@@ -1,0 +1,214 @@
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <title>verejne.digital</title>
+    <link rel='shortcut icon' href='favicon-32x32.png' type='image/x-png'/ >
+    <!-- BOOTSTRAP -->
+    <!-- Latest compiled and minified CSS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css" integrity="sha384-aUGj/X2zp5rLCbBxumKTCw2Z50WgIr1vs/PFN4praOTvYXWlVyh2UtNUU0KAUhAX" crossorigin="anonymous">
+    <link rel="stylesheet" href="shared-menu-colors.css">
+    <style>
+      body {
+        background-color: #fff0a5;
+      }
+      label {
+        margin : 5px;        
+        color: #bd4932;
+      }
+      table {
+        color: inherit;
+      }
+    </style>    
+ </head>
+ <body>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" integrity="sha512-K1qjQ+NcF2TYO/eI3M6v8EiNYZfA95pQumfvcVrTHtwQVDG+aHRqLi/ETn2uB+1JqwYqVG3LIvdm9lj6imS/pQ==" crossorigin="anonymous"></script>    
+    <script type="text/javascript" src="config.js"></script>
+    <script type="text/javascript" src="display_info.js"></script>
+    <script type="text/javascript" src="main_code.js"></script>
+    <script type="text/javascript" src="search.js"></script>
+    <nav class="navbar navbar-default">  
+  <div class="navbar-header" id="world-top">    
+    <button type="button" class="navbar-toggle pull-left" data-toggle="collapse" data-target=".navbar-collapse">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </button>
+    <a class="navbar-brand">prepojenia.verejne.digital</a> <span class="badge" style="background-color:#fff0a5;color:#bd4932;margin:3px">beta</span>
+  </div>
+  <div class="navbar-collapse collapse">
+    <ul class="nav navbar-nav">      
+      <li><a href="http://verejne.digital/">verejne.digital</a></li>      
+      <li><a href="http://www.facebook.com/verejne.digital" target="_blank">kontaktuj nás na Facebooku</a></li>
+      <li><a href="http://obstaravania.verejne.digital">obstaravania.verejne.digital</a></li>            
+    </ul>    
+  </div>
+    </nav>   
+
+   <div class="row">    
+    <div class="col-md-4" style="padding:10px;margin:10px">
+    <div style="margin-left:0px">
+        <label style="margin-left:20px"> Nájdi najkratšie spojenie medzi dvojicou:</label>
+    </div>
+    <table><tr><td valign="middle"><span style="font-size:28px">&#8597;</span></td><td>
+    
+
+    <input id="entitysearch1" class="form-control" type="text" style="width:300px;margin:5px;"
+           placeholder="Zadaj prvú firmu / človeka"/ onkeydown = "if (event.keyCode == 13) {searchEid1.searchEntity();}"/>            
+    <input id="entitysearch2" class="form-control" type="text" style="width:300px;margin:5px"
+           placeholder="Zadaj druhú firmu / človeka"/ onkeydown = "if (event.keyCode == 13) {searchEid2.searchEntity();}"/>     
+       </td></tr></table>    
+
+    <div style="margin-left:20px">        
+        <div>
+            <a href="#" class="list-group-item list-group-item-danger" style="text-align:center;margin-top:5px;width:100px;padding:5px"
+              onclick="searchEid2.searchEntity()">Hľadaj</a>
+        </div><br/>
+
+        <label id="search-status1" >&nbsp;</label><br/>
+        <label id="search-status2">&nbsp;</label><br/>
+        <label id="search-status"/>&nbsp;</label><br/><br/>
+
+    <iframe src="https://www.facebook.com/plugins/like.php?href=https%3A%2F%2Fwww.facebook.com%2Fverejne.digital&width=111&layout=button_count&action=like&size=small&show_faces=true&share=true&height=46&appId=" width="151" height="23" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowTransparency="true"></iframe>
+</div>
+    
+    </div>   
+    
+    <div class="col-md-6">        
+        <div id="search-results-link" style="margin-left:20px"></div>
+        <div id="search-results1"> </div>    
+        <div id="search-results2"> </div>        
+        <div id="search-results" style="margin:10px"> </div>
+    </div>  
+
+    <script type="text/javascript">
+        var eid1 = null;
+        var eid2 = null;
+
+    var path_length = 0;
+    var search_responses = []
+    var last_eid1_search_text = '';
+    var last_eid2_search_text = '';
+
+    function rememberLast() {
+        last_eid1_search_text = document.getElementById('entitysearch1').value;
+        last_eid2_search_text = document.getElementById('entitysearch2').value;
+    }
+
+    function addResponse() {
+        document.getElementById("search-results").innerHTML = '';   
+        for (i = 0; i < search_responses.length; i++) {
+            document.getElementById("search-results").innerHTML += '<a class="list-group-item list-group-item-info" style="border-color: black;">' + search_responses[i] +'</a>';
+        }
+        link_to_share = 'http://verejne.digital/prepojenia.html?'+escape(last_eid1_search_text)+'&'+escape(last_eid2_search_text)+'&';        
+        document.getElementById("search-results-link").innerHTML = '<label>Link na toto hľadanie: <br/><a href="'+link_to_share+'">'+link_to_share+'</a></label>';        
+    }
+
+    function clearResponse() {
+        document.getElementById("search-results").innerHTML = '';   
+    }
+
+    function getSearchInfo(eid, index) {
+        var resultsText;
+        var req = serverURL + 'getInfo?eid=' + eid;
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function() {
+            if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                var jsonData = JSON.parse(xmlhttp.responseText);
+                search_responses[index] = displayInfoPrepojenia(jsonData, eid);
+                addResponse();
+            }
+        }
+        xmlhttp.open("GET", req, true);
+        xmlhttp.send();
+    }
+
+        function searchPath() {            
+            if ((eid1==null)||(eid2==null)) return;
+
+            document.getElementById('search-status').innerHTML = 'Prebieha hľadanie prepojenia ...';
+            clearResponse();
+            var req = serverURL + 'connection?eid1=';
+            for (i = 0; i < eid1.length; i++) {
+                if (i != 0) req += ',';
+                req += eid1[i].eid;
+            }
+            req += '&eid2=';
+            for (i = 0; i < eid2.length; i++) {
+                if (i != 0) req += ',';
+                req += eid2[i].eid;
+            }
+            console.log('Search path request: ' + req);
+            var xmlhttp = new XMLHttpRequest();
+            
+            xmlhttp.onreadystatechange = function() {
+                if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {                    
+                    var jsonData = JSON.parse(xmlhttp.responseText);                    
+                    path_length = jsonData.length;
+                    if (jsonData.length > 0) {
+                        document.getElementById('search-status').innerHTML = 'Dĺžka prepojenia: <b>' + (jsonData.length - 1) + '</b>.';
+                    } else {
+                        document.getElementById('search-status').innerHTML = 'Prepojenie neexistuje.';
+                    }
+                    search_responses = []
+                    for (i=0; i<jsonData.length;i++) search_responses.push('');
+                    for (i=0; i<jsonData.length;i++) {
+                        getSearchInfo(jsonData[i], i);
+                    }
+                }
+            }
+            xmlhttp.open("GET", req, true);
+            xmlhttp.send();
+        }        
+
+        function setEid1(eid) {
+            eid1 = eid;                       
+            searchPath();            
+            if (last_eid2_search_text != document.getElementById('entitysearch2').value 
+                && document.getElementById('entitysearch2').value.length > 0) {
+                searchEid2.searchEntity();
+            }
+            rememberLast();
+        };
+
+        function setEid2(eid) {
+            eid2 = eid;            
+            searchPath();
+            if (last_eid1_search_text != document.getElementById('entitysearch1').value
+                && document.getElementById('entitysearch1').value.length > 0) {
+                searchEid1.searchEntity();
+            }
+            rememberLast();
+        }
+
+        searchEid1 = new SearchComp(
+                document.getElementById('entitysearch1'),
+                document.getElementById('search-status1'),
+                document.getElementById('search-results1'),
+                setEid1);
+
+        searchEid2 = new SearchComp(
+                document.getElementById('entitysearch2'),
+                document.getElementById('search-status2'),
+                document.getElementById('search-results2'),
+                setEid2);
+
+    </script>
+    <script type="text/javascript"> 
+      var searchString = window.location.search.substring(1);
+      params = searchString.split("&");      
+      if (params.length >= 2) {
+        name1 = unescape(params[0]);
+        name2 = unescape(params[1]);                
+        $(window).load(function(){ entitysearch1.value = name1; entitysearch2.value = name2; searchEid2.searchEntity()});         
+      }        
+    </script>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){ (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o), m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m) })(window,document,'script','https://www.google-analytics.com/analytics.js','ga'); ga('create', 'UA-82399296-1', 'auto'); ga('send', 'pageview');
+    </script>    
+ </body>
+ </html>

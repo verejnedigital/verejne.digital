@@ -1,0 +1,18 @@
+# datasources returned for getInfo
+# Syntax:
+# table_name: [column1, column1, column3, ... ]
+entities: [entity_name, address, lat, lng]
+firmy_data: [ico]
+new_orsr_data: [ico]
+orsresd_data: [ico]
+sponzori_stran_data: [hodnota_daru, strana, rok]
+stranicke_prispevky_data: [strana, vyska_prispevku, mena, rok]
+zrsr_data: [ico]
+contracts: [customer, total, source]
+advokati_data: ["'advokat'"]
+auditori_data: ["'auditor'"]
+audiovizfond_data: ["'audiovizfond'"]
+nadacie_data: ["'nadacia'"]
+uzivatelia_vyhody_ludia_data: ["(funkcionar = 'ano') AS is_funkcionar"]
+company_stats: [trzby2014, trzby2015, zisk2014, zisk2015,
+                "kategoriazamestnanci2015", "datum_vzniku", "datum_zaniku"]

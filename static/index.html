@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <link rel='shortcut icon' href='favicon-32x32.png' type='image/x-png'/ >
+    <title>verejne.digital</title>
+    <!-- BOOTSTRAP -->
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css" integrity="sha384-aUGj/X2zp5rLCbBxumKTCw2Z50WgIr1vs/PFN4praOTvYXWlVyh2UtNUU0KAUhAX" crossorigin="anonymous">
+    <!-- verejne.digital main colors -->
+    <link rel="stylesheet" href="shared-menu-colors.css">
+    <style>
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        background-color: #fff0a5;
+      }
+      #wrapper {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+      }
+      #map {
+        height: 100%;
+        overflow: hidden;
+      }
+      #stream {
+        width: 325px;
+        height: 100%;
+        float:left; 
+        overflow-y: scroll;       
+      }    
+
+      /* Simplify */
+      #search-fieldXXX {
+        height: 32px;
+        outline: none;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        background-color: #fff;
+        font-weight: 300;
+        text-overflow: ellipsis;
+        width: 290px;
+      }      
+
+      #legend {
+        background: white;
+        padding: 5px;
+        margin-right: 10px;
+        margin-bottom: 0px;
+        border: 1px solid #000;
+        opacity: 0.93;        
+      }
+
+      p { word-break: none }
+
+      label {
+        display: block;
+        margin-top: 5px;
+        margin-left: 3px;
+        font-weight: bold;
+        color: #b64926;
+      }
+    </style>
+  </head>
+  <body>
+    <script type="text/javascript" src="config.js"></script>
+    <!-- Latest compiled and minified JavaScript  -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" integrity="sha512-K1qjQ+NcF2TYO/eI3M6v8EiNYZfA95pQumfvcVrTHtwQVDG+aHRqLi/ETn2uB+1JqwYqVG3LIvdm9lj6imS/pQ==" crossorigin="anonymous"></script>    
+    <div id = "wrapper">
+      <div id = "stream">     
+      
+<nav class="navbar navbar-default">  
+  <div class="navbar-header" id="world-top">    
+    <button type="button" class="navbar-toggle pull-left" data-toggle="collapse" data-target=".navbar-collapse">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </button>
+    <a class="navbar-brand">verejne.digital</a> <span class="badge" style="background-color:#fffad5;color:#bd4932">beta</span>
+  </div>
+  <div class="navbar-collapse collapse">
+    <ul class="nav navbar-nav">      
+      <li><a href="#" data-toggle="modal" data-target="#aboutModal">o aplikácii</a></li>      
+      <li><a href="http://www.facebook.com/verejne.digital" target="_blank">kontaktuj nás na Facebooku</a></li>
+      <li><a href="http://prepojenia.verejne.digital/">prepojenia.verejne.digital </a></li>      
+      <li><a href="http://obstaravania.verejne.digital">obstaravania.verejne.digital</a></li>
+    </ul>    
+  </div>
+</nav>   
+        <div style="padding:3px">
+        <input id="search-field" class="form-control" type="text" placeholder="Hľadaj adresu" style="margin:2px"/>        
+        <input id="entitysearch-fake" class="form-control" type="text" placeholder="Hľadaj firmu / človeka"/ 
+               data-toggle="modal" data-target="#searchEntityModal" style="margin:2px"/>
+        </div>
+               <!-- Modal for Search-->
+               <div class="modal fade" id="searchEntityModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                 <div class="modal-dialog modal-lg" role="document">
+                   <div class="modal-content">
+                     <div class="modal-header">
+                       <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                       <input id="entitysearch" class="form-control" type="text" style="width:300px"
+                              placeholder="Hľadaj firmu / človeka"/ onkeydown = "if (event.keyCode == 13) searchByName.searchEntity()"/>
+                       <label id="search-status" style="margin:5px"/>
+                     </div>
+                     <div id="search-results" class="modal-body">
+                     </div>
+                   </div>
+                 </div>
+               </div>               
+
+               <!-- Modal for About-->
+               <div class="modal fade" id="aboutModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                 <div class="modal-dialog modal-lg" role="document">
+                   <div class="modal-content">
+                     <div class="modal-header">
+                       <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                       <center><h3>verejne.digital</h3></center>
+                     </div>
+                     <div class="modal-body" id="aboutContent">                      
+                     </div>
+                   </div>
+                 </div>
+               </div>
+               <script type="text/javascript">                  
+                  $('#searchEntityModal').on('shown.bs.modal', function () { $('#entitysearch').focus();})                  
+                  $('#entitysearch-fake').on('focusin', function () { $('#entitysearch-fake').blur(); })
+                  $('#aboutModal').on('shown.bs.modal', function () { $('#aboutContent').load('about.html');})
+               </script>
+
+        <div class="list-group" id="info_list">          
+        </div>
+      </div>
+      <div id = "map">      
+      </div>
+      <div id="legend">  
+        <button type="button" class="close" onclick="$('#legend').hide()"><span aria-hidden="true">&times;</span></button>              
+        <p><span class="badge">P</span> <span style="color:red;font-size:18px">&#9675;</span> kontakt s politikou</p>
+        <p><span class="badge">€</span> <span style="color:#db9e36;font-size:18px">&#9679;</span> obchod so štátom</p>
+        <p><span style="font-size:18px">&nbsp;⎈</span> zobraz na mape</p>
+        
+        <iframe src="https://www.facebook.com/plugins/like.php?href=https%3A%2F%2Fwww.facebook.com%2Fverejne.digital&width=111&layout=button_count&action=like&size=small&show_faces=true&share=true&height=46&appId=" width="151" height="23" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowTransparency="true"></iframe>
+      </div>
+    </div>    
+    <script type="text/javascript" src="display_info.js"></script>
+    <script type="text/javascript" src="main_code.js"></script>
+    <script type="text/javascript" src="search.js"></script>
+    <script type="text/javascript"> 
+      if ('about' == window.location.search.substring(1) || 'about=' == window.location.search.substring(1)) {
+        $(window).load(function(){ $('#aboutModal').modal('show'); }); 
+      }
+        searchByName = new SearchComp(
+                document.getElementById('entitysearch'),
+                document.getElementById('search-status'),
+                document.getElementById('search-results'), null);
+    </script>
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCAXMlEL-sfzT4jVK5CQHysSPp77JnVLks&libraries=places&callback=initMap"></script>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){ (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o), m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m) })(window,document,'script','https://www.google-analytics.com/analytics.js','ga'); ga('create', 'UA-82399296-1', 'auto'); ga('send', 'pageview');
+    </script>    
+  </body>
+</html>
