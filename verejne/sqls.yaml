@@ -27,33 +27,6 @@ SELECT eid, ((new_orsr is not null)) AS is_orsr
 FROM entities
 "
 
-# Commands used to populate contracts sql table
-otvorene_zmluvy_contracts: "
-INSERT INTO contracts (id, total, customer, source, confidence)
-SELECT DISTINCT entities.id, ds_otvorenezmluvy.total_amount, ds_otvorenezmluvy.customer, ds_otvorenezmluvy.source_url, 1.0
-FROM entities
-JOIN new_orsr_data ON entities.id = new_orsr_data.id
-JOIN ds_otvorenezmluvy ON ds_otvorenezmluvy.supplier_ico = new_orsr_data.ico
-WHERE new_orsr_data.ico > 0
-"
-
-# TODO: proper escaping
-# TODO: instead of having everything in one table, have separate tables for different sources
-procurements_contracts: "
-INSERT INTO contracts (id, total, customer, source, confidence)
-SELECT DISTINCT entities.id, 
-                IF(ds_procurements.currency='Sk', ds_procurements.price / 30.126,
-                                                  ds_procurements.price), 
-                CONCAT('O: ', ds_procurements.customer_name),
-                CONCAT('https://www.google.com/search?q=',
-                        CONCAT(ds_procurements.procurement_id,' site:uvo.gov.sk')),
-                1.0
-FROM entities
-JOIN new_orsr_data ON entities.id = new_orsr_data.id
-JOIN ds_procurements ON ds_procurements.supplier_ico = new_orsr_data.ico
-WHERE new_orsr_data.ico > 0;
-"
-
 # Commands used to compute entity name suffixes
 entity_name_suffixes_table: "DELETE from entity_name_suffixes"
 #DROP TABLE IF EXISTS entity_name_suffixes;
