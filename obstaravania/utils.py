@@ -13,10 +13,13 @@ def getEidForIco(ico):
               " WHERE ico = %s" + \
               " LIMIT 1"
         cur = db.getCursor()
-        cur = db.execute(cur, sql, [ico])
-        row = cur.fetchone()
-        if row is None: return None
-        return row["eid"]
+        try:
+            cur = db.execute(cur, sql, [ico])
+            row = cur.fetchone()
+            if row is None: return None
+            return row["eid"]
+        except:
+            return None
 
     if ico is None: return None
     ico = ico.replace(" ", "")

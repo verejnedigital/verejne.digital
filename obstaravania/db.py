@@ -23,6 +23,7 @@ def connect(local = True):
   args = parser.parse_args()
   config = getConfig()
   db = psycopg2.connect(user=config["user"], dbname=config["db"])
+  db.autocommit = True
 
 def log(s):
     print "LOG: " + s

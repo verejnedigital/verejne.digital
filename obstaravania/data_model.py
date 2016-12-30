@@ -12,7 +12,9 @@ import yaml
 # Defining database scheme here
 with open("db_config.yaml", "r") as stream:
     config = yaml.load(stream)
-engine = sqlalchemy.create_engine('postgresql+psycopg2://' + config["user"] + "@/" + config["db"])
+engine = sqlalchemy.create_engine(
+        'postgresql+psycopg2://' + config["user"] + "@/" + config["db"],
+        client_encoding='utf8')
 with engine.connect() as conn:
     conn.execute("SET search_path TO obstaravania")
 
@@ -80,6 +82,17 @@ Firma.obstaravania = relationship(
 Firma.obstaraval = relationship(
         "Obstaravanie", order_by=Obstaravanie.id, back_populates="customer",
         foreign_keys=[Obstaravanie.customer_id])
+
+class RawNotice(Base):
+    __tablename__ = 'raw_notice'
+    id = Column(Integer, primary_key=True)
+    notice = Column(String)
+
+# This table should always have only one row: the time of the last sync
+# of slovensko.digital data
+class LastSync(Base):
+    __tablename__ = 'last_sync'
+    last_sync = Column(String, primary_key=True)
 
 Base.metadata.create_all(engine)
 Session = sessionmaker(bind=engine)

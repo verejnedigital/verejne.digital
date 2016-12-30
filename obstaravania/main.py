@@ -1,5 +1,6 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from data_model import Firma, Obstaravanie, Firma, Candidate, Prediction, Session
+from data_model import Obstaravanie, Firma, Candidate, Prediction, RawNotice, LastSync, Session
 from utils import obstaravanieToJson, getEidForIco
 
 from sqlalchemy import Column, Float, Integer, String, Boolean, and_
@@ -58,20 +59,21 @@ options = parser.parse_args()
 
 
 session = Session()
+
 # returns Firma class from the csv row, using "customer"/"supplier" prefix
 def GetCompanyCSV(row, prefix, header):
     name = header.index(prefix + "_name")
     ico = header.index(prefix + "_organisation_code")
     address = header.index(prefix + "_address")
     email = header.index(prefix + "_email")
-    company = session.query(Firma).filter_by(ico=row[ico].decode("utf8")).first()
+    company = session.query(Firma).filter_by(ico=row[ico]).first()
     if company is not None: return company
-    company = Firma(ico=row[ico].decode("utf8"), address=row[address].decode("utf8"),
-                    name=row[name].decode("utf8"), email=row[email].decode("utf8"))
+    company = Firma(ico=row[ico], address=row[address],
+                    name=row[name], email=row[email])
     return company
 
 def GetCompany(ico, name):
-    company = session.query(Firma).filter_by(ico=ico).first()
+    company = session.query(Firma).filter_by(ico=str(ico)).first()
     if company is not None: return company
     company = Firma(ico=ico, name=name)
     return company
@@ -89,10 +91,10 @@ def GetObstaravanie(row, header):
     if obst is not None:
         print "Obst exists", official_id
         return obst
-    obst = Obstaravanie(official_id=row[official_id].decode("utf8"),
-                        description=row[description].decode("utf8"),
-                        title=row[title].decode("utf8"))
-    j = dict((key, value.decode("utf8")) for (key, value) in zip(header, row))
+    obst = Obstaravanie(official_id=row[official_id],
+                        description=row[description],
+                        title=row[title])
+    j = dict((key, value) for (key, value) in zip(header, row))
     obst.json = json.dumps(j)
 
     currency = j["procurement_currency"]
@@ -112,11 +114,29 @@ if options.download_datanest:
         print "Downloading datanest csv, might take a minute...."
         f.write(response.read())
 
+
+def unicode_csv_reader(unicode_csv_data, dialect=csv.excel, **kwargs):
+    # csv.py doesn't do Unicode; encode temporarily as UTF-8:
+    csv_reader = csv.reader(utf_8_encoder(unicode_csv_data),
+            dialect=dialect, **kwargs)
+    for row in csv_reader:
+        # decode UTF-8 back to Unicode, cell by cell:
+        yield [unicode(cell, 'utf-8') for cell in row]
+
+def utf_8_encoder(unicode_csv_data):
+    for line in unicode_csv_data:
+        yield line.decode('utf-8')
+
+def unicode_csv_reader2(utf8_data, dialect=csv.excel, **kwargs):
+    csv_reader = csv.reader(utf8_data, dialect=dialect, **kwargs)
+    for row in csv_reader:
+        yield [unicode(cell, 'utf-8') for cell in row]
+
 if options.create_data_files:
     print "Creating database from datanest data"
     csvfile = open("data.csv", "r")
     with open("data.csv", "r") as csvfile:
-        reader = csv.reader(csvfile)
+        reader = unicode_csv_reader2(csvfile)#csv.reader(csvfile)
         header = reader.next()
         index = 0
         for row in reader:
@@ -141,17 +161,19 @@ def strip_accents(s):
 if options.update_platforma:
     # Load RawNotice from datahub / file
     def GetRawNotice(raw_id):
-        filename = "raw_notices/" + str(raw_id)
-        if os.path.exists(filename):
-            response = open(filename, "r")
+        notice = session.query(RawNotice).filter_by(id=raw_id).first()
+        print "Raw notice", raw_id, notice
+        if notice is not None:
+            response = notice.notice
         else:
             time.sleep(1)
             response = urllib.urlopen(
                     "https://datahub.ekosystem.slovensko.digital/api/data/vvo/raw_notices/" + \
-                    str(raw_id))
-        entry = json.loads(response.read())
-        if (not os.path.exists(filename)):
-            open(filename, "w").write(json.dumps(entry))
+                    str(raw_id)).read()
+            raw_notice = RawNotice(id=raw_id, notice=response)
+            session.add(raw_notice)
+            session.commit()
+        entry = json.loads(response)
 
         if not "body" in entry:
             print "no body in entry"
@@ -178,12 +200,27 @@ if options.update_platforma:
         print "Price", raw_id, "=", value
         return FancyNumberToFloat(value)
 
+    def GetLastSync():
+        last_sync = session.query(LastSync).first()
+        if last_sync is None: return "2010-08-12T22:06:58.682810Z"
+        return last_sync.last_sync
+
+    def UpdateLastSync(timestamp):
+        new_session = Session()
+        new_session.query(LastSync).delete(synchronize_session=False)
+        new_session.commit()
+
+        last_sync = LastSync(last_sync=timestamp)
+        session.add(last_sync)
+        session.commit()
+
     processed = 0
     while True:
-        try:
-            last_sync = open("last_sync.txt", "r").read()
-        except:
-            last_sync = "2010-08-12T22:06:58.682810Z"
+    #    try:
+    #        last_sync = open("last_sync.txt", "r").read()
+    #    except:
+    #        last_sync = "2010-08-12T22:06:58.682810Z"
+        last_sync = GetLastSync()
         url = 'https://datahub.ekosystem.slovensko.digital/api/data/vvo/notices/sync?since=' + \
               last_sync
         print "Download platforma.slovensko.digital data since", last_sync, url
@@ -236,7 +273,8 @@ if options.update_platforma:
             processed += 1
             if (processed % 25 == 0): print processed
         print last_sync
-        print >>open("last_sync.txt", "w"), last_sync
+        UpdateLastSync(last_sync)
+#        print >>open("last_sync.txt", "w"), last_sync
         if not options.update_platforma_all: break
 
 
@@ -387,7 +425,7 @@ if options.compute_predictions:
             winner = suppliers[line_index]
             if winner in predicted: continue
             if (value < min_score): break
-            new_session.add(Candidate(score=value, obstaravanie_id=obstaravanie.id,
+            new_session.add(Candidate(score=float(value), obstaravanie_id=obstaravanie.id,
                                       company_id=winner,
                                       reason_id=ids[line_index]))
             new_session.commit()
@@ -414,7 +452,7 @@ if options.compute_estimates:
         avg = np.average(points, weights=weights)
         variance = np.average((points - avg) ** 2.0, weights=weights)
         stdev = np.sqrt(variance)
-        new_session.add(Prediction(mean=avg, stdev=stdev, num=len(data),
+        new_session.add(Prediction(mean=float(avg), stdev=float(stdev), num=len(data),
                                    obstaravanie_id=obstaravanie.id))
         new_session.commit()
         generated += 1
