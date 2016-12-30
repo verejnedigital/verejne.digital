@@ -614,7 +614,8 @@ class SearchEntity(MyServer):
             return
         cur = db.getCursor()
         sql = "SELECT DISTINCT eid AS eid FROM entities " + \
-              "WHERE to_tsvector('english', entity_name) @@ to_tsquery('english', %s)"
+              "WHERE to_tsvector('english', entity_name) @@ plainto_tsquery('english', %s) " + \
+              "LIMIT 20"
         cur = db.execute(cur, sql, [text])
         result = []
         for row in cur:
