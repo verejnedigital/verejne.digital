@@ -1,0 +1,15 @@
+.entitysearch {
+  width:300px;
+  margin:5px;
+}
+
+.toRight {
+  margin-left:20px
+}
+
+.searchButton {
+  text-align:center;
+  margin-top:5px;
+  width:100px;
+  padding:5px
+}

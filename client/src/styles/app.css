@@ -1,0 +1,21 @@
+body {
+  background-color: #fff0a5;
+}
+label {
+  margin : 5px;
+  color: #bd4932;
+}
+table {
+  color: inherit;
+}
+
+.beta {
+  background-color:#fff0a5;
+  color:#bd4932;
+  margin:3px
+}
+
+.fbIframe {
+  border:none;
+  overflow:hidden
+}
