@@ -10,5 +10,7 @@ module.exports = {
       "react/self-closing-comp": "off",
       "react/jsx-filename-extension": "off",
       "react/prop-types": "off",
+      "import/no-extraneous-dependencies": "off",
+      "import/prefer-default-export": "off"
     }
 };

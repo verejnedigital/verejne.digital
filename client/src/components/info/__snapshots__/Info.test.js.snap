@@ -1,0 +1,60 @@
+exports[`test renders dummy as before 1`] = `
+<a
+  className="list-group-item list-group-item-info"
+  style={
+    Object {
+      "borderColor": "black",
+    }
+  }>
+  <table>
+    <tbody>
+      <tr>
+        <td>
+          <b>
+            Dummy
+              
+          </b>
+          <a
+            href="?zobraz& 123&123&undefined&"
+            rel="noopener noreferrer"
+            target="_blank"
+            title="Zobraz na mape">
+            ⎈
+          </a>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          Dummy Street 123, 851 04 Petržalka, Slovakia
+        </td>
+      </tr>
+      <tr>
+        <td>
+          Stranícke príspevky:
+          <ul>
+            <li>
+              <a
+                className={false}
+                href="http://datanest.fair-play.sk/searches/quick?query_string=Dummy"
+                rel="noopener noreferrer"
+                target="_blank">
+                Dummy, 123 EUR (rok 2010)
+              </a>
+            </li>
+          </ul>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          Vzťahy:
+          <ul>
+            <li>
+              Dummy, a.s.
+            </li>
+          </ul>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</a>
+`;

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import '../../styles/prepojenia.css';
-import SearchResult from './SearchResult';
+import Info from '../info/Info';
 import { searchEntity, connection, getInfo } from '../../actions/serverAPI';
 
 class PrepojeniaPage extends Component {
@@ -137,11 +137,11 @@ class PrepojeniaPage extends Component {
                 this.state.connections.map((connEid) => {
                   if (connEid in this.state) {
                     return (
-                      <SearchResult key={connEid} data={this.state[connEid]} />
+                      <Info key={connEid} data={this.state[connEid]} />
                     );
                   }
                   return (
-                    <div key={connEid}></div>
+                    <div key={connEid}>Prebieha hľadanie</div>
                   );
                 })
             }
