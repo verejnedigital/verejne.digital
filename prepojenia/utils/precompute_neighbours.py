@@ -232,7 +232,7 @@ def consolidate_people():
     print('')
 
     # Construct parallel lists of IDs and eIDs
-    IDs_list, eIDs_list = zip(*[(ID, eIDs[ID]) for ID in sorted(eIDs.keys())])
+    IDs_list, eIDs_list = zip(*[(ID, eIDs[ID]) for ID in sorted(eIDs.keys()) if ID != eIDs[ID]])
 
     # (TEMP) Print the lists to a file
     file_output_merge = '/tmp/output/merge.txt'
@@ -251,6 +251,68 @@ def consolidate_people():
 
     return IDs_list, eIDs_list, edges
 
+def consolidate_companies():
+    # Connect to database
+    log("Merging companies.")
+    log("Connecting to the database")
+    with open("utils/db_config.yaml", "r") as stream:
+        config = yaml.load(stream)
+
+    db = psycopg2.connect(user=config["user"], dbname=config["db"])
+    cur = db.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    cur.execute("SET search_path = 'mysql'")
+
+    sql = "((SELECT ico, id FROM firmy_data WHERE (ico > 10000) and id IS NOT NULL) union " \
+        + "(SELECT ico, id FROM new_orsr_data WHERE (ico > 10000) and id IS NOT NULL) union " \
+        + "(SELECT ico, id FROM orsresd_data WHERE (ico > 10000) and id IS NOT NULL)) ORDER BY ico LIMIT %s"
+    cur.execute(sql, [int(config["relations_to_load"])])
+    ids = []
+    eids = []
+    last_ico = -1
+    last_eid = -1
+    for row in cur:
+        current_eid = row["id"]
+        current_ico = row["ico"]
+        if (last_ico == current_ico):
+            ids.append(current_eid)
+            eids.append(last_eid);
+            current_eid = last_eid
+        last_ico = current_ico
+        last_eid = current_eid
+
+    cur.close()
+    db.close()
+    log("DONE consolidate companies")
+    return ids, eids
+
+def update_eids_of_ids(cur, ids, eids):
+    print "Updating id", len(ids), len(eids)
+    sql = "UPDATE entities set eid = %s where id = %s"
+    cursor.executemany(stmt, zip(eids, ids))
+
+def consolidate_entities(read_only):
+    ids1, eids1, edges = consolidate_people()
+    ids2, eids2 = consolidate_companies()
+    if read_only:
+        return
+
+    with open("utils/db_config.yaml", "r") as stream:
+        config = yaml.load(stream)
+    db = psycopg2.connect(user=config["user"], dbname=config["db"])
+    cur = db.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    cur.execute("SET search_path = 'mysql'")
+    # 1. Reset eids to be equal to ids in entities.
+    cur.execute("update entities set eid = id;")
+    # 2. Consolidate people
+    update_eids_of_ids(cur, ids1, eids1)
+    # 3. Consolidate companies
+    update_eids_of_ids(cur, ids2, eids2)
+    # 4. Update related table
+    cur.execute("UPDATE mysql.related INNER JOIN mysql.entities set related.eid1=entities.eid where related.id1=entities.id;")
+    cur.execute("UPDATE mysql.related INNER JOIN mysql.entities set related.eid2=entities.eid where related.id2=entities.id;")
+    cur.close()
+    db.commit()
+    db.close()
 
 if __name__ == '__main__':
-    consolidate_people()
+    consolidate_entities(True)
