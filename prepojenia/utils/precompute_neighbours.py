@@ -299,10 +299,12 @@ def consolidate_companies():
 def update_eids_of_ids(cur, ids, eids):
     print "Updating eids", len(ids), len(eids)
     sql = "UPDATE entities set eid = %s where id = %s"
-    cursor.executemany(stmt, zip(eids, ids))
+    cur.executemany(sql, zip(eids, ids))
 
 def add_neighbour_edges(cur, edges):
     print "Adding neighbour edges", len(edges) 
+    sql = "INSERT INTO related (eid1, id1, eid2, id2, source, length) VALUES(%i, %i, %i, %i, %s, %f)"
+    cur.executemany(sql, ((id1, id1, id2, id2, 'neighbour', l) for (id1, id2, l) in edges))
 
 def consolidate_entities(read_only):
     ids1, eids1, edges = consolidate_people()
@@ -316,18 +318,23 @@ def consolidate_entities(read_only):
     cur = db.cursor(cursor_factory=psycopg2.extras.DictCursor)
     cur.execute("SET search_path = 'mysql'")
     # 1. Reset eids to be equal to ids in entities.
+    print "Reset eids"
     cur.execute("update entities set eid = id;")
     # 2. Consolidate people
+    print "Update DB with people eids"
     update_eids_of_ids(cur, ids1, eids1)
     # 3. Consolidate companies
+    print "Update DB with companies eids"
     update_eids_of_ids(cur, ids2, eids2)
     # 4. Remove neighbour edges
-
+    print "Delete neighbour edges"
+    cur.execute("DELETE * from related where source=%s", ("neighbour",))
     # 5. Add new neighbour edges 
     add_neighbour_edges(cur, edges)
     # 6. Update related table
-    cur.execute("UPDATE related INNER JOIN entities set related.eid1=entities.eid where related.id1=entities.id;")
-    cur.execute("UPDATE related INNER JOIN entities set related.eid2=entities.eid where related.id2=entities.id;")
+    print "Updating related eids"
+    cur.execute("UPDATE related SET eid1=entities.eid FROM entities WHERE related.id1=entities.id;")
+    cur.execute("UPDATE related SET eid2=entities.eid FROM entities WHERE related.id2=entities.id;")
     cur.close()
     db.commit()
     db.close()
