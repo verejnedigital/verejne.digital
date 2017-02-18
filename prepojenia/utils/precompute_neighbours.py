@@ -85,12 +85,12 @@ def parse_entity_name(entity_name, surnames, titles, verbose=False):
 
 def generate_edges():
 	# Read surnames
-	file_surnames = 'data_surnames2.txt'
+	file_surnames = 'utils/data_surnames2.txt'
 	with codecs.open(file_surnames, 'r') as f:
 	    surnames = [line.strip().decode('utf-8') for line in f.readlines()]
 
 	# Read academic titles
-	file_titles = 'data_titles.txt'
+	file_titles = 'utils/data_titles.txt'
 	with codecs.open(file_titles, 'r') as f:
 	    titles = [line.strip().decode('utf-8') for line in f.readlines()]
 
