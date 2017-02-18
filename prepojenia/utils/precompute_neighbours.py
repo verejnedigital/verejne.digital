@@ -127,9 +127,10 @@ def generate_edges():
 	            length = 1.0 if similar_surnames else (group_size + 1)
 
 	            # Print edge (instead of adding to database)
-	            print('Add edge of length %.2f between:' % (length))
-	            print('    %d | %s' % (ids[i], names[i]))
-	            print('    %d | %s' % (ids[j], names[j]))
+	            if length < 5.0:
+		            print('Add edge of length %.2f between:' % (length))
+		            print('    %d | %s' % (ids[i], names[i].encode('utf-8')))
+		            print('    %d | %s' % (ids[j], names[j].encode('utf-8')))
 
 
 if __name__ == '__main__':
