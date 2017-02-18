@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import db
-import json
+import simplejson as json
 from paste import httpserver
 import sys
 import traceback
@@ -614,7 +614,7 @@ class SearchEntity(MyServer):
             return
         cur = db.getCursor()
         sql = "SELECT DISTINCT eid AS eid FROM entities " + \
-              "WHERE to_tsvector('english', entity_name) @@ plainto_tsquery('english', %s) " + \
+              "WHERE to_tsvector('unaccent', entity_name) @@ plainto_tsquery('unaccent', %s) " + \
               "LIMIT 20"
         cur = db.execute(cur, sql, [text])
         result = []
@@ -673,7 +673,8 @@ def main():
     httpserver.serve(
         app,
         host='127.0.0.1',
-        port='8080')
+        port='8080',
+        use_threadpool=True)
   
 if __name__ == '__main__':
   main()
