@@ -29,7 +29,7 @@ def read_entities():
     lats = []
     lngs = []
     for row in cur:
-        entity_names.append(row["entity_name"])
+        entity_names.append(row["entity_name"].decode('utf-8'))
         ids.append(row["id"])
         lats.append(row["lat"])
         lngs.append(row["lng"])
