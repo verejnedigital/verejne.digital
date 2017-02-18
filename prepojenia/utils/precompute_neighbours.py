@@ -114,7 +114,7 @@ def generate_edges():
     file_output = '/tmp/output/edges.txt'
     num_entities_seen = 0
     num_edges = defaultdict(float)
-    last_percentage = -1.0
+    last_promile = -1.0
     with open(file_output, 'w') as f:
         for location, group in groupby(sorted(entities_for_grouping), key=itemgetter(0)):
             _, names, ids = zip(*group)
@@ -153,12 +153,12 @@ def generate_edges():
 
             num_entities_seen += group_size
 
-            percentage = 100.0 * num_entities_seen / num_entities
-            if percentage > last_percentage:
-                report_entities = 'Processed entities: %d / %d = %.1f%%' % (num_entities_seen, num_entities, percentage)
+            promile = 1000.0 * num_entities_seen / num_entities
+            if promile > last_promile:
+                report_entities = 'Processed entities: %d / %d = %.1f%%' % (num_entities_seen, num_entities, promile / 10)
                 report_edges = 'Edges: ' + ', '.join(['%.0f: %d' % (l, num_edges[l]) for l in sorted(num_edges.keys())])
                 print_progress(report_entities + '; ' + report_edges)
-                last_percentage = ceil(percentage)
+                last_promile = ceil(promile)
     print('')
 
 
