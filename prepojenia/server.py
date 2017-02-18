@@ -145,9 +145,8 @@ class MyServer(webapp2.RequestHandler):
         self.response.write(json.dumps(j, separators=(',',':')))
 
     def get(self):
-        self.process()
         try:
-            pass
+            self.process()
         except:
             self.returnJSON(errorJSON(
                 500, "Internal server error: sa mi neda vycentrovat!"))
