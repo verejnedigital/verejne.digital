@@ -25,7 +25,22 @@ def print_progress(string):
     sys.stdout.write('\r%s' % (string))
     sys.stdout.flush()
 
+def read_surnames():
+    """ Reads in a list of surnames from the provided data file """
+    file_surnames = 'utils/data_surnames2.txt'
+    with codecs.open(file_surnames, 'r') as f:
+        surnames = set([line.strip().decode('utf-8') for line in f.readlines()])
+    return surnames
+
+def read_titles():
+    """ Reads in a list of academic titles from the provided data file """
+    file_titles = 'utils/data_titles.txt'
+    with codecs.open(file_titles, 'r') as f:
+        titles = [line.strip().decode('utf-8') for line in f.readlines()]
+    return titles
+
 def longest_common_prefix(str1, str2):
+    """ Returns the length of the longest common prefix of two provided strings """
     i = 0
     while i < min(len(str1), len(str2)):
         if str1[i] != str2[i]:
@@ -38,8 +53,10 @@ def parse_entity_name(entity_name, surnames, titles, verbose=False):
     Input: entity_name (can contain academic titles and name of Zivnost)
     Output:
         if parse is successful: dictionary containing
+            titles_pre: list of titles detected before name
             firstnames: list of given names (of length at least 1)
             surname: string
+            titles_suf: list of titles detected after name
         otherwise:
             None
     """
@@ -59,18 +76,23 @@ def parse_entity_name(entity_name, surnames, titles, verbose=False):
     # Trim known academic titles
     name_clean = name
     finished = False
+    titles_pre = []
+    titles_suf = []
     while not finished:
         finished = True
         for title in titles:
             d = len(title) + 1 # number of characters to trim
             if name_clean.startswith(title + '.') or name_clean.startswith(title + ' '):
                 name_clean = name_clean[d:]
+                titles_pre.append(title)
                 finished = False
             elif name_clean.endswith(' ' + title) or name_clean.endswith(',' + title):
                 name_clean = name_clean[:-d]
+                titles_suf.append(title)
                 finished = False
             elif name_clean.endswith(title + '.'):
                 name_clean = name_clean[:-d]
+                titles_suf.append(title)
                 finished = False
             name_clean = name_clean.strip(' ,')
     if verbose:
@@ -79,11 +101,26 @@ def parse_entity_name(entity_name, surnames, titles, verbose=False):
     # Split cleaned name, should be list of firstnames followed by a surname
     names = name_clean.split()
 
-    # Check that last name is a surname
-    if len(names) >= 2 and names[-1] in surnames:
+    # Strict matching: Check that last name is a surname
+    # if len(names) >= 2 and names[-1] in surnames:
+    #     return {
+    #         'titles_pre': titles_pre,
+    #         'firstnames': names[:-1],
+    #         'surname': names[-1],
+    #         'titles_suf': titles_suf,
+    #     }
+
+    # Less conservative matching: Find the last token that is a surname,
+    # and take the rest before it as given names
+    i = len(names) - 1
+    while (i >= 1) and (names[i] not in surnames):
+        i -= 1
+    if i >= 1:
         return {
-            'firstnames': names[:-1],
-            'surname': names[-1],
+            'titles_pre': titles_pre,
+            'firstnames': names[:i],
+            'surname': names[i],
+            'titles_suf': titles_suf,
         }
     else:
         if verbose:
@@ -136,16 +173,10 @@ def is_merge_desired(name1, name2):
     # return True
 
 def main():
-    # Read surnames
-    file_surnames = 'utils/data_surnames2.txt'
-    with codecs.open(file_surnames, 'r') as f:
-        surnames = set([line.strip().decode('utf-8') for line in f.readlines()])
-
-    # Read academic titles
-    file_titles = 'utils/data_titles.txt'
-    with codecs.open(file_titles, 'r') as f:
-        titles = [line.strip().decode('utf-8') for line in f.readlines()]
-
+    # Get helper data
+    surnames = read_surnames()
+    titles = read_titles()
+    
     # Get entity data
     #reader = read_entities.read_entities_mock
     reader = read_entities.read_entities
@@ -179,9 +210,10 @@ def main():
             for j in xrange(i + 1, group_size):
                 # Check if merge should happen
                 if is_merge_desired(names_parsed[i], names_parsed[j]):
-                    # Thanks to sorting ids[i] < ids[j]
-                    eIDs[ids[j]] = ids[i]
-                    #print('Set eID of %d to %d' % (ids[j], ids[i]))
+                    if eIDs[ids[j]] > ids[i]:
+                        # Thanks to sorting ids[i] < ids[j]
+                        eIDs[ids[j]] = ids[i]
+                        #print('Set eID of %d to %d' % (ids[j], ids[i]))
 
                 # Compute edge length (depends on group_size and any surnames similarity)
                 length = compute_edge_length(names_parsed[i], names_parsed[j], group_size)
@@ -207,6 +239,7 @@ def main():
     with open(file_output_merge, 'w') as f:
         for ID, eID in zip(IDs_list, eIDs_list):
             f.write('%d | %d\n' % (ID, eID))
+            #print('%d | %d' % (ID, eID))
 
     # (TEMP) Print the edges to a file
     file_output_edges = '/tmp/output/edges.txt'
@@ -215,7 +248,7 @@ def main():
             f.write('Add edge of length %.2f between:\n' % (length))
             f.write('    %d | %s\n' % (ID1, name1.encode('utf-8')))
             f.write('    %d | %s\n' % (ID2, name2.encode('utf-8')))
-                        
+
     return IDs_list, eIDs_list, edges
 
 
