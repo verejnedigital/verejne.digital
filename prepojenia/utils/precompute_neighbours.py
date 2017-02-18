@@ -172,7 +172,7 @@ def is_merge_desired(name1, name2):
     #         return False
     # return True
 
-def main():
+def consolidate_people():
     # Get helper data
     surnames = read_surnames()
     titles = read_titles()
@@ -253,4 +253,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    consolidate_people()
