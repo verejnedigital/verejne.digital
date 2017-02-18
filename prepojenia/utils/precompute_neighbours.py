@@ -120,17 +120,19 @@ def generate_edges():
             _, names, ids = zip(*group)
             group_size = len(ids)
             #print('Location: %s; group size %d' % (str(location), group_size))
+
+            # Parse names in this group
+            names_parsed = [parse_entity_name(name, surnames, titles) for name in names]
+
             for i in xrange(group_size):
                 for j in xrange(i + 1, group_size):
                     # Compute edge length (depends on group_size and any surnames similarity)
                     
                     # Check surname similarity
                     similar_surnames = False
-                    parsed1 = parse_entity_name(names[i], surnames, titles)
-                    parsed2 = parse_entity_name(names[j], surnames, titles)
-                    if (parsed1 is not None) and (parsed2 is not None):
-                        surname1 = parsed1['surname']
-                        surname2 = parsed2['surname']
+                    if (names_parsed[i] is not None) and (names_parsed[j] is not None):
+                        surname1 = names_parsed[i]['surname']
+                        surname2 = names_parsed[j]['surname']
 
                         if surname1 == surname2:
                             similar_surnames = True
