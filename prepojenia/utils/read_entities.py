@@ -9,23 +9,22 @@ def log(s):
     print "LOG: " + s
 
 def read_entities_mock():
-    entity_names = ["Jan Novak", "Jana Novakova", "Peter Novak", "Fei Wu", "Li Weng"]
-    ids = [22, 41, 77, 13, 14]
-    lats = [0.15, 0.18, 0.18, 0.20, 0.20]
-    lngs = [0.22, 0.19, 0.19, 0.21, 0.21]
+    entity_names = ["Jan Novak", "Jana Novakova", "Peter Novak", "Fei Wu", "Li Weng", "Bc. Jan Novak, PhD.", "Mgr. Jan Novak ZIVNOSTNIK"]
+    ids = [22, 41, 77, 13, 14, 24, 25]
+    lats = [0.15, 0.18, 0.18, 0.20, 0.20, 0.15, 0.15]
+    lngs = [0.22, 0.19, 0.19, 0.21, 0.21, 0.22, 0.22]
     return entity_names, ids, lats, lngs
 
 def read_entities():
     # Connect to database
     log("Connecting to the database")
-    with open("db_config.yaml", "r") as stream:
+    with open("utils/db_config.yaml", "r") as stream:
         config = yaml.load(stream)
 
     db = psycopg2.connect(user=config["user"], dbname=config["db"])
     cur = db.cursor(cursor_factory=psycopg2.extras.DictCursor)
     cur.execute("SET search_path = 'mysql'")
 
-    log("relations constructor")
     sql = "SELECT entity_name,id,lat,lng FROM entities LIMIT %s"
     cur.execute(sql, [int(config["relations_to_load"])])
     entity_names = []
@@ -42,3 +41,5 @@ def read_entities():
 
     log("DONE")
     return entity_names,ids,lats,lngs
+
+
