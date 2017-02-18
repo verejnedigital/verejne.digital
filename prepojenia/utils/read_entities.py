@@ -42,11 +42,9 @@ def read_entities():
     log("DONE")
     return entity_names,ids,lats,lngs
 
-def update_eids_of_ids(ids, eids):
-    print "Updating id", len(ids), len(eids)
-
-def update_eids_of_companies():
+def consolidate_companies():
     # Connect to database
+    log("Merging companies.")
     log("Connecting to the database")
     with open("db_config.yaml", "r") as stream:
         config = yaml.load(stream)
@@ -75,9 +73,35 @@ def update_eids_of_companies():
 
     cur.close()
     db.close()
-    log("DONE")
-    update_eids_of_ids(ids, eids)
+    log("DONE consolidate companies")
     return ids, eids
 
+def update_eids_of_ids(cur, ids, eids):
+    print "Updating id", len(ids), len(eids)
+    sql = "UPDATE entities set eid = %s where id = %s"
+    cursor.executemany(stmt, zip(eids, ids))
+
+def consolidate_entities():
+    ids2, eids2 = consolidate_companies()
+    
+    with open("db_config.yaml", "r") as stream:
+        config = yaml.load(stream)
+    db = psycopg2.connect(user=config["user"], dbname=config["db"])
+    cur = db.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    cur.execute("SET search_path = 'mysql'")
+    # 1. Reset eids to be equal to ids in entities.
+    cur.execute("update entities set eid = id;")
+    # 2. Consolidate people
+    #
+    # 3. Consolidate companies
+    update_eids_of_ids(cur, ids2, eids2)
+    # 4. Update related table
+    cur.execute("UPDATE mysql.related INNER JOIN mysql.entities set related.eid1=entities.eid where related.id1=entities.id;")
+    cur.execute("UPDATE mysql.related INNER JOIN mysql.entities set related.eid2=entities.eid where related.id2=entities.id;")
+    cur.close()
+    db.commit()
+    db.close()
+ 
+
 if __name__ == '__main__':
-    update_eids_of_companies()
+    consolidate_entities()
