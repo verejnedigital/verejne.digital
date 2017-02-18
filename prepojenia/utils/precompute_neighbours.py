@@ -18,7 +18,15 @@ Goal:
 	(2) Similarity of entity names (e.g. similar surnames)
 """
 
-def parse_entity_name(entity_name, surnames, titles):
+def longest_common_prefix(str1, str2):
+    i = 0
+    while i < min(len(str1), len(str2)):
+        if str1[i] != str2[i]:
+            break
+        i += 1
+    return i
+
+def parse_entity_name(entity_name, surnames, titles, verbose=False):
     """
     Input: entity_name (can contain academic titles and name of Zivnost)
     Output:
@@ -29,13 +37,17 @@ def parse_entity_name(entity_name, surnames, titles):
             None
     """
     
+    if verbose:
+    	print('entity_name = |%s|' % (entity_name))
+
     # Trim name of Zivnost, followed by first occurrence of (' - ')
     p = entity_name.find(' - ')
     if (p > 0):
         name = entity_name[:p]
     else:
         name = entity_name
-    print('|%s|' % (name))
+    if verbose:
+    	print('name = |%s|' % (name))
 
     # Trim known academic titles
     name_clean = name
@@ -54,7 +66,8 @@ def parse_entity_name(entity_name, surnames, titles):
                 name_clean = name_clean[:-d]
                 finished = False
             name_clean = name_clean.strip(' ,')
-    print('|%s|' % (name_clean))
+    if verbose:
+    	print('name_clean = |%s|' % (name_clean))
 
     # Split cleaned name, should be list of firstnames followed by a surname
     names = name_clean.split()
@@ -66,9 +79,9 @@ def parse_entity_name(entity_name, surnames, titles):
         	'surname': names[-1],
         }
     else:
-        print('Parse failed')
+        if verbose:
+        	print('Parse failed')
         return None
-
 
 def generate_edges():
 	# Read surnames
@@ -82,7 +95,9 @@ def generate_edges():
 	    titles = [line.strip().decode('utf-8') for line in f.readlines()]
 
 	# Get entity data
-	names, ids, lats, lngs = read_entities.read_entities_mock()
+	#reader = read_entities.read_entities_mock
+	reader = read_entities.read_entities
+	names, ids, lats, lngs = reader()
 
 	# Arrange entities for sorting by location and subsequent grouping
 	entities_for_grouping = [((lat, lng), name, iid) for name, iid, lat, lng in zip(names, ids, lats, lngs)]
@@ -90,13 +105,32 @@ def generate_edges():
 	# Iterate through groups of entities sharing same (lat, lng)
 	for location, group in groupby(sorted(entities_for_grouping), key=itemgetter(0)):
 	    _, names, ids = zip(*group)
-	    print('Location: %s' % (str(location)))
-	    for i in xrange(len(names)):
-	        for j in xrange(i + 1, len(names)):
-	            print('Add edge between:')
+	    group_size = len(ids)
+	    #print('Location: %s' % (str(location)))
+	    for i in xrange(group_size):
+	        for j in xrange(i + 1, group_size):
+	            # Compute edge length (depends on group_size and any surnames similarity)
+	            
+	            # Check surname similarity
+	            similar_surnames = False
+	            parsed1 = parse_entity_name(names[i], surnames, titles)
+	            parsed2 = parse_entity_name(names[j], surnames, titles)
+	            if (parsed1 is not None) and (parsed2 is not None):
+	                surname1 = parsed1['surname']
+	                surname2 = parsed2['surname']
+	                lcp = longest_common_prefix(surname1, surname2)
+	                if (lcp >= len(surname1) - 3) and (lcp >= len(surname2) - 3):
+	                    #print('Similar surnames detected')
+	                    similar_surnames = True
+
+	            # Set edge length
+	            length = 1.0 if similar_surnames else (group_size + 1)
+
+	            # Print edge (instead of adding to database)
+	            print('Add edge of length %.2f between:' % (length))
 	            print('    %d | %s' % (ids[i], names[i]))
 	            print('    %d | %s' % (ids[j], names[j]))
-	            print('    (length TBD)')
+
 
 if __name__ == '__main__':
     generate_edges()
