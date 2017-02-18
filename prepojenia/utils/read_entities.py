@@ -23,8 +23,7 @@ def read_entities():
 
     log("relations constructor")
     sql = "SELECT entity_name,id,lat,lng FROM entities LIMIT %s"
-    #cur.execute(sql, [int(config["relations_to_load"])])
-    cur.execute(sql, [5])
+    cur.execute(sql, [int(config["relations_to_load"])])
     entity_names = []
     ids = []
     lats = []
