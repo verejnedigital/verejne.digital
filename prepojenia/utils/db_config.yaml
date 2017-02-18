@@ -1,3 +1,3 @@
-user: data_utils
+user: datautils
 db: verejne
 relations_to_load: 199999999

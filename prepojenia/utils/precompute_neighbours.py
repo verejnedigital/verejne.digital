@@ -1,5 +1,9 @@
 import codecs
 import sys
+import json
+import psycopg2
+import psycopg2.extras
+import yaml
 
 from collections import defaultdict
 from itertools import groupby
@@ -20,6 +24,9 @@ Goal:
     (1) Number of entities sharing coordinates
     (2) Similarity of entity names (e.g. similar surnames)
 """
+
+def log(s):
+    print "LOG: " + s
 
 def print_progress(string):
     sys.stdout.write('\r%s' % (string))
@@ -189,7 +196,7 @@ def consolidate_people():
     # Initialize eIDs to equal IDs
     eIDs = {iid: iid for iid in ids}
 
-    # Edges are tuples (ID1, name1, ID2, name2, length)
+    # Edges are tuples (ID1, ID2, length)
     edges = []
 
     # Iterate through groups of entities sharing same (lat, lng)
@@ -218,7 +225,7 @@ def consolidate_people():
                 # Compute edge length (depends on group_size and any surnames similarity)
                 length = compute_edge_length(names_parsed[i], names_parsed[j], group_size)
                 if length < 5.0:
-                    edges.append((ids[i], names[i], ids[j], names[j], length))
+                    edges.append((ids[i], ids[j], length))
                     num_edges[length] += 1
 
         num_entities_seen += group_size
@@ -233,7 +240,7 @@ def consolidate_people():
 
     # Construct parallel lists of IDs and eIDs
     IDs_list, eIDs_list = zip(*[(ID, eIDs[ID]) for ID in sorted(eIDs.keys()) if ID != eIDs[ID]])
-
+    '''
     # (TEMP) Print the lists to a file
     file_output_merge = '/tmp/output/merge.txt'
     with open(file_output_merge, 'w') as f:
@@ -248,7 +255,7 @@ def consolidate_people():
             f.write('Add edge of length %.2f between:\n' % (length))
             f.write('    %d | %s\n' % (ID1, name1.encode('utf-8')))
             f.write('    %d | %s\n' % (ID2, name2.encode('utf-8')))
-
+    '''
     return IDs_list, eIDs_list, edges
 
 def consolidate_companies():
@@ -286,9 +293,12 @@ def consolidate_companies():
     return ids, eids
 
 def update_eids_of_ids(cur, ids, eids):
-    print "Updating id", len(ids), len(eids)
+    print "Updating eids", len(ids), len(eids)
     sql = "UPDATE entities set eid = %s where id = %s"
     cursor.executemany(stmt, zip(eids, ids))
+
+def add_neighbour_edges(cur, edges):
+    print "Adding neighbour edges", len(edges) 
 
 def consolidate_entities(read_only):
     ids1, eids1, edges = consolidate_people()
@@ -307,12 +317,16 @@ def consolidate_entities(read_only):
     update_eids_of_ids(cur, ids1, eids1)
     # 3. Consolidate companies
     update_eids_of_ids(cur, ids2, eids2)
-    # 4. Update related table
-    cur.execute("UPDATE mysql.related INNER JOIN mysql.entities set related.eid1=entities.eid where related.id1=entities.id;")
-    cur.execute("UPDATE mysql.related INNER JOIN mysql.entities set related.eid2=entities.eid where related.id2=entities.id;")
+    # 4. Remove neighbour edges
+
+    # 5. Add new neighbour edges 
+    add_neighbour_edges(cur, edges)
+    # 6. Update related table
+    cur.execute("UPDATE related INNER JOIN entities set related.eid1=entities.eid where related.id1=entities.id;")
+    cur.execute("UPDATE related INNER JOIN entities set related.eid2=entities.eid where related.id2=entities.id;")
     cur.close()
     db.commit()
     db.close()
 
 if __name__ == '__main__':
-    consolidate_entities(True)
+    consolidate_entities(False)
