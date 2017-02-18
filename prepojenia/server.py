@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import heapq
 import json
 from paste import httpserver
 import psycopg2
@@ -34,8 +35,8 @@ class Relations:
         sql = "SELECT eid1, eid2 FROM related LIMIT %s"
         cur.execute(sql, [int(config["relations_to_load"])])
         for row in cur:
-            self.edges.append((row["eid1"], row["eid2"]))
-            self.edges.append((row["eid2"], row["eid1"]))
+            self.edges.append((row["eid1"], row["eid2"], 1.0))
+            self.edges.append((row["eid2"], row["eid1"], 1.0))
         cur.close()
         db.close()
 
@@ -88,6 +89,52 @@ class Relations:
         if not swapped: path.reverse()
         return path
 
+    def dijkstra(self, start, end):
+        # If start and end share entities, return the intersection
+        common = list(set(start).intersection(set(end)))
+        if (len(common)>0): return [common[0]]
+
+        pred = {}
+        distances = {}
+        h = []
+
+        def add(vertex, d, p):
+            # already in the heap with smaller distance; ignore the edge
+            if (distances.get(vertex, 999999999) <= d): return
+            pred[vertex] = p
+            distances[vertex] = d
+            heapq.heappush(h, (d, vertex))
+
+        # add start vertices
+        for i in start: add(i, 0, -1)
+
+        found = -1
+        while len(h) > 0:
+            entry = heapq.heappop(h)
+            vertex = entry[1]
+            if vertex in end:
+                found = vertex
+                break
+            if not (vertex in self.start_index): continue
+            distance = entry[0]
+            # Vertex processed at smaller distance; ignore
+            if (distance > distances.get(vertex, 999999999)): continue
+            from_index = self.start_index[vertex]
+            for edge_index in xrange(from_index, len(self.edges)):
+                edge = self.edges[edge_index]
+                # If outside of edges from the 'vertex'; stop
+                if (edge[0] != vertex): break
+                add(edge[1], distance + edge[2], vertex)
+        
+        if found == -1: return []
+        path = []
+        cur = found
+        while cur != -1:
+            path.append(cur)
+            cur = pred[cur]
+        path.reverse()
+        return path
+
 relations = Relations()
 
 # All individual hooks inherit from this class outputting jsons
@@ -98,25 +145,38 @@ class MyServer(webapp2.RequestHandler):
         self.response.write(json.dumps(j, separators=(',',':')))
 
     def get(self):
+        self.process()
         try:
-            self.process()
+            pass
         except:
             self.returnJSON(errorJSON(
                 500, "Internal server error: sa mi neda vycentrovat!"))
 
+def parseStartEnd(request):
+    try:
+        start = [int(x) for x in (request.GET["eid1"].split(","))[:50]]
+        end = [int(x) for x in (request.GET["eid2"].split(","))[:50]]
+        return start, end
+    except:
+        return None
+
 class Connection(MyServer):
     def process(self):
-        try:
-            start = [int(x) for x in (self.request.GET["eid1"].split(","))[:50]]
-            end = [int(x) for x in (self.request.GET["eid2"].split(","))[:50]]
-        except:
-            self.returnJSON(errorJSON(400, "Incorrect input text"))
-        return self.returnJSON(relations.bfs(start, end))
+        data = parseStartEnd(self.request)
+        if data is None: self.returnJSON(errorJSON(400, "Incorrect input text"))
+        else: return self.returnJSON(relations.bfs(data[0], data[1]))
+
+class ShortestPath(MyServer):
+    def process(self):
+        data = parseStartEnd(self.request)
+        if data is None: self.returnJSON(errorJSON(400, "Incorrect input text"))
+        else: return self.returnJSON(relations.dijkstra(data[0], data[1]))
 
 def main():
-  app = webapp2.WSGIApplication(
-          [('/connection', Connection)],
-          debug=False)
+  app = webapp2.WSGIApplication([
+      ('/connection', Connection),
+      ('/shortest', ShortestPath)
+      ], debug=False)
 
   httpserver.serve(
       app,
