@@ -33,7 +33,7 @@ class Relations:
         log("relations constructor")
         sql = "SELECT eid1, eid2 FROM related LIMIT %s"
         cur.execute(sql, [int(config["relations_to_load"])])
-        for row in cur.fetchall():
+        for row in cur:
             self.edges.append((row["eid1"], row["eid2"]))
             self.edges.append((row["eid2"], row["eid1"]))
         cur.close()
