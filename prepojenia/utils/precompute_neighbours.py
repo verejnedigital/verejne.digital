@@ -202,6 +202,7 @@ def consolidate_people():
     # Iterate through groups of entities sharing same (lat, lng)
     num_entities_seen = 0
     num_edges = defaultdict(float)
+    num_merged = 0
     last_promile = -1.0
     for location, group in groupby(sorted(entities_for_grouping), key=itemgetter(0)):
         # Get IDs and names in this group, sorted by increasing ID
@@ -220,6 +221,7 @@ def consolidate_people():
                     if eIDs[ids[j]] > ids[i]:
                         # Thanks to sorting ids[i] < ids[j]
                         eIDs[ids[j]] = ids[i]
+                        num_merged += 1
                         #print('Set eID of %d to %d' % (ids[j], ids[i]))
 
                 # Compute edge length (depends on group_size and any surnames similarity)
@@ -237,6 +239,8 @@ def consolidate_people():
             print_progress(report_entities + '; ' + report_edges)
             last_promile = ceil(promile)
     print('')
+
+    print('Number of merged eIDs: %d' % (num_merged))
 
     # Construct parallel lists of IDs and eIDs
     IDs_list, eIDs_list = zip(*[(ID, eIDs[ID]) for ID in sorted(eIDs.keys()) if ID != eIDs[ID]])
@@ -329,4 +333,6 @@ def consolidate_entities(read_only):
     db.close()
 
 if __name__ == '__main__':
+    #consolidate_people()
     consolidate_entities(False)
+
