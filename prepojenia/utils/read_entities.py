@@ -9,7 +9,11 @@ def log(s):
     print "LOG: " + s
 
 def read_entities_mock():
-    return ["Jan Novak", "Jana Novakova", "Peter Novak"],[22, 41, 77],[0.15, 0.18, 0.18],[0.22, 0.19, 0.19] 
+    entity_names = ["Jan Novak", "Jana Novakova", "Peter Novak", "Fei Wu", "Li Weng"]
+    ids = [22, 41, 77, 13, 14]
+    lats = [0.15, 0.18, 0.18, 0.20, 0.20]
+    lngs = [0.22, 0.19, 0.19, 0.21, 0.21]
+    return entity_names, ids, lats, lngs
 
 def read_entities():
     # Connect to database
