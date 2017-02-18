@@ -3,9 +3,6 @@
 import json
 import psycopg2
 import psycopg2.extras
-#import Queue
-#import random
-#import webapp2
 import yaml
 
 def log(s):
