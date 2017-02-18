@@ -22,7 +22,7 @@ Goal:
 
 def print_progress(string):
     sys.stdout.write('\r%s' % (string))
-    sys.stdout.flush()
+    #sys.stdout.flush()
 
 def longest_common_prefix(str1, str2):
     i = 0
@@ -127,11 +127,14 @@ def generate_edges():
                 if (parsed1 is not None) and (parsed2 is not None):
                     surname1 = parsed1['surname']
                     surname2 = parsed2['surname']
+
                     if surname1 == surname2:
                         similar_surnames = True
+
                     lcp = longest_common_prefix(surname1, surname2)
-                    if (lcp >= 3) and (lcp >= len(surname1) - 3) and (lcp >= len(surname2) - 3):
-                        #print('Similar surnames detected')
+                    if (lcp >= 3) and (lcp >= len(surname1) - 3) and (lcp >= len(surname2) - 1) and (surname1[-1] in ['a', u'\xe1']):
+                        similar_surnames = True
+                    if (lcp >= 3) and (lcp >= len(surname1) - 1) and (lcp >= len(surname2) - 3) and (surname2[-1] in ['a', u'\xe1']):
                         similar_surnames = True
 
                 # Set edge length
