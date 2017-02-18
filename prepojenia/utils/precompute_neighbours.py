@@ -90,7 +90,52 @@ def parse_entity_name(entity_name, surnames, titles, verbose=False):
             print('Parse failed')
         return None
 
-def generate_edges():
+def compute_edge_length(name1, name2, group_size):
+    # Check surname similarity
+    similar_surnames = False
+    if (name1 is not None) and (name2 is not None):
+        surname1 = name1['surname']
+        surname2 = name2['surname']
+
+        if surname1 == surname2:
+            similar_surnames = True
+
+        lcp = longest_common_prefix(surname1, surname2)
+        if (lcp >= 3) and (lcp >= len(surname1) - 3) and (lcp >= len(surname2) - 1) and (surname1[-1] in ['a', u'\xe1']):
+            similar_surnames = True
+        if (lcp >= 3) and (lcp >= len(surname1) - 1) and (lcp >= len(surname2) - 3) and (surname2[-1] in ['a', u'\xe1']):
+            similar_surnames = True
+
+    # Compute edge length
+    length = 1.0 if similar_surnames else (group_size + 1)
+    return length
+
+def is_merge_desired(name1, name2):
+    """ Input:
+        name1, name2: string
+                      parsednames as returned by parse_entity_name
+        Output:
+        True iff the two names have equal surnames and
+            last first names are equal.
+    """
+
+    if (name1 is None) or (name2 is None):
+        return False
+    if (name1['surname'] != name2['surname']):
+        return False
+
+    fns1 = name1['firstnames']
+    fns2 = name2['firstnames']
+    # Transitive relation: last first names match
+    return fns1[-1] == fns2[-1]
+
+    # Non-transitive relation: list of first names is prefix of another
+    # for i in xrange(min(len(fns1), len(fns2))):
+    #     if fns1[i] != fns[2]:
+    #         return False
+    # return True
+
+def main():
     # Read surnames
     file_surnames = 'utils/data_surnames2.txt'
     with codecs.open(file_surnames, 'r') as f:
@@ -110,59 +155,69 @@ def generate_edges():
     # Arrange entities for sorting by location and subsequent grouping
     entities_for_grouping = [((lat, lng), name, iid) for name, iid, lat, lng in zip(names, ids, lats, lngs)]
 
+    # Initialize eIDs to equal IDs
+    eIDs = {iid: iid for iid in ids}
+
+    # Edges are tuples (ID1, name1, ID2, name2, length)
+    edges = []
+
     # Iterate through groups of entities sharing same (lat, lng)
-    file_output = '/tmp/output/edges.txt'
     num_entities_seen = 0
     num_edges = defaultdict(float)
     last_promile = -1.0
-    with open(file_output, 'w') as f:
-        for location, group in groupby(sorted(entities_for_grouping), key=itemgetter(0)):
-            _, names, ids = zip(*group)
-            group_size = len(ids)
-            #print('Location: %s; group size %d' % (str(location), group_size))
+    for location, group in groupby(sorted(entities_for_grouping), key=itemgetter(0)):
+        # Get IDs and names in this group, sorted by increasing ID
+        ids, names = zip(*sorted([(iid, name) for _, name, iid in group]))
+        group_size = len(ids)
+        #print('Location: %s; group size %d' % (str(location), group_size))
 
-            # Parse names in this group
-            names_parsed = [parse_entity_name(name, surnames, titles) for name in names]
+        # Parse names in this group
+        names_parsed = [parse_entity_name(name, surnames, titles, verbose=False) for name in names]
 
-            for i in xrange(group_size):
-                for j in xrange(i + 1, group_size):
-                    # Compute edge length (depends on group_size and any surnames similarity)
-                    
-                    # Check surname similarity
-                    similar_surnames = False
-                    if (names_parsed[i] is not None) and (names_parsed[j] is not None):
-                        surname1 = names_parsed[i]['surname']
-                        surname2 = names_parsed[j]['surname']
+        # Iterate through distinct pairs of entities at this location
+        for i in xrange(group_size):
+            for j in xrange(i + 1, group_size):
+                # Check if merge should happen
+                if is_merge_desired(names_parsed[i], names_parsed[j]):
+                    # Thanks to sorting ids[i] < ids[j]
+                    eIDs[ids[j]] = ids[i]
+                    #print('Set eID of %d to %d' % (ids[j], ids[i]))
 
-                        if surname1 == surname2:
-                            similar_surnames = True
+                # Compute edge length (depends on group_size and any surnames similarity)
+                length = compute_edge_length(names_parsed[i], names_parsed[j], group_size)
+                if length < 5.0:
+                    edges.append((ids[i], names[i], ids[j], names[j], length))
+                    num_edges[length] += 1
 
-                        lcp = longest_common_prefix(surname1, surname2)
-                        if (lcp >= 3) and (lcp >= len(surname1) - 3) and (lcp >= len(surname2) - 1) and (surname1[-1] in ['a', u'\xe1']):
-                            similar_surnames = True
-                        if (lcp >= 3) and (lcp >= len(surname1) - 1) and (lcp >= len(surname2) - 3) and (surname2[-1] in ['a', u'\xe1']):
-                            similar_surnames = True
+        num_entities_seen += group_size
 
-                    # Set edge length
-                    length = 1.0 if similar_surnames else (group_size + 1)
-
-                    # Print edge (instead of adding to database)
-                    if length < 5.0:
-                        f.write('Add edge of length %.2f between:\n' % (length))
-                        f.write('    %d | %s\n' % (ids[i], names[i].encode('utf-8')))
-                        f.write('    %d | %s\n' % (ids[j], names[j].encode('utf-8')))
-                        num_edges[length] += 1
-
-            num_entities_seen += group_size
-
-            promile = 1000.0 * num_entities_seen / num_entities
-            if promile > last_promile:
-                report_entities = 'Processed entities: %d / %d = %.1f%%' % (num_entities_seen, num_entities, promile / 10)
-                report_edges = 'Edges: ' + ', '.join(['%.0f: %d' % (l, num_edges[l]) for l in sorted(num_edges.keys())])
-                print_progress(report_entities + '; ' + report_edges)
-                last_promile = ceil(promile)
+        promile = 1000.0 * num_entities_seen / num_entities
+        if promile > last_promile:
+            report_entities = 'Processed entities: %d / %d = %.1f%%' % (num_entities_seen, num_entities, promile / 10)
+            report_edges = 'Edges: ' + ', '.join(['%.0f: %d' % (l, num_edges[l]) for l in sorted(num_edges.keys())])
+            print_progress(report_entities + '; ' + report_edges)
+            last_promile = ceil(promile)
     print('')
+
+    # Construct parallel lists of IDs and eIDs
+    IDs_list, eIDs_list = zip(*[(ID, eIDs[ID]) for ID in sorted(eIDs.keys())])
+
+    # (TEMP) Print the lists to a file
+    file_output_merge = '/tmp/output/merge.txt'
+    with open(file_output_merge, 'w') as f:
+        for ID, eID in zip(IDs_list, eIDs_list):
+            f.write('%d | %d\n' % (ID, eID))
+
+    # (TEMP) Print the edges to a file
+    file_output_edges = '/tmp/output/edges.txt'
+    with open(file_output_edges, 'w') as f:
+        for ID1, name1, ID2, name2, length in edges:
+            f.write('Add edge of length %.2f between:\n' % (length))
+            f.write('    %d | %s\n' % (ID1, name1.encode('utf-8')))
+            f.write('    %d | %s\n' % (ID2, name2.encode('utf-8')))
+                        
+    return IDs_list, eIDs_list, edges
 
 
 if __name__ == '__main__':
-    generate_edges()
+    main()
