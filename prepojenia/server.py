@@ -32,11 +32,11 @@ class Relations:
         cur.execute("SET search_path = 'mysql'")
 
         log("relations constructor")
-        sql = "SELECT eid1, eid2 FROM related LIMIT %s"
+        sql = "SELECT eid1, eid2, length FROM related LIMIT %s"
         cur.execute(sql, [int(config["relations_to_load"])])
         for row in cur:
-            self.edges.append((row["eid1"], row["eid2"], 1.0))
-            self.edges.append((row["eid2"], row["eid1"], 1.0))
+            self.edges.append((row["eid1"], row["eid2"], float(row["length"])))
+            self.edges.append((row["eid2"], row["eid1"], float(row["length"])))
         cur.close()
         db.close()
 
@@ -89,7 +89,10 @@ class Relations:
         if not swapped: path.reverse()
         return path
 
-    def dijkstra(self, start, end):
+    # Start exploring from list start. Never explore beyond distance cap.
+    # If return_all is True, return id's of all explored vertices
+    # If return_all is False, return the shortest path to a vertex in the list end
+    def dijkstra(self, start, end, cap=999999999, return_all=False):
         # If start and end share entities, return the intersection
         common = list(set(start).intersection(set(end)))
         if (len(common)>0): return [common[0]]
@@ -101,6 +104,7 @@ class Relations:
         def add(vertex, d, p):
             # already in the heap with smaller distance; ignore the edge
             if (distances.get(vertex, 999999999) <= d): return
+            if (d > cap): return
             pred[vertex] = p
             distances[vertex] = d
             heapq.heappush(h, (d, vertex))
@@ -126,6 +130,8 @@ class Relations:
                 if (edge[0] != vertex): break
                 add(edge[1], distance + edge[2], vertex)
         
+        if return_all: return pred.keys()
+
         if found == -1: return []
         path = []
         cur = found
@@ -145,8 +151,9 @@ class MyServer(webapp2.RequestHandler):
         self.response.write(json.dumps(j, separators=(',',':')))
 
     def get(self):
+        self.process()
         try:
-            self.process()
+            pass
         except:
             self.returnJSON(errorJSON(
                 500, "Internal server error: sa mi neda vycentrovat!"))
@@ -171,10 +178,17 @@ class ShortestPath(MyServer):
         if data is None: self.returnJSON(errorJSON(400, "Incorrect input text"))
         else: return self.returnJSON(relations.dijkstra(data[0], data[1]))
 
+class Neighbourhood(MyServer):
+    def process(self):
+        start = [int(x) for x in (self.request.GET["eid"].split(","))[:50]]
+        cap = int(self.request.GET["cap"])
+        return self.returnJSON(relations.dijkstra(start, [], cap=cap, return_all=True))
+
 def main():
   app = webapp2.WSGIApplication([
       ('/connection', Connection),
-      ('/shortest', ShortestPath)
+      ('/shortest', ShortestPath),
+      ('/neighbourhood', Neighbourhood)
       ], debug=False)
 
   httpserver.serve(
