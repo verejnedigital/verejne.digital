@@ -1,6 +1,7 @@
 import codecs
 import sys
 
+from collections import defaultdict
 from itertools import groupby
 from operator import itemgetter
 
@@ -92,7 +93,7 @@ def generate_edges():
     # Read surnames
     file_surnames = 'utils/data_surnames2.txt'
     with codecs.open(file_surnames, 'r') as f:
-        surnames = [line.strip().decode('utf-8') for line in f.readlines()]
+        surnames = set([line.strip().decode('utf-8') for line in f.readlines()])
 
     # Read academic titles
     file_titles = 'utils/data_titles.txt'
@@ -100,8 +101,8 @@ def generate_edges():
         titles = [line.strip().decode('utf-8') for line in f.readlines()]
 
     # Get entity data
-    reader = read_entities.read_entities_mock
-    #reader = read_entities.read_entities
+    #reader = read_entities.read_entities_mock
+    reader = read_entities.read_entities
     names, ids, lats, lngs = reader()
     num_entities = len(ids)
 
@@ -110,6 +111,7 @@ def generate_edges():
 
     # Iterate through groups of entities sharing same (lat, lng)
     num_entities_seen = 0
+    num_edges = defaultdict(float)
     for location, group in groupby(sorted(entities_for_grouping), key=itemgetter(0)):
         _, names, ids = zip(*group)
         group_size = len(ids)
@@ -140,9 +142,13 @@ def generate_edges():
                     print('\nAdd edge of length %.2f between:' % (length))
                     print('    %d | %s' % (ids[i], names[i].encode('utf-8')))
                     print('    %d | %s' % (ids[j], names[j].encode('utf-8')))
-        
+                    num_edges[length] += 1
+
         num_entities_seen += group_size
-        print_progress('Processed entities: %d / %d = %.1f%%' % (num_entities_seen, num_entities, 100.0 * num_entities_seen / num_entities))
+
+        report_entities = 'Processed entities: %d / %d = %.1f%%' % (num_entities_seen, num_entities, 100.0 * num_entities_seen / num_entities)
+        report_edges = 'Edges: ' + ', '.join(['%.0f: %d' % (l, num_edges[l]) for l in sorted(num_edges.keys())])
+        print_progress(report_entities + '; ' + report_edges)
     print('')
 
 
