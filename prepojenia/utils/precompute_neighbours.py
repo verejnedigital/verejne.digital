@@ -111,7 +111,7 @@ def generate_edges():
     entities_for_grouping = [((lat, lng), name, iid) for name, iid, lat, lng in zip(names, ids, lats, lngs)]
 
     # Iterate through groups of entities sharing same (lat, lng)
-    file_output = 'utils/edges.txt'
+    file_output = '/tmp/out/edges.txt'
     num_entities_seen = 0
     num_edges = defaultdict(float)
     last_percentage = -1.0
