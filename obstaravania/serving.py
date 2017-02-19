@@ -30,7 +30,7 @@ class MyServer(webapp2.RequestHandler):
 class ServeObstaravanie(MyServer):
     def process(self):
         try:
-            oid = int(event.request.GET["id"])
+            oid = int(self.request.GET["id"])
         except:
             self.returnJSON(errorJSON(400, "Incorrect id"))
             return
@@ -49,7 +49,7 @@ class ServeObstaravanie(MyServer):
 class ServeCompany(MyServer):
     def process(self):
         try:
-            company_id = int(event.request.GET["id"])
+            company_id = int(self.request.GET["id"])
         except:
             self.returnJSON(errorJSON(400, "Incorrect id"))
             return
@@ -73,7 +73,7 @@ class ServeCompany(MyServer):
         result["obstaravania"] = candidates
         singleTemplate = Template(open("firma.tmpl").read().decode("utf8"))
         html = singleTemplate.render(firma=result)
-        event.response.write(html.encode("utf8"))
+        self.response.write(html.encode("utf8"))
 
 def main():
   app = webapp2.WSGIApplication(
