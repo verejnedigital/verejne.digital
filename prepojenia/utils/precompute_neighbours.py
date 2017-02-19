@@ -303,7 +303,7 @@ def update_eids_of_ids(cur, ids, eids):
 
 def add_neighbour_edges(cur, edges):
     print "Adding neighbour edges", len(edges) 
-    sql = "INSERT INTO related (eid1, id1, eid2, id2, source, length) VALUES(%i, %i, %i, %i, %s, %f)"
+    sql = "INSERT INTO related (eid1, id1, eid2, id2, source, length) VALUES(%s, %s, %s, %s, %s, %s)"
     cur.executemany(sql, ((id1, id1, id2, id2, 'neighbour', l) for (id1, id2, l) in edges))
 
 def consolidate_entities(read_only):
@@ -328,7 +328,7 @@ def consolidate_entities(read_only):
     update_eids_of_ids(cur, ids2, eids2)
     # 4. Remove neighbour edges
     print "Delete neighbour edges"
-    cur.execute("DELETE * from related where source=%s", ("neighbour",))
+    cur.execute("DELETE from related where source=%s", ("neighbour",))
     # 5. Add new neighbour edges 
     add_neighbour_edges(cur, edges)
     # 6. Update related table
@@ -340,6 +340,5 @@ def consolidate_entities(read_only):
     db.close()
 
 if __name__ == '__main__':
-    #consolidate_people()
     consolidate_entities(False)
 
