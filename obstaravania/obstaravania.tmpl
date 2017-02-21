@@ -168,7 +168,7 @@ Našim cieľom je identifikovať a notifikovať uchádzačov, ktorí by sa mali 
 <tr id={{"row_" + obstaravanie.id|string}}>  
   <td>
     {% if obstaravanie.title %}
-        <a class="obstaravania-selected" href="obstaravanie?id={{obstaravanie.id}}">{{ obstaravanie.title }} - {{obstaravanie.customer}}</a>        
+        <a class="obstaravania-selected" href="../obstaravanie?id={{obstaravanie.id}}">{{ obstaravanie.title }} - {{obstaravanie.customer}}</a>        
     {% endif %}
   </td>  
  {% if obstaravanie.kandidati|length == 0 %}
