@@ -49,7 +49,10 @@ exports[`test renders dummy as before 1`] = `
           Vzťahy:
           <ul>
             <li>
-              Dummy, a.s.
+              <button
+                onClick={[Function]}>
+                Dummy, a.s.
+              </button>
             </li>
           </ul>
         </td>

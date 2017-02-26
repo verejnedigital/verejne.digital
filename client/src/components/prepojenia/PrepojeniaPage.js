@@ -1,18 +1,21 @@
 import React, { Component } from 'react';
 import { browserHistory } from 'react-router';
 import '../../styles/prepojenia.css';
-import Info from '../info/Info';
-import { searchEntity, connection, getInfo } from '../../actions/serverAPI';
+import InfoLoader from '../info/InfoLoader';
+import * as serverAPI from '../../actions/serverAPI';
 
 class PrepojeniaPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      entitysearch1: props.location.query.eid1 || '',
-      entitysearch2: props.location.query.eid2 || '',
+      entitysearch1: (props.location && props.location.query.eid1) || '',
+      entitysearch2: (props.location && props.location.query.eid2) || '',
     };
     this.searchOnClick = this.searchOnClick.bind(this);
     this.updateInputValue = this.updateInputValue.bind(this);
+    this.loadEntity1 = this.loadEntity1.bind(this);
+    this.loadEntity2 = this.loadEntity2.bind(this);
+    this.loadConnections = this.loadConnections.bind(this);
   }
 
   componentWillMount() {
@@ -29,7 +32,6 @@ class PrepojeniaPage extends Component {
     if (this.state.entitysearch1.trim() === '' || this.state.entitysearch2.trim() === '') {
       return;
     }
-
     browserHistory.push({
       pathname: '/prepojenia',
       query: {
@@ -40,43 +42,41 @@ class PrepojeniaPage extends Component {
     this.setState({
       searching: true,
     });
+    this.loadEntity1();
+  }
 
-    searchEntity(this.state.entitysearch1, (eids1) => {
+  loadEntity1() {
+    serverAPI.searchEntity(this.state.entitysearch1, (eids1) => {
       this.setState({
         entity1: {
           name: this.state.entitysearch1,
           eids: eids1,
         },
-      }, () => {
-        searchEntity(this.state.entitysearch2, (eids2) => {
-          this.setState({
-            entity2: {
-              name: this.state.entitysearch2,
-              eids: eids2,
-            },
-          }, () => {
-            connection(this.state.entity1.eids.map(eid => eid.eid).join(),
-              this.state.entity2.eids.map(eid => eid.eid).join(),
-              (conns) => {
-                this.setState({
-                  connections: conns,
-                  searching: false,
-                }, () => {
-                  this.state.connections.forEach((conEid) => {
-                    getInfo(conEid, (conn) => {
-                      this.setState({
-                        [conEid]: conn,
-                      });
-                    });
-                  });
-                });
-              });
-          });
-        });
-      });
+      }, this.loadEntity2);
     });
   }
 
+  loadEntity2() {
+    serverAPI.searchEntity(this.state.entitysearch2, (eids2) => {
+      this.setState({
+        entity2: {
+          name: this.state.entitysearch2,
+          eids: eids2,
+        },
+      }, this.loadConnections);
+    });
+  }
+
+  loadConnections() {
+    serverAPI.connection(this.state.entity1.eids.map(eid => eid.eid).join(),
+      this.state.entity2.eids.map(eid => eid.eid).join(),
+      (conns) => {
+        this.setState({
+          connections: conns,
+          searching: false,
+        });
+      });
+  }
 
   render() {
     return (
@@ -145,18 +145,9 @@ class PrepojeniaPage extends Component {
           <div id="search-results2"> </div>
           <div id="search-results" style={{ margin: '10px' }}>
             {this.state.connections &&
-               this.state.connections.reduce((res, connEid) => res &&
-                (connEid in this.state), true) &&
-                this.state.connections.map((connEid) => {
-                  if (connEid in this.state) {
-                    return (
-                      <Info key={connEid} data={this.state[connEid]} />
-                    );
-                  }
-                  return (
-                    <div key={connEid}>Prebieha hľadanie</div>
-                  );
-                })
+                this.state.connections.map(connEid =>
+                  <InfoLoader key={connEid} eid={connEid} />,
+                )
             }
           </div>
         </div>
