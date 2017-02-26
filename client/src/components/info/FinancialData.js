@@ -1,7 +1,7 @@
 import React from 'react';
 import TabLink from './TabLink';
 import ShowTrend from './ShowTrend';
-import { icoUrl, showDate, showNumber } from '../../utility/utilities';
+import { icoUrl, showDate, showNumberCurrency } from '../../utility/utilities';
 
 const FinancialData = ({ findata }) => (
   <table>
@@ -44,7 +44,7 @@ const FinancialData = ({ findata }) => (
               <TabLink
                 isMapView={false}
                 url={icoUrl(findata.ico)}
-                text={showNumber(findata.zisk15)}
+                text={showNumberCurrency(findata.zisk15)}
               />
             </span>
           }
@@ -62,7 +62,7 @@ const FinancialData = ({ findata }) => (
             <TabLink
               isMapView={false}
               url={icoUrl(findata.ico)}
-              text={showNumber(findata.trzby15)}
+              text={showNumberCurrency(findata.trzby15)}
             />
           </span>
           }

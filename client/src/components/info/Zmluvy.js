@@ -1,6 +1,6 @@
 import React from 'react';
 import TabLink from './TabLink';
-import { showNumber } from '../../utility/utilities';
+import { showNumberCurrency } from '../../utility/utilities';
 
 const Zmluvy = ({ data, isMapView }) =>
 (
@@ -10,7 +10,7 @@ const Zmluvy = ({ data, isMapView }) =>
         <TabLink
           isMapView={isMapView}
           url={contract.source}
-          text={`${contract.customer}, ${showNumber(contract.total)}`}
+          text={`${contract.customer}, ${showNumberCurrency(contract.total)}`}
         />
       </li>
     ))

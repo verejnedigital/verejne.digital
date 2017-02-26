@@ -9,12 +9,8 @@ function addCommas(nStr) {
   return x1 + x2;
 }
 
-export function showNumberCurrency(num, cur) {
+export function showNumberCurrency(num, cur = '€') {
   return `${addCommas(num)} ${cur}`;
-}
-
-export function showNumber(num) {
-  return showNumberCurrency(num, '€');
 }
 
 export function icoUrl(ico) {
@@ -29,10 +25,7 @@ function computeTrend(num, oldNum) {
 }
 
 function isValidValue(value) {
-  if (value == null || value === 'null' || value === 'NULL' || value === 'None' || value === 'nezisten') {
-    return false;
-  }
-  return true;
+  return !(value == null || value === 'null' || value === 'NULL' || value === 'None' || value === 'nezisten');
 }
 
 export function getFinancialData(data, ico) {
