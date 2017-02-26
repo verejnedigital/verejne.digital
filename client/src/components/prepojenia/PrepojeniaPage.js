@@ -106,22 +106,22 @@ class PrepojeniaPage extends Component {
           <div className="toRight">
             <div>
               <button
-                className="list-group-item list-group-item-danger searchButton"
+                className="searchButton list-group-item list-group-item-danger"
                 onClick={this.searchOnClick}
               >Hľadaj</button>
             </div><br />
 
-            <span id="search-status1">
+            <span id="search-status1" className="searchStatus">
               {this.state.entity1 &&
                 `Nájdených ${this.state.entity1.eids.length} záznamov pre "${this.state.entity1.name}"`}
               &nbsp;
             </span><br />
-            <span id="search-status2">
+            <span id="search-status2" className="searchStatus">
               {this.state.entity2 &&
                 `Nájdených ${this.state.entity2.eids.length} záznamov pre "${this.state.entity2.name}"`}
               &nbsp;
             </span><br />
-            <span id="search-status">
+            <span id="search-status" className="searchStatus">
               {this.state.searching ? (
                 'Prebieha hľadanie prepojenia ...'
               ) : (

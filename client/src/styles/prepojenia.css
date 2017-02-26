@@ -7,9 +7,22 @@
   margin-left:20px
 }
 
-.searchButton {
+button.searchButton {
   text-align:center;
   margin-top:5px;
   width:100px;
   padding:5px
+}
+
+body {
+  background-color: #fff0a5;
+}
+
+.searchStatus {
+  margin : 5px;
+  color: #bd4932;
+}
+
+table {
+  color: inherit;
 }
