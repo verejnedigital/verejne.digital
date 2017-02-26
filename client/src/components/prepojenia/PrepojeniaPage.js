@@ -13,7 +13,9 @@ class PrepojeniaPage extends Component {
     };
     this.searchOnClick = this.searchOnClick.bind(this);
     this.updateInputValue = this.updateInputValue.bind(this);
+  }
 
+  componentWillMount() {
     this.searchOnClick();
   }
 
