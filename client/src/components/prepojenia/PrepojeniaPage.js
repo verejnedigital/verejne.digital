@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { browserHistory } from 'react-router';
 import '../../styles/prepojenia.css';
 import Info from '../info/Info';
 import { searchEntity, connection, getInfo } from '../../actions/serverAPI';
@@ -7,11 +8,13 @@ class PrepojeniaPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      entitysearch1: 'Kalinak',
-      entitysearch2: 'Basternak',
+      entitysearch1: props.location.query.eid1 || '',
+      entitysearch2: props.location.query.eid2 || '',
     };
     this.searchOnClick = this.searchOnClick.bind(this);
     this.updateInputValue = this.updateInputValue.bind(this);
+
+    this.searchOnClick();
   }
 
   updateInputValue(e) {
@@ -24,6 +27,14 @@ class PrepojeniaPage extends Component {
     if (this.state.entitysearch1.trim() === '' || this.state.entitysearch2.trim() === '') {
       return;
     }
+
+    browserHistory.push({
+      pathname: '/prepojenia',
+      query: {
+        eid1: this.state.entitysearch1,
+        eid2: this.state.entitysearch2,
+      },
+    });
     this.setState({
       searching: true,
     });

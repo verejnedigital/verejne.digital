@@ -28,7 +28,7 @@ class App extends Component { // eslint-disable-line react/prefer-stateless-func
             </ul>
           </div>
         </nav>
-        <PrepojeniaPage />
+        <PrepojeniaPage location={this.props.location} />
       </div>
     );
   }
