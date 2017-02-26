@@ -104,7 +104,7 @@
         for (i = 0; i < search_responses.length; i++) {
             document.getElementById("search-results").innerHTML += '<a class="list-group-item list-group-item-info" style="border-color: black;">' + search_responses[i] +'</a>';
         }
-        link_to_share = 'http://verejne.digital/prepojenia.html?'+escape(last_eid1_search_text)+'&'+escape(last_eid2_search_text)+'&';        
+        link_to_share = 'http://verejne.digital/prepojenia/?'+escape(last_eid1_search_text)+'&'+escape(last_eid2_search_text)+'&';        
         document.getElementById("search-results-link").innerHTML = '<label>Link na toto hľadanie: <br/><a href="'+link_to_share+'">'+link_to_share+'</a></label>';        
     }
 
