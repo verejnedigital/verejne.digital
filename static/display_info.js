@@ -158,7 +158,7 @@ function getRecursiveInfoLink(eid, text, is_map_view, show_zoom_to) {
 function displayInfoInternal(data, is_map_view, enable_recursive_related, show_zoom_to) {	
   if (data == null || data.entities == null || data.entities.length == 0) return "";
   entity = data.entities[0];  
-  var linkShowEntityOnMap = serverURL + "?zobraz&" + entity.lat + "&" + entity.lng + "&" + entity.eid +"&";
+  var linkShowEntityOnMap = "/?zobraz&" + entity.lat + "&" + entity.lng + "&" + entity.eid +"&";
   basic_data =
       "<tr><td><b>" + entity.entity_name + "&nbsp;&nbsp;</b>" +
       "<a href=\"javascript:;\" onClick=\"" + (is_map_view ? "" : "$('#searchEntityModal').modal('toggle');") + "zoomToLatLng(" + entity.lat + "," + entity.lng + "," + entity.eid + ");\"" +
