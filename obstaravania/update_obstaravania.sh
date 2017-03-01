@@ -4,7 +4,7 @@
 
 JSON_DIR=/tmp/ 
 STATIC_DIR=/tmp/
-OUTPUT_DIR=static/
+OUTPUT_DIR=../../generated/obstaravania/
 
 . venv/bin/activate
 

@@ -11,34 +11,35 @@ import webapp2
 
 db.connect(False)
 
-def errorJSON(code, text):
-    d = {"code": code, "message": "ERROR: " + text}
-    return d
 
 class MyServer(webapp2.RequestHandler):
     def returnJSON(self,j):
         self.response.headers['Content-Type'] = 'application/json'
         self.response.write(json.dumps(j, separators=(',',':')))
 
+    def returnError(self, code, message):
+        self.response.set_status(code)
+        self.returnJSON({'code': code, 'message': 'ERROR: ' + message})
+
     def get(self):
         try:
             self.process()
         except:
-            self.returnJSON(errorJSON(
-                500, "Internal server error: sa mi neda vycentrovat!"))
+            self.returnError(
+                500, "Internal server error: sa mi neda vycentrovat!")
 
 class ServeObstaravanie(MyServer):
     def process(self):
         try:
             oid = int(self.request.GET["id"])
         except:
-            self.returnJSON(errorJSON(400, "Incorrect id"))
+            self.returnError(400, "Incorrect id")
             return
 
         session = Session()
         obstaravanie = session.query(Obstaravanie).filter_by(id=oid).first()
         if obstaravanie is None:
-            self.returnJSON(errorJSON(400, "No matching id"))
+            self.returnError(400, "No matching id")
             return
         j = obstaravanieToJson(obstaravanie, 20, 20)
         # TODO: before launching this, move this to load only once
@@ -51,7 +52,7 @@ class ServeCompany(MyServer):
         try:
             company_id = int(self.request.GET["id"])
         except:
-            self.returnJSON(errorJSON(400, "Incorrect id"))
+            self.returnError(400, "Incorrect id")
             return
 
         session = Session()

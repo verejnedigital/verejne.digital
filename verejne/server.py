@@ -496,14 +496,10 @@ class Entities:
     def getRelated(self, eid):
         cur = db.getCursor()
         indices = set()
-        cur = db.execute(cur, "SELECT DISTINCT eid2 FROM related WHERE eid1=%s", [eid])
+        cur = db.execute(cur, "(select distinct eid1 as eid from related where eid2=%s and " \
+            + "eid2!=eid1) union (select distinct eid2 as eid from related where eid1=%s and eid2!=eid1)", [eid, eid])
         for row in cur:
-            indices.add(row["eid2"])
-        cur.close()
-        cur = db.getCursor()
-        cur = db.execute(cur, "SELECT DISTINCT eid1 FROM related WHERE eid2=%s", [eid])
-        for row in cur:
-            indices.add(row["eid1"])
+            indices.add(row["eid"])
         cur.close()
         result = [RawJson(self.entities["full"][self.eid_to_index[index]].json)
                   for index in indices if index in self.eid_to_index]
