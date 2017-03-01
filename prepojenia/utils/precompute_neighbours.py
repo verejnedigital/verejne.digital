@@ -34,7 +34,7 @@ def print_progress(string):
 
 def read_surnames():
     """ Reads in a list of surnames from the provided data file """
-    file_surnames = 'utils/data_surnames2.txt'
+    file_surnames = 'utils/data_surnames.txt'
     with codecs.open(file_surnames, 'r') as f:
         surnames = set([line.strip().decode('utf-8') for line in f.readlines()])
     return surnames
@@ -223,12 +223,13 @@ def consolidate_people():
                         eIDs[ids[j]] = ids[i]
                         num_merged += 1
                         #print('Set eID of %d to %d' % (ids[j], ids[i]))
-
-                # Compute edge length (depends on group_size and any surnames similarity)
-                length = compute_edge_length(names_parsed[i], names_parsed[j], group_size)
-                if length < 5.0:
-                    edges.append((ids[i], ids[j], length))
-                    num_edges[length] += 1
+                # If no merge is desired, consider adding an edge
+                else:
+                    # Compute edge length (depends on group_size and any surnames similarity)
+                    length = compute_edge_length(names_parsed[i], names_parsed[j], group_size)
+                    if length < 5.0:
+                        edges.append((ids[i], ids[j], length))
+                        num_edges[length] += 1
 
         num_entities_seen += group_size
 
