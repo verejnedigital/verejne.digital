@@ -9,10 +9,11 @@ def log(s):
     print "LOG: " + s
 
 def read_entities_mock():
-    entity_names = ["Jan Novak", "Jana Novakova", "Peter Novak", "Fei Wu", "Li Weng", "Bc. Jan Novak, PhD.", "Mgr. Jan Novak ZIVNOSTNIK"]
-    ids = [22, 41, 77, 13, 14, 24, 25]
-    lats = [0.15, 0.18, 0.18, 0.20, 0.20, 0.15, 0.15]
-    lngs = [0.22, 0.19, 0.19, 0.21, 0.21, 0.22, 0.22]
+    entity_names = ["JUDr. Robert Kaliňák", "Robert Kaliňák", "Jan Novak", "Jana Novakova", "Peter Novak", "Fei Wu", "Li Weng", "Bc. Jan Novak, PhD.", "Mgr. Jan Novak ZIVNOSTNIK"]
+    entity_names = [name.decode('utf-8') for name in entity_names]
+    ids = [389093, 430322, 22, 41, 77, 13, 14, 24, 25]
+    lats = [17.1219105, 17.1219105, 0.15, 0.18, 0.18, 0.20, 0.20, 0.15, 0.15]
+    lngs = [48.1225736, 48.1225736, 0.22, 0.19, 0.19, 0.21, 0.21, 0.22, 0.22]
     return entity_names, ids, lats, lngs
 
 def read_entities():
