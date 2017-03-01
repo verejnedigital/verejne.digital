@@ -26,20 +26,20 @@ class MyServer(webapp2.RequestHandler):
             self.process()
         except:
             self.returnError(
-                500, "Internal server error: sa mi neda vycentrovat!"))
+                500, "Internal server error: sa mi neda vycentrovat!")
 
 class ServeObstaravanie(MyServer):
     def process(self):
         try:
             oid = int(self.request.GET["id"])
         except:
-            self.returnError(400, "Incorrect id"))
+            self.returnError(400, "Incorrect id")
             return
 
         session = Session()
         obstaravanie = session.query(Obstaravanie).filter_by(id=oid).first()
         if obstaravanie is None:
-            self.returnError(400, "No matching id"))
+            self.returnError(400, "No matching id")
             return
         j = obstaravanieToJson(obstaravanie, 20, 20)
         # TODO: before launching this, move this to load only once
@@ -52,7 +52,7 @@ class ServeCompany(MyServer):
         try:
             company_id = int(self.request.GET["id"])
         except:
-            self.returnError(400, "Incorrect id"))
+            self.returnError(400, "Incorrect id")
             return
 
         session = Session()
