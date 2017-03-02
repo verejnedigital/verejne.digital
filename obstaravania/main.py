@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from data_model import Obstaravanie, Firma, Candidate, Prediction, RawNotice, LastSync, Session
+from data_model import Obstaravanie, Firma, Candidate, Prediction, RawNotice, LastSync, MakeSession, Session
 from utils import obstaravanieToJson, getEidForIco
 
 from sqlalchemy import Column, Float, Integer, String, Boolean, and_
@@ -58,7 +58,7 @@ parser.add_argument("--log_titles", action="store_true")
 options = parser.parse_args()
 
 
-session = Session()
+session = MakeSession()
 
 # returns Firma class from the csv row, using "customer"/"supplier" prefix
 def GetCompanyCSV(row, prefix, header):
@@ -206,9 +206,9 @@ if options.update_platforma:
         return last_sync.last_sync
 
     def UpdateLastSync(timestamp):
-        new_session = Session()
-        new_session.query(LastSync).delete(synchronize_session=False)
-        new_session.commit()
+        with Session() as new_session:
+            new_session.query(LastSync).delete(synchronize_session=False)
+            new_session.commit()
 
         last_sync = LastSync(last_sync=timestamp)
         session.add(last_sync)

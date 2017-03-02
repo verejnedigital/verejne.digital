@@ -6,6 +6,8 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy.orm import sessionmaker
+
+import contextlib
 import os
 import yaml
 
@@ -95,4 +97,16 @@ class LastSync(Base):
     last_sync = Column(String, primary_key=True)
 
 Base.metadata.create_all(engine)
-Session = sessionmaker(bind=engine)
+
+MakeSession = sessionmaker(bind=engine)
+
+@contextlib.contextmanager
+def Session():
+    sess = MakeSession()
+    try:
+        yield sess
+    except:
+        sess.rollback()
+        raise
+    finally:
+        sess.close()

@@ -36,28 +36,28 @@ for row in cur.fetchall():
 
 print "Number of companies with data", len(data)
 
-session = Session()
-cnt = 0
-for obstaravanie in session.query(Obstaravanie). \
-        filter(and_(Obstaravanie.winner_id.isnot(None),
-                    Obstaravanie.bulletin_year>=2015)). \
-        order_by(-Obstaravanie.bulletin_year, -Obstaravanie.bulleting_number):
-        j = json.loads(obstaravanie.json)
-        try:
-            value = float(j["estimated_value_amount"])
-        except:
-            # No amount, skip for now.
-            continue
-        try:
-            ico = int(obstaravanie.winner.ico) # TODO: can have multiple winners...
-        except:
-            continue
-        if ico in data:
-            trzby = data[ico]["trzby2015"]
-            zisk = data[ico]["zisk2015"]
-            if (value > trzby) or (zisk < -value):
-                print "Suspicious", obstaravanie.title, obstaravanie.customer.name, \
-                    "Vyherca", obstaravanie.winner.name, \
-                    "Trzby", data[ico]["trzby2015"], "Zisk", data[ico]["zisk2015"], \
-                    "Hodnota: ", value, \
-                    "Vestnik", obstaravanie.bulletin_year, obstaravanie.bulleting_number
+with Session() as session:
+    cnt = 0
+    for obstaravanie in session.query(Obstaravanie). \
+            filter(and_(Obstaravanie.winner_id.isnot(None),
+                        Obstaravanie.bulletin_year>=2015)). \
+            order_by(-Obstaravanie.bulletin_year, -Obstaravanie.bulleting_number):
+            j = json.loads(obstaravanie.json)
+            try:
+                value = float(j["estimated_value_amount"])
+            except:
+                # No amount, skip for now.
+                continue
+            try:
+                ico = int(obstaravanie.winner.ico) # TODO: can have multiple winners...
+            except:
+                continue
+            if ico in data:
+                trzby = data[ico]["trzby2015"]
+                zisk = data[ico]["zisk2015"]
+                if (value > trzby) or (zisk < -value):
+                    print "Suspicious", obstaravanie.title, obstaravanie.customer.name, \
+                        "Vyherca", obstaravanie.winner.name, \
+                        "Trzby", data[ico]["trzby2015"], "Zisk", data[ico]["zisk2015"], \
+                        "Hodnota: ", value, \
+                        "Vestnik", obstaravanie.bulletin_year, obstaravanie.bulleting_number

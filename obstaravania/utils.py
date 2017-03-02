@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from data_model import Firma, Obstaravanie, Firma, Session
+from data_model import Firma, Obstaravanie, Firma
 import db
 
 from dateutil.parser import parse

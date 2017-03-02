@@ -21,60 +21,55 @@ class MyServer(webapp2.RequestHandler):
         self.response.set_status(code)
         self.returnJSON({'code': code, 'message': 'ERROR: ' + message})
 
-    def get(self):
-        try:
-            self.process()
-        except:
-            self.returnError(
-                500, "Internal server error: sa mi neda vycentrovat!")
-
 class ServeObstaravanie(MyServer):
-    def process(self):
+    def get(self):
         try:
             oid = int(self.request.GET["id"])
         except:
-            self.returnError(400, "Incorrect id")
+            self.returnError(400, "Malformed id")
             return
 
-        session = Session()
-        obstaravanie = session.query(Obstaravanie).filter_by(id=oid).first()
-        if obstaravanie is None:
-            self.returnError(400, "No matching id")
-            return
-        j = obstaravanieToJson(obstaravanie, 20, 20)
-        # TODO: before launching this, move this to load only once
-        singleTemplate = Template( open("obstaravanie.tmpl").read().decode("utf8"))
-        html = singleTemplate.render(obstaravanie=j)
-        self.response.write(html.encode("utf8"))
+        with Session() as session:
+            obstaravanie = session.query(Obstaravanie).filter_by(id=oid).first()
+            if obstaravanie is None:
+                self.returnError(404, "No matching id")
+                return
+            j = obstaravanieToJson(obstaravanie, 20, 20)
+            # TODO: before launching this, move this to load only once
+            singleTemplate = Template( open("obstaravanie.tmpl").read().decode("utf8"))
+            html = singleTemplate.render(obstaravanie=j)
+            self.response.write(html.encode("utf8"))
 
 class ServeCompany(MyServer):
-    def process(self):
+    def get(self):
         try:
             company_id = int(self.request.GET["id"])
         except:
-            self.returnError(400, "Incorrect id")
+            self.returnError(400, "Malformed id")
             return
-
-        session = Session()
-        company = session.query(Firma).filter_by(id=company_id).first()
-        result = {
-            "name": company.name,
-            "ico": company.ico,
-            "eid": getEidForIco(company.ico)
-        }
-        candidates = []
-        for candidate in session.query(Candidate). \
-            filter_by(company_id=company_id). \
-            order_by(-Candidate.score):
-            candidates.append([
-                    candidate.score,
-                    obstaravanieToJson(candidate.obstaravanie, candidates=0, full_candidates=0),
-                    obstaravanieToJson(candidate.reason, candidates=0, full_candidates=0)
-            ])
-        result["obstaravania"] = candidates
-        singleTemplate = Template(open("firma.tmpl").read().decode("utf8"))
-        html = singleTemplate.render(firma=result)
-        self.response.write(html.encode("utf8"))
+        with Session() as session:
+            company = session.query(Firma).filter_by(id=company_id).first()
+            if company is None:
+                self.returnError(404, 'No matching id')
+                return
+            result = {
+                "name": company.name,
+                "ico": company.ico,
+                "eid": getEidForIco(company.ico)
+            }
+            candidates = []
+            for candidate in session.query(Candidate). \
+                filter_by(company_id=company_id). \
+                order_by(-Candidate.score):
+                candidates.append([
+                        candidate.score,
+                        obstaravanieToJson(candidate.obstaravanie, candidates=0, full_candidates=0),
+                        obstaravanieToJson(candidate.reason, candidates=0, full_candidates=0)
+                ])
+            result["obstaravania"] = candidates
+            singleTemplate = Template(open("firma.tmpl").read().decode("utf8"))
+            html = singleTemplate.render(firma=result)
+            self.response.write(html.encode("utf8"))
 
 def main():
   app = webapp2.WSGIApplication(
