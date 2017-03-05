@@ -23,7 +23,7 @@ class InfoLoader extends Component {
   render() {
     if (this.state.loaded) {
       return (
-        <Info data={this.state.data} />
+        <Info data={this.state.data} eid={this.props.eid} />
       );
     }
     return (

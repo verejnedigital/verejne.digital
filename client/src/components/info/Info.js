@@ -5,21 +5,20 @@ import Vztahy from './Vztahy';
 import Zmluvy from './Zmluvy';
 import FinancialData from './FinancialData';
 import TabLink from './TabLink';
-import { getFinancialData, extractIco, icoUrl } from '../../utility/utilities';
+import { getFinancialData, extractIco, icoUrl, showNumberCurrency } from '../../utility/utilities';
 
 
-const Info = ({ data }) => {
+const Info = ({ data, eid }) => {
   const entity = data.entities[0];
   const findata = getFinancialData(data, extractIco(data));
-  // console.log(JSON.stringify(data));
   return (
     <a className="list-group-item list-group-item-info" style={{ borderColor: 'black' }}>
       <table>
         <tbody>
           <tr>
             <td>
-              <b>{entity.entity_name}&nbsp;&nbsp;</b>
-              <a title="Zobraz na mape" target="_blank" rel="noopener noreferrer" href={`?zobraz& ${entity.lat}&${entity.lng}&${entity.eid}&`}>⎈</a>
+              <b>{entity.entity_name}&nbsp;</b>
+              <a title="Zobraz na mape" target="_blank" rel="noopener noreferrer" href={`?zobraz&${entity.lat}&${entity.lng}&${eid}&`}>⎈</a>
             </td>
           </tr>
           <tr>
@@ -49,6 +48,18 @@ const Info = ({ data }) => {
                     text={'detaily o firme'}
                   />
                 )
+              </td>
+            </tr>
+          }
+          {data.total_contracts !== null && data.total_contracts > 0 &&
+            <tr>
+              <td>
+                Verejné zákazky:&nbsp;
+                <TabLink
+                  isMapView={false}
+                  url={`http://www.otvorenezmluvy.sk/documents/search?utf8=%E2%9C%93&q=${entity.entity_name}`}
+                  text={showNumberCurrency(data.total_contracts)}
+                />
               </td>
             </tr>
           }

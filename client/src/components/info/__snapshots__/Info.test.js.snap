@@ -12,10 +12,10 @@ exports[`test renders dummy as before 1`] = `
         <td>
           <b>
             Dummy
-              
+             
           </b>
           <a
-            href="?zobraz& 123&123&undefined&"
+            href="?zobraz&123&123&undefined&"
             rel="noopener noreferrer"
             target="_blank"
             title="Zobraz na mape">
