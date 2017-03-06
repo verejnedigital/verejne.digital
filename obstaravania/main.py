@@ -368,10 +368,10 @@ if options.compute_predictions:
     # table with generated suggestions
     table = []
     print "Computing candidates"
-    new_session = Session()
     if options.delete_predictions:
-        new_session.query(Candidate).delete(synchronize_session=False)
-        new_session.commit()
+        with Session() as new_session:
+            new_session.query(Candidate).delete(synchronize_session=False)
+            new_session.commit()
     min_score = float(options.min_score)
     results = []
     generated_predictions = 0
@@ -435,28 +435,28 @@ if options.compute_predictions:
 
 if options.compute_estimates:
     print "computing estimates"
-    new_session = Session()
-    new_session.query(Prediction).delete(synchronize_session=False)
-    new_session.commit()
-    generated = 0
-    for obstaravanie in session.query(Obstaravanie):
-        candidates = obstaravanie.candidates
-        if (candidates is None) or (len(candidates) is None): continue
-        estimates = [(candidate.score, candidate.reason.final_price)
-                     for candidate in candidates]
-        data = filter(lambda x: (x[1] is not None) and (x[1] > 0), estimates)
-        if len(data) == 0: continue
-        weights = [x[0] for x in data]
-        points = np.log([x[1] for x in data])
-        # assumming log-normal distribution
-        avg = np.average(points, weights=weights)
-        variance = np.average((points - avg) ** 2.0, weights=weights)
-        stdev = np.sqrt(variance)
-        new_session.add(Prediction(mean=float(avg), stdev=float(stdev), num=len(data),
-                                   obstaravanie_id=obstaravanie.id))
+    with Session() as new_session:
+        new_session.query(Prediction).delete(synchronize_session=False)
         new_session.commit()
-        generated += 1
-        if (generated % 25 == 0): print "Generated estimates", generated
+        generated = 0
+        for obstaravanie in session.query(Obstaravanie):
+            candidates = obstaravanie.candidates
+            if (candidates is None) or (len(candidates) is None): continue
+            estimates = [(candidate.score, candidate.reason.final_price)
+                         for candidate in candidates]
+            data = filter(lambda x: (x[1] is not None) and (x[1] > 0), estimates)
+            if len(data) == 0: continue
+            weights = [x[0] for x in data]
+            points = np.log([x[1] for x in data])
+            # assumming log-normal distribution
+            avg = np.average(points, weights=weights)
+            variance = np.average((points - avg) ** 2.0, weights=weights)
+            stdev = np.sqrt(variance)
+            new_session.add(Prediction(mean=float(avg), stdev=float(stdev), num=len(data),
+                                       obstaravanie_id=obstaravanie.id))
+            new_session.commit()
+            generated += 1
+            if (generated % 25 == 0): print "Generated estimates", generated
 
 if options.generate_json:
     print "generating json"
