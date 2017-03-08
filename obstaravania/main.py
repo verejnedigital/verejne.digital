@@ -425,10 +425,11 @@ if options.compute_predictions:
             winner = suppliers[line_index]
             if winner in predicted: continue
             if (value < min_score): break
-            new_session.add(Candidate(score=float(value), obstaravanie_id=obstaravanie.id,
-                                      company_id=winner,
-                                      reason_id=ids[line_index]))
-            new_session.commit()
+            with Session() as new_session:
+                new_session.add(Candidate(score=float(value), obstaravanie_id=obstaravanie.id,
+                                          company_id=winner,
+                                          reason_id=ids[line_index]))
+                new_session.commit()
             predicted.add(winner)
             if (len(predicted) >= int(options.num_candidates)): break
         if (len(predicted)>0): generated_predictions += 1
