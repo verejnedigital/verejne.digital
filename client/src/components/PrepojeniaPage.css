@@ -13,16 +13,3 @@ button.searchButton {
   width:100px;
   padding:5px
 }
-
-body {
-  background-color: #fff0a5;
-}
-
-.searchStatus {
-  margin : 5px;
-  color: #bd4932;
-}
-
-table {
-  color: inherit;
-}
