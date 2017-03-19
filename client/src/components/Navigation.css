@@ -1,10 +1,32 @@
+.sidebarnav {
+  align-self: flex-start;
+  width: 100%;
+  margin-bottom: auto;
+
+}
 .navbar-header {
   float: none;
+  background-color: inherit;
 }
+
 .navbar-toggle {
   display: block;
-  margin-left: 5px;
+  margin-right: 0;
 }
+
+.navbar-brand {
+  padding-left: 0;
+  padding-right: 10px;
+  font-family: SourceCodePro;
+  color:  #333333;
+  font-size: 18px;
+  font-weight: 900;
+  text-align: left;
+}
+.navbar-brand:hover {
+  color:  #333333;
+}
+
 .navbar-collapse.collapse {
   display: none!important;
 }
@@ -17,87 +39,9 @@
 .navbar-collapse.collapse.in{
   display:block !important;
 }
-.navbar-default {
-  margin-bottom: 0px;
-  background-color: #bd4932;
-  color: #fffad5;
-  background-image: -webkit-linear-gradient(top, #bd4932 0%, #bd4932 100%);
-  background-image: -o-linear-gradient(top, #bd4932 0%, #bd4932 100%);
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#bd4932), to(#bd4932));
-  background-image: linear-gradient(to bottom, #bd4932 0%, #bd4932 100%);
-  background-repeat: repeat-x;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffbd4932', endColorstr='#ffbd4932', GradientType=0);
-  filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
-  border-radius: 4px;
-  -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 1px 5px rgba(0, 0, 0, 0.075);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 1px 5px rgba(0, 0, 0, 0.075);
-}
 
-.navbar-default .navbar-brand{
-    color: #fffad5;
-}
-
-.navbar-brand {
-  height: 45px;
-  text-align: center;
-  font-weight: bold;
-  font-size: 20px;
-}
-
-.navbar-default .navbar-brand:hover{
-    color: #fffad5;
-}
-
-.navbar-default .navbar-toggle {
-    border-color: #fffad5;
-    color: #fffad5;
-}
-
-.navbar-default .navbar-nav>li>a {
-    color: #fffad5;;
-}
-
-.navbar-default .navbar-nav>li>a:hover {
-    color: #fffad5;;
-    opacity: 0.8;
-}
-
-.navbar-default .navbar-nav>li>a:visited {
-    color: #fffad5;;
-    opacity: 0.8;
-}
-
-.navbar-default .navbar-toggle:hover {
-    background-color: #bd4932;
-    color: #fffad5;
-    opacity: 0.8;
-}
-
-.navbar-default .navbar-toggle:focus {
-    background-color: #bd4932;
-    color: #fffad5;
-}
-
-.navbar-default .navbar-toggle .icon-bar {
-  background-color: #fffad5;
-}
-
-.navbar-default .navbar-toggle .icon-bar:hover {
-  background-color: #fffad5;
-}
-
-.navbar-toggle .icon-bar {
-  display: block;
-  width: 22px;
-  height: 2px;
-  border-radius: 1px;
-}
-
-.menu-sublink, .menu-sublink:hover {
-  color: #fffad5;
-}
-
-.menu-sublink:visited {
-   color: #fffad5;
-   opacity: 0.8;
+.icon-bar {
+  background-color:  #cddae3;
+  width: 24px;
+  height: 4px;
 }

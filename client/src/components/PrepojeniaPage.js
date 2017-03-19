@@ -3,6 +3,7 @@ import { browserHistory } from 'react-router';
 import InfoLoader from './info/InfoLoader';
 import * as serverAPI from '../actions/serverAPI';
 
+import Navigation from './Navigation';
 import './PrepojeniaPage.css';
 
 class PrepojeniaPage extends Component {
@@ -89,26 +90,7 @@ class PrepojeniaPage extends Component {
       <div className="container-fluid">
         <div className="row">
           <div className="sidebar col-sm-5 col-md-3">
-            <nav className="sidebarnav navbar">
-              <div className="navbar-header" id="world-top">
-                <button
-                  type="button" className="navbar-toggle"
-                  data-toggle="collapse" data-target=".navbar-collapse"
-                >
-                  <span className="icon-bar"></span>
-                  <span className="icon-bar"></span>
-                  <span className="icon-bar"></span>
-                </button>
-                <a className="navbar-brand">prepojenia.verejne.digital</a>
-              </div>
-              <div className="navbar-collapse collapse">
-                <ul className="nav navbar-nav">
-                  <li><a href="../index.html">verejne.digital</a></li>
-                  <li><a href="http://www.facebook.com/verejne.digital" target="_blank" rel="noopener noreferrer">kontaktuj nás na Facebooku</a></li>
-                  <li><a href="../obstaravania/index.html">obstaravania.verejne.digital</a></li>
-                </ul>
-              </div>
-            </nav>
+            <Navigation />
             <div className="searchForm">
               <div className="searchLabel row">
                 <div className="col-sm-offset-2 col-sm-10">

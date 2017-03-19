@@ -14,12 +14,12 @@
   box-shadow: 0 4px 12px 0 rgba(187, 198, 206, 0.5);
 }
 
-.result:first-of-type > .entityName > .fa-circle:before {
+.infoWrapper:first-of-type > .result > .entityName > .fa-circle:before {
   content:"\f10c";
   font-family: FontAwesome;
 }
 
-.result:last-of-type > .entityName > .fa-circle:before {
+.infoWrapper:last-of-type > .result > .entityName > .fa-circle:before {
   content:"\f10c";
   font-family: FontAwesome;
 }

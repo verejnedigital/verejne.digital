@@ -2,20 +2,19 @@ import React from 'react';
 import './Navigation.css';
 
 // For map view, we do not give red/green colors
-const Navigation = ({ brand }) =>
+const Navigation = () =>
   (
-    <nav className="navbar navbar-default">
+    <nav className="sidebarnav navbar">
       <div className="navbar-header" id="world-top">
         <button
-          type="button" className="navbar-toggle pull-left"
+          type="button" className="navbar-toggle"
           data-toggle="collapse" data-target=".navbar-collapse"
         >
           <span className="icon-bar"></span>
           <span className="icon-bar"></span>
           <span className="icon-bar"></span>
         </button>
-        <a className="navbar-brand">{brand}</a>
-        <span className="badge beta">beta</span>
+        <a className="navbar-brand">prepojenia.verejne.digital</a>
       </div>
       <div className="navbar-collapse collapse">
         <ul className="nav navbar-nav">
