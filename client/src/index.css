@@ -1,12 +1,9 @@
-body {
-  background-color: #fff0a5;
+html, body {
+  background-color: #f1f4f5;
+  height: 100%;
 }
-label {
-  margin : 5px;
-  color: #bd4932;
-}
-table {
-  color: inherit;
+#root {
+  height: 100%;
 }
 
 .beta {
@@ -14,12 +11,6 @@ table {
   color:#bd4932;
   margin:3px
 }
-
-.fbIframe {
-  border:none;
-  overflow:hidden
-}
-
 
 .list-group-item-success {
   color: #468966;

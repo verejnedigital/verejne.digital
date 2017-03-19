@@ -1,15 +1,146 @@
-.entitysearch {
-  width:300px;
-  margin:5px;
+.entitysearch input {
+  border-radius: 2px;
+  border-width: 2px;
+  border-color:  #cddae3;
+  border-style: solid;
+  background-color:  #f2f5f8;
 }
 
-.toRight {
-  margin-left:20px
+.entitysearch label {
+  color: #CDDAE3;
+  color: rgba(205, 218, 227, 0.5);
+  font-weight: 700;
+  text-align: left;
 }
 
-button.searchButton {
+.searchButton {
   text-align:center;
-  margin-top:5px;
-  width:100px;
-  padding:5px
+  width: 126px;
+  height: 38px;
+  margin-top: 5px;
+}
+
+.container-fluid > .row {
+  height: 100%;
+}
+
+.container-fluid {
+  height: 100%;
+}
+
+.searchForm {
+  width: 100%;
+}
+
+.searchForm [class*='col-'] {
+  padding-left: 0;
+}
+
+.searchLabel {
+  padding-bottom: 6px;
+}
+
+.main {
+  height: 100%;
+}
+
+.statuses {
+  position: absolute;
+  top: 10px;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  font-family: Roboto;
+  color: #859fb4;
+  font-size: 15px; /* Approximation due to font substitution */
+  font-weight: 400;
+}
+
+.results {
+  padding-top: 50px;
+}
+
+.beforeSearchContainer {
+  display:flex;
+  align-items: center;
+  height: 100%;
+}
+.beforeSearch {
+  width: 100%;
+}
+
+.beforeSearch > .whatSearch, .describeFor {
+  text-align: center;
+  font-family: Roboto;
+  color: #859fb4;
+  font-weight: 400;
+}
+
+.sidebar {
+  background-color: #ffffff;
+  height: 100%;
+  display:flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.fbfooter {
+  width: 100%;
+  margin-top: auto;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  align-self: flex-end;
+}
+
+.fbIframe {
+  border:none;
+  overflow:hidden;
+}
+
+.sidebarnav {
+  align-self: flex-start;
+  width: 100%;
+  margin-bottom: auto;
+
+}
+.navbar-header {
+  float: none;
+  background-color: inherit;
+}
+
+.navbar-toggle {
+  display: block;
+  margin-right: 0;
+}
+
+.navbar-brand {
+  padding-left: 0;
+  padding-right: 10px;
+  font-family: SourceCodePro;
+  color:  #333333;
+  font-size: 18px;
+  font-weight: 900;
+  text-align: left;
+}
+.navbar-brand:hover {
+  color:  #333333;
+}
+
+.navbar-collapse.collapse {
+  display: none!important;
+}
+.navbar-nav {
+  float: none!important;
+}
+.navbar-nav>li {
+  float: none;
+}
+.navbar-collapse.collapse.in{
+  display:block !important;
+}
+
+.icon-bar {
+  background-color:  #cddae3;
+  width: 24px;
+  height: 4px;
 }

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Info from '../info/Info';
 import * as serverAPI from '../../actions/serverAPI';
+import './InfoLoader.css';
 
 class InfoLoader extends Component {
   constructor(props) {
@@ -23,11 +24,14 @@ class InfoLoader extends Component {
   render() {
     if (this.state.loaded) {
       return (
-        <Info data={this.state.data} eid={this.props.eid} />
+        <div className="infoWrapper">
+          <Info data={this.state.data} eid={this.props.eid} />
+          {this.props.hasConnectLine && <div className="connectLine"></div>}
+        </div>
       );
     }
     return (
-      <div>Prebieha hľadanie</div>
+      <div className="resultLoading">Prebieha hľadanie...</div>
     );
   }
 }

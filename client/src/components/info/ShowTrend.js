@@ -8,7 +8,7 @@ const ShowTrend = ({ isMapView, trend }) => {
   }
   return (
     <span title="Oproti predchádzajúcemu roku" style={style} >
-      {`${trend}%`}
+      {`${trend > 0 ? '+' : ''}${trend}%`}
     </span>
   );
 };

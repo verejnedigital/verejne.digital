@@ -1,10 +1,11 @@
 import React from 'react';
 import TabLink from './TabLink';
 import { showNumberCurrency } from '../../utility/utilities';
+import './Zmluvy.css';
 
 const Zmluvy = ({ data, isMapView }) =>
 (
-  <ul>
+  <ul className="contractList list-unstyled">
     {data.map(contract => (
       <li key={contract.source}>
         <TabLink

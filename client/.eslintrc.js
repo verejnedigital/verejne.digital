@@ -11,6 +11,7 @@ module.exports = {
       "react/jsx-filename-extension": "off",
       "react/prop-types": "off",
       "import/no-extraneous-dependencies": "off",
-      "import/prefer-default-export": "off"
+      "import/prefer-default-export": "off",
+      "jsx-a11y/anchor-has-content": "off",
     }
 };
