@@ -69,36 +69,36 @@ class Info extends Component {
                 </td>
               </tr>
             }
-            {findata.ico &&
+            {findata.ico && findata.zaciatok &&
               <tr>
-                <td colSpan="2">
-                  {findata.zaciatok &&
-                    <span title="Vznik"><strong>Založená:</strong>&nbsp;
-                      <TabLink
-                        isMapView={false}
-                        url={icoUrl(findata.ico)}
-                        text={showDate(findata.zaciatok)}
-                      />
-                    </span>
-                  }
-                  {findata.koniec &&
-                    <span title="Zánik"><strong>Zaniknutá:</strong>&nbsp;
-                      <TabLink
-                        isMapView={false}
-                        url={icoUrl(findata.ico)}
-                        text={showDate(findata.koniec)}
-                      />
-                    </span>
-                  }
-                  {findata.zamestnancov &&
-                    <span title="Zamestnancov"> &#x1f464;
-                      <TabLink
-                        isMapView={false}
-                        url={icoUrl(findata.ico)}
-                        text={findata.zamestnancov}
-                      />
-                    </span>
-                  }
+                <td colSpan="2"><strong>Založená:</strong>&nbsp;
+                  <TabLink
+                    isMapView={false}
+                    url={icoUrl(findata.ico)}
+                    text={showDate(findata.zaciatok)}
+                  />
+                </td>
+              </tr>
+            }
+            {findata.ico && findata.koniec &&
+              <tr>
+                <td colSpan="2"><strong>Zaniknutá:</strong>&nbsp;
+                  <TabLink
+                    isMapView={false}
+                    url={icoUrl(findata.ico)}
+                    text={showDate(findata.koniec)}
+                  />
+                </td>
+              </tr>
+            }
+            {findata.ico && findata.zamestnancov &&
+              <tr>
+                <td colSpan="2"><strong>Zamestnancov:</strong>&nbsp;
+                  <TabLink
+                    isMapView={false}
+                    url={icoUrl(findata.ico)}
+                    text={findata.zamestnancov}
+                  />
                 </td>
               </tr>
             }
@@ -114,7 +114,7 @@ class Info extends Component {
                 </td>
               </tr>
             }
-            {findata.ico && findata.zisk15 !== 0 &&
+            {findata.ico && findata.zisk15 !== undefined && findata.zisk15 !== 0 &&
               <tr>
                 <td colSpan="2">
                   <span><strong>Zisk v 2015:</strong>&nbsp;
@@ -132,7 +132,7 @@ class Info extends Component {
                 </td>
               </tr>
               }
-            {findata.ico && findata.trzby15 !== 0 &&
+            {findata.ico && findata.trzby15 !== undefined && findata.trzby15 !== 0 &&
               <tr>
                 <td colSpan="2">
                   <span><strong>Tržby v 2015:</strong>&nbsp;
