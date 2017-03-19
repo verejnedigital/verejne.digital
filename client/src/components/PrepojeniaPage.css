@@ -1,46 +1,6 @@
-.entitysearch input {
-  border-radius: 2px;
-  border-width: 2px;
-  border-color: #cddae3;
-  border-style: solid;
-  background-color: #f2f5f8;
-}
-
-.entitysearch label {
-  color: #CDDAE3;
-  color: rgba(205, 218, 227, 0.5);
-  font-weight: 700;
-  text-align: left;
-}
-
-.searchButton {
-  text-align:center;
-  width: 126px;
-  height: 38px;
-  margin-top: 5px;
-}
-
+.main,
+.container-fluid,
 .container-fluid > .row {
-  height: 100%;
-}
-
-.container-fluid {
-  height: 100%;
-}
-
-.searchForm {
-  width: 100%;
-}
-
-.searchForm [class*='col-'] {
-  padding-left: 0;
-}
-
-.searchLabel {
-  padding-bottom: 6px;
-}
-
-.main {
   height: 100%;
 }
 
@@ -90,6 +50,10 @@
   padding-top: 20px;
   padding-bottom: 20px;
   align-self: flex-end;
+}
+
+.fbfooter .col-sm-10 {
+  padding-left: 0;
 }
 
 .fbIframe {

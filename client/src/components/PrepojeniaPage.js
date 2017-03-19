@@ -4,6 +4,7 @@ import InfoLoader from './info/InfoLoader';
 import * as serverAPI from '../actions/serverAPI';
 
 import Navigation from './Navigation';
+import Search from './Search';
 import './PrepojeniaPage.css';
 
 class PrepojeniaPage extends Component {
@@ -12,41 +13,31 @@ class PrepojeniaPage extends Component {
     this.state = {
       entitysearch1: (props.location && props.location.query.eid1) || '',
       entitysearch2: (props.location && props.location.query.eid2) || '',
+      searching: false,
     };
-    this.searchOnClick = this.searchOnClick.bind(this);
-    this.updateInputValue = this.updateInputValue.bind(this);
+    this.searchConnection = this.searchConnection.bind(this);
     this.loadEntity1 = this.loadEntity1.bind(this);
     this.loadEntity2 = this.loadEntity2.bind(this);
     this.loadConnections = this.loadConnections.bind(this);
-    this.searchOnClickOnEnter = this.searchOnClickOnEnter.bind(this);
   }
 
   componentWillMount() {
-    this.searchOnClick();
+    this.searchConnection(this.state.entitysearch1, this.state.entitysearch2);
   }
 
-  updateInputValue(e) {
-    this.setState({
-      [e.target.id]: e.target.value,
-    });
-  }
-
-  searchOnClickOnEnter(e) {
-    if (e.key === 'Enter') {
-      this.searchOnClick();
-    }
-  }
-  searchOnClick() {
-    if (this.state.entitysearch1.trim() === '' || this.state.entitysearch2.trim() === '') {
+  searchConnection(entitysearch1, entitysearch2) {
+    if (entitysearch1.trim() === '' || entitysearch2.trim() === '') {
       return;
     }
     browserHistory.push({
       query: {
-        eid1: this.state.entitysearch1,
-        eid2: this.state.entitysearch2,
+        eid1: entitysearch1,
+        eid2: entitysearch2,
       },
     });
     this.setState({
+      entitysearch1,
+      entitysearch2,
       searching: true,
     });
     this.loadEntity1();
@@ -91,50 +82,17 @@ class PrepojeniaPage extends Component {
         <div className="row">
           <div className="sidebar col-sm-5 col-md-3">
             <Navigation />
-            <div className="searchForm">
-              <div className="searchLabel row">
-                <div className="col-sm-offset-2 col-sm-10">
-                  <h2>Vyhľadaj</h2>
-                  najkratšie spojenie medzi dvojicou:
-                </div>
-              </div>
-              <div className="form-horizontal">
-                <div className="entitysearch form-group">
-                  <label htmlFor="entitysearch1" className="col-sm-2 control-label">01</label>
-                  <div className="col-sm-10">
-                    <input
-                      id="entitysearch1" className="form-control" type="text"
-                      value={this.state.entitysearch1} onChange={this.updateInputValue}
-                      onKeyPress={this.searchOnClickOnEnter}
-                      placeholder="Zadaj prvú firmu / človeka"
-                    />
-                  </div>
-                </div>
-                <div className="entitysearch form-group">
-                  <label htmlFor="entitysearch2" className="col-sm-2 control-label">02</label>
-                  <div className="col-sm-10">
-                    <input
-                      id="entitysearch2" className="form-control" type="text"
-                      value={this.state.entitysearch2} onChange={this.updateInputValue}
-                      onKeyPress={this.searchOnClickOnEnter}
-                      placeholder="Zadaj druhú firmu / človeka"
-                    />
-                  </div>
-                </div>
-                <div className="form-group">
-                  <div className="col-sm-offset-2 col-sm-10">
-                    <button
-                      className="searchButton btn btn-primary"
-                      onClick={this.searchOnClick}
-                    >Vyhľadať</button>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <Search
+              entitysearch1={this.state.entitysearch1}
+              entitysearch2={this.state.entitysearch2}
+              searchConnection={this.searchConnection}
+            />
             <div className="fbfooter">
               <hr />
-              <div className="col-sm-offset-2 col-sm-10">
-                <iframe src="https://www.facebook.com/plugins/like.php?href=https%3A%2F%2Fwww.facebook.com%2Fverejne.digital&width=111&layout=button_count&action=like&size=small&show_faces=true&share=true&height=46&appId=" width="151" height="23" className="fbIframe" scrolling="no" frameBorder="0" allowTransparency="true" />
+              <div className="row">
+                <div className="col-sm-offset-2 col-sm-10">
+                  <iframe src="https://www.facebook.com/plugins/like.php?href=https%3A%2F%2Fwww.facebook.com%2Fverejne.digital&width=111&layout=button_count&action=like&size=small&show_faces=true&share=true&height=46&appId=" width="151" height="23" className="fbIframe" scrolling="no" frameBorder="0" allowTransparency="true" />
+                </div>
               </div>
             </div>
           </div>
