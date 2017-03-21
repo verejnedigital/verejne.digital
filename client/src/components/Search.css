@@ -7,7 +7,7 @@
 }
 
 .entitysearch label {
-  color: #CDDAE3;
+  color: #cddae3;
   color: rgba(205, 218, 227, 0.5);
   font-weight: 700;
   text-align: left;
@@ -24,7 +24,7 @@
   width: 100%;
 }
 
-.searchForm [class*='col-'] {
+.searchForm .col-sm-10, .col-sm-2 {
   padding-left: 0;
 }
 

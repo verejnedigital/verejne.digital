@@ -23,6 +23,7 @@
   font-weight: 900;
   text-align: left;
 }
+
 .navbar-brand:hover {
   color:  #333333;
 }
@@ -30,18 +31,21 @@
 .navbar-collapse.collapse {
   display: none!important;
 }
+
 .navbar-nav {
   float: none!important;
 }
-.navbar-nav>li {
+
+.navbar-nav > li {
   float: none;
 }
+
 .navbar-collapse.collapse.in{
-  display:block !important;
+  display: block !important;
 }
 
 .icon-bar {
-  background-color:  #cddae3;
+  background-color: #cddae3;
   width: 24px;
   height: 4px;
 }

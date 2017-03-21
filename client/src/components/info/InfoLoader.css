@@ -25,6 +25,7 @@
 .infoWrapper:last-of-type {
   margin-bottom: 60px;
 }
+
 .infoWrapper:last-of-type > .connectLine {
   height:0;
   width:0;

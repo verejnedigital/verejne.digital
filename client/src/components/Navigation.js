@@ -16,7 +16,7 @@ const Navigation = () =>
         </button>
         <a className="navbar-brand">prepojenia.verejne.digital</a>
       </div>
-      <div className="navbar-collapse collapse">
+      <div className="collapse navbar-collapse">
         <ul className="nav navbar-nav">
           <li><a href="../index.html">verejne.digital</a></li>
           <li><a href="http://www.facebook.com/verejne.digital" target="_blank" rel="noopener noreferrer">kontaktuj nás na Facebooku</a></li>

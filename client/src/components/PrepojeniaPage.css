@@ -20,16 +20,17 @@
   padding-top: 50px;
 }
 
-.beforeSearchContainer {
-  display:flex;
+.beforeResultsContainer {
+  display: flex;
   align-items: center;
   height: 100%;
 }
-.beforeSearch {
+
+.beforeResults {
   width: 100%;
 }
 
-.beforeSearch > .whatSearch, .describeFor {
+.beforeResults > .whatSearch, .describeFor {
   text-align: center;
   font-family: Roboto;
   color: #859fb4;
@@ -39,7 +40,7 @@
 .sidebar {
   background-color: #ffffff;
   height: 100%;
-  display:flex;
+  display: flex;
   flex-direction: column;
   align-items: center;
 }
@@ -57,6 +58,6 @@
 }
 
 .fbIframe {
-  border:none;
-  overflow:hidden;
+  border: none;
+  overflow: hidden;
 }
