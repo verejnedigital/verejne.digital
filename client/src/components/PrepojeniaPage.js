@@ -39,8 +39,8 @@ class PrepojeniaPage extends Component {
       entitysearch1,
       entitysearch2,
       searching: true,
-    });
-    this.loadEntity1();
+      connections: [],
+    }, this.loadEntity1);
   }
 
   loadEntity1() {
@@ -126,7 +126,7 @@ class PrepojeniaPage extends Component {
                 </span>
               }
             </div>
-            {this.state.connections ? (
+            {this.state.connections && this.state.connections.length > 0 ? (
               <div className="results container-fluid">
                 {this.state.connections.map(connEid =>
                   <InfoLoader key={connEid} eid={connEid} hasConnectLine />,
