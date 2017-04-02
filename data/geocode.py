@@ -172,12 +172,15 @@ class IdMaster:
         if (t_lat_lng) in self.name_lat_lng:
             return self.name_lat_lng[t_lat_lng]
         #add to table
-        data = {"address" : g["formatted_address"],
-                "original_address": address,
-                "entity_name": name,
-                "json": json.dumps(djson),
-                "lat": lat,
-                "lng": lng} 
+        data = {
+            "address" : g["formatted_address"],
+            "original_address": address,
+            "entity_name": name,
+            "json": json.dumps(djson),
+            "lat": lat,
+            "lng": lng
+        }
+
         row_id = int(insertDictionary("entities", data))
         # remember the id for the various representations
         logging.info("Added id " + str(row_id))
@@ -208,7 +211,7 @@ def geocodeTable(
     address_like_column=None, geocoded_table=None):
     global api_calls, master
 
-    cur = db.getCursor()
+    cur = getCursor()
     if id_column is not None:
         geocoded_id_table = input_table + "_geocoded_" if geocoded_table is None else geocoded_table
         if not db.checkTableExists(db.db, geocoded_id_table):
@@ -250,60 +253,41 @@ def geocodeTable(
         # Requires address is not null
         select_sql += " WHERE " + address_column + " IS NOT NULL"
     logging.info(select_sql)
-    processed_now = [0]
     not_geocoded = 0
     geocoded_ids = getGeocodedIds(geocoded_id_table)
     
-    def processFromTo(select_sql, offset, limit, remaining):
-      global api_calls
-      limit_sql = " LIMIT " + str(limit) + " OFFSET " + str(offset)
-      logging.info(limit_sql)
-      select_sql += limit_sql
-      db.execute(cur, select_sql)
-      processed = 0
-      not_geocoded = 0
-      skipped = 0
-      for row in cur.fetchall():
-          api_calls_before = api_calls
-          processed += 1
-          if (row[id_column] in geocoded_ids):
-              skipped += 1
-              continue
-          to_id = master.getId(row["name"], row["address"])
-          if (to_id is None): not_geocoded += 1
-          if id_column is not None:
-              db.insertDictionary(geocoded_id_table,
-                  {"orig_id": row[id_column], "new_id": to_id})
-          if (new_table_name is not None):
-              new_data = {"id": to_id}
-              for column in extra_columns:
-                  new_data[extra_columns[column]] = row[column]
-              db.insertDictionary(new_table_name, new_data)
-          
-          db.execute(cur, 
-              "UPDATE entities SET " + source_name + "=1 WHERE id=%s",
-              [to_id])
-          geocoded_ids.add(row[id_column])
-          db.db.commit()
-  
-          remaining -= (api_calls - api_calls_before)
-          # processed requested number of api calls. stop
-          if (remaining <= 0): return False, 0
-
-      logging.info("Total number of rows processed: " + str(processed) +
-          ", remaining: " + str(remaining) + ", skipped: " + str(skipped))
-      logging.info("Not geocoded: " + str(not_geocoded))
-      return processed > 0, remaining
-
-    from_row = 0
-    process_in_step = 10000
     remaining = max_process
-    while remaining > 0:
-      more_data, remaining = processFromTo(
-          select_sql, from_row, process_in_step, remaining)
-      from_row += process_in_step
-      logging.info("More data: " + str(more_data) + " remaining " + str(remaining))
-      if (not more_data): break
+    processed = 0
+    not_geocoded = 0
+    skipped = 0
+    for row in cur:
+        api_calls_before = api_calls
+        processed += 1
+        if (processed % 1000 == 0):
+            logging.info("Total number of rows processed: " + str(processed) +
+                ", remaining: " + str(remaining) + ", skipped: " + str(skipped))
+            logging.info("Not geocoded: " + str(not_geocoded))
+
+        if (row[id_column] in geocoded_ids):
+            skipped += 1
+            continue
+        to_id = master.getId(row["name"], row["address"])
+        if (to_id is None): not_geocoded += 1
+        if id_column is not None:
+            insertDictionary(geocoded_id_table,
+                {"orig_id": row[id_column], "new_id": to_id})
+        if (new_table_name is not None):
+            new_data = {"id": to_id}
+            for column in extra_columns:
+                new_data[extra_columns[column]] = row[column]
+            insertDictionary(new_table_name, new_data)
+            
+        with getCursor as new_cursor:
+            new_cursor.execute("UPDATE entities SET " + source_name + "=1 WHERE id=%s", [to_id])
+        geocoded_ids.add(row[id_column])
+        remaining -= (api_calls - api_calls_before)
+        # processed requested number of api calls. stop
+        if (remaining <= 0): break
 
 
 def nullOrEmpty(x):
