@@ -2,78 +2,103 @@
 # -*- coding: utf-8 -*-
 import argparse
 import ast
+# TODO: add to geoocode_db_utils
 import db
 import json
-import MySQLdb
+import logging
+import psycopg2.extras
+from psycopg2.extensions import AsIs
 import sys
 import time
 import urllib
 import yaml
 
-db.parser.add_argument("--related", help="Only compute related table", action="store_true")
-db.parser.add_argument("--populate_has_data", help="Updates values so we know for which data we have somthing to show", action="store_true")
-db.connect(False)
-print db.db
+# Load the key we use for geocoding addressed
+# TODO: have a config file for this
+geocode_key = None
+with open("/tmp/geocode_key.txt", 'r') as f:
+    geocode_key = yaml.load(f)['key']
+#db.parser.add_argument("--related", help="Only compute related table", action="store_true")
+#db.parser.add_argument("--populate_has_data", help="Updates values so we know for which data we have somthing to show", action="store_true")
 
-log_file = open("log.txt", "a")
-def log(s, only_file=False):
-    if not only_file:
-        try:
-            print "LOG: " + s
-        except:
-            print "LOG: " + s.encode("utf8")
-    log_file.write(s.encode("utf8") + "\n")
+db = db.db_connect()
+logging.basicConfig(
+        format='%(asctime)s %(levelname)s: %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p', level=logging.DEBUG)
 
+# global variable for tracking number of api call
 api_calls = 0
+
+# Return dictionary cursor and use mysql.* paths for tables
+def getCursor(db):
+    global db
+    cur = db.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    cur.execute("SET search_path = 'mysql'")
+    return cur
+
+
+# inserts the given dictionary {(column_name: value} into the given table
+# returns the id of the inserted row
+def insertDicionary(table, d):
+    global db
+    with cur = db.cursor():
+        columns = d.keys()
+        values = [d[column] for column in columns]
+        # TODO: change to cur.execute
+        print cur.mogrify('insert into %s (%s) values %s returning id',
+                          table, (AsIs(','.join(columns)), tuple(values)))
+        return cur.fetchone()[0]
 
 class IdMaster:
 
+    # mappings
+    #  (has(name), address) -> id
+    #  (hash(name), (lat, lng)) -> id
+    #  (hash(address)) -> id
     name_address = {}
     name_lat_lng = {}
     address_data = {}
 
     def __init__(self):
         #load table to memory
-        def loadFromTo(from_offset, batch_size):
-            log("Loading ids from " + str(from_offset))
-            cur = db.getCursor()
-            db.execute(cur, "SELECT id, entity_name, address, original_address, lat, lng " + #, json
-                        "FROM entities " +
-                        "LIMIT " + str(batch_size) + " OFFSET " + str(from_offset))
-            processed = False
-            for row in cur.fetchall():
-                processed = True
-                norm_name = self.normalize(row["entity_name"])
-                norm_address = self.normalize(row["address"])
-                norm_orig_address = self.normalize(row["original_address"])
-                t_address = (hash(norm_name), hash(norm_address))
-                t_orig_address = (hash(norm_name), hash(norm_orig_address))
-                t_lat_lng = (hash(norm_name), hash((str(row["lat"]), str(row["lng"]))))
-                self.name_address[t_address] = row["id"]
-                self.name_address[t_orig_address] = row["id"]
-                self.name_lat_lng[t_lat_lng] = row["id"]
-                self.address_data[hash(norm_orig_address)] = row["id"]
-            return processed    
-        
-        from_index = 0
-        batch_size = 66666
-        while loadFromTo(from_index, batch_size):
-            from_index += batch_size
-        log("Loading done")
+        logging.info("Loading ids")
+        cur = getCursor()
+        cur.execute("SELECT id, entity_name, address, original_address, lat, lng FROM entities LIMIT 100")
+        for row in cur:
+            norm_name = self.normalize(row["entity_name"]) 
+            logging.info(norm_name)
+            norm_address = self.normalize(row["address"])
+            norm_orig_address = self.normalize(row["original_address"])
+            t_address = (hash(norm_name), hash(norm_address))
+            t_orig_address = (hash(norm_name), hash(norm_orig_address))
+            t_lat_lng = (hash(norm_name), hash((str(row["lat"]), str(row["lng"]))))
+            self.name_address[t_address] = row["id"]
+            self.name_address[t_orig_address] = row["id"]
+            self.name_lat_lng[t_lat_lng] = row["id"]
+            self.address_data[hash(norm_orig_address)] = row["id"]
+        cur.close()
+        logging.info("Loading done")
 
-
+    # normalize string be removing spaces, dots, commas and turning everything into lower cases
+    # TODO: normalize upper case letters with diacritics
     def normalize(self, s):
         return s.lower().replace(" ", "").replace("."," ").replace(",", "")
 
+    # load json for the provided entities.id 
     def getJSONForId(self, row_id):
-        log("getJSONForId: " + str(row_id))
-        cur = db.getCursor()
-        cur = db.execute(cur, "SELECT json FROM entities WHERE id=%s", [row_id])
-        return json.loads(cur.fetchone()["json"])
-
+        logging.info("getJSONForId: " + str(row_id))
+        with getCursor() as cur:
+            cur = db.execute(cur, "SELECT json FROM entities WHERE id=%s", [row_id])
+            return json.loads(cur.fetchone()["json"])
+    
+    # gecoodes given address.
+    # returns json as returned by the GoogleAPI
+    # the json is also stored in the database, so first the method checks whether
+    # the hash of the provided address is stored in self.address_data
+    # if the address cannot be geocoded, the method iteratively strips the first
+    # word until it can geocode the address
     def geocode(self, address, mock=True):
-        global api_calls
-        log("Geocoding: " + address)
+        global api_calls, geocode_key
+        logging.info("Geocoding: " + address)
         if mock:
             # TODO: fix unicode
             with open('tmp/address.json') as data_file:
@@ -84,15 +109,18 @@ class IdMaster:
        
         split = address.split(" ")
         for i in range(len(split)):
-            attempted = " ".join(split[i:])    
+            # Let's ignore the first i words
+            attempted = " ".join(split[i:]) 
+            # lookup if has been already geocoded
             norm_address = self.normalize(attempted)
             if (hash(norm_address) in self.address_data):
                 return self.getJSONForId(self.address_data[hash(norm_address)])
+            # Build a request to the maps api
             # TODO: also add viewport biasing to slovakia
             params = {
                 'address': attempted.encode('utf-8'),
                 'region': 'sk',
-                'key': 'TODO: read key'
+                'key': geocode_key
             }
             url = "https://maps.googleapis.com/maps/api/geocode/json?" + urllib.urlencode(params)
             try:
@@ -103,10 +131,15 @@ class IdMaster:
                     return data["results"]
             except:
                 pass
-            log("Unable to geocode: (" + attempted + ") removing first word")
+            logging.info("Unable to geocode: (" + attempted + ") removing first word")
 
         return None
 
+    # get entities.eid for the given (name, address)
+    # if the pair is already is in the database, return the eid
+    # otherwise create new entry in entities
+    # Note this method tries to normalize the address (by geocoding to lat, lng)
+    # as well as name, byt normalizing the string
     def getId(self, name, address):
         def toUnicode(s):
           if isinstance(s, str): return s.decode("utf8")
@@ -122,18 +155,18 @@ class IdMaster:
             return self.name_address[t_address]
         djson = self.geocode(address, False)
         if djson is None:
-            log("Address " + address + "geocoded to None")
+            logging.info("Address " + address + "geocoded to None")
             return None
         g = djson[0]
         if g is None:
-            log("Address " + address + "geocoded to None")
+            logging.info("Address " + address + "geocoded to None")
             return None
         lat_n = g["geometry"]["location"]["lat"]
         lng_n = g["geometry"]["location"]["lng"]
         lat = "%3.7f" % lat_n
         lng = "%3.7f" % lng_n
 
-        log(address + " -> " + str(lat) + ", " + str(lng))
+        logging.info(address + " -> " + str(lat) + ", " + str(lng))
 
         t_lat_lng = (hash(norm_name), hash((lat, lng)))
         if (t_lat_lng) in self.name_lat_lng:
@@ -145,37 +178,30 @@ class IdMaster:
                 "json": json.dumps(djson),
                 "lat": lat,
                 "lng": lng} 
-        row_id = int(db.insertDictionary("entities", data))
-        log("Added id " + str(row_id))
+        row_id = int(insertDictionary("entities", data))
+        # remember the id for the various representations
+        logging.info("Added id " + str(row_id))
         self.address_data[hash(norm_address)] = row_id
         self.name_address[t_address] = row_id
         self.name_lat_lng[t_lat_lng] = row_id
-        cursor = db.getCursor()
-        db.execute(cursor, "UPDATE entities SET eid=%s WHERE id=%s", [row_id, row_id])
-        db.db.commit()
+        with getCursor() as cur:
+            cur.execute("UPDATE entities SET eid=%s WHERE id=%s", [row_id, row_id])
         return row_id
 
+# returns set(ids) of ids that were already geocoded in the previous rus
 def getGeocodedIds(table_name):
-    log("getGeocodedIds " + table_name)
+    logging.info("getGeocodedIds " + table_name)
     result = set()
-    cur = db.getCursor()
-    from_index = 0
-    batch_size = 33333
-    while True:
+    with getCursor as cur:
       sql = "SELECT orig_id FROM " + table_name + \
-             " LIMIT " + str(batch_size) + " OFFSET " + str(from_index)
-      db.execute(cur, sql)
-      processed = False;
-      for row in cur.fetchall():
-          processed = True
-          result.add(row["orig_id"])
-      if not processed: break
-      from_index += batch_size
+      cur.execute(sql)
+      for row in cur: result.add(row["orig_id"])
     return result
 
 master = None
 
 # TODO: document all the params
+# The master method to gecoode raw data into our format
 def geocodeTable(
     input_table, name_column, address_column, id_column, source_name,
     new_table_name, extra_columns, max_process=None, address_like=None,
@@ -186,7 +212,7 @@ def geocodeTable(
     if id_column is not None:
         geocoded_id_table = input_table + "_geocoded_" if geocoded_table is None else geocoded_table
         if not db.checkTableExists(db.db, geocoded_id_table):
-            log("Creating table: " + geocoded_id_table)
+            logging.info("Creating table: " + geocoded_id_table)
             db.execute(cur, 
                     "CREATE TABLE " + geocoded_id_table + "("
                     "orig_id " + db.getColumnType(input_table, id_column) + " PRIMARY KEY,"
@@ -201,8 +227,8 @@ def geocodeTable(
             new_table_sql += (
                 "," + extra_columns[column] + " " + db.getColumnType(input_table, column))
         new_table_sql += ", FOREIGN KEY (id) REFERENCES entities(id)) DEFAULT CHARSET=utf8"
-        log("Creatting table: " + new_table_name)
-        log(new_table_sql)
+        logging.info("Creatting table: " + new_table_name)
+        logging.info(new_table_sql)
         db.execute(cur, new_table_sql)
         db.db.commit()
 
@@ -223,7 +249,7 @@ def geocodeTable(
     else:
         # Requires address is not null
         select_sql += " WHERE " + address_column + " IS NOT NULL"
-    log(select_sql)
+    logging.info(select_sql)
     processed_now = [0]
     not_geocoded = 0
     geocoded_ids = getGeocodedIds(geocoded_id_table)
@@ -231,7 +257,7 @@ def geocodeTable(
     def processFromTo(select_sql, offset, limit, remaining):
       global api_calls
       limit_sql = " LIMIT " + str(limit) + " OFFSET " + str(offset)
-      log(limit_sql)
+      logging.info(limit_sql)
       select_sql += limit_sql
       db.execute(cur, select_sql)
       processed = 0
@@ -264,9 +290,9 @@ def geocodeTable(
           # processed requested number of api calls. stop
           if (remaining <= 0): return False, 0
 
-      log("Total number of rows processed: " + str(processed) +
+      logging.info("Total number of rows processed: " + str(processed) +
           ", remaining: " + str(remaining) + ", skipped: " + str(skipped))
-      log("Not geocoded: " + str(not_geocoded))
+      logging.info("Not geocoded: " + str(not_geocoded))
       return processed > 0, remaining
 
     from_row = 0
@@ -276,7 +302,7 @@ def geocodeTable(
       more_data, remaining = processFromTo(
           select_sql, from_row, process_in_step, remaining)
       from_row += process_in_step
-      log("More data: " + str(more_data) + " remaining " + str(remaining))
+      logging.info("More data: " + str(more_data) + " remaining " + str(remaining))
       if (not more_data): break
 
 
@@ -341,10 +367,10 @@ def populateRelated(relationship_table, colA, colB, tableA, tableB):
             newA = mapA[valA]
             newB = mapB[valB]
             if not newA in id_to_eid:
-              log("Missing " + str(newA) + " in id_to_eid")
+              logging.info("Missing " + str(newA) + " in id_to_eid")
               continue
             if not newB in id_to_eid:
-              log("Missing " + str(newB) + " in id_to_eid")
+              logging.info("Missing " + str(newB) + " in id_to_eid")
               continue
             db.insertDictionary("related",
                 {"id1": newA, "eid1": id_to_eid[newA],
@@ -352,7 +378,7 @@ def populateRelated(relationship_table, colA, colB, tableA, tableB):
     db.db.commit()
     
 def processRelated():
-    log("processRelated")
+    logging.info("processRelated")
     cur = db.getCursor()
     db.execute(cur, "DELETE FROM related")
     db.db.commit()
@@ -517,27 +543,32 @@ def populateHasData():
 def loadFreeQuota():
   api_limit = 99500
   while api_calls < api_limit:
-      log("API calls: " + str(api_calls))
+      logging.info("API calls: " + str(api_calls))
       # Bulk process many rows in tables, so that we have about 40 queries remaining or do at least one row
       limit = int((api_limit - api_calls) / 2)
       if limit < 1: limit = 1
       api_calls_before = api_calls
       process(limit)
       if (api_calls_before == api_calls):
-          log("Stopping, didn't make any API calls") 
+          logging.info("Stopping, didn't make any API calls") 
 
   processRelated()
-  log("API calls: " + str(api_calls))
+  logging.info("API calls: " + str(api_calls))
 
-if db.args.related:
-  log("OnlyComputingRelated")
-  processRelated()
-elif db.args.populate_has_data:
-  log("populate_has_data")
-  populateHasData()
-else:
-  master = IdMaster()
-  loadFreeQuota()
-  populateHasData()
+#if db.args.related:
+#  logging.info("OnlyComputingRelated")
+#  processRelated()
+#elif db.args.populate_has_data:
+#  logging.info("populate_has_data")
+#  populateHasData()
+#else:
+master = IdMaster()
 
-log("API Calls: " + str(api_calls))
+#loadFreeQuota()
+#populateHasData()
+
+# Everything done, commit and close the connection
+logging.info("Commiting!")
+db.commit()
+db.close()
+logging.info("API Calls: " + str(api_calls))
