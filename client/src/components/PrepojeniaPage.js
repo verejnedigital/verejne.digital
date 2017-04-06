@@ -30,6 +30,7 @@ class PrepojeniaPage extends Component {
       return;
     }
     browserHistory.push({
+      ...this.props.location,
       query: {
         eid1: entitysearch1,
         eid2: entitysearch2,

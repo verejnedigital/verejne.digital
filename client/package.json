@@ -24,5 +24,5 @@
     "lint": "eslint src"
   },
   "proxy": "https://verejne.digital/",
-  "homepage": ".",
+  "homepage": "."
 }
