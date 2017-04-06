@@ -5,7 +5,7 @@ import PrepojeniaPage from './components/PrepojeniaPage';
 
 const Routes = props => (
   <Router {...props}>
-    <Route path="/" component={PrepojeniaPage} />
+    <Route path="*" component={PrepojeniaPage} />
   </Router>
 );
 

@@ -15,7 +15,7 @@ function parseJSON(res) {
 
 
 export function searchEntity(query, cb) {
-  fetch(`searchEntity?text=${query}`, {
+  fetch(`api/v/searchEntity?text=${query}`, {
     accept: 'application/json',
   }).then(checkStatus)
     .then(parseJSON)
@@ -23,7 +23,7 @@ export function searchEntity(query, cb) {
 }
 
 export function connection(eid1, eid2, cb) {
-  fetch(`connection?eid1=${eid1}&eid2=${eid2}`, {
+  fetch(`api/v/connection?eid1=${eid1}&eid2=${eid2}`, {
     accept: 'application/json',
   }).then(checkStatus)
     .then(parseJSON)
@@ -31,7 +31,7 @@ export function connection(eid1, eid2, cb) {
 }
 
 export function getInfo(eid, cb) {
-  fetch(`getInfo?eid=${eid}`, {
+  fetch(`api/v/getInfo?eid=${eid}`, {
     accept: 'application/json',
   }).then(checkStatus)
     .then(parseJSON)

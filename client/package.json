@@ -23,5 +23,6 @@
     "eject": "react-scripts eject",
     "lint": "eslint src"
   },
-  "proxy": "https://verejne.digital/api/v/"
+  "proxy": "https://verejne.digital/",
+  "homepage": ".",
 }
