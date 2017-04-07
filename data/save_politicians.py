@@ -17,6 +17,16 @@ DIR_DATA = '/home/matej_balog/'
     (if does not exist yet) and fills them with data from raw JSON files.
     """
 
+def get_office_id(db, office_name_male):
+    q = """
+        SELECT  id FROM offices
+        WHERE   name_male='%s';
+        """ % (office_name_male)
+    with db.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+        cur.execute(q)
+        row = cur.fetchone()
+    return row['id']
+
 
 def main(args_dict):
     # Start connection, everything will be a single transaction
@@ -35,6 +45,9 @@ def main(args_dict):
         """
 
     q += """
+        DROP TABLE politicians;
+        DROP TABLE offices;
+
         CREATE TABLE IF NOT EXISTS offices(
             id              serial          PRIMARY KEY,
             name_male       text            UNIQUE,
@@ -46,10 +59,16 @@ def main(args_dict):
             id          serial  PRIMARY KEY,
             firstname   text,
             surname     text,
+            title       text,
             address     text,
+            email       text,
             office_id   int     REFERENCES offices(id),
             term_start  int,
-            term_end    int
+            term_end    int,
+            party_nom   text,
+            party       text,
+            source      text,
+            picture     text
         );
         """
     with db.cursor() as cur:
@@ -63,10 +82,11 @@ def main(args_dict):
         ON      CONFLICT DO NOTHING;
         """
 
-    politicians_columns = ['firstname', 'surname', 'address', 'office_id', 'term_start', 'term_end']
+    politicians_columns = ['firstname', 'surname', 'title', 'address', 'email',
+    'office_id', 'term_start', 'term_end', 'party_nom', 'party', 'source', 'picture']
     q_insert_politician = """
         INSERT  INTO politicians(""" + ', '.join(politicians_columns) + """)
-        VALUES  (%s, %s, %s, %s, %s, %s)
+        VALUES  (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         ON      CONFLICT DO NOTHING;
         """
 
@@ -80,24 +100,72 @@ def main(args_dict):
     print('\r%sINSERTED%s %s offices' % (color.GREEN, color.END, len(offices)))
 
     # Get office id for poslanec NR SR
-    q = """
-        SELECT  id FROM offices
-        WHERE   name_male='poslanec NR SR';
-        """
-    with db.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        cur.execute(q)
-        row = cur.fetchone()
-    poslanec_NR_SR_id = row['id']
-
+    office_name_male = u'poslanec NR SR'
+    poslanec_NR_SR_id = get_office_id(db, office_name_male)
+    
     # Load JSON file into database
-    path_poslanci = DIR_DATA + 'data/poslanci_NRSR_2016_2020.json'
+    terms = {
+        1: (1994, 1998),
+        2: (1998, 2002),
+        3: (2002, 2006),
+        4: (2006, 2010),
+        5: (2010, 2012),
+        6: (2012, 2016),
+        7: (2016, 2020),
+    }
+    path_poslanci = DIR_DATA + 'data/poslanci_NRSR.json'
     politicians = json_load(path_poslanci)
     for politician in politicians:
         for address in politician['addresses']:
-            q_data = (politician['firstname'], politician['surname'], address, poslanec_NR_SR_id, 2016, 2020)
+            q_data = (
+                politician['firstname'],
+                politician['surname'],
+                politician['title'],
+                address,
+                politician['email'],
+                poslanec_NR_SR_id,
+                terms[politician['CisObdobia']][0],
+                terms[politician['CisObdobia']][1],
+                politician['party_nom'],
+                '\N',
+                politician['source'],
+                politician['picture']
+                )
             with db.cursor() as cur:
                 cur.execute(q_insert_politician, q_data)
-    print('\r%sINSERTED%s %s politicians' % (color.GREEN, color.END, len(politicians)))
+    print('\r%sINSERTED%s %s politicians (poslanci NR SR)' % (color.GREEN, color.END, len(politicians)))
+
+    # Get office id for poslanec MsZ Bratislava
+    office_name_male = u'poslanec Mestsk\xe9ho zastupite\u013estva Bratislava'
+    poslanec_MsZ_Bratislava_id = get_office_id(db, office_name_male)
+    
+    # Insert poslanci MsZ Bratislava
+    path_poslanci = DIR_DATA + 'data/poslanci_Bratislava.json'
+    politicians = json_load(path_poslanci)
+    num_inserted = 0
+    for politician in politicians:
+        address = politician['address']
+        if not address.strip():
+            continue
+        q_data = (
+            politician['firstname'],
+            politician['surname'],
+            politician['title'],
+            politician['address'],
+            politician['email'],
+            poslanec_MsZ_Bratislava_id,
+            politician['term_start'],
+            politician['term_end'],
+            politician['party_nom'],
+            politician['party'],
+            politician['source'],
+            politician['picture']
+            )
+        with db.cursor() as cur:
+            cur.execute(q_insert_politician, q_data)
+        num_inserted += 1
+    print('\r%sINSERTED%s %s politicians (poslanci MsZ Bratislava) out of %d' % (color.GREEN, color.END, num_inserted, len(politicians)))
+
 
     # Commit changes and close connection to database
     db.commit()
