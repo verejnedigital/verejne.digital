@@ -23,29 +23,32 @@ with open("/tmp/geocode_key.txt", 'r') as f:
 
 db = db.db_connect()
 logging.basicConfig(
-        format='%(asctime)s %(levelname)s: %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p', level=logging.DEBUG)
+        format='%(asctime)s %(levelname)s: %(message)s',
+        datefmt='%m/%d/%Y %I:%M:%S %p', level=logging.DEBUG)
 
 # global variable for tracking number of api call
 api_calls = 0
 
 # Return dictionary cursor and use mysql.* paths for tables
-def getCursor(db):
+def getCursor(set_search_path=True):
     global db
     cur = db.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    cur.execute("SET search_path = 'mysql'")
+    if set_search_path: cur.execute("SET search_path = 'mysql'")
     return cur
 
+def executeAndLog(cur, sql, params=None):
+    command = cur.mogrify(sql, params)
+    logging.info("SQL: " + command)
+    cur.execute(command)
 
 # inserts the given dictionary {(column_name: value} into the given table
 # returns the id of the inserted row
 def insertDicionary(table, d):
-    global db
-    with cur = db.cursor():
+    with getCursor() as cur:
         columns = d.keys()
         values = [d[column] for column in columns]
-        # TODO: change to cur.execute
-        print cur.mogrify('insert into %s (%s) values %s returning id',
-                          table, (AsIs(','.join(columns)), tuple(values)))
+        executeAndLog(cur, 'insert into %s (%s) values %s returning id',
+                [table, (AsIs(','.join(columns)), tuple(values))])
         return cur.fetchone()[0]
 
 class IdMaster:
@@ -62,7 +65,8 @@ class IdMaster:
         #load table to memory
         logging.info("Loading ids")
         cur = getCursor()
-        cur.execute("SELECT id, entity_name, address, original_address, lat, lng FROM entities LIMIT 100")
+        executeAndLog(cur,
+                "SELECT id, entity_name, address, original_address, lat, lng FROM entities LIMIT 100")
         for row in cur:
             norm_name = self.normalize(row["entity_name"]) 
             logging.info(norm_name)
@@ -87,7 +91,7 @@ class IdMaster:
     def getJSONForId(self, row_id):
         logging.info("getJSONForId: " + str(row_id))
         with getCursor() as cur:
-            cur = db.execute(cur, "SELECT json FROM entities WHERE id=%s", [row_id])
+            executeAndLog(cur, "SELECT json FROM entities WHERE id=%s", [row_id])
             return json.loads(cur.fetchone()["json"])
     
     # gecoodes given address.
@@ -188,16 +192,16 @@ class IdMaster:
         self.name_address[t_address] = row_id
         self.name_lat_lng[t_lat_lng] = row_id
         with getCursor() as cur:
-            cur.execute("UPDATE entities SET eid=%s WHERE id=%s", [row_id, row_id])
+            executeAndLog(cur, "UPDATE entities SET eid=%s WHERE id=%s", [row_id, row_id])
         return row_id
 
 # returns set(ids) of ids that were already geocoded in the previous rus
 def getGeocodedIds(table_name):
     logging.info("getGeocodedIds " + table_name)
     result = set()
-    with getCursor as cur:
-      sql = "SELECT orig_id FROM " + table_name + \
-      cur.execute(sql)
+    with getCursor() as cur:
+      sql = "SELECT orig_id FROM " + table_name
+      executeAndLog(cur, sql)
       for row in cur: result.add(row["orig_id"])
     return result
 
@@ -205,6 +209,47 @@ master = None
 
 # TODO: document all the params
 # The master method to gecoode raw data into our format
+# Take 'input_table' and 
+#    1) geocode it: transforms 'address_column' into lat long,
+#    2) add new entities to entities table,
+#    3) column 'id_column' is the column with identifiers in the 'input_table'.
+#       The method creates 'input_table'_geocoded_" table which contains
+#       mappings between ids from 'id_column' and entities.id for the
+#       corresponding new record in entities table
+#    4) name of the added entities is extracted from 'name_column'
+#    5) 'extra_columns' = dist{column_name: new_column_name} is a dictionary.
+#       Keys are names of columns from input_table that get also extracted from
+#       the input table. The data are extracted into table called 'new_table_name'
+#       and the column names are the values in the 'extra_columns' dictionary.
+#       As as convention, new_table_name = `source_name`_data
+#    6) to keep track from which source individual entries in entities table
+#       came from, the method adds new boolean column 'source_name', which is
+#       true if the data came from that particular source.
+
+def checkTableExists(table):
+    with getCursor() as cur:
+        executeAndLog(cur,
+                "SELECT * FROM information_schema.tables WHERE table_name=%s",
+                [table])
+        exists = bool(cur.rowcount)
+        logging.info("Exists %s = %s", table, exists)
+        return exists
+
+def getColumnType(table, column):
+    with getCursor() as cur:
+        executeAndLog(cur,
+                "SELECT data_type FROM information_schema.columns " +
+                "WHERE table_name = %s AND column_name = %s",
+                [table, column])
+        try:
+            column_type = cur.fetchone()[0]
+        except:
+            logging.info("columns does not exist")
+            return None
+        logging.info("Type %s.%s => %s", table, column, column_type)
+        return column_type
+
+
 def geocodeTable(
     input_table, name_column, address_column, id_column, source_name,
     new_table_name, extra_columns, max_process=None, address_like=None,
@@ -212,36 +257,46 @@ def geocodeTable(
     global api_calls, master
 
     cur = getCursor()
+    # Here's to the crazy ones:
+    # Create `input_table'_geocoded
     if id_column is not None:
-        geocoded_id_table = input_table + "_geocoded_" if geocoded_table is None else geocoded_table
-        if not db.checkTableExists(db.db, geocoded_id_table):
-            logging.info("Creating table: " + geocoded_id_table)
-            db.execute(cur, 
-                    "CREATE TABLE " + geocoded_id_table + "("
-                    "orig_id " + db.getColumnType(input_table, id_column) + " PRIMARY KEY,"
-                    "new_id INT)")
-            db.db.commit()
+        logging.info("Creating geocoded table")
+        # Default to *_geocoded_, unless provided otherwise.
+        geocoded_id_table = input_table + "_geocoded_" \
+                if geocoded_table is None else geocoded_table
 
-    
+        if not checkTableExists(geocoded_id_table):
+            with getCursor() as new_cursor:
+                getColumnType(input_table, id_column)
+                executeAndLog(new_cursor, 
+                    "CREATE TABLE " + geocoded_id_table + "("
+                    "orig_id " + getColumnType(input_table, id_column) + " PRIMARY KEY,"
+                    "new_id INTEGER)")
+  
+    # Create table with extra column
     if ((new_table_name is not None) and
-        (not db.checkTableExists(db.db, new_table_name))):
-        new_table_sql = "CREATE TABLE " + new_table_name + " ( id INT"
+        (not checkTableExists(new_table_name))):
+        logging.info("Creatting table: " + new_table_name)
+        new_table_sql = "CREATE TABLE " + new_table_name + " ( id INTEGER"
         for column in extra_columns:
             new_table_sql += (
-                "," + extra_columns[column] + " " + db.getColumnType(input_table, column))
-        new_table_sql += ", FOREIGN KEY (id) REFERENCES entities(id)) DEFAULT CHARSET=utf8"
-        logging.info("Creatting table: " + new_table_name)
-        logging.info(new_table_sql)
-        db.execute(cur, new_table_sql)
-        db.db.commit()
+                "," + extra_columns[column] + " " + getColumnType(input_table, column))
+        new_table_sql += ", FOREIGN KEY (id) REFERENCES entities(id))"
+        executeAndLog(cur, new_table_sql)
 
-    if (db.getColumnType("entities", source_name) is None):
-        db.execute(cur, "ALTER TABLE entities ADD " + source_name + " BOOL")
-        db.db.commit()
+    # add tag column into entities denoting the source
+    if (getColumnType("entities", source_name) is None):
+        logging.info("Adding column to entities")
+        executeAndLog(cur,
+                "ALTER TABLE entities ADD " + source_name + " BOOL")
 
+    # Build select statement, which extracts id, name, addres and extra column
+    # from the input table
     select_sql = \
             "SELECT " + \
-            (",".join([id_column, name_column + " as name", address_column + " as address"] + \
+            (",".join([id_column,
+                       name_column + " as name",
+                       address_column + " as address"] + \
                       extra_columns.keys())) + \
             " FROM " + input_table
 
@@ -260,7 +315,12 @@ def geocodeTable(
     processed = 0
     not_geocoded = 0
     skipped = 0
+    executeAndLog(cur, select_sql)
     for row in cur:
+        # For each row, if not procesed already,
+        # geocode, add new row into entities,
+        # copy extra_columns into 'new_table_name'
+        # and mark new record in entities as coming from this source.
         api_calls_before = api_calls
         processed += 1
         if (processed % 1000 == 0):
@@ -282,16 +342,18 @@ def geocodeTable(
                 new_data[extra_columns[column]] = row[column]
             insertDictionary(new_table_name, new_data)
             
-        with getCursor as new_cursor:
-            new_cursor.execute("UPDATE entities SET " + source_name + "=1 WHERE id=%s", [to_id])
+        with getCursor() as new_cursor:
+            executeAndLog(new_cursor,
+                    "UPDATE entities SET " + source_name + "=1 WHERE id=%s", [to_id])
         geocoded_ids.add(row[id_column])
         remaining -= (api_calls - api_calls_before)
         # processed requested number of api calls. stop
         if (remaining <= 0): break
+    cur.close()
 
 
 def nullOrEmpty(x):
-    return "if (" + x + " is NULL, \"\", " + x + ")" 
+    return "CASE WHEN " + x + " is NULL THEN '' ELSE " + x
 
 def getConcat(x, y, z=None):
     s="concat(" + nullOrEmpty(x) + ", \" \", " + nullOrEmpty(y)
@@ -301,7 +363,7 @@ def getConcat(x, y, z=None):
 
 def getConcatList(l):
   s = ", \" \", ".join([nullOrEmpty(x) for x in l])
-  return "concat(" + s + ")"
+  return "TRIM(CONCAT(" + s + "))"
 
 def getNewId(table_name):
     return table_name + ".new_id"
@@ -547,12 +609,32 @@ def loadFreeQuota():
 #  populateHasData()
 #else:
 master = IdMaster()
-
+geocodeTable(
+        input_table='politicians', 
+        name_column=getConcatList(["title", "firstname", "surname"]),
+        address_column="address",
+        id_column="id",
+        source_name="politicians",
+        new_table_name="politicians_data",
+        extra_columns={
+            "title": "title",
+            "firstname": "firstname",
+            "surname": "surname",
+            "email": "email",
+            "office_id": "office_id",
+            "term_start": "term_start",
+            "term_end": "term_end",
+            "party_nom": "party_nom",
+            "party": "party",
+            "source": "source",
+            "picture": "picture"}
+)
 #loadFreeQuota()
 #populateHasData()
 
 # Everything done, commit and close the connection
 logging.info("Commiting!")
-db.commit()
+#db.commit()
+db.rollback()
 db.close()
 logging.info("API Calls: " + str(api_calls))
