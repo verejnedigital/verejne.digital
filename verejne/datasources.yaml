@@ -16,3 +16,4 @@ nadacie_data: ["'nadacia'"]
 uzivatelia_vyhody_ludia_data: ["(funkcionar = 'ano') AS is_funkcionar"]
 company_stats: [trzby2014, trzby2015, zisk2014, zisk2015,
                 "kategoriazamestnanci2015", "datum_vzniku", "datum_zaniku"]
+politicians_data: [party, party_nom, term_start, term_end]
