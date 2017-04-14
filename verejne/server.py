@@ -357,16 +357,15 @@ class Entities:
     # mapping(column)
     def loadExtra(self, sql, column, attribute, mapping=None):
         log("loadExtra " + column + ", " + attribute)
-        cur = db.getCursor()
-        cur = db.execute(cur, sql)
-        for row in cur:
-            eid = row["eid"]
-            if not eid in self.eid_to_index: continue
-            value = row[column]
-            if mapping is not None: value = mapping(value)
-            setattr(self.entities["full"][self.eid_to_index[eid]],
-                    attribute, value)
-        cur.close()
+        with db.getCursor() as cur:
+            cur = db.execute(cur, sql)
+            for row in cur:
+                eid = row["eid"]
+                if not eid in self.eid_to_index: continue
+                value = row[column]
+                if mapping is not None: value = mapping(value)
+                setattr(self.entities["full"][self.eid_to_index[eid]],
+                        attribute, value)
 
     # loads all properties associated with entities. E.g, original datasource,
     # sum of contracts, connected to politics,...
@@ -494,16 +493,15 @@ class Entities:
 
     # Returns entities ([json]) of all entitities related to the one with given eid
     def getRelated(self, eid):
-        cur = db.getCursor()
-        indices = set()
-        cur = db.execute(cur, "(select distinct eid1 as eid from related where eid2=%s and " \
-            + "eid2!=eid1) union (select distinct eid2 as eid from related where eid1=%s and eid2!=eid1)", [eid, eid])
-        for row in cur:
-            indices.add(row["eid"])
-        cur.close()
-        result = [RawJson(self.entities["full"][self.eid_to_index[index]].json)
-                  for index in indices if index in self.eid_to_index]
-        return result
+        with db.getCursor() as cur:
+            indices = set()
+            cur = db.execute(cur, "(select distinct eid1 as eid from related where eid2=%s and " \
+                + "eid2!=eid1) union (select distinct eid2 as eid from related where eid1=%s and eid2!=eid1)", [eid, eid])
+            for row in cur:
+                indices.add(row["eid"])
+            result = [RawJson(self.entities["full"][self.eid_to_index[index]].json)
+                      for index in indices if index in self.eid_to_index]
+            return result
 
 entities = Entities()
 
@@ -586,15 +584,14 @@ class GetInfo(MyServer):
             if (table != "entities"):
                 sql += " JOIN " + table + " ON " + "entities.id=" + table + ".id"
             sql += " WHERE entities.eid=%s"
-            cur = db.getCursor()
-            cur = db.execute(cur, sql, [eid])
-            current = []
-            for row in cur:
-                # TODO: is this needed?
-                r = {key: row[key] for key in row}
-                current.append(r)
-            result[table] = current
-            cur.close()
+            with db.getCursor() as cur:
+                cur = db.execute(cur, sql, [eid])
+                current = []
+                for row in cur:
+                    # TODO: is this needed?
+                    r = {key: row[key] for key in row}
+                    current.append(r)
+                result[table] = current
 
         result["related"] = entities.getRelated(eid)
         return self.returnJSON(result)
@@ -608,19 +605,18 @@ class SearchEntity(MyServer):
             print "unable to parse"
             self.returnJSON(errorJSON(400, "Incorrect input text"))
             return
-        cur = db.getCursor()
-        sql = "SELECT DISTINCT eid AS eid FROM entities " + \
-              "WHERE to_tsvector('unaccent', entity_name) @@ plainto_tsquery('unaccent', %s) " + \
-              "LIMIT 20"
-        cur = db.execute(cur, sql, [text])
-        result = []
-        for row in cur:
-            try:
-                result.append({"eid": row["eid"]})
-            except:
-                pass
-        cur.close()
-        return self.returnJSON(result)
+        with db.getCursor() as cur:
+            sql = "SELECT DISTINCT eid AS eid FROM entities " + \
+                  "WHERE to_tsvector('unaccent', entity_name) @@ plainto_tsquery('unaccent', %s) " + \
+                  "LIMIT 20"
+            cur = db.execute(cur, sql, [text])
+            result = []
+            for row in cur:
+                try:
+                    result.append({"eid": row["eid"]})
+                except:
+                    pass
+            return self.returnJSON(result)
 
 # For given ico, find the corresponding eid and redirect to to its url.
 # If no matching entity found redirect to default
@@ -631,12 +627,12 @@ class IcoRedirect(MyServer):
                   " JOIN entities ON entities.id = " + table + ".id" + \
                   " WHERE ico = %s" + \
                   " LIMIT 1"
-            cur = db.getCursor()
-            cur = db.execute(cur, sql, [ico])
-            row = cur.fetchone()
-            if row is None: return None
-            cur.close()
-            return row["eid"]
+            with db.getCursor() as cur:
+                cur = db.execute(cur, sql, [ico])
+                row = cur.fetchone()
+                if row is None: return None
+                return row["eid"]
+
         eid = None
         eid = getForTable("new_orsr_data")
         if eid is None: eid = getForTable("firmy_data")
