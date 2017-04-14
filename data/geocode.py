@@ -30,10 +30,10 @@ logging.basicConfig(
 api_calls = 0
 
 # Return dictionary cursor and use mysql.* paths for tables
-def getCursor(set_search_path=True):
+def getCursor(set_search_path='mysql'):
     global db
     cur = db.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    if set_search_path: cur.execute("SET search_path = 'mysql'")
+    if set_search_path: cur.execute("SET search_path = %s", [set_search_path])
     return cur
 
 def executeAndLog(cur, sql, params=None):
@@ -43,16 +43,18 @@ def executeAndLog(cur, sql, params=None):
 
 # inserts the given dictionary {(column_name: value} into the given table
 # returns the id of the inserted row
-def insertDicionary(table, d):
+# if returnIDColumn is not None, also return 'RETURNIN returnIdColumn'
+def insertDictionary(table, d, returnIDColumn=None):
     with getCursor() as cur:
         columns = d.keys()
         values = [d[column] for column in columns]
-        executeAndLog(cur, 'insert into %s (%s) values %s returning id',
-                [table, (AsIs(','.join(columns)), tuple(values))])
-        return cur.fetchone()[0]
+        values_string = ','.join(["%s"] * len(values))
+        sql = 'INSERT INTO %s (%s) VALUES (' + values_string + ')'
+        if returnIDColumn is not None: sql += 'RETURNING ' + returnIDColumn
+        executeAndLog(cur, sql, [AsIs(table), AsIs(', '.join(columns))] + values)
+        if returnIDColumn is not None: return cur.fetchone()[0]
 
 class IdMaster:
-
     # mappings
     #  (has(name), address) -> id
     #  (hash(name), (lat, lng)) -> id
@@ -66,7 +68,7 @@ class IdMaster:
         logging.info("Loading ids")
         cur = getCursor()
         executeAndLog(cur,
-                "SELECT id, entity_name, address, original_address, lat, lng FROM entities LIMIT 100")
+                "SELECT id, entity_name, address, original_address, lat, lng FROM entities")
         for row in cur:
             norm_name = self.normalize(row["entity_name"]) 
             logging.info(norm_name)
@@ -185,13 +187,17 @@ class IdMaster:
             "lng": lng
         }
 
-        row_id = int(insertDictionary("entities", data))
-        # remember the id for the various representations
-        logging.info("Added id " + str(row_id))
-        self.address_data[hash(norm_address)] = row_id
-        self.name_address[t_address] = row_id
-        self.name_lat_lng[t_lat_lng] = row_id
         with getCursor() as cur:
+            # Add entry into entities. As this is new entity, we set its eid=id.
+            # However, before inserting the entry, we don't know id, so initially insert
+            # -1 and then set eid to match.
+            data["eid" ] = -1
+            row_id = int(insertDictionary("entities", data, returnIDColumn='id'))
+            # remember the id for the various representations
+            logging.info("Added id " + str(row_id))
+            self.address_data[hash(norm_address)] = row_id
+            self.name_address[t_address] = row_id
+            self.name_lat_lng[t_lat_lng] = row_id
             executeAndLog(cur, "UPDATE entities SET eid=%s WHERE id=%s", [row_id, row_id])
         return row_id
 
@@ -253,10 +259,9 @@ def getColumnType(table, column):
 def geocodeTable(
     input_table, name_column, address_column, id_column, source_name,
     new_table_name, extra_columns, max_process=None, address_like=None,
-    address_like_column=None, geocoded_table=None):
+    address_like_column=None, geocoded_table=None, input_table_search_path='public'):
     global api_calls, master
 
-    cur = getCursor()
     # Here's to the crazy ones:
     # Create `input_table'_geocoded
     if id_column is not None:
@@ -277,27 +282,30 @@ def geocodeTable(
     if ((new_table_name is not None) and
         (not checkTableExists(new_table_name))):
         logging.info("Creatting table: " + new_table_name)
-        new_table_sql = "CREATE TABLE " + new_table_name + " ( id INTEGER"
+        new_table_sql = "CREATE TABLE " + new_table_name + " (id INTEGER"
         for column in extra_columns:
             new_table_sql += (
-                "," + extra_columns[column] + " " + getColumnType(input_table, column))
+                ", " + extra_columns[column] + " " + getColumnType(input_table, column))
         new_table_sql += ", FOREIGN KEY (id) REFERENCES entities(id))"
-        executeAndLog(cur, new_table_sql)
+        with getCursor() as new_cursor:
+            executeAndLog(new_cursor, new_table_sql)
 
     # add tag column into entities denoting the source
+    # todo: having columns is quite bad, turn this into a table as it should be.
     if (getColumnType("entities", source_name) is None):
         logging.info("Adding column to entities")
-        executeAndLog(cur,
-                "ALTER TABLE entities ADD " + source_name + " BOOL")
+        with getCursor() as new_cursor:
+            executeAndLog(new_cursor,
+                    "ALTER TABLE entities ADD " + source_name + " BOOL")
 
     # Build select statement, which extracts id, name, addres and extra column
     # from the input table
     select_sql = \
             "SELECT " + \
-            (",".join([id_column,
+            (", ".join([id_column,
                        name_column + " as name",
                        address_column + " as address"] + \
-                      extra_columns.keys())) + \
+                       extra_columns.keys())) + \
             " FROM " + input_table
 
     if address_like is not None:
@@ -311,10 +319,13 @@ def geocodeTable(
     not_geocoded = 0
     geocoded_ids = getGeocodedIds(geocoded_id_table)
     
-    remaining = max_process
+    remaining = max_process if max_process is not None else 100
     processed = 0
     not_geocoded = 0
     skipped = 0
+    # dirty trick to escape from 'mysql' search_path. Todo: figure out proper
+    # search_paths for different kinds of tables
+    cur = getCursor(set_search_path=input_table_search_path)
     executeAndLog(cur, select_sql)
     for row in cur:
         # For each row, if not procesed already,
@@ -332,7 +343,8 @@ def geocodeTable(
             skipped += 1
             continue
         to_id = master.getId(row["name"], row["address"])
-        if (to_id is None): not_geocoded += 1
+        if (to_id is None):
+            not_geocoded += 1
         if id_column is not None:
             insertDictionary(geocoded_id_table,
                 {"orig_id": row[id_column], "new_id": to_id})
@@ -344,7 +356,7 @@ def geocodeTable(
             
         with getCursor() as new_cursor:
             executeAndLog(new_cursor,
-                    "UPDATE entities SET " + source_name + "=1 WHERE id=%s", [to_id])
+                    "UPDATE entities SET " + source_name + "=TRUE WHERE id=%s", [to_id])
         geocoded_ids.add(row[id_column])
         remaining -= (api_calls - api_calls_before)
         # processed requested number of api calls. stop
@@ -353,7 +365,7 @@ def geocodeTable(
 
 
 def nullOrEmpty(x):
-    return "CASE WHEN " + x + " is NULL THEN '' ELSE " + x
+    return "CASE WHEN " + x + " is NULL THEN '' ELSE " + x + " END"
 
 def getConcat(x, y, z=None):
     s="concat(" + nullOrEmpty(x) + ", \" \", " + nullOrEmpty(y)
@@ -362,7 +374,7 @@ def getConcat(x, y, z=None):
     return s 
 
 def getConcatList(l):
-  s = ", \" \", ".join([nullOrEmpty(x) for x in l])
+  s = ", ' ', ".join([nullOrEmpty(x) for x in l])
   return "TRIM(CONCAT(" + s + "))"
 
 def getNewId(table_name):
@@ -385,6 +397,7 @@ def getMapping(table_name):
       from_index += batch_size
     return result
 
+# TODO: rewrite this to postgres
 def populateRelated(relationship_table, colA, colB, tableA, tableB):
     print "populateRelated", relationship_table
     cur = db.getCursor()
@@ -423,6 +436,7 @@ def populateRelated(relationship_table, colA, colB, tableA, tableB):
                  "id2": newB, "eid2": id_to_eid[newB]})
     db.db.commit()
     
+# TODO: rewrite this to postgres
 def processRelated():
     logging.info("processRelated")
     cur = db.getCursor()
@@ -552,7 +566,8 @@ def process(limit):
 
 
 def populateHasData():
-    data_sources = yaml.load(open("datasources.yaml", "r"))
+    with open("../verejne/datasources.yaml", "r") as f:
+        data_sources = yaml.load(f)
     cur = db.getCursor()
     if (db.getColumnType("entities", "has_data") is None):
         db.execute(cur, "ALTER TABLE entities ADD has_data BOOL")
@@ -586,21 +601,6 @@ def populateHasData():
         cur = db.execute(cur, sql)
         db.db.commit()
 
-def loadFreeQuota():
-  api_limit = 99500
-  while api_calls < api_limit:
-      logging.info("API calls: " + str(api_calls))
-      # Bulk process many rows in tables, so that we have about 40 queries remaining or do at least one row
-      limit = int((api_limit - api_calls) / 2)
-      if limit < 1: limit = 1
-      api_calls_before = api_calls
-      process(limit)
-      if (api_calls_before == api_calls):
-          logging.info("Stopping, didn't make any API calls") 
-
-  processRelated()
-  logging.info("API calls: " + str(api_calls))
-
 #if db.args.related:
 #  logging.info("OnlyComputingRelated")
 #  processRelated()
@@ -608,33 +608,36 @@ def loadFreeQuota():
 #  logging.info("populate_has_data")
 #  populateHasData()
 #else:
-master = IdMaster()
-geocodeTable(
-        input_table='politicians', 
-        name_column=getConcatList(["title", "firstname", "surname"]),
-        address_column="address",
-        id_column="id",
-        source_name="politicians",
-        new_table_name="politicians_data",
-        extra_columns={
-            "title": "title",
-            "firstname": "firstname",
-            "surname": "surname",
-            "email": "email",
-            "office_id": "office_id",
-            "term_start": "term_start",
-            "term_end": "term_end",
-            "party_nom": "party_nom",
-            "party": "party",
-            "source": "source",
-            "picture": "picture"}
-)
-#loadFreeQuota()
-#populateHasData()
+if False:
+    # Here's an example how to geocode a particular table.
+    master = IdMaster()
+    geocodeTable(
+            input_table='politicians', 
+            name_column=getConcatList(["title", "firstname", "surname"]),
+            address_column="address",
+            id_column="id",
+            source_name="politicians",
+            new_table_name="politicians_data",
+            extra_columns={
+                "title": "title",
+                "firstname": "firstname",
+                "surname": "surname",
+                "email": "email",
+                "office_id": "office_id",
+                "term_start": "term_start",
+                "term_end": "term_end",
+                "party_nom": "party_nom",
+                "party": "party",
+                "source": "source",
+                "picture": "picture"},
+            max_process=1000000
+    )
+
+populateHasData()
 
 # Everything done, commit and close the connection
 logging.info("Commiting!")
-#db.commit()
-db.rollback()
+db.commit()
+#db.rollback()
 db.close()
 logging.info("API Calls: " + str(api_calls))
