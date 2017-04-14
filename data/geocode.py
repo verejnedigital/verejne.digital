@@ -287,8 +287,11 @@ def geocodeTable(
             new_table_sql += (
                 ", " + extra_columns[column] + " " + getColumnType(input_table, column))
         new_table_sql += ", FOREIGN KEY (id) REFERENCES entities(id))"
+        new_index_sql = "CREATE INDEX " + new_table_name + "_id_idx" \
+                        " ON " + new_table_name + " (id)"
         with getCursor() as new_cursor:
             executeAndLog(new_cursor, new_table_sql)
+            executeAndLog(new_cursor, new_index_sql)
 
     # add tag column into entities denoting the source
     # todo: having columns is quite bad, turn this into a table as it should be.
@@ -565,41 +568,40 @@ def process(limit):
         geocoded_table="relation_from_geocoded_")
 
 
-def populateHasData():
+def populateHasDataForTable(table):
     with open("../verejne/datasources.yaml", "r") as f:
         data_sources = yaml.load(f)
-    cur = db.getCursor()
-    if (db.getColumnType("entities", "has_data") is None):
-        db.execute(cur, "ALTER TABLE entities ADD has_data BOOL")
-        db.db.commit()
-
-    cur = db.execute(cur, "UPDATE entities SET has_data = NULL")
-    db.db.commit()
-
-    print "Populating has_data based on related"
-    sql = "UPDATE entities JOIN related ON entities.id = related.id1 SET entities.has_data=true"
-    cur = db.execute(cur, sql)
-    db.db.commit()
-    sql = "UPDATE entities JOIN related ON entities.id = related.id2 SET entities.has_data=true"
-    cur = db.execute(cur, sql)
-    db.db.commit()
-
-    print "Populating has_data based on contracts"
-    sql = "UPDATE entities JOIN contracts ON entities.id = contracts.id SET entities.has_data=true" 
-    cur = db.execute(cur, sql)
-    db.db.commit()
-
-    for table in data_sources:
-        if table == "entities": continue
+    with getCursor() as cur:
         print "Populating has data for", table
         condition = " OR ".join([column + " IS NOT NULL" for column in data_sources[table]])
 
         sql = "UPDATE entities " + \
-            "JOIN " + table + " ON entities.id = " + table + ".id " + \
-            "SET entities.has_data=true " + \
-            "WHERE " + condition
-        cur = db.execute(cur, sql)
-        db.db.commit()
+            "SET has_data=1 " + \
+            "FROM " + table + \
+            " WHERE entities.id = " + table + ".id " + \
+            " AND (" + condition + ")"
+        executeAndLog(cur, sql)
+
+def populateHasData():
+    with open("../verejne/datasources.yaml", "r") as f:
+        data_sources = yaml.load(f)
+
+    with getCursor() as cur:
+        #executeAndLog(cur, "UPDATE entities SET has_data = NULL")
+        for table in data_sources:
+            if table == "entities": continue
+            populateHasDataForTable(table)
+    
+        print "Populating has_data based on contracts"
+        sql = "UPDATE entities SET has_data=1 FROM contracts WHERE entities.id = contracts.id" 
+        executeAndLog(cur, sql)
+
+        print "Populating has_data based on related"
+        sql = "UPDATE entities SET has_data=1 FROM related WHERE entities.id = related.id1"
+        executeAndLog(cur, sql)
+        sql = "UPDATE entities SET has_data=1 FROM related WHERE entities.id = related.id2"
+        executeAndLog(cur, sql)
+
 
 #if db.args.related:
 #  logging.info("OnlyComputingRelated")
@@ -633,7 +635,7 @@ if False:
             max_process=1000000
     )
 
-populateHasData()
+    populateHasDataForTable('politicians_data')
 
 # Everything done, commit and close the connection
 logging.info("Commiting!")
