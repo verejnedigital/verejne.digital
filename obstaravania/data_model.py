@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
 import psycopg2
 import sqlalchemy
-from sqlalchemy import Column, Float, Integer, String, Boolean, and_
+from sqlalchemy import Column, Float, Integer, String, Boolean, DateTime, and_
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.types import Enum
 
 import contextlib
+import enum
 import os
 import yaml
 
@@ -95,6 +97,26 @@ class RawNotice(Base):
 class LastSync(Base):
     __tablename__ = 'last_sync'
     last_sync = Column(String, primary_key=True)
+
+# This table should always have only one row: the last id used for generating
+# notifications
+class LastNotificationUpdate(Base):
+    __tablename__ = 'last_notification_update'
+    last_id = Column(Integer, primary_key=True)
+
+class NotificationStatus(enum.Enum):
+    GENERATED = 1
+    APPROVED = 2
+    DECLINED = 3
+
+class Notification(Base):
+    __tablename__ = 'notification'
+    id = Column(Integer, primary_key=True)
+    candidate_id = Column(Integer, ForeignKey("candidate.id"))
+    candidate = relationship("Candidate", foreign_keys=[candidate_id])
+    status = Column(Enum(NotificationStatus))
+    date_generated = Column(DateTime)
+    date_modified = Column(DateTime)
 
 Base.metadata.create_all(engine)
 

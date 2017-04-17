@@ -8,6 +8,8 @@ OUTPUT_DIR=../../generated/obstaravania/
 
 . venv/bin/activate
 
+export LD_PRELOAD=/usr/local/lib/gcc5/libgcc_s.so.1
+
 python main.py \
 	--update_platforma --update_platforma_all \
 	--create_model \

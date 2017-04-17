@@ -1,16 +1,17 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from data_model import Firma, Obstaravanie, Firma, Candidate, Session
+from data_model import Firma, Obstaravanie, Firma, Candidate, Session, Notification, NotificationStatus
 import db
-from utils import obstaravanieToJson, getEidForIco
+from utils import obstaravanieToJson, getEidForIco, generateReport, getAddressForIco
+from sqlalchemy import update
 
 from jinja2 import Template
 import json
 from paste import httpserver
+import yaml
 import webapp2
 
 db.connect(False)
-
 
 class MyServer(webapp2.RequestHandler):
     def returnJSON(self,j):
@@ -21,6 +22,75 @@ class MyServer(webapp2.RequestHandler):
         self.response.set_status(code)
         self.returnJSON({'code': code, 'message': 'ERROR: ' + message})
 
+class UpdateNotifications:
+    def get(self):
+        # Check that the request know the secret code
+        with open("/tmp/secret.yaml", "r") as stream:
+            config = yaml.load(stream)
+            if (self.response.GET['secret'] != config['secret']):
+                self.response.write('Unauthorized request')
+                return
+
+        self.response.write("update_notificationas")
+        # As a response, we expect parameters called all_notificationid to
+        # specify which notifications are affected. If on_notificationid is also
+        # present, that means that the notification is approved.
+        approved = []
+        declined = []
+        for param in self.request.GET.keys():
+            if param.startswith("all_") and param[4:].isdigit():
+                notification_id = int(param[4:])
+                if ("on_" + str(notification_id)) in self.request.GET:
+                    approved.append(notification_id)
+                else:
+                    declined.append(notification_id)
+        with Session() as session:
+            for_report = []
+            for nid in approved:
+                notification = session.query(Notification).filter_by(id=nid).first()
+                notification.status = NotificationStatus.APPROVED
+                self.response.write(notification.candidate.obstaravanie.title)
+                for_report.append(notification)
+            for nid in declined:
+                notification = session.query(Notification).filter_by(id=nid).first()
+                notification.status = NotificationStatus.DECLINED
+
+            generateReport(for_report, '/tmp/report.pdf')
+            session.commit()
+
+class ServeNotifications(MyServer):
+    def get(self):
+        with Session() as session:
+            valid = session.query(Notification).\
+                    filter_by(status=NotificationStatus.GENERATED).\
+                    order_by(Notification.date_generated.desc())
+
+            per_company = {}
+            for notification in valid:
+                candidate = notification.candidate
+                current = {
+                        'id': notification.id,
+                        'generated': notification.date_generated,
+                        'obstaravanie': obstaravanieToJson(candidate.obstaravanie, 0),
+                        'reason': obstaravanieToJson(candidate.reason, 0)
+                }
+                company = candidate.company_id
+                if (not company in per_company):
+                    per_company[company] = {
+                            "name": candidate.company.name,
+                            "address": getAddressForIco(candidate.company.ico),
+                            "notifications": [],
+                            "first_id": candidate.id
+                    }
+                per_company[company]["notifications"].append(current)
+
+            with open("notifications.tmpl") as f:
+                singleTemplate = Template(f.read().decode("utf8"))
+            sorted_values = sorted(per_company.values(), key=lambda x: -x["first_id"])
+            html = singleTemplate.render(data=sorted_values,
+                                         secret=self.request.GET.get("secret", ""))
+            self.response.write(html.encode("utf8"))
+            
 class ServeObstaravanie(MyServer):
     def get(self):
         try:
@@ -36,7 +106,8 @@ class ServeObstaravanie(MyServer):
                 return
             j = obstaravanieToJson(obstaravanie, 20, 20)
             # TODO: before launching this, move this to load only once
-            singleTemplate = Template( open("obstaravanie.tmpl").read().decode("utf8"))
+            with open("obstaravanie.tmpl") as f:
+                singleTemplate = Template(f.read().decode("utf8"))
             html = singleTemplate.render(obstaravanie=j)
             self.response.write(html.encode("utf8"))
 
@@ -67,7 +138,8 @@ class ServeCompany(MyServer):
                         obstaravanieToJson(candidate.reason, candidates=0, full_candidates=0)
                 ])
             result["obstaravania"] = candidates
-            singleTemplate = Template(open("firma.tmpl").read().decode("utf8"))
+            with open("firma.tmpl") as f:
+                singleTemplate = Template(f.read().decode("utf8"))
             html = singleTemplate.render(firma=result)
             self.response.write(html.encode("utf8"))
 
@@ -75,13 +147,17 @@ def main():
   app = webapp2.WSGIApplication(
           [
            ('/obstaravanie', ServeObstaravanie),
-           ('/obstaravanieFirma', ServeCompany)
+           ('/obstaravanieFirma', ServeCompany),
+           ('/notifications', ServeNotifications),
+           ('/updateNotifications', UpdateNotifications),
           ], debug=False)
+
+  port = 8082 # default port for the app. TODO: move this to a flag
 
   httpserver.serve(
       app,
       host='127.0.0.1',
-      port='8082')
+      port=port)
   
 if __name__ == '__main__':
   main()
