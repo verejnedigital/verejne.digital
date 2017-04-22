@@ -7,7 +7,7 @@ function SearchComp(searchTextElem, searchStatusElem, searchResultsElem, callbac
     this.callback = callback;
 
     this.addResponse = function(eid) {
-        var obj = $.parseHTML('<a class="list-group-item list-group-item-info">' + this.search_responses[eid] +'</a>');
+        var obj = $.parseHTML('<a class="list-group-item list-group-item-danger">' + this.search_responses[eid] +'</a>');
         this.searchResultsElem.appendChild(obj[0]);
             
         if (this.callback != null) {

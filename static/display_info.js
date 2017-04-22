@@ -52,7 +52,7 @@ function addCommas(nStr) {
     while (rgx.test(x1)) {
             x1 = x1.replace(rgx, '$1' + '&nbsp;' + '$2');
     }
-    return x1 + x2;
+    return x1; // + x2
 }
 
 function showNumberCurrency(num, cur) {  
@@ -162,8 +162,8 @@ function displayInfoInternal(data, is_map_view, enable_recursive_related, show_z
   basic_data =
       "<tr><td><b>" + entity.entity_name + "&nbsp;&nbsp;</b>" +
       "<a href=\"javascript:;\" onClick=\"" + (is_map_view ? "" : "$('#searchEntityModal').modal('toggle');") + "zoomToLatLng(" + entity.lat + "," + entity.lng + "," + entity.eid + ");\"" +
-      " title=\"Zobraz na mape\"" + (is_map_view ? "class=\"verejne-menu-selected\"" : "") + ">" + (show_zoom_to ? "⎈" : "") + "</a> " +      
-      (show_zoom_to ? "" : "<a title=\"Zobraz na mape\" target=\"_blank\" href=\"" + linkShowEntityOnMap + "\">⎈</a>") +
+      " title=\"Zobraz na mape\"" + (is_map_view ? "class=\"verejne-menu-selected\"" : "") + ">" + (show_zoom_to ? "<i class=\"fa fa-map-marker\" aria-hidden=\"true\"></i>" : "") + "</a> " +      
+      (show_zoom_to ? "" : "<a title=\"Zobraz na mape\" target=\"_blank\" href=\"" + linkShowEntityOnMap + "\"><i class=\"fa fa-map-marker\" aria-hidden=\"true\"></i></a>") +
       "</td></tr><tr><td>" + entity.address + "</td></tr>";
 
   // Try to extract ico from different data sources
@@ -192,7 +192,7 @@ function displayInfoInternal(data, is_map_view, enable_recursive_related, show_z
     if (data.total_contracts != null && data.total_contracts > 0) {
       basic_data += "<tr><td>Verejné zákazky: " + openTabLink(is_map_view,
           "http://www.otvorenezmluvy.sk/documents/search?utf8=%E2%9C%93&q=" + entity.entity_name,
-          showNumber(data.total_contracts)) + "</td></tr>";
+          showNumberCurrency(data.total_contracts,"€")) + "</td></tr>";
     }
   }
 

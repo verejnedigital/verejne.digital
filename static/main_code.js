@@ -222,10 +222,11 @@ function getListHtml(sorted_entities, extra_caption) {
       '<a ' + (entity.selected ? '' : 'href="#world-top"') + ' class="list-group-item ' + color + '"'
           + (entity.selected ? '' : ' onclick="selectMarker(' + index + ');getInfo(' + index + ')"') + '>'
       + (entity.selected ? '<button type="button" class="close" onmousedown="selectMarker(' + index + ');getInfo(' + index + ')"><span aria-hidden="true">&times;</span></button>' : '')
+      + ((!entity.selected && isIndividual(entity.eid)) ? '<span style="color: ' + (isPolitician(entity) ? kPoliticianColor : kNormalColor) + ';font-size:18px;font-weight:bold;">' + (hasContractsWithState(entity) ? '<i class="fa fa-circle" aria-hidden="true"></i>' : '<i class="fa fa-circle-o" aria-hidden="true"></i>') + ' </span> ' : '')
+      + ((!entity.selected && !isIndividual(entity.eid)) ? '<i class="fa fa-circle" aria-hidden="true"></i> &nbsp; ' : '')
       + ((entity.selected && entity.info != undefined) ? entity.info : entity.title)
-      + (!isIndividual(entity.eid) ? '<span class="badge badge-list">' + entity.size + '</span>' : '')
-      + ((!entity.selected && isIndividual(entity.eid) && isPolitician(entity)) ? '<span class="badge">' + 'P' + '</span>' : '')
-      + ((!entity.selected && isIndividual(entity.eid) && getOpacityForEntity(entity) > 0.26) ? '<span class="badge">' + '€' + '</span>' : '')
+      + (!isIndividual(entity.eid) && !entity.selected ? ' <span class="many">' + entity.size + '</span>' : '')
+      + (isIndividual(entity.eid) && !entity.selected ? ' &nbsp;<span class="manygray"><i class="fa fa-chevron-right sizeCellArrow" aria-hidden="true"></i></span>' : '')
       + '</a>');
   }
   return html;
@@ -393,31 +394,52 @@ function contractsWithState(entity) {
   return (value - 0.15) * (0.75 / 0.85) + 0.25;
 }
 
-function getColorForEntity(entity) {
-  if (entity.selected) return kSelectedEntityColor;
-  if (isIndividual(entity.eid)) {
-    return kIndividualEntityColor;
-//    if (isDatasourceORSR(entity)) return "blue";
-//    if (isDatasourceZRSR(entity)) return "blue";
-//    return "blue";
+function hasContractsWithState(entity) {
+  if (entity.ds != null && entity.ds.length >= 2 && isIndividual(entity.eid)) {
+    if (entity.ds[1] > 0) return true;
   }
-  else return kOtherEntityColor;
+  return false;
+}
+
+function getColorForEntity(entity) {
+  if (entity.selected) return "yellow";
+  if (isIndividual(entity.eid)) {
+    if (hasContractsWithState(entity)) {
+      if (isPolitician(entity)) {
+        return kPoliticianColor;
+      } else {
+        return kNormalColor;  
+      }
+    } else {
+      return "white";
+    }
+  }
+  else return kNormalColor;
 }
 
 function getOpacityForEntity(entity) {
-  if (entity.selected) {
-    return 1.0;
-  } else if (isIndividual(entity.eid)) {
-//    return 1.0; 
-    return contractsWithState(entity);
+  if (isIndividual(entity.eid)) {
+    return 1.0; 
+    //return contractsWithState(entity);
   } else {
-    return 0.25;
+    return 0.75;
   }
 }
 
 function getStrokeColorForEntity(entity) {
-  if (isIndividual(entity.eid) && isPolitician(entity)) return "red";
-  return "black";
+  if (isIndividual(entity.eid)) {
+    if (isPolitician(entity)) return kPoliticianColor;
+    else return kNormalColor;
+  } 
+  return kNormalColor;
+}
+
+function getStrokeWeightForEntity(entity) {
+  if (isIndividual(entity.eid)) {    
+    if (entity.selected) return 3.0;
+    return 2.0;
+  }
+  return 0;
 }
 
 function getIcon(entity) {
@@ -427,7 +449,7 @@ function getIcon(entity) {
     path : google.maps.SymbolPath.CIRCLE,
     scale : iconScale,
     strokeColor : getStrokeColorForEntity(entity),
-    strokeWeight : 0.8,
+    strokeWeight : getStrokeWeightForEntity(entity),
     fillColor : getColorForEntity(entity),
     fillOpacity : getOpacityForEntity(entity),
   }
@@ -607,9 +629,8 @@ function drawLine(i, j, map) {
   }
   var lineSymbol = {
       path: google.maps.SymbolPath.CIRCLE,
-      scale: 5,
-      strokeColor: 'yellow',
-      strokeWeight : 4
+      scale: 5,      
+      strokeWeight : 0
   };
   console.log('draw ' + i + '->' + j);
   // Create the polyline and add the symbol to it via the 'icons' property.
@@ -620,7 +641,8 @@ function drawLine(i, j, map) {
       offset: '100%'
     }],
     strokeWeight : 1,
-    map: map
+    map: map,
+    strokeColor: '#0062db'
   });
   if (!all_lines.hasOwnProperty(i)) {
     all_lines[i] = [];
@@ -642,15 +664,101 @@ function removeLines(i, map) {
 }
 
 function initMap() {
+  var styledMapType = new google.maps.StyledMapType(
+      [
+        {elementType: 'geometry.fill', stylers: [{color: '#f1f4f5'}]},  
+        {elementType: 'geometry.stroke', stylers: [{color: '#cddae3'}]},  
+        {elementType: 'labels.text.fill', stylers: [{color: '#666666'}]}, 
+        {elementType: 'labels.text.stroke', stylers: [{color: '#ffffff'}]},
+        {
+          featureType: 'administrative',
+          elementType: 'geometry.stroke',
+          stylers: [{color: '#333333'}]
+        },
+        {
+          featureType: 'landscape',
+          elementType: 'geometry.stroke',
+          stylers: [{color: '#859fb4'}]
+        },
+        {
+          featureType: 'landscape.natural',
+          elementType: 'geometry',
+          stylers: [{color: '#f1f4f5'}]
+        },
+        {
+          featureType: 'landscape.man_made',
+          elementType: 'geometry.fill',
+          stylers: [{color: '#dae3ea' }]
+        },
+        {
+          featureType: 'road',
+          elementType: 'geometry.fill',
+          stylers: [{color: '#ffffff'}]
+        }, 
+        {
+          featureType: 'road',
+          elementType: 'geometry.stroke',
+          stylers: [{color: '#a5baca'}]
+        },
+        {
+          featureType: 'road.local',
+          elementType: 'geometry.fill',
+          stylers: [{color: '#ffffff'}]
+        }, 
+        {
+          featureType: 'transit.line',
+          elementType: 'geometry',
+          stylers: [{color: '#c5d1da'}]
+        },
+        {
+          featureType: 'transit.station',
+          elementType: 'geometry',
+          stylers: [{color: '#e6ecf1'}]
+        },
+        {
+          featureType: 'water',
+          elementType: 'geometry.fill',
+          stylers: [{color: '#ebf8ff'}]
+        },
+        {
+          featureType: 'water',
+          elementType: 'labels.text.fill',
+          stylers: [{color: '#859fb4'}]
+        },
+        {
+          featureType: 'landscape.natural',
+          elementType: 'labels',
+          stylers: [{visibility: 'off' }]
+        },
+        {
+          featureType: 'road.highway',
+          elementType: 'labels',
+          stylers: [{visibility: 'off' }]
+        },        
+        {
+          featureType: 'road.arterial',
+          elementType: 'labels',
+          stylers: [{visibility: 'off' }]
+        }        
+      ],
+      {name: 'verejne.digital'});
+
+
+
   /* Init map API */
   var centerLatLng = {lat: 48.600, lng: 19.500};
 
   var map = new google.maps.Map(document.getElementById('map'), {
     zoom: 8,
-    center: centerLatLng
+    center: centerLatLng,
+    mapTypeControlOptions: {
+      mapTypeIds: ['satellite','styled_map']
+    }
   });
 
   global_map = map;
+  map.mapTypes.set('styled_map', styledMapType);
+  map.setMapTypeId('styled_map');
 
   map.addListener('zoom_changed', function() {
     if (!server_calls_enabled) return;
