@@ -1,0 +1,51 @@
+.sidebarnav {
+  align-self: flex-start;
+  width: 100%;
+  margin-bottom: auto;
+
+}
+.navbar-header {
+  float: none;
+  background-color: inherit;
+}
+
+.navbar-toggle {
+  display: block;
+  margin-right: 0;
+}
+
+.navbar-brand {
+  padding-left: 0;
+  padding-right: 10px;
+  font-family: SourceCodePro;
+  color:  #333333;
+  font-size: 18px;
+  font-weight: 900;
+  text-align: left;
+}
+
+.navbar-brand:hover {
+  color:  #333333;
+}
+
+.navbar-collapse.collapse {
+  display: none!important;
+}
+
+.navbar-nav {
+  float: none!important;
+}
+
+.navbar-nav > li {
+  float: none;
+}
+
+.navbar-collapse.collapse.in{
+  display: block !important;
+}
+
+.icon-bar {
+  background-color: #cddae3;
+  width: 24px;
+  height: 4px;
+}

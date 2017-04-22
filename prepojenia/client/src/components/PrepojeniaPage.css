@@ -1,0 +1,63 @@
+.main,
+.container-fluid,
+.container-fluid > .row {
+  height: 100%;
+}
+
+.statuses {
+  position: absolute;
+  top: 10px;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  font-family: Roboto;
+  color: #859fb4;
+  font-size: 15px; /* Approximation due to font substitution */
+  font-weight: 400;
+}
+
+.results {
+  padding-top: 50px;
+}
+
+.beforeResultsContainer {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.beforeResults {
+  width: 100%;
+}
+
+.beforeResults > .whatSearch, .describeFor {
+  text-align: center;
+  font-family: Roboto;
+  color: #859fb4;
+  font-weight: 400;
+}
+
+.sidebar {
+  background-color: #ffffff;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.fbfooter {
+  width: 100%;
+  margin-top: auto;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  align-self: flex-end;
+}
+
+.fbfooter .col-sm-10 {
+  padding-left: 0;
+}
+
+.fbIframe {
+  border: none;
+  overflow: hidden;
+}
