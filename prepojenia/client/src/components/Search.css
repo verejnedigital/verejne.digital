@@ -24,6 +24,10 @@
   width: 100%;
 }
 
+.searchForm .searchTitle {
+  font-family: 'Source Code Pro', monospace;
+}
+
 .searchForm .col-sm-10, .col-sm-2 {
   padding-left: 0;
 }

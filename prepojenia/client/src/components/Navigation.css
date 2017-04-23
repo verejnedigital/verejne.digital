@@ -17,9 +17,9 @@
 .navbar-brand {
   padding-left: 0;
   padding-right: 10px;
-  font-family: SourceCodePro;
+  font-family: 'Source Code Pro', monospace;
   color:  #333333;
-  font-size: 18px;
+  font-size: 14px;
   font-weight: 900;
   text-align: left;
 }

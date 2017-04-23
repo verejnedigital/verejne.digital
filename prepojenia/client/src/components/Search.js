@@ -35,7 +35,7 @@ class Search extends Component {
       <div className="searchForm">
         <div className="searchLabel row">
           <div className="col-sm-offset-2 col-sm-10">
-            <h2>Vyhľadaj</h2>
+            <h2 className="searchTitle">Vyhľadaj</h2>
             najkratšie spojenie medzi dvojicou:
           </div>
         </div>

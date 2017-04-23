@@ -3,7 +3,7 @@ import TabLink from './TabLink';
 import { showNumberCurrency } from '../../utility/utilities';
 
 const SponzorstvoStran = ({ entityName, data }) => (
-  <ul>
+  <ul className="sponzorList">
     {data.map(sponzor => (
       <li key={sponzor.strana}>
         <TabLink

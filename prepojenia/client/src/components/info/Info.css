@@ -79,3 +79,7 @@ td.sizeCell > strong {
   border-top: 0;
   padding-top: 0;
 }
+
+.dataTable .sponzorList {
+  margin-bottom: 0;
+}
