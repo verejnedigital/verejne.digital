@@ -27,7 +27,7 @@ class RecursiveInfo extends Component {
         <div className="recursiveInfoWrapper">
           <button onClick={this.pack} className="btn btn-link">[-]</button>
           <div className="recursiveInfo">
-            <InfoLoader eid={this.props.eid} />
+            <InfoLoader eid={this.props.eid} recursive />
           </div>
         </div>
       );

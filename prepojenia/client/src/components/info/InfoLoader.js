@@ -24,7 +24,7 @@ class InfoLoader extends Component {
   render() {
     if (this.state.loaded) {
       return (
-        <div className="infoWrapper col-md-offset-2 col-md-8 col-lg-offset-3 col-lg-6">
+        <div className={this.props.recursive ? 'infoWrapper' : 'infoWrapper col-md-offset-2 col-md-8 col-lg-offset-3 col-lg-6'}>
           <Info data={this.state.data} eid={this.props.eid} />
           {this.props.hasConnectLine && <div className="connectLine"></div>}
         </div>
