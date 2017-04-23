@@ -1,6 +1,5 @@
 .result {
   background-color: #ffffff;
-  width: 400px;
   display: block;
   margin-left: auto;
   margin-right: auto;
@@ -78,4 +77,8 @@ td.sizeCell > strong {
 .table > tbody > tr.noBorder > td {
   border-top: 0;
   padding-top: 0;
+}
+
+.dataTable .sponzorList {
+  margin-bottom: 0;
 }
