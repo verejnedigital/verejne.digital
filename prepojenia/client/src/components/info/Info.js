@@ -41,7 +41,7 @@ class Info extends Component {
         <span className="entityName">
           <i className="fa fa-circle" aria-hidden="true"></i>&nbsp;
           {entity.entity_name}&nbsp;
-          <a title="Zobraz na mape" target="_blank" rel="noopener noreferrer" href={`?zobraz&${entity.lat}&${entity.lng}&${eid}&`}><i className="fa fa-map-marker" aria-hidden="true"></i></a>
+          <a title="Zobraz na mape" target="_blank" rel="noopener noreferrer" href={`https://verejne.digital/index.html?zobraz&${entity.lat}&${entity.lng}&${eid}&`}><i className="fa fa-map-marker" aria-hidden="true"></i></a>
         </span>
         <hr />
         <table className="dataTable table table-condensed">
@@ -108,7 +108,7 @@ class Info extends Component {
                   <strong>IČO Živnostníka:</strong>&nbsp;
                   <TabLink
                     isMapView={false}
-                    url={`zrsr.html?${data.zrsr_data[0].ico}`}
+                    url={`https://verejne.digital/zrsr.html?${data.zrsr_data[0].ico}`}
                     text={data.zrsr_data[0].ico}
                   />
                 </td>
