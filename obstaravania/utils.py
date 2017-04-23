@@ -6,6 +6,7 @@ import json
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 import requests
+from requests_toolbelt.multipart.encoder import MultipartEncoder
 import yaml
 import zipfile
 
@@ -160,20 +161,22 @@ def generateReport(notifications, filename):
     headers = {"Content-Type": "multipart/form-data"}
     with open("/tmp/zelena_posta.yaml", "r") as stream:
         config = yaml.load(stream)
+        print "config", config
     with open('/tmp/report.zip', 'rb') as report_file:
-        payload = {
-                "oauth_consumer_key": config["key"],
-                "oauth_signature": config["signature"],
-                "access_token": config["token"],
-                "oauth_signature_method": "PLAINTEXT",
-                "payload": json.dumps(metadata),
-                "callback": "https://verejne.digital",
-                "file": report_file 
-        }
-        print payload
+        multipart_data = MultipartEncoder(
+            fields=[
+                ("oauth_consumer_key", config["key"]),
+                ("oauth_signature", config["signature"]),
+                ("access_token", config["token"]),
+                ("payload", json.dumps(metadata)),
+                ("callback", "https://verejne.digital"),
+                ("file", ('report.zip', report_file, 'application/zip')),
+            ]
+        )
+        x = multipart_data.to_string()
         r = requests.post("https://www.zelenaposta.sk/online-service/online-printer",
-                          data=payload,
-                          headers=headers)
-        print r.text
+                          data=x,
+                          headers={'Content-Type': multipart_data.content_type})
+        print r
 
 
