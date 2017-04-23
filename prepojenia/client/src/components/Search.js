@@ -34,15 +34,15 @@ class Search extends Component {
     return (
       <div className="searchForm">
         <div className="searchLabel row">
-          <div className="col-sm-offset-2 col-sm-10">
+          <div className="col-sm-offset-2 col-sm-10 col-xs-offset-2 col-xs-10">
             <h2 className="searchTitle">Vyhľadaj</h2>
             najkratšie spojenie medzi dvojicou:
           </div>
         </div>
         <div className="form-horizontal">
           <div className="entitysearch form-group">
-            <label htmlFor="entitysearch1" className="col-sm-2 control-label">01</label>
-            <div className="col-sm-10">
+            <label htmlFor="entitysearch1" className="col-sm-2 control-label col-xs-2">01</label>
+            <div className="col-sm-10  col-xs-10">
               <input
                 id="entitysearch1" className="form-control" type="text"
                 value={this.state.entitysearch1} onChange={this.updateInputValue}
@@ -52,8 +52,8 @@ class Search extends Component {
             </div>
           </div>
           <div className="entitysearch form-group">
-            <label htmlFor="entitysearch2" className="col-sm-2 control-label">02</label>
-            <div className="col-sm-10">
+            <label htmlFor="entitysearch2" className="col-sm-2 control-label col-xs-2">02</label>
+            <div className="col-sm-10 col-xs-10">
               <input
                 id="entitysearch2" className="form-control" type="text"
                 value={this.state.entitysearch2} onChange={this.updateInputValue}
@@ -63,7 +63,7 @@ class Search extends Component {
             </div>
           </div>
           <div className="form-group">
-            <div className="col-sm-offset-2 col-sm-10">
+            <div className="col-sm-offset-2 col-sm-10 col-xs-offset-2 col-xs-10">
               <button
                 className="searchButton btn btn-primary"
                 onClick={this.searchOnClick}
