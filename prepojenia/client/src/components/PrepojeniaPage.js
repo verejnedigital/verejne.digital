@@ -81,7 +81,7 @@ class PrepojeniaPage extends Component {
     return (
       <div className="container-fluid">
         <div className="row">
-          <div className="sidebar col-sm-5 col-md-3">
+          <div className="sidebar col-sm-5 col-md-4 col-lg-3">
             <Navigation />
             <Search
               entitysearch1={this.state.entitysearch1}
@@ -97,7 +97,7 @@ class PrepojeniaPage extends Component {
               </div>
             </div>
           </div>
-          <div className="col-sm-7 col-md-9 main">
+          <div className="col-sm-7 col-md-8 col-lg-9 main">
             <div className="statuses">
               {this.state.searching ? (
                 'Prebieha hľadanie prepojenia ...'
