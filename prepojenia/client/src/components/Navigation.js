@@ -14,7 +14,7 @@ const Navigation = () =>
           <span className="icon-bar"></span>
           <span className="icon-bar"></span>
         </button>
-        <a className="navbar-brand">prepojenia.verejne.digital</a>
+        <a className="navbar-brand"><span className="bolder">prepojenia</span>.verejne.digital</a>
       </div>
       <div className="collapse navbar-collapse">
         <ul className="nav navbar-nav">

@@ -20,8 +20,12 @@
   font-family: 'Source Code Pro', monospace;
   color:  #333333;
   font-size: 14px;
-  font-weight: 900;
+  font-weight: 400;
   text-align: left;
+}
+
+.bolder {
+  font-weight: 700;
 }
 
 .navbar-brand:hover {
