@@ -132,9 +132,9 @@ class Entities:
     # An inverse map mapping eid to index in entities
     entities = []
     eid_to_index = {}
-    sidlaEntity = {}
-    okresyEntity = {}
-    subcityEntity = {}
+    sidlaEntity = []
+    okresyEntity = []
+    subcityEntity = []
     def __init__(self):
         self.initializeHigherEntities()
 
@@ -153,6 +153,7 @@ class Entities:
         self.loadEntitieProperties()
         self.populateHigherEntities()
         self.generateSubcities()
+        self.flattenHigherEntities()
         self.createJSONs()
 
     # Internal state used while loading cities, districts, ...
@@ -176,6 +177,9 @@ class Entities:
                     self.sidloNoAccentsCount.get(nazovNoAccents, 0) + 1
             self.noAccToOrig[nazovNoAccents] = nazov
 
+        # Since for serving we only need lists of cities, districts,... but
+        # for creating them we need them as dicts, we initially define them 
+        # here as dictionaries and then replace them by their values. 
         self.sidlaEntity = self.createEntities(sidla, "S", "O")
         self.okresyEntity = self.createEntities(okresy, "O", "K", 10)
         self.subcityEntity = {}
@@ -299,7 +303,14 @@ class Entities:
 
         self.sidlaEntity.update(outsideCities)
         self.okresyEntity.update(outsideOkres)
-    
+  
+    # For bookkeeping, sidlaEntity, okresyEntity, subcityEntity were dictionaries.
+    # For serving, we only need the values, so replace them just by the values.
+    def flattenHigherEntities(self):
+        self.sidlaEntity = self.sidlaEntity.values()
+        self.okresyEntity = self.okresyEntity.values()
+        self.subcityEntity = self.subcityEntity.values()
+
     #Loads batch_size number of entities from database, skipping first from_index entries
     #and populates internal database with them
     #Returns True if processed some entities.
@@ -413,9 +424,9 @@ class Entities:
                     entity.eid = ""
         log("createJSONs")
         processList(self.entities)
-        processList(self.subcityEntity.values())
-        processList(self.sidlaEntity.values())
-        processList(self.okresyEntity.values())
+        processList(self.subcityEntity)
+        processList(self.sidlaEntity)
+        processList(self.okresyEntity)
 
     # Returns all entities within the given bounding box at the given level
     # level == 0 -> entities
@@ -430,22 +441,24 @@ class Entities:
             self, response, lat1, lng1, lat2, lng2, level, restrictToSlovakia):
         result = []
         inputs = []
+        start_index = 0
         if (level == 0):
             #since entities are sorted, find the first possible point
-            data = self.entities#[from_point:]
             # binary search first point so that [0, left) < lat1 <= [right, )
-            left, right = 0, len(data)
+            left, right = 0, len(self.entities)
             while left < right:
                 mid = (left + right) / 2
-                if data[mid].lat < lat1: left = mid + 1
+                if self.entities[mid].lat < lat1: left = mid + 1
                 else: right = mid
-            inputs = data[left:]
-        if (level == 1): inputs = self.subcityEntity.values()
-        if (level == 2): inputs = self.sidlaEntity.values()
-        if (level == 3): inputs = self.okresyEntity.values() 
+            inputs = self.entities
+            start_index = left
+        if (level == 1): inputs = self.subcityEntity
+        if (level == 2): inputs = self.sidlaEntity
+        if (level == 3): inputs = self.okresyEntity
         response.write("[")
         first = True
-        for entity in inputs:
+        for i in xrange(start_index, len(inputs)):
+            entity = inputs[i]
             if (level == 0) and (entity.lat > lat2): break # entities are sorted, so this is fine
             if (restrictToSlovakia and (not entity.slovakia)): continue
             if ((lat1 <= entity.lat) and (entity.lat <= lat2) and
@@ -629,7 +642,7 @@ def main():
     httpserver.serve(
         app,
         host='127.0.0.1',
-        port='8088',
+        port='8080',
         use_threadpool=True)
   
 if __name__ == '__main__':
