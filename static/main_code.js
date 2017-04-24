@@ -314,18 +314,18 @@ function selectMarker(i) {
   
     server_calls_enabled = false; 
     if (entities[i].level == 1) {
-      map.setOptions({ maxZoom: 17 });
+      map.setOptions({ maxZoom: 17, minZoom: 16 });
       bounds = new google.maps.LatLngBounds();
       bounds.extend(new google.maps.LatLng(entities[i].lat, entities[i].lng));
       map.fitBounds(bounds);
       //map.panTo({ lat: entities[i].lat, lng: entities[i].lng});
-      map.setOptions({ maxZoom: null} );
+      map.setOptions({ maxZoom: null, minZoom: null} );
     } else {
       // pan to and zoom
       bounds = new google.maps.LatLngBounds();
       bounds.extend(new google.maps.LatLng(entities[i].lat1, entities[i].lng1));
       bounds.extend(new google.maps.LatLng(entities[i].lat2, entities[i].lng2));
-      map.setOptions({ minZoom: map.getZoom() + 2});
+      map.setOptions({ minZoom: map.getZoom() + 3});
       map.fitBounds(bounds);
       map.setOptions({ minZoom: null });
       //map.panTo({ lat: entities[i].lat, lng: entities[i].lng});
@@ -789,10 +789,12 @@ function initMap() {
     if (place.geometry.viewport)  bounds.union(place.geometry.viewport);
     else bounds.extend(place.geometry.location);
     // TODO: function for this
+    var bounds2 = new google.maps.LatLngBounds();
+    bounds2.extend(bounds.getCenter());
     server_calls_enabled = false; 
-    map.setOptions({ maxZoom: kZoomForEntity + 2 });
-    map.fitBounds(bounds)
-    map.setOptions({ maxZoom: null });
+    map.setOptions({ maxZoom: kZoomForEntity + 2, minZoom:17 });
+    map.fitBounds(bounds2)
+    map.setOptions({ maxZoom: null, minZoom: null });
     server_calls_enabled = true; 
     getEntities(map);
   });
