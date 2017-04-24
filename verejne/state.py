@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
+import cPickle as pickle
 import db
+import os
 import simplejson as json
 import unicodedata
 import yaml
@@ -118,7 +120,8 @@ class Entities:
     sidlaEntity = []
     okresyEntity = []
     subcityEntity = []
-    def __init__(self):
+
+    def loadFromDatabase(self):
         self.initializeHigherEntities()
 
         entities_to_load = int(db.getConfig()["entities_to_load"])
@@ -138,6 +141,35 @@ class Entities:
         self.generateSubcities()
         self.flattenHigherEntities()
         self.createJSONs()
+
+    # serialize the state needed for serving into directory.
+    def saveToDirectory(self, directory):
+        log("savetToDirectory")
+        if not os.path.exists(directory): os.makedirs(directory)
+        data = [
+                ("entities", self.entities),
+                ("eid_to_index", self.eid_to_index),
+                ("sidla_entity", self.sidlaEntity),
+                ("okresy_entity", self.okresyEntity),
+                ("subcity_entity", self.subcityEntity)
+                ]
+        for filename, component in data:
+            with open(os.path.join(directory, filename + ".pkl"), "wb") as f:
+                pickle.dump(component, f, protocol=-1)# highest protocol
+
+    # load state needed for serving from a directory.
+    def loadFromDirectory(self, directory):
+        log("loadFromDirectory")
+        with open(os.path.join(directory,  "entities.pkl"), "rb") as f:
+            self.entities = pickle.load(f)
+        with open(os.path.join(directory,  "eid_to_index.pkl"), "rb") as f:
+            self.eid_to_index = pickle.load(f)
+        with open(os.path.join(directory,  "sidla_entity.pkl"), "rb") as f:
+            self.sidlaEntity = pickle.load(f)
+        with open(os.path.join(directory,  "okresy_entity.pkl"), "rb") as f:
+            self.okresyEntity = pickle.load(f)
+        with open(os.path.join(directory,  "subcity_entity.pkl"), "rb") as f:
+            self.subcityEntity = pickle.load(f)
 
     # Internal state used while loading cities, districts, ...
     sidlaMapping = {}

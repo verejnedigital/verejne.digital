@@ -37,6 +37,7 @@ def errorJSON(code, text):
 ########################################
 
 entities = state.Entities()
+entities.loadFromDirectory("/data/www/verejne.digital/serving/prod/")
 
 ###########################################
 # Implemenatation of the server hooks
