@@ -36,11 +36,9 @@
 }
 
 .sidebar {
-  background-color: #ffffff;
   height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  padding-right: 0;
+  padding-left: 0;
 }
 
 .fbfooter {
@@ -58,4 +56,20 @@
 .fbIframe {
   border: none;
   overflow: hidden;
+}
+
+#myAffix {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #ffffff;
+  padding-right: 15px;
+  padding-left: 15px;
+}
+
+@media(max-width: 768px){
+    #myAffix{
+        position: relative !important;
+    }
 }
