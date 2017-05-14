@@ -42,6 +42,12 @@ class PrepojeniaPage extends Component {
       searching: true,
       connections: [],
     }, this.loadEntity1);
+
+    if (this.main) {
+      this.main.scrollIntoView({
+        behavior: 'smooth',
+      });
+    }
   }
 
   loadEntity1() {
@@ -99,7 +105,7 @@ class PrepojeniaPage extends Component {
               </div>
             </div>
           </div>
-          <div className="col-sm-7 col-md-8 col-lg-9 main">
+          <div className="col-sm-7 col-md-8 col-lg-9 main" ref={(el) => { this.main = el; }}>
             <div className="statuses">
               {this.state.searching ? (
                 'Prebieha hľadanie prepojenia ...'
