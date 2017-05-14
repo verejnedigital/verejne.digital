@@ -117,7 +117,7 @@ class Info extends Component {
             {findata.ico && findata.zisk15 !== undefined && findata.zisk15 !== 0 &&
               <tr>
                 <td colSpan="2">
-                  <span><strong>Zisk v 2015:</strong>&nbsp;
+                  <span><strong>Zisk v 2016:</strong>&nbsp;
                     <TabLink
                       isMapView={false}
                       url={icoUrl(findata.ico)}
@@ -135,7 +135,7 @@ class Info extends Component {
             {findata.ico && findata.trzby15 !== undefined && findata.trzby15 !== 0 &&
               <tr>
                 <td colSpan="2">
-                  <span><strong>Tržby v 2015:</strong>&nbsp;
+                  <span><strong>Tržby v 2016:</strong>&nbsp;
                     <TabLink
                       isMapView={false}
                       url={icoUrl(findata.ico)}
