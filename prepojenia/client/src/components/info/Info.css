@@ -82,3 +82,7 @@ td.sizeCell > strong {
 .dataTable .sponzorList {
   margin-bottom: 0;
 }
+
+.politician {
+  color: #e55600;
+}

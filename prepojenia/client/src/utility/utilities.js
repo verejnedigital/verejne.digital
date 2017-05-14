@@ -28,6 +28,10 @@ function isValidValue(value) {
   return !(value == null || value === 'null' || value === 'NULL' || value === 'None' || value === 'nezisten');
 }
 
+export function isPolitician(entity) {
+  return entity.sponzori_stran_data.length >= 1 || entity.stranicke_prispevky_data.length >= 1;
+}
+
 export function getFinancialData(data, ico) {
   const findata = { };
   if (data.company_stats.length > 0) {

@@ -5,7 +5,7 @@ import Vztahy from './Vztahy';
 import Zmluvy from './Zmluvy';
 import ShowTrend from './ShowTrend';
 import TabLink from './TabLink';
-import { getFinancialData, extractIco, icoUrl, showNumberCurrency, showDate } from '../../utility/utilities';
+import { getFinancialData, extractIco, icoUrl, showNumberCurrency, showDate, isPolitician } from '../../utility/utilities';
 import './Info.css';
 
 class Info extends Component {
@@ -39,7 +39,7 @@ class Info extends Component {
     return (
       <div className="result">
         <span className="entityName">
-          <i className="fa fa-circle" aria-hidden="true"></i>&nbsp;
+          <i className={`fa fa-circle${isPolitician(data) ? ' politician' : ''}`} aria-hidden="true"></i>&nbsp;
           {entity.entity_name}&nbsp;
           <a title="Zobraz na mape" target="_blank" rel="noopener noreferrer" href={`https://verejne.digital/index.html?zobraz&${entity.lat}&${entity.lng}&${eid}&`}><i className="fa fa-map-marker" aria-hidden="true"></i></a>
         </span>
