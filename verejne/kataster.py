@@ -1,3 +1,4 @@
+# Experimental code by Mato
 import argparse
 import io
 import json
@@ -120,7 +121,7 @@ def get_cadastral_data(lat, lon, circumvent_geoblocking, verbose):
 
         # Accumulate owners from all pages
         print('Owners:')
-        url = url_parcel + 'Kn.Participants?%24filter=Type%2FCode+eq+1&%24select=Id%2CName%2CValidTo%2CNumerator%2CDenominator&%24expand=OwnershipRecord(%24select%3DOrder)&%24orderby=OwnershipRecord%2FOrder&%24count=true'
+        url = url_parcel + 'Kn.Participants?$select=Name&$expand=Subjects($select=FirstName,Surname;$expand=Address($select=Street,HouseNo,Municipality,Zip,State))'
         while True:
             content = download_url(url, circumvent_geoblocking, verbose)
             try:
@@ -136,7 +137,9 @@ def get_cadastral_data(lat, lon, circumvent_geoblocking, verbose):
 
             # Print owners in this batch and append them to owners list
             for owner in j['value']:
-                print('  %s' % (owner['Name']))
+                subject = owner['Subjects'][0]
+                address = subject['Address']
+                print('  %s | %s | %s | %s | %s | %s | %s' % (subject['Surname'], subject['FirstName'], address['Street'], address['HouseNo'], address['Municipality'], address['Zip'], address['State']))
             owners += j['value']
 
             # Continue with URL of next page if there is one
