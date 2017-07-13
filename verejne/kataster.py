@@ -1,4 +1,3 @@
-# Experimental code by Mato
 import argparse
 import io
 import json
@@ -102,8 +101,26 @@ def get_cadastral_data(lat, lon, circumvent_geoblocking, verbose):
         if verbose:
             print('Downloading Parcel%c with ID %s...' % (parcel_type, ID))
 
+        url_parcel = 'https://kataster.skgeodesy.sk/PortalOData/Parcels' + parcel_type + '(' + ID + ')/'
+        
+        # Download parcel metadata
+        url = url_parcel + '?$select=Id,ValidTo,No,Area,HouseNo,Extent&$expand=OwnershipType($select=Name,Code),CadastralUnit($select=Name,Code),Localization($select=Name),Municipality($select=Name),LandUse($select=Name),SharedProperty($select=Name),ProtectedProperty($select=Name),Affiliation($select=Name),Folio($select=Id,No),Utilisation($select=Name),Status($select=Code)'
+        content = download_url(url, circumvent_geoblocking, verbose)
+        try:
+            j = json.loads(content)
+        except:
+            print('Warning: Could not parse parcel metadata response JSON:')
+            print(content)
+            break
+        print('LandUse:\n  %s' % (j['LandUse']['Name']))
+        print('Utilisation:\n  %s' % (j['Utilisation']['Name']))
+        print('Area:\n  %s' % (j['Area']))
+        path_output = 'Parcel%s(%s).json' % (parcel_type, ID)
+        json_dump_utf8(j, path_output)
+
         # Accumulate owners from all pages
-        url = 'https://kataster.skgeodesy.sk/PortalOData/Parcels' + parcel_type + '(' + ID + ')/Kn.Participants?%24filter=Type%2FCode+eq+1&%24select=Id%2CName%2CValidTo%2CNumerator%2CDenominator&%24expand=OwnershipRecord(%24select%3DOrder)&%24orderby=OwnershipRecord%2FOrder&%24count=true'
+        print('Owners:')
+        url = url_parcel + 'Kn.Participants?%24filter=Type%2FCode+eq+1&%24select=Id%2CName%2CValidTo%2CNumerator%2CDenominator&%24expand=OwnershipRecord(%24select%3DOrder)&%24orderby=OwnershipRecord%2FOrder&%24count=true'
         while True:
             content = download_url(url, circumvent_geoblocking, verbose)
             try:
@@ -119,7 +136,7 @@ def get_cadastral_data(lat, lon, circumvent_geoblocking, verbose):
 
             # Print owners in this batch and append them to owners list
             for owner in j['value']:
-                print('%s' % (owner['Name']))
+                print('  %s' % (owner['Name']))
             owners += j['value']
 
             # Continue with URL of next page if there is one
