@@ -5,6 +5,9 @@ import json
 import math
 import requests
 import sys
+from paste import httpserver
+import webapp2
+import yaml
 
 EARTH_EQUATORIAL_RADIUS = 6378137;
 
@@ -151,22 +154,25 @@ def get_cadastral_data(lat, lon, circumvent_geoblocking, verbose):
     path_output = 'output_owners.json'
     json_dump_utf8(owners, path_output)
     print('JSON with %d owners dumped to %s' % (len(owners), path_output))
+    return owners
 
+class KatasterInfo(MyServer):
+    def process(self):
+      lat = self.request.GET["lat"]
+      lon = self.request.GET["lon"]
+      circumvent_geoblocking = True
+      verbose = False
+      return self.returnJSON(get_cadastral_data(lat, lon, circumvent_geoblocking, verbose))
 
-# --- Make script runnable ---
-def main(args_dict):
-    # Extract query
-    lat = args_dict['lat']
-    lon = args_dict['lon']
-    circumvent_geoblocking = args_dict['circumvent_geoblocking']
-    verbose = args_dict['verbose']
-    get_cadastral_data(lat, lon, circumvent_geoblocking, verbose)
+def main():
+  app = webapp2.WSGIApplication([
+      ('/kataster_info', KatasterInfo)
+      ], debug=False)
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument('lon', type=float, help='longitude of click')
-    parser.add_argument('lat', type=float, help='latitude of click')
-    parser.add_argument('--circumvent_geoblocking', dest='circumvent_geoblocking', action='store_true', default=False, help='use ZBGIS proxy to circumvent geoblocking')
-    parser.add_argument('--verbose', dest='verbose', action='store_true', default=False)
-    args_dict = vars(parser.parse_args())
-    main(args_dict)
+  httpserver.serve(
+      app,
+      host='127.0.0.1',
+      port='8083')
+  
+if __name__ == '__main__':
+  main()
