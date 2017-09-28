@@ -119,6 +119,7 @@ def get_cadastral_data(lat, lon, circumvent_geoblocking, verbose):
         print('LandUse:\n  %s' % (j['LandUse']['Name']))
         print('Utilisation:\n  %s' % (j['Utilisation']['Name']))
         print('Area:\n  %s' % (j['Area']))
+        print('LV URL\n  https://kataster.skgeodesy.sk/EsknBo/Bo.svc/GeneratePrf?prfNumber=%s&cadastralUnitCode=%s&outputType=html' % (j['Folio']['No'], j['CadastralUnit']['Code']))
         path_output = 'Parcel%s(%s).json' % (parcel_type, ID)
         json_dump_utf8(j, path_output)
 
