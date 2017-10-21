@@ -1,0 +1,18 @@
+{
+    "name": "verejne.digital/pdfcreator",
+    "description": "tool to create PDF files with suggested offers from json",
+    "type": "project",
+    "require": {
+        "tecnickcom/tcpdf": "^6.2",
+        "smarty/smarty": "^3.1"
+    },
+    "authors": [
+        {
+            "name": "Martin Rejda",
+            "email": "rejdi@ksp.sk"
+        }
+    ],
+    "config": {
+        "preferred-install": "dist"
+    }
+}
