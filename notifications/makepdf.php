@@ -39,7 +39,7 @@ function groupBySource($data) {
 	return $data;
 }
 
-$start = microtime();
+$start = microtime(true);
 
 $groupedData = groupBySource($json);
 //var_dump($groupedData);die();
@@ -51,7 +51,7 @@ $pdfTemplate->setData($groupedData);
 //TODO: check for existance - overwrite?
 file_put_contents($argv[2], $pdfTemplate->createDocument());
 
-$end = microtime();
+$end = microtime(true);
 echo ($end - $start) . "ms to generate PDF.\n";
 
 ?>
