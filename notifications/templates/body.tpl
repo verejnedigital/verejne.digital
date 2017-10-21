@@ -94,8 +94,8 @@
 	&nbsp;&nbsp;&nbsp;&nbsp;Veríme, že Vás aspoň jedno obstarávanie zaujalo a svojou účasťou pomôžete ku lepšej kvalite, cene a iným parametrom verejných obstarávaní, čím
 	sa nepriamo zlepší efektivita štátu a v konečnom dốsledku aj život všetkých ľudí na Slovensku.
 	Zároveň pre získanie zoznamu všetkých aktuálnych obstarávaní odporúčame navštíviť <em>{$linkMore}</em>.
-</p>
 
-<div class="signature">
-S pozdravom,<br/>
-<em>Tím <strong>verejne</strong>.digital</em></div>
+	<p class="signature">
+	S pozdravom,<br/>
+	<em>Tím <strong>verejne</strong>.digital</em></p>
+</p>
