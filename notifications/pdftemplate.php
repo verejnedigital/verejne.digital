@@ -32,42 +32,42 @@ class pdfTemplate extends TCPDF {
 	}
 
 	//Page header
-    public function Header() {
-    	//botom line
-    	$x = $this->GetX();
-    	$y = $this->GetY();
-        $this->SetLineStyle(array('width' => 0.85 / $this->k, 'cap' => 'butt', 'join' => 'miter', 'dash' => 0));
-        $this->SetX($this->original_rMargin);
-        $this->SetY(20);
-        $this->Cell(($this->w - $this->original_lMargin - $this->original_rMargin), 0, '', 'T', 0, 'C');
-        $this->SetX($x);
+	public function Header() {
+		//botom line
+		$x = $this->GetX();
+		$y = $this->GetY();
+		$this->SetLineStyle(array('width' => 0.85 / $this->k, 'cap' => 'butt', 'join' => 'miter', 'dash' => 0));
+		$this->SetX($this->original_rMargin);
+		$this->SetY(20);
+		$this->Cell(($this->w - $this->original_lMargin - $this->original_rMargin), 0, '', 'T', 0, 'C');
+		$this->SetX($x);
 		$this->SetY($y);
 
-        // Logo
-        $image_file = self::LOGO_PATH;
-        $this->Image($image_file, 10, 10, 25, '', 'PNG', '', 'T', false, 300, '', false, false, 0, false, false, false);
-        //TODO: font
-        // Set font
-        $this->SetFont('helvetica', 'B', 12);
-        $this->SetTextColor(255,255,255,255);
-        $x = $this->GetX() + 2;
-        $this->SetY(15);
-        $this->SetX($x);
-        $this->Cell(15, 135, 'verejne', 0, false, '', 0, '', 0, false, 'M', 'M');
-        $this->SetFont('helvetica', '');
-        $this->Cell(20, 135, '.digital', 0, false, '', 0, '', 0, false, 'M', 'M');
-        $this->Cell(0, 135, date('j.n.Y'), 0, false, 'R', 0, '', 0, false, 'M', 'M');
-        /*$this->SetY(15);
-        $html = $this->smarty->fetch('header.tpl');
+		// Logo
+		$image_file = self::LOGO_PATH;
+		$this->Image($image_file, 10, 10, 25, '', 'PNG', '', 'T', false, 300, '', false, false, 0, false, false, false);
+		//TODO: font
+		// Set font
+		$this->SetFont('helvetica', 'B', 12);
+		$this->SetTextColor(255,255,255,255);
+		$x = $this->GetX() + 2;
+		$this->SetY(15);
+		$this->SetX($x);
+		$this->Cell(15, 135, 'verejne', 0, false, '', 0, '', 0, false, 'M', 'M');
+		$this->SetFont('helvetica', '');
+		$this->Cell(20, 135, '.digital', 0, false, '', 0, '', 0, false, 'M', 'M');
+		$this->Cell(0, 135, date('j.n.Y'), 0, false, 'R', 0, '', 0, false, 'M', 'M');
+		/*$this->SetY(15);
+		$html = $this->smarty->fetch('header.tpl');
 		$this->writeHTML($html, true, false, true, false, '');*/
-    }
+	}
 
-    // Page footer
-    public function Footer() {
-        $this->SetY(-15);
-        $html = $this->smarty->fetch('footer.tpl');
+	// Page footer
+	public function Footer() {
+		$this->SetY(-15);
+		$html = $this->smarty->fetch('footer.tpl');
 		$this->writeHTML($html, true, false, true, false, '');
-    }
+	}
 
 	public function createDocument() {
 		if ($this->smarty === null) {
