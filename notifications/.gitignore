@@ -1,6 +1,5 @@
 vendor
 *.pdf
-composer.lock
 templates/compiled/*
 !templates/compiled/.gitkeep
 templates/cache/*
