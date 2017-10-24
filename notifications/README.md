@@ -12,14 +12,16 @@
 
 # Usage / Testing
 `php makepdf.php <input_json_file> <output_pdf_file>`
+
 example:
+
 `php makepdf.php sample_data/three.json example.pdf`
 
 # Directory structure
 * [vendor] *- directory for libraries installed by composer*
 * [templates] *- directory for smarty templates with resources*
- * [cache] *- cache for smarty*
- * [compiled] *- compiled smarty templates*
+  * [cache] *- cache for smarty*
+  * [compiled] *- compiled smarty templates*
 * [resources] *- images, icons and other resources used in result*
 * [sample_data] *- sample json data*
 * composer.json *- composer project file description*
