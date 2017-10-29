@@ -161,7 +161,7 @@ def get_cadastral_data(lat, lon, circumvent_geoblocking, verbose):
 # Actual work of subclasses is done in method process
 class MyServer(webapp2.RequestHandler):
     def get(self):
-        self.process()
+      self.process()
 
 class KatasterInfo(MyServer):
     def process(self):
