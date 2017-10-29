@@ -1,0 +1,5 @@
+paste
+PyYaml
+requests
+webapp2
+webob
