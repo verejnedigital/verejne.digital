@@ -172,14 +172,21 @@ class KatasterInfo(MyServer):
       return self.returnJSON(get_cadastral_data(lat, lon, circumvent_geoblocking, verbose))
 
 def main():
+  parser = argparse.ArgumentParser()
+  parser.add_argument('--listen',
+                    help='host:port to listen on',
+                    default='127.0.0.1:8083')
+  args = parser.parse_args()
+  host, port = args.listen.split(':')
+
   app = webapp2.WSGIApplication([
       ('/kataster_info', KatasterInfo)
       ], debug=False)
 
   httpserver.serve(
       app,
-      host='127.0.0.1',
-      port='8083')
+      host=host,
+      port=port)
   
 if __name__ == '__main__':
   main()
