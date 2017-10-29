@@ -2,4 +2,4 @@
 
 . venv/bin/activate
 
-exec ./server.py
+exec ./server.py $@

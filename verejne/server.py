@@ -187,6 +187,13 @@ class IcoRedirect(MyServer):
         return self.redirect("/?zobraz&%.7f&%.7f&%d" % (entity.lat, entity.lng, eid))
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('listen',
+                        default='127.0.0.1:8080',
+                        help='host:port to listen on')
+    args = parser.parse_args()
+    host, port = args.lister.split(':')
+
     app = webapp2.WSGIApplication(
             [
                 ('/getEntities', GetEntities),
@@ -198,8 +205,8 @@ def main():
 
     httpserver.serve(
         app,
-        host='127.0.0.1',
-        port='8080',
+        host=host,
+        port=port,
         use_threadpool=True)
   
 if __name__ == '__main__':
