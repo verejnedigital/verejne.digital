@@ -160,17 +160,8 @@ def get_cadastral_data(lat, lon, circumvent_geoblocking, verbose):
 # All individual hooks inherit from this class outputting jsons
 # Actual work of subclasses is done in method process
 class MyServer(webapp2.RequestHandler):
-    def returnJSON(self,j):
-        self.response.headers['Content-Type'] = 'application/json'
-        self.response.write(json.dumps(j, separators=(',',':')))
-
     def get(self):
         self.process()
-        try:
-            pass
-        except:
-            self.returnJSON(errorJSON(
-                500, "Internal server error: sa mi neda vycentrovat!"))
 
 class KatasterInfo(MyServer):
     def process(self):
