@@ -20,6 +20,9 @@
 		page-break-inside: avoid;
 		padding: 3pt 0;
 	}
+	.offers {
+		padding: 0 30pt;
+	}
 	.offer .date_cell,
 	.offer .title_cell {
 		border-top: 0pt solid black;
@@ -52,11 +55,12 @@
 </style>
 <br/>
 <p class="welcome">
-	Dobrý deň,<br/>
+	Dobrý deň,<br/><br/>
 	<br/>
 	&nbsp;&nbsp;&nbsp;&nbsp;sme z <strong>verejne</strong>.digital. Našim cieľom je zvyšovať transparentnosť, konkurenciu a kvalitu verejných obstarávaní využitím dát, ktoré poskytuje štát.
-	Preto Vám v tomto liste zasielame niektoré z aktuálne prebiehajúcich verejných obstarávaní, o ktorých si myslíme, žeby mohli byť pre Vás zaujímavé.
+	Preto Vám v tomto liste zasielame niektoré z aktuálnych verejných obstarávaní, o ktorých si myslíme, že by Vás mohli zaujímať.
 </p>
+<p></p>
 
 {foreach $data['notifications'] as $notification}
 <table class="offer">
@@ -65,7 +69,7 @@
 	<tr class="text_row"><td colspan="6" class="text_cell">{$notification['reason']['text']}</td></tr>
 	<tr class="price_row">
 		<td colspan="3" class="customer"><span><img src="resources/place.png" />{$notification['reason']['customer']}</span></td>
-		<td colspan="3"><span>Cena</span> {prettyfyPrice price=$notification['reason']['price']}</td>
+		<td colspan="3">{if isset($notification['reason']['price'])}<span>Cena</span> {prettyfyPrice price=$notification['reason']['price']}{/if}</td>
 	</tr>
 	<tr><td></td></tr>
 	<tr><td colspan="6">
@@ -82,7 +86,7 @@
 	<tr class="text_row"><td colspan="6" class="text_cell">{$offer['text']}</td></tr>
 	<tr class="price_row">
 		<td colspan="3" class="customer"><span><img src="resources/place.png" />{$offer['customer']}</span></td>
-		<td colspan="3"><span>Odhadovaná cena</span> {prettyfyPrice price=$offer['price']}</td>
+		<td colspan="3">{if isset($offer['price'])}<span>Odhadovaná cena</span> {prettyfyPrice price=$offer['price']}{/if}</td>
 	</tr>
 </table>
 <p></p>
@@ -91,10 +95,9 @@
 {/foreach}
 
 <p class="ending">
-	&nbsp;&nbsp;&nbsp;&nbsp;Veríme, že Vás aspoň jedno obstarávanie zaujalo a svojou účasťou pomôžete ku lepšej kvalite, cene a iným parametrom verejných obstarávaní, čím
-	sa nepriamo zlepší efektivita štátu a v konečnom dốsledku aj život všetkých ľudí na Slovensku.
-	Zároveň pre získanie zoznamu všetkých aktuálnych obstarávaní odporúčame navštíviť <em>{$linkMore}</em>.
-
+	&nbsp;&nbsp;&nbsp;&nbsp;Veríme, že Vás aspoň jedno obstarávanie zaujalo. Pre získanie zoznamu všetkých aktuálnych obstarávaní odporúčame navštíviť <em>{$linkMore}</em>
+	alebo oficiálnu stránku Úradu pre Verejné Obstarávania: <em>www.uvo.gov.sk</em>.
+	
 	<p class="signature">
 	S pozdravom,<br/>
 	<em>Tím <strong>verejne</strong>.digital</em></p>
