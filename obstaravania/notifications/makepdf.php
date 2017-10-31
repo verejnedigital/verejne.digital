@@ -39,9 +39,26 @@ function groupBySource($data) {
 	return $data;
 }
 
+function filterData($data) {
+	//remove price if it's 0
+	foreach ($data['notifications'] as $key => $offer) {
+
+		if ($offer['reason']['price'] == 0) {
+			unset($data['notifications']['reason']['price']);
+		}
+
+		if ($offer['what']['price'] == 0) {
+			unset($data['notifications']['what']['price']);
+		}
+	}
+	
+	return $data;
+}
+
 $start = microtime(true);
 
-$groupedData = groupBySource($json);
+$filteredData = filterData($json);
+$groupedData = groupBySource($filteredData);
 //var_dump($groupedData);die();
 
 require ('pdftemplate.php');
