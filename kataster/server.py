@@ -144,7 +144,8 @@ def get_cadastral_data(lat, lon, circumvent_geoblocking, verbose):
             for owner in j['value']:
                 subject = owner['Subjects'][0]
                 address = subject['Address']
-                print('  %s | %s | %s | %s | %s | %s | %s' % (subject['Surname'], subject['FirstName'], address['Street'], address['HouseNo'], address['Municipality'], address['Zip'], address['State']))
+                if verbose:
+                    print('  %s | %s | %s | %s | %s | %s | %s' % (subject['Surname'], subject['FirstName'], address['Street'], address['HouseNo'], address['Municipality'], address['Zip'], address['State']))
             owners += j['value']
 
             # Continue with URL of next page if there is one
