@@ -169,8 +169,8 @@ class MyServer(webapp2.RequestHandler):
 
 class KatasterInfo(MyServer):
     def process(self):
-      lat = self.request.GET["lat"]
-      lon = self.request.GET["lon"]
+      lat = float(self.request.GET["lat"])
+      lon = float(self.request.GET["lon"])
       circumvent_geoblocking = True
       verbose = False
       return self.returnJSON(get_cadastral_data(lat, lon, circumvent_geoblocking, verbose))
