@@ -193,7 +193,7 @@ function displayKatasterInfo(entity) {
   var unique_id_detail = 'detail' + unique_id;
   // Add when we have url "<tr><td><a href=\"#\">List vlastníctva (beta)</a></td></tr>" +
   return "<tr><td><div id=\"" + unique_id + "\" onclick=\"event.stopPropagation();getKatasterInfo('" + entity.lat + "','" + entity.lng + "','" + unique_id_detail + "')\">" +
-  "Kataster: <a onclick = \"javascript:;\">Vlastníci na tejto adrese (beta)</a></div><div id=\"" + unique_id_detail +"\"></div></td></tr>";
+  "Kataster: <a class=\"verejne-menu-selected\" onclick = \"javascript:;\">Vlastníci na tejto adrese (beta)</a></div><div id=\"" + unique_id_detail +"\"></div></td></tr>";
 }
 
 // if show_zoom_to is true then use the local link and javascript to show entity on the map.
