@@ -153,6 +153,49 @@ function getRecursiveInfoLink(eid, text, is_map_view, show_zoom_to) {
          "event.stopPropagation()\"><a href=\"javascript:;\"" + (is_map_view ? "class=\"verejne-menu-selected\"" : "") + ">" + text + "</a></div>";
 }
 
+function getKatasterInfo(lat, lon, unique_id_detail) {
+  document.getElementById(unique_id_detail).innerHTML = "získavame informácie ...";
+  var req = katasterURL + 'kataster_info?lat=' + lat + '&lon=' + lon;
+  var xmlhttp = new XMLHttpRequest();
+  xmlhttp.onreadystatechange = function() {
+      if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+          var jsonData = JSON.parse(xmlhttp.responseText);                    
+          console.log(jsonData.length);
+          console.log(jsonData);
+          console.log(unique_id_detail);
+          var kataster_html = '<ul>';
+          for (i = 0; i < jsonData.length; i++) {
+            kataster_html += '<li>';
+            kataster_html +=  jsonData[i].Name;
+            //for (int j = 0; j < jsonData[i].Subjects.length; j++) {
+            //}
+            kataster_html += '</li>'
+          }
+          kataster_html += '</ul>';          
+          if (jsonData.length > 0) {
+            console.log(kataster_html);            
+            if (document.getElementById(unique_id_detail) == null) {
+              console.log('Null ' + unique_id_detail);
+            }
+            document.getElementById(unique_id_detail).innerHTML = kataster_html;
+          }
+      }
+  }
+  xmlhttp.open("GET", req, true);
+  xmlhttp.send();
+  console.log('getKatasterInfo request: ' + req);  
+}
+
+function displayKatasterInfo(entity) {
+  if (!enable_kataster_data) return "";
+  unique += 1;
+  var unique_id = 'kataster' + unique;
+  var unique_id_detail = 'detail' + unique_id;
+  // Add when we have url "<tr><td><a href=\"#\">List vlastníctva (beta)</a></td></tr>" +
+  return "<tr><td><div id=\"" + unique_id + "\" onclick=\"event.stopPropagation();getKatasterInfo('" + entity.lat + "','" + entity.lng + "','" + unique_id_detail + "')\">" +
+  "Kataster: <a onclick = \"javascript:;\">Vlastníci na tejto adrese (beta)</a></div><div id=\"" + unique_id_detail +"\"></div></td></tr>";
+}
+
 // if show_zoom_to is true then use the local link and javascript to show entity on the map.
 // if show_zoom_to is false we produce external link
 function displayInfoInternal(data, is_map_view, enable_recursive_related, show_zoom_to) {	
@@ -166,6 +209,7 @@ function displayInfoInternal(data, is_map_view, enable_recursive_related, show_z
       (show_zoom_to ? "" : "<a title=\"Zobraz na mape\" target=\"_blank\" href=\"" + linkShowEntityOnMap + "\"><i class=\"fa fa-map-marker\" aria-hidden=\"true\"></i></a>") +
       "</td></tr><tr><td>" + entity.address + "</td></tr>";
 
+  basic_data += displayKatasterInfo(entity);
   // Try to extract ico from different data sources
   var ico = null;
   if (data.new_orsr_data.length >= 1) {
@@ -276,7 +320,7 @@ function displayInfoInternal(data, is_map_view, enable_recursive_related, show_z
       }
       contracts_block += "</ul></td></tr>";
       basic_data += contracts_block;
-  }
+  }  
 
   return "<table>" + basic_data + "</table>";
 }
