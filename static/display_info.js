@@ -160,19 +160,26 @@ function getKatasterInfo(lat, lon, unique_id_detail) {
   xmlhttp.onreadystatechange = function() {
       if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
           var jsonData = JSON.parse(xmlhttp.responseText);                    
-          console.log(jsonData.length);
+          console.log(jsonData.Parcels.length);
           console.log(jsonData);
           console.log(unique_id_detail);
-          var kataster_html = '<ul>';
-          for (i = 0; i < jsonData.length; i++) {
-            kataster_html += '<li>';
-            kataster_html +=  jsonData[i].Name;
-            //for (int j = 0; j < jsonData[i].Subjects.length; j++) {
-            //}
-            kataster_html += '</li>'
+          var kataster_html = '';
+          for (i = 0; i < jsonData.Parcels.length; i++) {
+            parcel = jsonData.Parcels[i];
+            console.log(parcel.Participants.length);
+            console.log(parcel);
+            kataster_html += '<a href="' + parcel.Folio.URL + '"">LV č. ' + parcel.Folio.No + ', parcela č. ' + parcel.No + '</a>'
+            kataster_html += '<ul>';
+            for (j = 0; j < parcel.Participants.length; j++) {
+              kataster_html += '<li>';
+              kataster_html +=  parcel.Participants[i].Name;
+              //for (int k = 0; k < parcel.Participants[i].Subjects.length; k++) {
+              //}
+              kataster_html += '</li>';
+            }
+            kataster_html += '</ul>';
           }
-          kataster_html += '</ul>';          
-          if (jsonData.length > 0) {
+          if (jsonData.Parcels.length > 0) {
             console.log(kataster_html);            
             if (document.getElementById(unique_id_detail) == null) {
               console.log('Null ' + unique_id_detail);
