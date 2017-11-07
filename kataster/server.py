@@ -119,15 +119,17 @@ def get_cadastral_data(lat, lon, circumvent_geoblocking, verbose):
         Parcel['ParcelType'] = parcel_type
 
         # Construct Folio URL and add it to the JSON
-        FolioURL = 'https://kataster.skgeodesy.sk/EsknBo/Bo.svc/GeneratePrf?prfNumber=%s&cadastralUnitCode=%s&outputType=html' % (Parcel['Folio']['No'], Parcel['CadastralUnit']['Code'])
-        Parcel['Folio']['URL'] = FolioURL
+        if Parcel['Folio'] is not None:
+            FolioURL = 'https://kataster.skgeodesy.sk/EsknBo/Bo.svc/GeneratePrf?prfNumber=%s&cadastralUnitCode=%s&outputType=html' % (Parcel['Folio']['No'], Parcel['CadastralUnit']['Code'])
+            Parcel['Folio']['URL'] = FolioURL
 
         # Log downloaded Parcel
         if verbose:
             print('LandUse:\n  %s' % (Parcel['LandUse']['Name']))
             print('Utilisation:\n  %s' % (Parcel['Utilisation']['Name']))
             print('Area:\n  %s' % (Parcel['Area']))
-            print('LV URL\n  %s' % (FolioURL))
+            if Parcel['Folio'] is not None:
+                print('LV URL\n  %s' % (Parcel['Folio']['URL']))
         path_output = 'Parcel%s(%s).json' % (parcel_type, ID)
         json_dump_utf8(Parcel, path_output)
 
