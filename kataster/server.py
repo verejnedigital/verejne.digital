@@ -99,8 +99,8 @@ def get_cadastral_data(lat, lon, circumvent_geoblocking, verbose):
     # Parse results into set of pairs (parcel_type, parcel_ID), where parcel_type = {C, E}
     parcels = set([(r['layerName'][-1], r['attributes']['ID']) for r in results])
 
-    # Download owners at parsed parcels
-    owners = []
+    # Download parsed Parcels
+    response = {'lat': lat, 'lon': lon, 'X': X, 'Y': Y, 'Parcels': []}
     for parcel_type, ID in parcels:
         if verbose:
             print('Downloading Parcel%c with ID %s...' % (parcel_type, ID))
@@ -111,22 +111,30 @@ def get_cadastral_data(lat, lon, circumvent_geoblocking, verbose):
         url = url_parcel + '?$select=Id,ValidTo,No,Area,HouseNo,Extent&$expand=OwnershipType($select=Name,Code),CadastralUnit($select=Name,Code),Localization($select=Name),Municipality($select=Name),LandUse($select=Name),SharedProperty($select=Name),ProtectedProperty($select=Name),Affiliation($select=Name),Folio($select=Id,No),Utilisation($select=Name),Status($select=Code)'
         content = download_url(url, circumvent_geoblocking, verbose)
         try:
-            j = json.loads(content)
+            Parcel = json.loads(content)
         except:
             print('Warning: Could not parse parcel metadata response JSON:')
             print(content)
             break
+        Parcel['ParcelType'] = parcel_type
+
+        # Construct Folio URL and add it to the JSON
+        FolioURL = 'https://kataster.skgeodesy.sk/EsknBo/Bo.svc/GeneratePrf?prfNumber=%s&cadastralUnitCode=%s&outputType=html' % (Parcel['Folio']['No'], Parcel['CadastralUnit']['Code'])
+        Parcel['Folio']['URL'] = FolioURL
+
+        # Log downloaded Parcel
         if verbose:
-            print('LandUse:\n  %s' % (j['LandUse']['Name']))
-            print('Utilisation:\n  %s' % (j['Utilisation']['Name']))
-            print('Area:\n  %s' % (j['Area']))
-            print('LV URL\n  https://kataster.skgeodesy.sk/EsknBo/Bo.svc/GeneratePrf?prfNumber=%s&cadastralUnitCode=%s&outputType=html' % (j['Folio']['No'], j['CadastralUnit']['Code']))
+            print('LandUse:\n  %s' % (Parcel['LandUse']['Name']))
+            print('Utilisation:\n  %s' % (Parcel['Utilisation']['Name']))
+            print('Area:\n  %s' % (Parcel['Area']))
+            print('LV URL\n  %s' % (FolioURL))
         path_output = 'Parcel%s(%s).json' % (parcel_type, ID)
-        json_dump_utf8(j, path_output)
+        json_dump_utf8(Parcel, path_output)
 
         # Accumulate owners from all pages
-        print('Owners:')
-        url = url_parcel + 'Kn.Participants?$select=Name&$expand=Subjects($select=FirstName,Surname;$expand=Address($select=Street,HouseNo,Municipality,Zip,State))'
+        print('Participants:')
+        url = url_parcel + 'Kn.Participants?$select=Id,Name&$expand=Subjects($select=Id,FirstName,Surname;$expand=Address($select=Id,Street,HouseNo,Municipality,Zip,State))'
+        Participants = []
         while True:
             content = download_url(url, circumvent_geoblocking, verbose)
             try:
@@ -140,24 +148,28 @@ def get_cadastral_data(lat, lon, circumvent_geoblocking, verbose):
                 print(j)
                 break
 
-            # Print owners in this batch and append them to owners list
-            for owner in j['value']:
-                subject = owner['Subjects'][0]
-                address = subject['Address']
-                if verbose:
+            # Print Participants in this batch and append them to Participants list
+            if verbose:
+                for owner in j['value']:
+                    subject = owner['Subjects'][0]
+                    address = subject['Address']
                     print('  %s | %s | %s | %s | %s | %s | %s' % (subject['Surname'], subject['FirstName'], address['Street'], address['HouseNo'], address['Municipality'], address['Zip'], address['State']))
-            owners += j['value']
+            Participants += j['value']
 
             # Continue with URL of next page if there is one
             if '@odata.nextLink' not in j:
                 break
             url = j['@odata.nextLink']
 
-    # Dump accumulated values to JSON
-    path_output = 'output_owners.json'
-    json_dump_utf8(owners, path_output)
-    print('JSON with %d owners dumped to %s' % (len(owners), path_output))
-    return owners
+        # Save to JSON response
+        Parcel['Participants'] = Participants
+        response['Parcels'].append(Parcel)
+
+    # Dump final response to JSON
+    path_output = 'response.json'
+    json_dump_utf8(response, path_output)
+    print('JSON with %d Parcels dumped to %s' % (len(response['Parcels']), path_output))
+    return response
 
 # All individual hooks inherit from this class outputting jsons
 # Actual work of subclasses is done in method process
