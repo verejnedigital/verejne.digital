@@ -55,6 +55,10 @@ function addCommas(nStr) {
     return x1; // + x2
 }
 
+function isBlank(str) {
+    return (!str || /^\s*$/.test(str));
+}
+
 function showNumberCurrency(num, cur) {  
   return addCommas(num) + " " + cur;
 }
@@ -160,37 +164,58 @@ function getKatasterInfo(lat, lon, unique_id_detail) {
   xmlhttp.onreadystatechange = function() {
       if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
           var jsonData = JSON.parse(xmlhttp.responseText);                    
-          console.log(jsonData.Parcels.length);
+          console.log(jsonData.Folios.length);
           console.log(jsonData);
           console.log(unique_id_detail);
           var kataster_html = '';
-          for (i = 0; i < jsonData.Parcels.length; i++) {
-            parcel = jsonData.Parcels[i];
-            console.log(parcel.Participants.length);
-            console.log(parcel);
+          for (i = 0; i < jsonData.Folios.length; i++) {
+            folio = jsonData.Folios[i];
+            console.log(folio.Subjects.length);
+            console.log(folio);
 
-            // Link to Folio of this Parcel (if available)
-            if (parcel.Folio != null) {
-              is_map_view = true;
-              kataster_html += openTabLink(is_map_view, parcel.Folio.URL,
-                "LV č. " + parcel.Folio.No + ", parcela č. " + parcel.No);
-            }
-            else {
-              kataster_html += 'Parcela č. ' + parcel.No + ' bez listu vlastníctva';
-            }
+            // Link to Folio
+            is_map_view = true;
+            kataster_html += openTabLink(is_map_view, folio.URL, "LV č. " + folio.No)
+            kataster_html += ", parcelné č. " + folio.ParcelNos;
 
-            // List owners of this Parcel
+            // Sort Subjects alphabetically
+            folio.Subjects.sort(function(a, b){
+              var surnameA = a.Surname.toLowerCase();
+              var surnameB = b.Surname.toLowerCase();
+              if (surnameA < surnameB) return -1;
+              if (surnameB > surnameA) return 1;
+              return 0
+            });
+
+            // List owners
             kataster_html += '<ul>';
-            for (j = 0; j < parcel.Participants.length; j++) {
+            for (j = 0; j < folio.Subjects.length; j++) {
+              subject = folio.Subjects[j];
               kataster_html += '<li>';
-              kataster_html +=  parcel.Participants[i].Name;
-              //for (int k = 0; k < parcel.Participants[i].Subjects.length; k++) {
-              //}
+              kataster_html += subject.Surname;
+              if (!isBlank(subject.FirstName))
+                kataster_html += ' ' + subject.FirstName;
+              if (!isBlank(subject.BirthSurname))
+                kataster_html += ', r. ' + subject.BirthSurname;
+              if (!isBlank(subject.Address.Street))
+                kataster_html += ', ' + subject.Address.Street;
+              else if (!isBlank(subject.Address.HouseNo))
+                kataster_html += ',';
+              if (!isBlank(subject.Address.HouseNo))
+                kataster_html += ' ' + subject.Address.HouseNo;
+              if (!isBlank(subject.Address.Zip) || !isBlank(subject.Address.Municipality))
+                kataster_html += ','
+              if (!isBlank(subject.Address.Zip))
+                kataster_html += ' ' + subject.Address.Zip;
+              if (!isBlank(subject.Address.Municipality))
+                kataster_html += ' ' + subject.Address.Municipality;
+              if (!isBlank(subject.Address.State))
+                kataster_html += ', ' + subject.Address.State;
               kataster_html += '</li>';
             }
             kataster_html += '</ul>';
           }
-          if (jsonData.Parcels.length > 0) {
+          if (jsonData.Folios.length > 0) {
             console.log(kataster_html);            
             if (document.getElementById(unique_id_detail) == null) {
               console.log('Null ' + unique_id_detail);
