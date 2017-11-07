@@ -170,12 +170,11 @@ function getKatasterInfo(lat, lon, unique_id_detail) {
             console.log(parcel);
 
             // Link to Folio of this Parcel (if available)
-            if (parcel.hasOwnProperty('Folio')) {
-              kataster_html += 'new';
+            if (parcel.Folio != null) {
               kataster_html += '<a href="' + parcel.Folio.URL + '"">LV č. ' + parcel.Folio.No + ', parcela č. ' + parcel.No + '</a>';
             }
             else {
-              kataster_html += 'Parcela č. ' + parcel.No + 'bez listu vlastníctva';
+              kataster_html += 'Parcela č. ' + parcel.No + ' bez listu vlastníctva';
             }
 
             // List owners of this Parcel
