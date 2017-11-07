@@ -1,5 +1,6 @@
 # Experimental code by Mato
 import argparse
+from collections import defaultdict
 import json
 from paste import httpserver
 import webapp2
@@ -65,8 +66,13 @@ def get_cadastral_data(lat, lon, circumvent_geoblocking, verbose):
     # Parse results into set of pairs (parcel_type, parcel_ID), where parcel_type = {C, E}
     parcels = set([(r['layerName'][-1], r['attributes']['ID']) for r in results])
 
+    # Initialize storage for downloaded Subjects and Folios
+    FoliosById = {}
+    SubjectById = {}
+    FolioSubjectIds = defaultdict(set)
+    FolioParcelNos = defaultdict(list)
+
     # Download parsed Parcels
-    response = {'lat': lat, 'lon': lon, 'X': X, 'Y': Y, 'Parcels': []}
     for parcel_type, ParcelId in parcels:
         if verbose:
             print('Downloading Parcel%c(%s)...' % (parcel_type, ParcelId))
@@ -78,41 +84,54 @@ def get_cadastral_data(lat, lon, circumvent_geoblocking, verbose):
         Parcel = download_cadastral_json(url, circumvent_geoblocking, verbose)
         if Parcel is None:
             continue
-        Parcel['ParcelType'] = parcel_type
+        # Skip Parcels without a Folio (and hence without OwnershipRecords)
+        if Parcel['Folio'] is None:
+            continue
 
-        # Construct Folio URL and add it to the JSON
-        if Parcel['Folio'] is not None:
-            FolioURL = 'https://kataster.skgeodesy.sk/EsknBo/Bo.svc/GeneratePrf?prfNumber=%s&cadastralUnitCode=%s&outputType=html' % (Parcel['Folio']['No'], Parcel['CadastralUnit']['Code'])
-            Parcel['Folio']['URL'] = FolioURL
+        # Save Folio, with constructed URL
+        FolioId = Parcel['Folio']['Id']
+        FoliosById[FolioId] = {
+            'No': Parcel['Folio']['No'],
+            'URL': 'https://kataster.skgeodesy.sk/EsknBo/Bo.svc/GeneratePrf?prfNumber=%s&cadastralUnitCode=%s&outputType=html' % (Parcel['Folio']['No'], Parcel['CadastralUnit']['Code'])
+        }
+        FolioParcelNos[FolioId].append(Parcel['No'])
 
         # Log downloaded Parcel
         if verbose:
             print('LandUse:\n  %s' % (Parcel['LandUse']['Name']))
             print('Utilisation:\n  %s' % (Parcel['Utilisation']['Name']))
             print('Area:\n  %s' % (Parcel['Area']))
-            if Parcel['Folio'] is not None:
-                print('LV URL\n  %s' % (Parcel['Folio']['URL']))
         path_output = 'Parcel%s(%s).json' % (parcel_type, ParcelId)
         json_dump_utf8(Parcel, path_output)
 
         # Accumulate owners from all pages
-        url = url_parcel + 'Kn.Participants?$select=Id,Name&$expand=Subjects($select=Id,FirstName,Surname;$expand=Address($select=Id,Street,HouseNo,Municipality,Zip,State))'
+        url = url_parcel + 'Kn.Participants?$select=Id,Name&$expand=Subjects($select=Id,FirstName,Surname,BirthSurname;$expand=Address($select=Id,Street,HouseNo,Municipality,Zip,State))'
         Participants = download_cadastral_pages(url, circumvent_geoblocking, verbose)
-        if verbose:
-            print('Owners:')
-            for Participant in Participants:
-                for Subject in Participant['Subjects']:
+        for Participant in Participants:
+            for Subject in Participant['Subjects']:
+                SubjectById[Subject['Id']] = Subject
+                FolioSubjectIds[FolioId].add(Subject['Id'])
+                if verbose:
                     Address = Subject['Address']
                     print('  %s | %s | %s | %s | %s | %s | %s' % (Subject['Surname'], Subject['FirstName'], Address['Street'], Address['HouseNo'], Address['Municipality'], Address['Zip'], Address['State']))
-        Parcel['Participants'] = Participants
 
-        # Save to JSON response
-        response['Parcels'].append(Parcel)
+    # Add Subjects and ParcelNos to the the Folios
+    for FolioId in FolioSubjectIds:
+        SubjectIds = FolioSubjectIds[FolioId]
+        FoliosById[FolioId]['Subjects'] = [SubjectById[SubjectId] for SubjectId in SubjectIds]
+        FoliosById[FolioId]['ParcelNos'] = FolioParcelNos[FolioId]
+
+    # Construct response
+    response = {
+        'lat': lat, 'lon': lon,
+        'X': X, 'Y': Y,
+        'Folios': [FoliosById[FolioId] for FolioId in FoliosById],
+    }
 
     # Dump final response to JSON
     path_output = 'response.json'
     json_dump_utf8(response, path_output)
-    print('JSON with %d Parcels dumped to %s' % (len(response['Parcels']), path_output))
+    print('JSON with %d Folios dumped to %s' % (len(response['Folios']), path_output))
     return response
 
 # All individual hooks inherit from this class outputting jsons
