@@ -168,7 +168,17 @@ function getKatasterInfo(lat, lon, unique_id_detail) {
             parcel = jsonData.Parcels[i];
             console.log(parcel.Participants.length);
             console.log(parcel);
-            kataster_html += '<a href="' + parcel.Folio.URL + '"">LV č. ' + parcel.Folio.No + ', parcela č. ' + parcel.No + '</a>'
+
+            // Link to Folio of this Parcel (if available)
+            if (parcel.hasOwnProperty('Folio')) {
+              kataster_html += 'new';
+              kataster_html += '<a href="' + parcel.Folio.URL + '"">LV č. ' + parcel.Folio.No + ', parcela č. ' + parcel.No + '</a>';
+            }
+            else {
+              kataster_html += 'Parcela č. ' + parcel.No + 'bez listu vlastníctva';
+            }
+
+            // List owners of this Parcel
             kataster_html += '<ul>';
             for (j = 0; j < parcel.Participants.length; j++) {
               kataster_html += '<li>';
