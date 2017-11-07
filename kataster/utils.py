@@ -5,12 +5,40 @@ import requests
 
 
 # --- CADASTRAL API ---
-def download_kataster_url(url, circumvent_geoblocking=False, verbose=False):
+def download_cadastral_url(url, circumvent_geoblocking=False, verbose=False):
+    """ Download a single URL, optionally using the cadastral proxy """
     if circumvent_geoblocking:
         url = 'https://zbgis.skgeodesy.sk/mkzbgis/proxy.ashx?' + url
     if verbose:
         print('URL: %s' % (url))
     return requests.get(url).text
+
+def download_cadastral_json(url, circumvent_geoblocking=False, verbose=False):
+    """ Download and parse a single JSON from the cadastral API """
+    content = download_cadastral_url(url, circumvent_geoblocking, verbose)
+    try:
+        j = json.loads(content)
+    except:
+        print('ERROR: Could not parse JSON response from URL %s:\n%s' % (url, content))
+        return None
+    if ('Message' in j) and (j['Message'].startswith('Error')):
+        print('ERROR: Error message in cadastral JSON response from URL %s:\n%s' % (url, j))
+        return None
+    return j
+
+def download_cadastral_pages(url_start, circumvent_geoblocking=False, verbose=False):
+    """ Download and parse paginated JSON from the cadatral API """
+    values = []
+    url = url_start
+    while True:
+        j = download_cadastral_json(url, circumvent_geoblocking, verbose)
+        if (j is None) or ('value' not in j):
+            break
+        values += j['value']
+        if '@odata.nextLink' not in j:
+            break
+        url = j['@odata.nextLink']
+    return values
 
 
 # --- MATH ---

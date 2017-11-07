@@ -5,7 +5,7 @@ from paste import httpserver
 import webapp2
 import yaml
 
-from utils import download_kataster_url, WGS84_to_Mercator, json_dump_utf8
+from utils import download_cadastral_json, download_cadastral_pages, WGS84_to_Mercator, json_dump_utf8
 
 """ Identifies the parcel at given (longitude, latitude) coordinates and
 returns the list of owners. The circumvent_geoblocking flag should allow
@@ -49,15 +49,9 @@ def get_cadastral_data(lat, lon, circumvent_geoblocking, verbose):
            'imageDisplay=881%2C826%2C96&'
            'returnGeometry=false&'
            'maxAllowableOffset=')
-    content = download_kataster_url(url, circumvent_geoblocking, verbose)
-    
-    # Parse response JSON
-    try:
-        json_data = json.loads(content)
-    except:
-        print('Fatal (terminating): Could not parse identify response JSON:')
-        print(content)
-        return
+    json_data = download_cadastral_json(url, circumvent_geoblocking, verbose)
+    if json_data is None:
+        return None
     
     # Check result is available
     results = [r for r in json_data['results'] if 'PARCELS' in r['layerName']]
@@ -73,21 +67,17 @@ def get_cadastral_data(lat, lon, circumvent_geoblocking, verbose):
 
     # Download parsed Parcels
     response = {'lat': lat, 'lon': lon, 'X': X, 'Y': Y, 'Parcels': []}
-    for parcel_type, ID in parcels:
+    for parcel_type, ParcelId in parcels:
         if verbose:
-            print('Downloading Parcel%c with ID %s...' % (parcel_type, ID))
+            print('Downloading Parcel%c(%s)...' % (parcel_type, ParcelId))
 
-        url_parcel = 'https://kataster.skgeodesy.sk/PortalOData/Parcels' + parcel_type + '(' + ID + ')/'
+        url_parcel = 'https://kataster.skgeodesy.sk/PortalOData/Parcels' + parcel_type + '(' + ParcelId + ')/'
         
         # Download parcel metadata
         url = url_parcel + '?$select=Id,ValidTo,No,Area,HouseNo,Extent&$expand=OwnershipType($select=Name,Code),CadastralUnit($select=Name,Code),Localization($select=Name),Municipality($select=Name),LandUse($select=Name),SharedProperty($select=Name),ProtectedProperty($select=Name),Affiliation($select=Name),Folio($select=Id,No),Utilisation($select=Name),Status($select=Code)'
-        content = download_kataster_url(url, circumvent_geoblocking, verbose)
-        try:
-            Parcel = json.loads(content)
-        except:
-            print('Warning: Could not parse parcel metadata response JSON:')
-            print(content)
-            break
+        Parcel = download_cadastral_json(url, circumvent_geoblocking, verbose)
+        if Parcel is None:
+            continue
         Parcel['ParcelType'] = parcel_type
 
         # Construct Folio URL and add it to the JSON
@@ -102,42 +92,21 @@ def get_cadastral_data(lat, lon, circumvent_geoblocking, verbose):
             print('Area:\n  %s' % (Parcel['Area']))
             if Parcel['Folio'] is not None:
                 print('LV URL\n  %s' % (Parcel['Folio']['URL']))
-        path_output = 'Parcel%s(%s).json' % (parcel_type, ID)
+        path_output = 'Parcel%s(%s).json' % (parcel_type, ParcelId)
         json_dump_utf8(Parcel, path_output)
 
         # Accumulate owners from all pages
-        if verbose:
-            print('Participants:')
         url = url_parcel + 'Kn.Participants?$select=Id,Name&$expand=Subjects($select=Id,FirstName,Surname;$expand=Address($select=Id,Street,HouseNo,Municipality,Zip,State))'
-        Participants = []
-        while True:
-            content = download_kataster_url(url, circumvent_geoblocking, verbose)
-            try:
-                j = json.loads(content)
-            except:
-                print('Warning: Could not parse owners response JSON:')
-                print(content)
-                break
-            if 'value' not in j:
-                print('Warning: no value in JSON returned by ESKN:')
-                print(j)
-                break
-
-            # Print Participants in this batch and append them to Participants list
-            if verbose:
-                for owner in j['value']:
-                    subject = owner['Subjects'][0]
-                    address = subject['Address']
-                    print('  %s | %s | %s | %s | %s | %s | %s' % (subject['Surname'], subject['FirstName'], address['Street'], address['HouseNo'], address['Municipality'], address['Zip'], address['State']))
-            Participants += j['value']
-
-            # Continue with URL of next page if there is one
-            if '@odata.nextLink' not in j:
-                break
-            url = j['@odata.nextLink']
+        Participants = download_cadastral_pages(url, circumvent_geoblocking, verbose)
+        if verbose:
+            print('Owners:')
+            for Participant in Participants:
+                for Subject in Participant['Subjects']:
+                    Address = Subject['Address']
+                    print('  %s | %s | %s | %s | %s | %s | %s' % (Subject['Surname'], Subject['FirstName'], Address['Street'], Address['HouseNo'], Address['Municipality'], Address['Zip'], Address['State']))
+        Parcel['Participants'] = Participants
 
         # Save to JSON response
-        Parcel['Participants'] = Participants
         response['Parcels'].append(Parcel)
 
     # Dump final response to JSON
