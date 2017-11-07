@@ -171,7 +171,9 @@ function getKatasterInfo(lat, lon, unique_id_detail) {
 
             // Link to Folio of this Parcel (if available)
             if (parcel.Folio != null) {
-              kataster_html += '<a href="' + parcel.Folio.URL + '"">LV č. ' + parcel.Folio.No + ', parcela č. ' + parcel.No + '</a>';
+              is_map_view = true;
+              kataster_html += openTabLink(is_map_view, parcel.Folio.URL,
+                "LV č. " + parcel.Folio.No + ", parcela č. " + parcel.No);
             }
             else {
               kataster_html += 'Parcela č. ' + parcel.No + ' bez listu vlastníctva';
