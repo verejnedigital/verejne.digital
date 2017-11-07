@@ -8,10 +8,10 @@ import yaml
 
 from utils import download_cadastral_json, download_cadastral_pages, WGS84_to_Mercator, json_dump_utf8
 
-""" Identifies the parcel at given (longitude, latitude) coordinates and
-returns the list of owners. The circumvent_geoblocking flag should allow
-the script to run in countries blocked by https://kataster.skgeodesy.sk.
-The owners are printed to stdout and a JSON is saved to output_owners.json.
+""" Identifies the parcel(s) at given (longitude, latitude) coordinates
+(with a given tolerance) and returns a list of owners, grouped by foilo.
+The circumvent_geoblocking flag allows the script to run in countries
+blocked by the https://kataster.skgeodesy.sk OData API.
 
 Example runs:
     python kataster.py 17.0910016 48.1451953 --circumvent_geoblocking
@@ -32,17 +32,22 @@ Possible issues:
 """
 
 
-def get_cadastral_data(lat, lon, circumvent_geoblocking, verbose):
+def get_cadastral_data(lat, lon, tolerance, circumvent_geoblocking, verbose):
     # Convert to Mercator (EPSG:3857)
     X, Y = WGS84_to_Mercator(lat, lon)
+    Xmin, Ymin = WGS84_to_Mercator(lat-tolerance, lon-tolerance)
+    Xmax, Ymax = WGS84_to_Mercator(lat+tolerance, lon+tolerance)
     if verbose:
         print('Mercator coordinates: (%.9f | %.9f)' % (X, Y))
 
-    # Identify object at Mercator coordinates (X, Y)
+    # Identify object(s) at/around Mercator coordinates (X, Y)
     url = ('https://kataster.skgeodesy.sk/eskn/rest/services/VRM/identify/MapServer/identify?'
            'f=json&'
-           'geometryType=esriGeometryPoint&'
-           'geometry=%7B%22x%22%3A' + ('%.9f' % (X)) + '%2C%22y%22%3A' + ('%.9f' % (Y)) + '%7D&'
+           #'geometryType=esriGeometryPoint&'
+           #'geometry=%7B%22x%22%3A' + ('%.9f' % (X)) + '%2C%22y%22%3A' + ('%.9f' % (Y)) + '%7D&'
+           #'geometry=' + ('%.9f' % (X)) + ',' + ('%.9f' % (Y)) + '&'
+           'geometryType=esriGeometryEnvelope&'
+           'geometry=' + ('%.9f' % (Xmin)) + ',' + ('%.9f' % (Ymin)) + ',' + ('%.9f' % (Xmax)) + ',' + ('%.9f' % (Ymax)) + '&'
            'sr=3857&'
            'layers=all&'  # try using all instead of 1 if does not work
            'time=&layerTimeOptions=&layerdefs=&tolerance=0&'
@@ -148,9 +153,10 @@ class KatasterInfo(MyServer):
     def process(self):
       lat = float(self.request.GET["lat"])
       lon = float(self.request.GET["lon"])
+      tolerance = 0.000075
       circumvent_geoblocking = True
       verbose = False
-      return self.returnJSON(get_cadastral_data(lat, lon, circumvent_geoblocking, verbose))
+      return self.returnJSON(get_cadastral_data(lat, lon, tolerance, circumvent_geoblocking, verbose))
 
 def main():
   parser = argparse.ArgumentParser()
