@@ -1,15 +1,11 @@
 # Experimental code by Mato
 import argparse
-import io
 import json
-import math
-import requests
-import sys
 from paste import httpserver
 import webapp2
 import yaml
 
-EARTH_EQUATORIAL_RADIUS = 6378137;
+from utils import download_kataster_url, WGS84_to_Mercator, json_dump_utf8
 
 """ Identifies the parcel at given (longitude, latitude) coordinates and
 returns the list of owners. The circumvent_geoblocking flag should allow
@@ -35,30 +31,6 @@ Possible issues:
 """
 
 
-# ----- UTILS -----
-def json_dump_utf8(var, path, indent=4, flatten_level=None):
-    with io.open(path, 'w', encoding='utf-8') as f:
-        data = json.dumps(var, f, indent=indent, sort_keys=True, separators=(',', ': '), ensure_ascii=False)
-        if (indent is not None) and (flatten_level is not None):
-            flatten_string = '\n' + ' '*(indent*flatten_level)
-            data = data.replace(flatten_string, ' ')
-            data = data.replace('\n' + ' '*(indent*(flatten_level-1)) + ']', ']')
-        f.write(unicode(data))
-
-def WGS84_to_Mercator(lat, lon):
-    x = math.radians(lon) * EARTH_EQUATORIAL_RADIUS
-    y = math.log(math.tan(math.pi / 4 + math.radians(lat) / 2)) * EARTH_EQUATORIAL_RADIUS
-    return x, y
-
-def download_url(url, circumvent_geoblocking=False, verbose=False):
-    if circumvent_geoblocking:
-        url = 'https://zbgis.skgeodesy.sk/mkzbgis/proxy.ashx?' + url
-    if verbose:
-        print('URL: %s' % (url))
-    return requests.get(url).text
-
-
-# ----- MAIN SCRIPT -----
 def get_cadastral_data(lat, lon, circumvent_geoblocking, verbose):
     # Convert to Mercator (EPSG:3857)
     X, Y = WGS84_to_Mercator(lat, lon)
@@ -77,7 +49,7 @@ def get_cadastral_data(lat, lon, circumvent_geoblocking, verbose):
            'imageDisplay=881%2C826%2C96&'
            'returnGeometry=false&'
            'maxAllowableOffset=')
-    content = download_url(url, circumvent_geoblocking, verbose)
+    content = download_kataster_url(url, circumvent_geoblocking, verbose)
     
     # Parse response JSON
     try:
@@ -109,7 +81,7 @@ def get_cadastral_data(lat, lon, circumvent_geoblocking, verbose):
         
         # Download parcel metadata
         url = url_parcel + '?$select=Id,ValidTo,No,Area,HouseNo,Extent&$expand=OwnershipType($select=Name,Code),CadastralUnit($select=Name,Code),Localization($select=Name),Municipality($select=Name),LandUse($select=Name),SharedProperty($select=Name),ProtectedProperty($select=Name),Affiliation($select=Name),Folio($select=Id,No),Utilisation($select=Name),Status($select=Code)'
-        content = download_url(url, circumvent_geoblocking, verbose)
+        content = download_kataster_url(url, circumvent_geoblocking, verbose)
         try:
             Parcel = json.loads(content)
         except:
@@ -134,11 +106,12 @@ def get_cadastral_data(lat, lon, circumvent_geoblocking, verbose):
         json_dump_utf8(Parcel, path_output)
 
         # Accumulate owners from all pages
-        print('Participants:')
+        if verbose:
+            print('Participants:')
         url = url_parcel + 'Kn.Participants?$select=Id,Name&$expand=Subjects($select=Id,FirstName,Surname;$expand=Address($select=Id,Street,HouseNo,Municipality,Zip,State))'
         Participants = []
         while True:
-            content = download_url(url, circumvent_geoblocking, verbose)
+            content = download_kataster_url(url, circumvent_geoblocking, verbose)
             try:
                 j = json.loads(content)
             except:
