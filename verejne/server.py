@@ -152,6 +152,45 @@ class SearchEntity(MyServer):
                     pass
             return self.returnJSON(result)
 
+class SearchEntityByNameAndAddress(MyServer):
+    """ Server hook allowing to search for entities by name and address
+        (given in text format). Returns a list of dictionaries, with each
+        dictionary of the form {'eid': 123456}. """
+    def process(self):
+        # Parse input
+        try:
+            firstname = self.request.GET["text"].encode("utf8")
+            surname = self.request.GET["text"].encode("utf8")
+            address = self.request.GET["text"].encode("utf8")
+        except:
+            print("SearchEntityByNameAndAddress: Unable to parse input")
+            self.returnJSON(errorJSON(400, "Incorrect input text"))
+            return
+
+        # Carry-out the logic
+        q = """
+            SELECT DISTINCT
+                eid AS eid
+            FROM
+                entities
+            WHERE
+                to_tsvector('unaccent', entity_name) @@ plainto_tsquery('unaccent', %s)
+                AND
+                to_tsvector('unaccent', entity_name) @@ plainto_tsquery('unaccent', %s)
+                AND
+                to_tsvector('unaccent', address) @@ plainto_tsquery('unaccent', %s)
+            LIMIT 20;
+            """
+        with db.getCursor() as cur:
+            cur = db.execute(cur, q, (firstname, surname, address))
+            result = []
+            for row in cur:
+                try:
+                    result.append({"eid": row["eid"]})
+                except:
+                    pass
+            return self.returnJSON(result)
+
 # For given ico, find the corresponding eid and redirect to to its url.
 # If no matching entity found redirect to default
 class IcoRedirect(MyServer):
