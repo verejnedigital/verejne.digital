@@ -240,6 +240,7 @@ def main():
                 ('/getRelated', GetRelated),
                 ('/ico', IcoRedirect),
                 ('/searchEntity', SearchEntity),
+                ('/searchEntityByNameAndAddress', SearchEntityByNameAndAddress),
             ], debug=False)
 
     httpserver.serve(
