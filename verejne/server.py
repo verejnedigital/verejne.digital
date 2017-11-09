@@ -232,7 +232,7 @@ def main():
                         default='127.0.0.1:8080',
                         help='host:port to listen on')
     args = parser.parse_args()
-    host, port = args.lister.split(':')
+    host, port = args.listen.split(':')
 
     app = webapp2.WSGIApplication(
             [
