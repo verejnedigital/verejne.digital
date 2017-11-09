@@ -228,7 +228,7 @@ class IcoRedirect(MyServer):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('listen',
+    parser.add_argument('--listen',
                         default='127.0.0.1:8080',
                         help='host:port to listen on')
     args = parser.parse_args()
