@@ -160,9 +160,9 @@ class SearchEntityByNameAndAddress(MyServer):
     def process(self):
         # Parse input
         try:
-            firstname = self.request.GET["text"].encode("utf8")
-            surname = self.request.GET["text"].encode("utf8")
-            address = self.request.GET["text"].encode("utf8")
+            firstname = self.request.GET["firstname"].encode("utf8")
+            surname = self.request.GET["surname"].encode("utf8")
+            address = self.request.GET["address"].encode("utf8")
         except:
             print("SearchEntityByNameAndAddress: Unable to parse input")
             self.returnJSON(errorJSON(400, "Incorrect input text"))
