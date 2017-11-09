@@ -177,13 +177,11 @@ class SearchEntityByNameAndAddress(MyServer):
             WHERE
                 to_tsvector('unaccent', entity_name) @@ plainto_tsquery('unaccent', %s)
                 AND
-                to_tsvector('unaccent', entity_name) @@ plainto_tsquery('unaccent', %s)
-                AND
                 to_tsvector('unaccent', address) @@ plainto_tsquery('unaccent', %s)
             LIMIT 20;
             """
         with db.getCursor() as cur:
-            cur = db.execute(cur, q, (firstname, surname, address))
+            cur = db.execute(cur, q, (firstname + ' ' + surname, address))
             result = []
             for row in cur:
                 try:
