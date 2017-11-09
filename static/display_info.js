@@ -158,6 +158,19 @@ function getRecursiveInfoLink(eid, text, is_map_view, show_zoom_to) {
 }
 
 function getKatasterInfo(lat, lon, unique_id_detail) {
+  show_zoom_to = false;
+
+  function callAjaxSearchEntities(url, result_processing_function, id, display_text) {
+    var xmlhr = new XMLHttpRequest();
+    xmlhr.onreadystatechange = function () {
+        if (xmlhr.readyState == 4 && xmlhr.status == 200) {
+          result_processing_function(xmlhr.responseText, id, display_text);
+        }
+    }
+    xmlhr.open("GET", url, true);
+    xmlhr.send();
+  }
+
   document.getElementById(unique_id_detail).innerHTML = "získavame informácie ...";
   var req = katasterURL + 'kataster_info?lat=' + lat + '&lon=' + lon;
   var xmlhttp = new XMLHttpRequest();
@@ -184,39 +197,76 @@ function getKatasterInfo(lat, lon, unique_id_detail) {
               var surnameB = b.Surname.toLowerCase();
               if (surnameA < surnameB) return -1;
               if (surnameB > surnameA) return 1;
-              return 0
+              return 0;
             });
 
             // List owners
             kataster_html += '<ul>';
             for (j = 0; j < folio.Subjects.length; j++) {
-              subject = folio.Subjects[j];
-              kataster_html += '<li>';
-              kataster_html += subject.Surname;
+              var subject = folio.Subjects[j];
+
+              // Construct name
+              var name = subject.Surname;
               if (!isBlank(subject.FirstName))
-                kataster_html += ' ' + subject.FirstName;
+                name += ' ' + subject.FirstName;
               if (!isBlank(subject.BirthSurname))
-                kataster_html += ', r. ' + subject.BirthSurname;
+                name += ', r. ' + subject.BirthSurname;
+
+              // Construct address
+              var address = '';
               if (!isBlank(subject.Address.Street))
-                kataster_html += ', ' + subject.Address.Street;
-              else if (!isBlank(subject.Address.HouseNo))
-                kataster_html += ',';
+                address += subject.Address.Street;
+                if (!isBlank(subject.Address.HouseNo))
+                  address += ' ';
               if (!isBlank(subject.Address.HouseNo))
-                kataster_html += ' ' + subject.Address.HouseNo;
+                address += subject.Address.HouseNo;
               if (!isBlank(subject.Address.Zip) || !isBlank(subject.Address.Municipality))
-                kataster_html += ','
+                address += ',';
               if (!isBlank(subject.Address.Zip))
-                kataster_html += ' ' + subject.Address.Zip;
+                address += ' ' + subject.Address.Zip;
               if (!isBlank(subject.Address.Municipality))
-                kataster_html += ' ' + subject.Address.Municipality;
+                address += ' ' + subject.Address.Municipality;
               if (!isBlank(subject.Address.State))
-                kataster_html += ', ' + subject.Address.State;
-              kataster_html += '</li>';
+                address += ', ' + subject.Address.State;;
+
+              //var state = (subject.Address.State == "SR") ? "Slovakia" : subject.Address.State;
+              //var address_search = [subject.Address.Street, subject.Address.HouseNo, subject.Address.Zip, subject.Address.Municipality, state].join(' ');
+              var address_search = [subject.Address.Street, subject.Address.Municipality].join(' ');
+
+              // Construct row in HTML
+              unique += 1;
+              var unique_id_Subject = 'Subject' + unique;
+              var display_text = name + ', ' + address;
+              kataster_html += '<li id="' + unique_id_Subject + '">' + display_text + '</li>';
+
+              // Attempt to determine eID
+              verejneURL = "https://verejne.digital/api/v/";
+              searchName = subject.FirstName + ' ' + subject.Surname;
+              //var reqSubject = verejneURL + "searchEntity?text='" + searchName + "'";
+              var reqSubject = verejneURL + "searchEntityByNameAndAddress?firstname='" + subject.FirstName + "'&surname='" + subject.Surname + "'&address='" + address_search + "'";
+              result_processing_function = function(responseText, id, display_text) {
+                var jsonDataSubject = JSON.parse(responseText);
+                console.log('(' + id + ') Subject response JSON data: ' + jsonDataSubject);
+                var entity_html = '';
+                if (jsonDataSubject.length > 0) {
+                  eid = jsonDataSubject[0].eid;
+                  entity_html = getRecursiveInfoLink(eid, display_text, is_map_view, show_zoom_to);
+                }
+                if (jsonDataSubject.length > 0) {
+                  console.log('(' + id + ') entity_html: ' + entity_html);
+                  if (document.getElementById(id) == null) {
+                    console.log('Null ' + id);
+                  }
+                  document.getElementById(id).innerHTML = entity_html;
+                }
+              }
+              callAjaxSearchEntities(reqSubject, result_processing_function, unique_id_Subject, display_text);
+              console.log('(' + unique_id_Subject + ') searchEntity request: ' + reqSubject);
             }
             kataster_html += '</ul>';
           }
           if (jsonData.Folios.length > 0) {
-            console.log(kataster_html);            
+            console.log(kataster_html);
             if (document.getElementById(unique_id_detail) == null) {
               console.log('Null ' + unique_id_detail);
             }
