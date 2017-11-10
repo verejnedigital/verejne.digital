@@ -145,14 +145,16 @@ def get_cadastral_data_for_company(company_name, circumvent_geoblocking, verbose
     # Get Subjects with matching company name
     url = CADASTRAL_API_ODATA + "Subjects/?$filter=FirstNameSearch eq null and SurnameSearch eq '" + search_string(company_name) + "'"
     Subjects = download_cadastral_pages(url, circumvent_geoblocking, verbose)
-    print('Received %d Subjects for company %s' % (len(Subjects), company_name))
+    if verbose:
+        print('Received %d Subjects for company %s' % (len(Subjects), company_name.encode('utf-8')))
 
     # Accumulate information from all found Subjects
     Folios = {}
     for Si, Subject in enumerate(Subjects):
         url = (CADASTRAL_API_ODATA + 'Subjects(' + str(Subject['Id']) + ')/Participants/?$expand=OwnershipRecord($expand=Folio($expand=CadastralUnit($expand=Municipality)))')
         Participants = download_cadastral_pages(url, circumvent_geoblocking, verbose)
-        print('(%d/%d) Subject(%s) appears in %d Participants' % (Si+1, len(Subjects), Subject['Id'], len(Participants)))
+        if verbose:
+            print('(%d/%d) Subject(%s) appears in %d Participants' % (Si+1, len(Subjects), Subject['Id'], len(Participants)))
         for Participant in Participants:
             Folio = Participant['OwnershipRecord']['Folio']
             Folios[Folio['Id']] = Folio
