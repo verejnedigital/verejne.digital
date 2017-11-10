@@ -150,16 +150,27 @@ def get_cadastral_data_for_company(company_name, circumvent_geoblocking, verbose
     # Accumulate information from all found Subjects
     Folios = {}
     for Si, Subject in enumerate(Subjects):
-        url = (CADASTRAL_API_ODATA + 'Subjects(' + str(Subject['Id']) + ')/Participants/?$expand=OwnershipRecord($expand=Folio($expand=CadastralUnit($select=Code,Name)))')
+        url = (CADASTRAL_API_ODATA + 'Subjects(' + str(Subject['Id']) + ')/Participants/?$expand=OwnershipRecord($expand=Folio($expand=CadastralUnit($expand=Municipality)))')
         Participants = download_cadastral_pages(url, circumvent_geoblocking, verbose)
         print('(%d/%d) Subject(%s) appears in %d Participants' % (Si+1, len(Subjects), Subject['Id'], len(Participants)))
         for Participant in Participants:
             Folio = Participant['OwnershipRecord']['Folio']
             Folios[Folio['Id']] = Folio
 
-    # Translate dictionary into a list of (unique) values)
+    # Translate dictionary into a list of (unique) values
     Folios = [Folios[Id] for Id in Folios]
-    return Folios
+
+    # Add Folio URLs
+    FolioURL_prefix = 'https://kataster.skgeodesy.sk/EsknBo/Bo.svc/GeneratePrf?'
+    for Folio in Folios:
+        FolioNo = Folio['No']
+        CadastralUnitCode = Folio['CadastralUnit']['Code']
+        FolioURL_suffix = 'prfNumber=%s&cadastralUnitCode=%s&outputType=html' % (FolioNo, CadastralUnitCode)
+        Folio['URL'] = FolioURL_prefix + FolioURL_suffix
+
+    # Construct and return response
+    response = {'company_name': company_name, 'Folios': Folios}
+    return response
 
 
 # All individual hooks inherit from this class outputting jsons
