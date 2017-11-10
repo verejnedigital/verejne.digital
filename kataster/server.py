@@ -6,33 +6,35 @@ from paste import httpserver
 import webapp2
 import yaml
 
-from utils import download_cadastral_json, download_cadastral_pages, WGS84_to_Mercator, json_dump_utf8
+from utils import download_cadastral_json, download_cadastral_pages, search_string, WGS84_to_Mercator, json_dump_utf8
 
-""" Identifies the parcel(s) at given (longitude, latitude) coordinates
-(with a given tolerance) and returns a list of owners, grouped by foilo.
-The circumvent_geoblocking flag allows the script to run in countries
-blocked by the https://kataster.skgeodesy.sk OData API.
-
-Example runs:
-    python kataster.py 17.0910016 48.1451953 --circumvent_geoblocking
-    (Bonaparte)
-
-    python kataster.py 17.09270 48.14588 --circumvent_geoblocking
-    (nahodny domcek nedaleko Bonaparte)
-
-    python kataster.py 21.261691 48.725668 --circumvent_geoblocking
-    (nahodny dom v Kosiciach pri Mestskom parku)
-
-Possible issues:
-- Not familiar with different coordinate systems; may not have used
-    exactly the right conversion formulas.
-- The mapExtent and imageDisplay arguments of the identify API are required,
-    but currently set to some fixed values. Based on the documentation
-    this should be fine and actually seems to work all right, but it is odd.
-"""
+CADASTRAL_API_ODATA = 'https://kataster.skgeodesy.sk/PortalOData/'
 
 
-def get_cadastral_data(lat, lon, tolerance, circumvent_geoblocking, verbose):
+def get_cadastral_data_for_coordinates(lat, lon, tolerance, circumvent_geoblocking, verbose):
+    """ Identifies the parcel(s) at given (longitude, latitude) coordinates
+    (with a given tolerance) and returns a list of owners, grouped by foilo.
+    The circumvent_geoblocking flag allows the script to run in countries
+    blocked by the https://kataster.skgeodesy.sk OData API.
+
+    Example runs:
+        python kataster.py 17.0910016 48.1451953 --circumvent_geoblocking
+        (Bonaparte)
+
+        python kataster.py 17.09270 48.14588 --circumvent_geoblocking
+        (nahodny domcek nedaleko Bonaparte)
+
+        python kataster.py 21.261691 48.725668 --circumvent_geoblocking
+        (nahodny dom v Kosiciach pri Mestskom parku)
+
+    Possible issues:
+    - Not familiar with different coordinate systems; may not have used
+        exactly the right conversion formulas.
+    - The mapExtent and imageDisplay arguments of the identify API are required,
+        but currently set to some fixed values. Based on the documentation
+        this should be fine and actually seems to work all right, but it is odd.
+    """
+
     # Convert to Mercator (EPSG:3857)
     X, Y = WGS84_to_Mercator(lat, lon)
     Xmin, Ymin = WGS84_to_Mercator(lat-tolerance, lon-tolerance)
@@ -82,7 +84,7 @@ def get_cadastral_data(lat, lon, tolerance, circumvent_geoblocking, verbose):
         if verbose:
             print('Downloading Parcel%c(%s)...' % (parcel_type, ParcelId))
 
-        url_parcel = 'https://kataster.skgeodesy.sk/PortalOData/Parcels' + parcel_type + '(' + ParcelId + ')/'
+        url_parcel = CADASTRAL_API_ODATA + 'Parcels' + parcel_type + '(' + ParcelId + ')/'
         
         # Download parcel metadata
         url = url_parcel + '?$select=Id,ValidTo,No,Area,HouseNo,Extent&$expand=OwnershipType($select=Name,Code),CadastralUnit($select=Name,Code),Localization($select=Name),Municipality($select=Name),LandUse($select=Name),SharedProperty($select=Name),ProtectedProperty($select=Name),Affiliation($select=Name),Folio($select=Id,No),Utilisation($select=Name),Status($select=Code)'
@@ -139,24 +141,54 @@ def get_cadastral_data(lat, lon, tolerance, circumvent_geoblocking, verbose):
     print('JSON with %d Folios dumped to %s' % (len(response['Folios']), path_output))
     return response
 
+def get_cadastral_data_for_company(company_name, circumvent_geoblocking, verbose):
+    # Get Subjects with matching company name
+    url = CADASTRAL_API_ODATA + "Subjects/?$filter=FirstNameSearch eq null and SurnameSearch eq '" + search_string(company_name) + "'"
+    Subjects = download_cadastral_pages(url, circumvent_geoblocking, verbose)
+    print('Received %d Subjects for company %s' % (len(Subjects), company_name))
+
+    # Accumulate information from all found Subjects
+    Folios = {}
+    for Si, Subject in enumerate(Subjects):
+        url = (CADASTRAL_API_ODATA + 'Subjects(' + str(Subject['Id']) + ')/Participants/?$expand=OwnershipRecord($expand=Folio($expand=CadastralUnit($select=Code,Name)))')
+        Participants = download_cadastral_pages(url, circumvent_geoblocking, verbose)
+        print('(%d/%d) Subject(%s) appears in %d Participants' % (Si+1, len(Subjects), Subject['Id'], len(Participants)))
+        for Participant in Participants:
+            Folio = Participant['OwnershipRecord']['Folio']
+            Folios[Folio['Id']] = Folio
+
+    # Translate dictionary into a list of (unique) values)
+    Folios = [Folios[Id] for Id in Folios]
+    return Folios
+
+
 # All individual hooks inherit from this class outputting jsons
 # Actual work of subclasses is done in method process
 class MyServer(webapp2.RequestHandler):
     def returnJSON(self,j):
-      self.response.headers['Content-Type'] = 'application/json'
-      self.response.write(json.dumps(j, separators=(',',':')))
+        self.response.headers['Content-Type'] = 'application/json'
+        self.response.write(json.dumps(j, separators=(',',':')))
 
     def get(self):
-      self.process()
+        self.process()
 
 class KatasterInfo(MyServer):
     def process(self):
-      lat = float(self.request.GET["lat"])
-      lon = float(self.request.GET["lon"])
-      tolerance = 0.000075
-      circumvent_geoblocking = True
-      verbose = False
-      return self.returnJSON(get_cadastral_data(lat, lon, tolerance, circumvent_geoblocking, verbose))
+        identifier = self.request.GET["identifier"].encode("utf8")
+        if identifier == 'coordinates':
+            lat = float(self.request.GET["lat"])
+            lon = float(self.request.GET["lon"])
+            tolerance = 0.000075
+            circumvent_geoblocking = True
+            verbose = False
+            return self.returnJSON(get_cadastral_data_for_coordinates(lat, lon, tolerance, circumvent_geoblocking, verbose))
+        elif identifier == 'company':
+            company_name = self.request.GET["name"].encode("utf8")
+            circumvent_geoblocking = True
+            verbose = False
+            return self.returnJSON(get_cadastral_data_for_company(company_name, circumvent_geoblocking, verbose))
+        else:
+            self.returnJSON(errorJSON(400, "Incorrect input text"))
 
 def main():
   parser = argparse.ArgumentParser()

@@ -2,6 +2,8 @@ import io
 import json
 import math
 import requests
+import time
+import unicodedata
 
 
 # --- CADASTRAL API ---
@@ -11,7 +13,12 @@ def download_cadastral_url(url, circumvent_geoblocking=False, verbose=False):
         url = 'https://zbgis.skgeodesy.sk/mkzbgis/proxy.ashx?' + url
     if verbose:
         print('URL: %s' % (url))
-    return requests.get(url).text
+        start_time = time.time()
+    response_text = requests.get(url).text
+    if verbose:
+        duration = time.time() - start_time
+        print('Download duration %ds' % (duration))
+    return response_text
 
 def download_cadastral_json(url, circumvent_geoblocking=False, verbose=False):
     """ Download and parse a single JSON from the cadastral API """
@@ -39,6 +46,18 @@ def download_cadastral_pages(url_start, circumvent_geoblocking=False, verbose=Fa
             break
         url = j['@odata.nextLink']
     return values
+
+
+# --- SEARCH ---
+def remove_accents(s):
+    s_NFKD = unicodedata.normalize('NFKD', s)
+    return u''.join([c for c in s_NFKD if not unicodedata.combining(c)])
+
+def search_string(s):
+    """ Function to obtain search string from original string (such
+        as FirstName or Surname), consistently with how it's done in
+        the OData cadastral API. """
+    return remove_accents(s).replace(' ', '').replace('.', '').replace(',', '').replace('-', '').lower()
 
 
 # --- MATH ---
