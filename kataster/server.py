@@ -183,7 +183,7 @@ class KatasterInfo(MyServer):
             verbose = False
             return self.returnJSON(get_cadastral_data_for_coordinates(lat, lon, tolerance, circumvent_geoblocking, verbose))
         elif identifier == 'company':
-            company_name = self.request.GET["name"].encode("utf8")
+            company_name = self.request.GET["name"].encode("utf8").decode("utf8")
             circumvent_geoblocking = True
             verbose = False
             return self.returnJSON(get_cadastral_data_for_company(company_name, circumvent_geoblocking, verbose))
