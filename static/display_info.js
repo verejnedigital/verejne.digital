@@ -172,7 +172,7 @@ function getKatasterInfoAddress(lat, lon, unique_id_detail) {
   }
 
   document.getElementById(unique_id_detail).innerHTML = "získavame informácie ...";
-  var req = katasterURL + 'kataster_info?identifier=coordinates&lat=' + lat + '&lon=' + lon;
+  var req = katasterURL + 'kataster_info_location?lat=' + lat + '&lon=' + lon;
   var xmlhttp = new XMLHttpRequest();
   xmlhttp.onreadystatechange = function() {
       if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
@@ -293,7 +293,7 @@ function getKatasterInfoCompany(company_name, unique_id_detail) {
   show_zoom_to = false;
 
   document.getElementById(unique_id_detail).innerHTML = " Získavame informácie...";
-  var req = katasterURL + "kataster_info?identifier=company&name=" + company_name;
+  var req = katasterURL + "kataster_info_company?name=" + company_name;
   var xmlhttp = new XMLHttpRequest();
   xmlhttp.onreadystatechange = function() {
       if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
