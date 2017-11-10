@@ -189,7 +189,7 @@ class KatasterInfoLocation(MyServer):
     def process(self):
         lat = float(self.request.GET["lat"])
         lon = float(self.request.GET["lon"])
-        tolerance = 0.000075
+        tolerance = 0.00001
         circumvent_geoblocking = True
         verbose = False
         return self.returnJSON(get_cadastral_data_for_coordinates(lat, lon, tolerance, circumvent_geoblocking, verbose))
