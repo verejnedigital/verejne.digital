@@ -203,6 +203,17 @@ class KatasterInfo(MyServer):
         else:
             self.returnJSON(errorJSON(400, "Incorrect input text"))
 
+class KatasterInfoCompany(MyServer):
+    def process(self):
+        company_name = self.request.GET["name"].encode("utf8").decode("utf8")
+        circumvent_geoblocking = True
+        verbose = False
+        return self.returnJSON(get_cadastral_data_for_company(company_name, circumvent_geoblocking, verbose))
+
+class KatasterInfoPerson(MyServer):
+    def process(self):
+        return self.returnJSON({})
+
 def main():
   parser = argparse.ArgumentParser()
   parser.add_argument('--listen',
@@ -212,7 +223,9 @@ def main():
   host, port = args.listen.split(':')
 
   app = webapp2.WSGIApplication([
-      ('/kataster_info', KatasterInfo)
+      ('/kataster_info', KatasterInfo),
+      ('/kataster_info_company', KatasterInfoCompany),
+      ('/kataster_info_person', KatasterInfoPerson),
       ], debug=False)
 
   httpserver.serve(
