@@ -185,23 +185,14 @@ class MyServer(webapp2.RequestHandler):
     def get(self):
         self.process()
 
-class KatasterInfo(MyServer):
+class KatasterInfoLocation(MyServer):
     def process(self):
-        identifier = self.request.GET["identifier"].encode("utf8")
-        if identifier == 'coordinates':
-            lat = float(self.request.GET["lat"])
-            lon = float(self.request.GET["lon"])
-            tolerance = 0.000075
-            circumvent_geoblocking = True
-            verbose = False
-            return self.returnJSON(get_cadastral_data_for_coordinates(lat, lon, tolerance, circumvent_geoblocking, verbose))
-        elif identifier == 'company':
-            company_name = self.request.GET["name"].encode("utf8").decode("utf8")
-            circumvent_geoblocking = True
-            verbose = False
-            return self.returnJSON(get_cadastral_data_for_company(company_name, circumvent_geoblocking, verbose))
-        else:
-            self.returnJSON(errorJSON(400, "Incorrect input text"))
+        lat = float(self.request.GET["lat"])
+        lon = float(self.request.GET["lon"])
+        tolerance = 0.000075
+        circumvent_geoblocking = True
+        verbose = False
+        return self.returnJSON(get_cadastral_data_for_coordinates(lat, lon, tolerance, circumvent_geoblocking, verbose))
 
 class KatasterInfoCompany(MyServer):
     def process(self):
@@ -223,7 +214,7 @@ def main():
   host, port = args.listen.split(':')
 
   app = webapp2.WSGIApplication([
-      ('/kataster_info', KatasterInfo),
+      ('/kataster_info_location', KatasterInfoLocation),
       ('/kataster_info_company', KatasterInfoCompany),
       ('/kataster_info_person', KatasterInfoPerson),
       ], debug=False)
