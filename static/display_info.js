@@ -171,7 +171,7 @@ function getKatasterInfoAddress(lat, lon, unique_id_detail) {
     xmlhr.send();
   }
 
-  document.getElementById(unique_id_detail).innerHTML = "získavame informácie ...";
+  document.getElementById(unique_id_detail).innerHTML = " Získavame informácie...";
   var req = katasterURL + 'kataster_info_location?lat=' + lat + '&lon=' + lon;
   var xmlhttp = new XMLHttpRequest();
   xmlhttp.onreadystatechange = function() {
@@ -279,20 +279,21 @@ function getKatasterInfoAddress(lat, lon, unique_id_detail) {
   console.log('getKatasterInfoAddress request: ' + req);
 }
 
-function displayKatasterInfoAddress(entity) {
+function displayKatasterInfoAddress(entity, is_map_view) {
   if (!enable_kataster_data) return "";
   unique += 1;
   var unique_id = 'kataster' + unique;
   var unique_id_detail = 'detail' + unique_id;
   // Add when we have url "<tr><td><a href=\"#\">List vlastníctva (beta)</a></td></tr>" +
-  return "<tr><td><div id=\"" + unique_id + "\" onclick=\"event.stopPropagation();getKatasterInfoAddress('" + entity.lat + "','" + entity.lng + "','" + unique_id_detail + "')\">" +
-  "Kataster: <a class=\"verejne-menu-selected\" onclick = \"javascript:;\">Vlastníci na tejto adrese (beta)</a></div><div id=\"" + unique_id_detail +"\"></div></td></tr>";
+  return "<tr><td><div id=\"" + unique_id + "\">" +
+  "Kataster: <a href=\"javascript:;\" " + (is_map_view ? "class=\"verejne-menu-selected\"" : "")
+  + " onclick = \"event.stopPropagation();getKatasterInfoAddress('" + entity.lat + "','" + entity.lng + "','" + unique_id_detail + "')\">Vlastníci v okolí (beta)</a></div><div id=\"" + unique_id_detail +"\"></div></td></tr>";
 }
 
 function getKatasterInfoCompany(company_name, unique_id_detail) {
   show_zoom_to = false;
 
-  document.getElementById(unique_id_detail).innerHTML = " Získavame informácie...";
+  document.getElementById(unique_id_detail).innerHTML = " Získavame informácie... (môže to trvať dlho)";
   var req = katasterURL + "kataster_info_company?name=" + company_name;
   var xmlhttp = new XMLHttpRequest();
   xmlhttp.onreadystatechange = function() {
@@ -331,13 +332,13 @@ function getKatasterInfoCompany(company_name, unique_id_detail) {
   console.log('getKatasterInfoCompany request: ' + req);
 }
 
-function displayKatasterInfoCompany(entity) {
+function displayKatasterInfoCompany(entity, is_map_view) {
   if (!enable_kataster_data) return "";
   unique += 1;
   var unique_id = 'katasterCompany' + unique;
   var unique_id_detail = 'detailCompany' + unique_id;
-  return "<tr><td><div id=\"" + unique_id + "\" onclick=\"event.stopPropagation();getKatasterInfoCompany('" + entity.entity_name + "','" + unique_id_detail + "')\">" +
-  "Kataster: <a class=\"verejne-menu-selected\" onclick = \"javascript:;\">Vo vlastníctve firmy (beta)</a></div><div id=\"" + unique_id_detail +"\"></div></td></tr>";
+  return "<tr><td><div id=\"" + unique_id + "\">" +
+  "Kataster: <a href=\"javascript:;\" " + (is_map_view ? "class=\"verejne-menu-selected\"" : "") + "onclick = \"event.stopPropagation();getKatasterInfoCompany('" + entity.entity_name + "','" + unique_id_detail + "')\">Vo vlastníctve firmy (beta)</a></div><div id=\"" + unique_id_detail +"\"></div></td></tr>";
 }
 
 // if show_zoom_to is true then use the local link and javascript to show entity on the map.
@@ -353,7 +354,7 @@ function displayInfoInternal(data, is_map_view, enable_recursive_related, show_z
       (show_zoom_to ? "" : "<a title=\"Zobraz na mape\" target=\"_blank\" href=\"" + linkShowEntityOnMap + "\"><i class=\"fa fa-map-marker\" aria-hidden=\"true\"></i></a>") +
       "</td></tr><tr><td>" + entity.address + "</td></tr>";
 
-  basic_data += displayKatasterInfoAddress(entity);
+  basic_data += displayKatasterInfoAddress(entity, is_map_view);
   // Try to extract ico from different data sources
   var ico = null;
   if (data.new_orsr_data.length >= 1) {
@@ -369,7 +370,7 @@ function displayInfoInternal(data, is_map_view, enable_recursive_related, show_z
   }
 
   if (ico != null) {
-    basic_data += displayKatasterInfoCompany(entity);
+    basic_data += displayKatasterInfoCompany(entity, is_map_view);
   }
 
   basic_data += displayFinancialData(getFinancialData(data, ico), is_map_view);
