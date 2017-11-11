@@ -83,6 +83,7 @@ class pdfTemplate extends TCPDF {
 
 		if ($this->output === null && $this->data !== null) {
 			$this->smarty->assign('linkMore', $this->getLinkMore($this->data));
+			$this->smarty->assign('companyName', $this->data['company']['name']);
 
 			// set document metadata information
 			$this->createMeta();
