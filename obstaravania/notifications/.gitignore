@@ -1,6 +1,7 @@
 .idea
 vendor
 *.pdf
+out/*
 templates/compiled/*
 !templates/compiled/.gitkeep
 templates/cache/*

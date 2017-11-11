@@ -1,0 +1,40 @@
+{
+    "company": {
+        "address": "Dr. J. Zeleny\u00e1ka 28", 
+        "address_full": "Doktor J\u00e1na Zeleny\u00e1ka 506/28, 935 61 Hronovce, Slovakia", 
+        "ico": "36769002", 
+        "name": "M&G Company s.r.o.",
+        "city": "Bratislava",
+        "street": "Pifflova 6",
+        "zip": "85101",
+        "country": "sk"
+    }, 
+    "notifications": [
+        {
+            "reason": {
+                "bulletin_number": null, 
+                "bulletin_year": null, 
+                "customer": "Obec \u0160alov", 
+                "id": 142918, 
+                "price": 55500.0, 
+                "text": "zber odpadu, nakladanie odpadu, odvoz komun\u00e1lneho odpadu, odvoz stavebn\u00e9ho odpadu, odvoz ostatn\u00e9ho odpadu, ulo\u017eenie odpadu na skl\u00e1dku, \u00faprava miesta do p\u00f4vodn\u00e9ho stavu/san\u00e1cia", 
+                "title": "SAN\u00c1CIA MIEST S NEZ\u00c1KONNE UMIESTNEN\u00ddM ODPADOM v obci \u0160ALOV"
+            }, 
+            "what": {
+                "bulletin_date": "29. j\u00fan 2017", 
+                "bulletin_day": 29, 
+                "bulletin_month": 6, 
+                "bulletin_number": 127, 
+                "bulletin_year": 2017, 
+                "customer": "Mestsk\u00e1 \u010das\u0165 Bratislava - Ra\u010da", 
+                "id": 173851, 
+                "price": 29784.6, 
+                "price_avg": 11.1714600112613, 
+                "price_num": 20, 
+                "price_stdev": 1.13647785918956, 
+                "text": "Predmetom z\u00e1kazky je odvoz, vytriedenie a n\u00e1sledn\u00e9 zhodnotenie alebo zne\u0161kodnenie komun\u00e1lneho odpadu zaraden\u00e9ho pod\u013ea Katal\u00f3gu odpadov do skupiny 20 03 07 objemn\u00fd odpad \u010dinnos\u0165ou R 1 a 20 03 08 drobn\u00fd stavebn\u00fd odpad \u010dinnos\u0165ou R 5, vznikaj\u00faceho pri prev\u00e1dzkovan\u00ed Zbern\u00e9ho dvora Mestskej \u010dasti Bratislava Ra\u010da, Pri \u0160ajb\u00e1ch v Bratislave a pren\u00e1jom ve\u013ekokapacitn\u00fdch kontajnerov. S\u00fa\u010das\u0165ou odvozu odpadu je nalo\u017eenie kontajnera na dopravn\u00fd prostriedok a jeho vykl\u00e1dka na mieste spracovania odpadu ako aj poskytnutie ve\u013ekoobjemov\u00fdch kontajnerov na skladovanie odpadu pred ich odvozom na spracovanie.", 
+                "title": "Odvoz a likvid\u00e1cia odpadu"
+            }
+        }
+    ]
+}

@@ -1,0 +1,66 @@
+{
+    "company": {
+        "address": "Trnavsk\u00e1", 
+        "address_full": "Trnavsk\u00e1 2692/71, 902 01 Pezinok, Slovakia", 
+        "ico": "46817671", 
+        "name": "Servis elektro - zdv\u00edhacie zariadenia, s.r.o.",
+        "city": "Bratislava",
+        "street": "Pifflova 6",
+        "zip": "85101",
+        "country": "sk"
+    }, 
+    "notifications": [
+        {
+            "reason": {
+                "bulletin_number": null, 
+                "bulletin_year": null, 
+                "customer": "Univerzita Komensk\u00e9ho v Bratislave", 
+                "id": 135423, 
+                "price": 200000.0, 
+                "text": "Predmetom z\u00e1kazky je Oprava, \u00fadr\u017eba a odborn\u00e9 prehliadky a sk\u00fa\u0161ky v\u00fd\u0165ahov a zv\u00edhac\u00edch zariaden\u00ed a vypros\u0165ovanie uviaznut\u00fdch os\u00f4b NONSTOP 24 hod. pozost\u00e1vaj\u00facej z :-odborn\u00fdch prehliadok v\u00fd\u0165ahov v intervale 1x za \u0161tvr\u0165rok v zmysle Vyhl\u00e1\u0161ky \u010d.508/2009 Z. z.,-odborn\u00fdch sk\u00fa\u0161ok v\u00fd\u0165ahov v intervale 1 x za 3 roky v zmysle Vyhl\u00e1\u0161ky \u010d.508/2009 Z.z.,-kontroly v\u00fd\u0165ahov v medziobdob\u00ed \u0161tvr\u0165ro\u010dn\u00fdch prehliadok pod\u013ea STN 274002, \u010dl. 49-korekt\u00edvnej opravy, \u00fadr\u017eby v\u00fd\u0165ahov operat\u00edvne odstra\u0148ovanie por\u00fach (servisn\u00e1 hodina technikov a dod\u00e1vka n\u00e1hradn\u00fdch dielov).", 
+                "title": "Servis a opravy v\u00fd\u0165ahov a zdv\u00edhac\u00edch zariaden\u00ed"
+            }, 
+            "what": {
+                "bulletin_date": "30. j\u00fan 2017", 
+                "bulletin_day": 30, 
+                "bulletin_month": 6, 
+                "bulletin_number": 128, 
+                "bulletin_year": 2017, 
+                "customer": "Detsk\u00e1 fakultn\u00e1 nemocnica s poliklinikou Bratislava", 
+                "id": 173742, 
+                "price": 796900.0, 
+                "price_avg": 11.9132112729697, 
+                "price_num": 20, 
+                "price_stdev": 0.880370000078149, 
+                "text": "Rekon\u0161trukcia 12 kusov v\u00fd\u0165ahov, stavebn\u00e9 pr\u00e1ce spojen\u00e9 s rekon\u0161trukciou v\u00fd\u0165ahov, a pravideln\u00e9 \u010dinnosti povinnej \u00fadr\u017eby rekon\u0161truovan\u00fdch v\u00fd\u0165ahov predp\u00edsan\u00fdch v\u00fdrobcom s\u00favisiacich s ich prev\u00e1dzkovan\u00edm.", 
+                "title": "Rekon\u0161trukcia v\u00fd\u0165ahov II. etapa"
+            }
+        }, 
+        {
+            "reason": {
+                "bulletin_number": null, 
+                "bulletin_year": null, 
+                "customer": "Univerzita Komensk\u00e9ho v Bratislave", 
+                "id": 135423, 
+                "price": 200000.0, 
+                "text": "Predmetom z\u00e1kazky je Oprava, \u00fadr\u017eba a odborn\u00e9 prehliadky a sk\u00fa\u0161ky v\u00fd\u0165ahov a zv\u00edhac\u00edch zariaden\u00ed a vypros\u0165ovanie uviaznut\u00fdch os\u00f4b NONSTOP 24 hod. pozost\u00e1vaj\u00facej z :-odborn\u00fdch prehliadok v\u00fd\u0165ahov v intervale 1x za \u0161tvr\u0165rok v zmysle Vyhl\u00e1\u0161ky \u010d.508/2009 Z. z.,-odborn\u00fdch sk\u00fa\u0161ok v\u00fd\u0165ahov v intervale 1 x za 3 roky v zmysle Vyhl\u00e1\u0161ky \u010d.508/2009 Z.z.,-kontroly v\u00fd\u0165ahov v medziobdob\u00ed \u0161tvr\u0165ro\u010dn\u00fdch prehliadok pod\u013ea STN 274002, \u010dl. 49-korekt\u00edvnej opravy, \u00fadr\u017eby v\u00fd\u0165ahov operat\u00edvne odstra\u0148ovanie por\u00fach (servisn\u00e1 hodina technikov a dod\u00e1vka n\u00e1hradn\u00fdch dielov).", 
+                "title": "Servis a opravy v\u00fd\u0165ahov a zdv\u00edhac\u00edch zariaden\u00ed"
+            }, 
+            "what": {
+                "bulletin_date": "11. august 2017", 
+                "bulletin_day": 11, 
+                "bulletin_month": 8, 
+                "bulletin_number": 158, 
+                "bulletin_year": 2017, 
+                "customer": "Jadrov\u00e1 a vyra\u010fovacia spolo\u010dnos\u0165, a.s.", 
+                "id": 173303, 
+                "price": 121335.35, 
+                "price_avg": 11.8952605918054, 
+                "price_num": 20, 
+                "price_stdev": 0.803869059890073, 
+                "text": "Predmetom z\u00e1kazky s\u00fa nasledovn\u00e9 \u010dinnosti : - odborn\u00e9 sk\u00fa\u0161ky v\u00fd\u0165ahov v intervale 1 x za 3 roky v zmysle Vyhl\u00e1\u0161ky \u010d. 508/2009 Z. z., - odborn\u00e9 prehliadky v\u00fd\u0165ahov v intervale 1x za \u0161tvr\u0165rok v zmysle Vyhl\u00e1\u0161ky \u010d. 508/2009 Z. z. (zoradenie - nastavenie zatv\u00e1rania \u0161achtov\u00fdch dvier, samozatv\u00e1ra\u010dov, nastavenie b\u0155zd v\u00fd\u0165ahu, nastavenie dojazdov do stan\u00edc, premazanie pod\u013ea mazacieho pl\u00e1nu v\u00fd\u0165ahu), - kontroly v\u00fd\u0165ahov v medziobdob\u00ed \u0161tvr\u0165ro\u010dn\u00fdch prehliadok pod\u013ea STN 274002, \u010dl. 49, - dod\u00e1vky \u0161pecifikovan\u00fdch n\u00e1hradn\u00fdch dielov (Trak\u010dn\u00e9 kot\u00fa\u010de, Dvern\u00e9 uz\u00e1vierky, Sp\u00edna\u010de rel\u00e9, Riadiace moduly), - dod\u00e1vky ne\u0161pecifikovan\u00fdch dielov, - nepl\u00e1novan\u00e9 (korekt\u00edvne) opravy v\u00fd\u0165ahov (operat\u00edvne odstra\u0148ovanie por\u00fach (servisn\u00e1 hodina technikov a pou\u017eitie n\u00e1hradn\u00fdch dielov)). \u010eal\u0161ie inform\u00e1cie s\u00fa uveden\u00e9 v s\u00fa\u0165a\u017en\u00fdch podkladoch.", 
+                "title": "Opravy, \u00fadr\u017eba a odborn\u00e9 prehliadky a sk\u00fa\u0161ky v\u00fd\u0165ahov"
+            }
+        }
+    ]
+}

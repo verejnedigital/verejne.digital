@@ -1,0 +1,101 @@
+{
+    "company": {
+        "address": null, 
+        "address_full": "Bar\u010dianska 884/2B, 040 17 Ko\u0161ice, Slovakia", 
+        "ico": "48293750", 
+        "name": "GB STAV Ko\u0161ice, s.r.o.",
+        "city": "Bratislava",
+        "street": "Pifflova 6",
+        "zip": "85101",
+        "country": "sk"
+    }, 
+    "notifications": [
+        {
+            "reason": {
+                "bulletin_date": "24. febru\u00e1r 2016", 
+                "bulletin_day": 24, 
+                "bulletin_month": 2, 
+                "bulletin_number": 38, 
+                "bulletin_year": 2016, 
+                "customer": "Obec Gy\u0148ov", 
+                "id": 158777, 
+                "price": 66992.87, 
+                "text": "Predmetom z\u00e1kazky je realiz\u00e1cia projektu zateplenia budovy v obci Gy\u0148ov", 
+                "title": "Projekt zateplenie budovy materskej \u0161koly"
+            }, 
+            "what": {
+                "bulletin_date": "7. apr\u00edl 2017", 
+                "bulletin_day": 7, 
+                "bulletin_month": 4, 
+                "bulletin_number": 70, 
+                "bulletin_year": 2017, 
+                "customer": "Obec Hontianske Trs\u0165any", 
+                "id": 173739, 
+                "price": 166651.42, 
+                "price_avg": 11.9486666727546, 
+                "price_num": 20, 
+                "price_stdev": 0.763912195267794, 
+                "text": "Predmetom z\u00e1kazky je rekon\u0161trukcia strechy a zateplenie budovy materskej \u0161koly a obecn\u00e9ho bytu pod\u013ea projektovej dokument\u00e1cie.", 
+                "title": "Rekon\u0161trukcia strechy a zateplenie materskej \u0161koly a obecn\u00e9ho bytu"
+            }
+        }, 
+        {
+            "reason": {
+                "bulletin_date": "24. febru\u00e1r 2016", 
+                "bulletin_day": 24, 
+                "bulletin_month": 2, 
+                "bulletin_number": 38, 
+                "bulletin_year": 2016, 
+                "customer": "Obec Gy\u0148ov", 
+                "id": 158777, 
+                "price": 66992.87, 
+                "text": "Predmetom z\u00e1kazky je realiz\u00e1cia projektu zateplenia budovy v obci Gy\u0148ov", 
+                "title": "Projekt zateplenie budovy materskej \u0161koly"
+            }, 
+            "what": {
+                "bulletin_date": "14. j\u00fal 2017", 
+                "bulletin_day": 14, 
+                "bulletin_month": 7, 
+                "bulletin_number": 138, 
+                "bulletin_year": 2017, 
+                "customer": "Obec Ilija", 
+                "id": 173579, 
+                "price": null, 
+                "price_avg": 12.1424108279636, 
+                "price_num": 20, 
+                "price_stdev": 0.977746313139411, 
+                "text": "Predmetom z\u00e1kazky je obnova budovy materskej \u0161koly - zateplenie obvodov\u00fdch stien a sokla, zateplenie stanovej a pultovej strechy vr\u00e1tane v\u00fdmeny stre\u0161nej krytiny, zateplenie podlahy a stropov spodn\u00e9ho tepelnoizola\u010dn\u00e9ho pl\u00e1\u0161\u0165a a v\u00fdmena okenn\u00fdch a dvern\u00fdch otvorov.", 
+                "title": "Obnova objektu materskej \u0161koly v obci Ilija"
+            }
+        }, 
+        {
+            "reason": {
+                "bulletin_date": "24. febru\u00e1r 2016", 
+                "bulletin_day": 24, 
+                "bulletin_month": 2, 
+                "bulletin_number": 38, 
+                "bulletin_year": 2016, 
+                "customer": "Obec Gy\u0148ov", 
+                "id": 158777, 
+                "price": 66992.87, 
+                "text": "Predmetom z\u00e1kazky je realiz\u00e1cia projektu zateplenia budovy v obci Gy\u0148ov", 
+                "title": "Projekt zateplenie budovy materskej \u0161koly"
+            }, 
+            "what": {
+                "bulletin_date": "30. marec 2017", 
+                "bulletin_day": 30, 
+                "bulletin_month": 3, 
+                "bulletin_number": 64, 
+                "bulletin_year": 2017, 
+                "customer": "Obec Pust\u00e9 \u00da\u013eany", 
+                "id": 173467, 
+                "price": 558468.11, 
+                "price_avg": 11.8533444690422, 
+                "price_num": 20, 
+                "price_stdev": 0.732258345151348, 
+                "text": "Predmetom obstar\u00e1vania s\u00fa stavebn\u00e9 pr\u00e1ce s\u00favisiace so zateplen\u00edm fas\u00e1dy budovy materskej \u0161koly, zateplen\u00edm strechy, v\u00fdmenou v\u00fdpln\u00ed otvorov, rekon\u0161trukciou vykurovania a zmenou zdroja tepla tepeln\u00e9 \u010derpadlo, rekon\u0161trukciou elektroin\u0161tal\u00e1cie, mont\u00e1\u017eou fotovoltaiky a ostat\u00fdmi stavebn\u00fdmi pr\u00e1cami s cie\u013eom zn\u00ed\u017eenia energetickej n\u00e1ro\u010dnosti budovy v zmysle projektovej dokument\u00e1cie vypracovanej Ing. arch. \u0160tefanom M\u00fcllerom s n\u00e1zvom: Zateplenie budovy materskej \u0161koly.", 
+                "title": "Zateplenie budovy materskej \u0161koly"
+            }
+        }
+    ]
+}

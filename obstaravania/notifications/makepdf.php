@@ -1,6 +1,6 @@
 <?php
-if ($argc < 3) {
-	echo 'Usage: php makepdf.php <input file> <output file>, where input file is json. Output file is PDF.';
+if ($argc < 2) {
+	echo 'Usage: php makepdf.php <input file>, where input file is json. Output will be put into "out" directory.';
 	exit(1);
 }
 
@@ -65,10 +65,16 @@ require ('pdftemplate.php');
 $pdfTemplate = new \pdfTemplate();
 $pdfTemplate->setData($groupedData);
 
-//TODO: check for existance - overwrite?
-file_put_contents($argv[2], $pdfTemplate->createDocument());
-
-$end = microtime(true);
-echo ($end - $start) . "ms to generate PDF.\n";
+$baseFileName = sprintf('%s_%s', date('Ymd-His'), $groupedData['company']['ico']);
+is_dir('out') || mkdir('out');
+if (!is_file('out/'.$baseFileName.'.pdf')) {
+	file_put_contents('out/'.$baseFileName.'.pdf', $pdfTemplate->createDocument());
+	file_put_contents('out/'.$baseFileName.'.json', $data);
+	$end = microtime(true);
+	echo sprintf("%fms to generate PDF (%s{.json, .pdf})\n", ($end - $start), 'out/' . $baseFileName);
+} else {
+	$end = microtime(true);
+	echo sprintf("%s{.json, .pdf} already exists, skipping...\n", ($end - $start), 'out/' . $baseFileName);
+}
 
 ?>
