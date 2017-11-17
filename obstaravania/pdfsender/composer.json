@@ -1,0 +1,28 @@
+{
+	"name": "verejne.digital/pdfsender",
+	"description": "Sends PDF to customers using webservice.",
+	"type": "project",
+	"require": {
+		"phpro/soap-client": "^0.5.3",
+		"guzzlehttp/guzzle": "^6.2",
+		"http-interop/http-factory-guzzle": "^0.1.0"
+	},
+	"authors": [
+		{
+			"name": "Martin Rejda",
+			"email": "rejdi@ksp.sk"
+		}
+	],
+	"require-dev": {
+		"zendframework/zend-code": "^3.3"
+	},
+	"autoload": {
+		"psr-4": {
+			"zelenaposta\\api2\\user\\": "libs/zelenaposta/api2/user",
+			"zelenaposta\\api2\\product\\": "libs/zelenaposta/api2/product",
+			"zelenaposta\\api2\\sent\\": "libs/zelenaposta/api2/sent",
+			"zelenaposta\\api2\\": "libs/zelenaposta/api2",
+			"": "libs"
+		}
+	}
+}

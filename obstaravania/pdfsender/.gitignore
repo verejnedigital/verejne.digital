@@ -1,0 +1,7 @@
+err
+out
+input
+*.xml
+.idea
+vendor
+*.pdf
