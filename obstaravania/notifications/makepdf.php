@@ -1,6 +1,6 @@
 <?php
-if ($argc < 2) {
-	echo 'Usage: php makepdf.php <input file>, where input file is json. Output will be put into "out" directory.';
+if ($argc < 3) {
+	echo 'Usage: php makepdf.php <input file> <output directory>, where input file is json. Output will be put into output directory.';
 	exit(1);
 }
 
@@ -13,6 +13,11 @@ if ($data === false) {
 $json = json_decode($data, true);
 if ($json === null) {
 	echo 'Unable to decode input file to json.';
+	exit(1);
+}
+
+if (file_exists($argv[2]) && !is_dir($argv[2])) {
+	echo sprintf("%s is not a directory.", $argv[2]);
 	exit(1);
 }
 
@@ -66,15 +71,15 @@ $pdfTemplate = new \pdfTemplate();
 $pdfTemplate->setData($groupedData);
 
 $baseFileName = sprintf('%s_%s', date('Ymd-His'), $groupedData['company']['ico']);
-is_dir('out') || mkdir('out');
-if (!is_file('out/'.$baseFileName.'.pdf')) {
-	file_put_contents('out/'.$baseFileName.'.pdf', $pdfTemplate->createDocument());
-	file_put_contents('out/'.$baseFileName.'.json', $data);
+is_dir($argv[2]) || mkdir($argv[2]);
+if (!is_file($argv[2] . '/'.$baseFileName.'.pdf')) {
+	file_put_contents($argv[2] . '/'.$baseFileName.'.pdf', $pdfTemplate->createDocument());
+	file_put_contents($argv[2] . '/'.$baseFileName.'.json', $data);
 	$end = microtime(true);
-	echo sprintf("%fms to generate PDF (%s{.json, .pdf})\n", ($end - $start), 'out/' . $baseFileName);
+	echo sprintf("%fms to generate PDF (%s{.json, .pdf})\n", ($end - $start), $argv[2] . '/' . $baseFileName);
 } else {
 	$end = microtime(true);
-	echo sprintf("%s{.json, .pdf} already exists, skipping...\n", ($end - $start), 'out/' . $baseFileName);
+	echo sprintf("%s{.json, .pdf} already exists, skipping...\n", ($end - $start), $argv[2] . '/' . $baseFileName);
 }
 
 ?>
