@@ -47,8 +47,8 @@ class App extends Component {
 
   loadAssetDeclaration(id) {
     serverAPI.loadAssetDeclaration(id,
-      (report) => {
-        const assetsFromDeclaration = report["nehnuteľný majetok"].split('\n');
+      (report) => {        
+        const assetsFromDeclaration = (typeof report["nehnuteľný majetok"] != 'undefined') ? report["nehnuteľný majetok"].split('\n') : [];
         this.setState({
           assetsFromDeclaration
         });

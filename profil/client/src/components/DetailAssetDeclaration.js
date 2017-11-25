@@ -7,7 +7,10 @@ const DetailAssetDeclaration = ({assets}) => (
   <thead>
     <tr>
       <th></th>
-      <th>Majetkové priznanie ({assets.length})</th>
+      <th>
+        Majetkové priznanie ({assets.length})
+        <span className="assets-declaration source"> &nbsp; &nbsp; &nbsp; &nbsp;zdroj <a href="http://www.nrsr.sk">NRSR <i class="fa fa-external-link" aria-hidden="true"></i></a></span>
+      </th>
     </tr>
   </thead>
   <tbody>
