@@ -1,4 +1,9 @@
 
+.App {
+  width: 800px;
+  margin: auto;
+}
+
 .App-header {
   height: 150px;
   padding: 20px;
@@ -14,14 +19,7 @@
   font-size: large;
 }
 
-.App-body {
-  margin: auto;
-  width: 800px;
-}
-
 .App-search {
-  margin: auto;
-  width: 800px;
   padding-bottom: 30px;
   padding-top: 30px;
 }

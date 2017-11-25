@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-
+import TableLine from './TableLine';
 import './Table.css';
 
 class Table extends Component {
@@ -17,13 +17,10 @@ class Table extends Component {
           </tr>
         </thead>
         <tbody>
-          <tr>
-              <td>Mikulas Basternak</td>
-              <td>KDH</td>
-              <td className="numbercolumn">8</td>
-              <td className="numbercolumn">24</td>
-              <td className="numbercolumn">3</td>
-          </tr>
+          {this.props.politicians.map(politician =>
+            <TableLine key={politician.id}  politician={politician}/>,
+          )}
+          
         </tbody>
       </table>
     )

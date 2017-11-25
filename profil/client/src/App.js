@@ -1,10 +1,36 @@
 import React, { Component } from 'react';
 import './App.css';
 
+import * as serverAPI from './actions/serverAPI';
+
 import Table from './components/Table';
 import Search from './components/Search';
 
 class App extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      searching: false,
+      politicians: [],
+    };
+    this.loadListOfPoliticiants = this.loadListOfPoliticiants.bind(this);
+  }
+
+  componentWillMount() {
+    this.loadListOfPoliticiants();
+  }
+
+  loadListOfPoliticiants() {
+    serverAPI.listPoliticians(
+      (list) => {
+        this.setState({
+          politicians: list,
+          searching: false,
+        });
+      });
+  }
+
   render() {
     return (
       <div className="App">
@@ -20,7 +46,11 @@ class App extends Component {
         </div>
 
         <div className="App-body">
-          <Table/>        
+          <Table politicians={this.state.politicians}/>        
+        </div>
+
+        <div className="App-footer">
+        O projekte | <a href="https://www.facebook.com/verejne.digital/">Kontaktujte nas cez facebook</a>
         </div>
       </div>
     );
