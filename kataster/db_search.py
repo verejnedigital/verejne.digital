@@ -83,4 +83,10 @@ def get_Parcels_from_database(db, person, search_params):
         WHERE
             """ + SQL_filter + """;"""
     rows = db_query(db, q, SQL_filter_data)
+
+    # Convert ParticipantRatio to floats for JSON serialisability
+    for row in rows:
+        if row['participantratio'] is not None:
+            row['participantratio'] = float(row['participantratio'])
+
     return rows
