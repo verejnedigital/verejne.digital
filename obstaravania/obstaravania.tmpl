@@ -153,14 +153,14 @@ Našim cieľom je identifikovať a notifikovať uchádzačov, ktorí by sa mali 
   <li role="presentation"><a class="obstaravania-selected" href="obstaravania-firmy.html">Zoraď podľa firiem</a></li>
 </ul>
 
-{{ tableHeader(obstaravania[0], False) }}
+{{ tableHeader(obstaravania[0], True) }}
 {% set bulletin_numbers = [] %}
 {% for obstaravanie in obstaravania %}
   {% if bulletin_numbers and bulletin_numbers[-1] != obstaravanie.bulletin_number %}
   </tbody>
   </table>
   </div>
-  {{tableHeader(obstaravanie, True)}}
+  {{tableHeader(obstaravanie, False)}}
   {% endif %}
   {% set _ = bulletin_numbers.append(obstaravanie.bulletin_number) %}
 <tr id={{"row_" + obstaravanie.id|string}}>  
