@@ -55,8 +55,8 @@ class UpdateNotifications:
                 notification = session.query(Notification).filter_by(id=nid).first()
                 notification.status = NotificationStatus.DECLINED
 
-            generateReport(for_report, '/tmp/report.pdf')
-            session.commit()
+            if generateReport(for_report):
+                session.commit()
 
 class ServeNotifications(MyServer):
     def get(self):
