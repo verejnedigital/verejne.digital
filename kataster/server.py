@@ -219,8 +219,13 @@ class KatasterInfoPolitician(MyServer):
         try:
             politician_id = int(self.request.GET["id"])
         except:
-            self.abort(400)
+            self.abort(400, detail="Could not parse parameter 'id' as int")
         j = json_load('mock_report.json')
+        return self.returnJSON(j)
+
+class ListPoliticians(MyServer):
+    def process(self):
+        j = json_load('mock_list.json')
         return self.returnJSON(j)
 
 def main():
@@ -236,6 +241,7 @@ def main():
       ('/kataster_info_company', KatasterInfoCompany),
       ('/kataster_info_person', KatasterInfoPerson),
       ('/kataster_info_politician', KatasterInfoPolitician),
+      ('/list_politicians', ListPoliticians),
       ], debug=False)
 
   httpserver.serve(
