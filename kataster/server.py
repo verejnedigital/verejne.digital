@@ -188,6 +188,7 @@ class MyServer(webapp2.RequestHandler):
         print(exception)
         self.response.write('An error occurred.')
         if isinstance(exception, webapp2.HTTPException):
+            self.response.write('Error code: %d' % (exception.code))
             self.response.set_status(exception.code)
         else:
             self.response.set_status(500)
@@ -231,6 +232,15 @@ class InfoPolitician(MyServer):
         except:
             self.abort(400, detail="Could not parse parameter 'id' as int")
         j = json_load('mock_info.json')
+        return self.returnJSON(j)
+
+class AssetDeclaration(MyServer):
+    def process(self):
+        try:
+            politician_id = int(self.request.GET["id"])
+        except:
+            self.abort(400, detail="Could not parse parameter 'id' as int")
+        j = json_load('mock_declaration.json')
         return self.returnJSON(j)
 
 class ListPoliticians(MyServer):
@@ -280,6 +290,7 @@ def main():
       ('/kataster_info_politician', KatasterInfoPolitician),
       ('/list_politicians', ListPoliticians),
       ('/info_politician', InfoPolitician),
+      ('/asset_declaration', AssetDeclaration),
       ], debug=False)
 
   httpserver.serve(

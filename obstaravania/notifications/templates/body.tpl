@@ -66,13 +66,26 @@
 	<tr><td colspan="6">Nakoľko ste robili projekt</td></tr>
 	<tr class="title_row"><td class="title_cell" colspan="5">{$notification['reason']['title']}</td>
 		<td class="date_cell">
-			<img src="resources/date2.png" /><span class="date">{$notification['reason']['bulletin_day']}.{$notification['reason']['bulletin_month']}.{$notification['reason']['bulletin_year']}</span>
+			{if isset($notification['reason']['bulletin_day']}
+				<img src="resources/date2.png" />
+				<span class="date">
+					{$notification['reason']['bulletin_day']}.{$notification['reason']['bulletin_month']}.{$notification['reason']['bulletin_year']}
+				</span>
+			{/if}
 		</td>
 	</tr>
 	<tr class="text_row"><td colspan="6" class="text_cell">{$notification['reason']['text']}</td></tr>
 	<tr class="price_row">
-		<td colspan="3" class="customer"><span><img src="resources/place.png" />{$notification['reason']['customer']}</span></td>
-		<td colspan="3">{if isset($notification['reason']['price'])}<span>Cena</span> {prettyfyPrice price=$notification['reason']['price']}{/if}</td>
+		<td colspan="3" class="customer">
+			<span>
+				<img src="resources/place.png" />{$notification['reason']['customer']}
+			</span>
+		</td>
+		<td colspan="3">
+			{if isset($notification['reason']['price'])}
+				<span>Cena</span>{prettyfyPrice price=$notification['reason']['price']}
+			{/if}
+		</td>
 	</tr>
 	<tr><td></td></tr>
 	<tr><td colspan="6">
@@ -86,14 +99,25 @@
 {foreach $notification['offers'] as $offer}
 <table class="offer">
 	<tr class="title_row"><td class="title_cell" colspan="4">{$offer['title']}</td>
-		<td colspan="2" class="date_cell">Vyhlásené dňa:
-			<img src="resources/date2.png" /><span class="date">{$offer['bulletin_day']}.{$offer['bulletin_month']}.{$offer['bulletin_year']}</span>
+		<td colspan="2" class="date_cell">
+			{if isset($offer['bulletin_day'])}
+				Vyhlásené dňa:
+				<img src="resources/date2.png" /><span class="date">
+				{$offer['bulletin_day']}.{$offer['bulletin_month']}.{$offer['bulletin_year']}
+				</span>
+			{/if}
 		</td>
 	</tr>
 	<tr class="text_row"><td colspan="6" class="text_cell">{$offer['text']}</td></tr>
 	<tr class="price_row">
-		<td colspan="3" class="customer"><span><img src="resources/place.png" />{$offer['customer']}</span></td>
-		<td colspan="3">{if isset($offer['price'])}<span>Vyhlásená cena</span> {prettyfyPrice price=$offer['price']}{/if}</td>
+		<td colspan="3" class="customer">
+			<span><img src="resources/place.png" />{$offer['customer']}</span>
+		</td>
+		<td colspan="3">
+			{if isset($offer['price'])}
+				<span>Vyhlásená cena</span> {prettyfyPrice price=$offer['price']}
+			{/if}
+		</td>
 	</tr>
 </table>
 <p></p>

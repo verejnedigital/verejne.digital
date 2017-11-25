@@ -11,10 +11,10 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      searching: false,
       politicians: [],
     };
     this.loadListOfPoliticiants = this.loadListOfPoliticiants.bind(this);
+    this.filterNames = this.filterNames.bind(this);
   }
 
   componentWillMount() {
@@ -26,9 +26,15 @@ class App extends Component {
       (list) => {
         this.setState({
           politicians: list,
-          searching: false,
         });
       });
+  }
+
+  filterNames(query) {
+    const politicians = this.state.politicians.filter(p => p.firstname === query);
+    this.setState({
+      politicians
+    })
   }
 
   render() {
@@ -42,9 +48,10 @@ class App extends Component {
         </div>
 
         <div className="App-search">
-          <Search/>
+          <Search filterNames={this.filterNames} names={this.state.politicians.map(politician => { return {
+            firstname: politician.firstname, 
+            surname: politician.surname}})}/>
         </div>
-
         <div className="App-body">
           <Table politicians={this.state.politicians}/>        
         </div>
