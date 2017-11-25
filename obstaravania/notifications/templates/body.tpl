@@ -93,7 +93,7 @@
 	<tr class="text_row"><td colspan="6" class="text_cell">{$offer['text']}</td></tr>
 	<tr class="price_row">
 		<td colspan="3" class="customer"><span><img src="resources/place.png" />{$offer['customer']}</span></td>
-		<td colspan="3">{if isset($offer['price'])}<span>Odhadovaná cena</span> {prettyfyPrice price=$offer['price']}{/if}</td>
+		<td colspan="3">{if isset($offer['price'])}<span>Vyhlásená cena</span> {prettyfyPrice price=$offer['price']}{/if}</td>
 	</tr>
 </table>
 <p></p>
