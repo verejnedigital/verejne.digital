@@ -1,4 +1,10 @@
+argparse
 enum34
+jinja2
+paste
 psycopg2
+python-dateutil
 PyYAML
 sqlalchemy
+webapp2
+webob
