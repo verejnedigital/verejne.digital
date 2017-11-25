@@ -1,0 +1,2367 @@
+[
+    {
+        "area": 90,
+        "cadastralunitcode": 819000,
+        "cadastralunitname": "Hradište pod Vrátnom",
+        "foliono": 760,
+        "folioownerscount": 1,
+        "landusename": "Záhrada",
+        "legalrighttexts": [],
+        "parcelno": "483/2",
+        "parceltype": "C",
+        "participantratio": 100.0,
+        "participanttypename": "Vlastník",
+        "utilisationname": "Pozemok prevažne v zastavanom území obce alebo v záhradkárskej osade, na ktorom sa pestuje zelenina, ovocie, okrasná nízka a vysoká zeleň a iné poľnohospodárske plodiny"
+    },
+    {
+        "area": 187,
+        "cadastralunitcode": 819000,
+        "cadastralunitname": "Hradište pod Vrátnom",
+        "foliono": 760,
+        "folioownerscount": 1,
+        "landusename": "Trvalý trávnatý porast",
+        "legalrighttexts": [],
+        "parcelno": "484/6",
+        "parceltype": "C",
+        "participantratio": 100.0,
+        "participanttypename": "Vlastník",
+        "utilisationname": "Pozemok lúky a pasienku trvalo porastený trávami alebo pozemok dočasne nevyužívaný pre trvalý trávny porast"
+    },
+    {
+        "area": 245,
+        "cadastralunitcode": 819000,
+        "cadastralunitname": "Hradište pod Vrátnom",
+        "foliono": 760,
+        "folioownerscount": 1,
+        "landusename": "Zastavaná plocha a nádvorie",
+        "legalrighttexts": [],
+        "parcelno": "484/8",
+        "parceltype": "C",
+        "participantratio": 100.0,
+        "participanttypename": "Vlastník",
+        "utilisationname": "Pozemok, na ktorom je postavená budova bez označenia súpisným číslom"
+    },
+    {
+        "area": 113,
+        "cadastralunitcode": 819000,
+        "cadastralunitname": "Hradište pod Vrátnom",
+        "foliono": 760,
+        "folioownerscount": 1,
+        "landusename": "Zastavaná plocha a nádvorie",
+        "legalrighttexts": [],
+        "parcelno": "484/7",
+        "parceltype": "C",
+        "participantratio": 100.0,
+        "participanttypename": "Vlastník",
+        "utilisationname": "Pozemok, na ktorom je postavená bytová budova označená súpisným číslom"
+    },
+    {
+        "area": 279,
+        "cadastralunitcode": 857386,
+        "cadastralunitname": "Spišská Nová Ves",
+        "foliono": 9537,
+        "folioownerscount": 11,
+        "landusename": "Trvalý trávnatý porast",
+        "legalrighttexts": [
+            "Hodnovernosť údajov k parcele C KN č.9455/12-ostatné plochy o výmere 1721 m2 je vyvrátená,podľa § 71 odc.3 zákona 162/1995 Z.z.(katastrálneho zákona) údaje,ktorých hodnovernosť je vyvrátená, sa nesmú používať, duplicitné vlastníctvo s LV 9245-Poznámka: Pozemok v kat.území Spišská Nová Ves podľa V-243/05 časť parcely C KN č.9470/1 o výmere 1402 m2-/X-133/2010-Pz/-1767/2010,",
+            "Rozhodnutie OÚ č.72/1992-8 MK-Pol.VZ 1798/2002,312/07 vl.č.1644",
+            "Rozhodnutie Správy katastra Sp. Nová Ves č. ROEP 29/58/2011, právoplatné 7.10.2011; Z 3235/2011; PVZ 3089/11"
+        ],
+        "parcelno": "9478/2",
+        "parceltype": "C",
+        "participantratio": 4.166666666666667,
+        "participanttypename": "Vlastník",
+        "utilisationname": "Pozemok lúky a pasienku trvalo porastený trávami alebo pozemok dočasne nevyužívaný pre trvalý trávny porast"
+    },
+    {
+        "area": 429,
+        "cadastralunitcode": 857386,
+        "cadastralunitname": "Spišská Nová Ves",
+        "foliono": 3129,
+        "folioownerscount": 13,
+        "landusename": "Ostatná plocha",
+        "legalrighttexts": [
+            "- rozh.OÚ č. 72/92-8MK - 1798/2002",
+            "Osvedčenie o dedičstve D-1183/93-25,D 1184/93-25-2426/98,"
+        ],
+        "parcelno": "9469/6",
+        "parceltype": "C",
+        "participantratio": 4.166666666666667,
+        "participanttypename": "Vlastník",
+        "utilisationname": "Pozemok, na ktorom sú skaly, svahy, rokliny, výmole, vysoké medze s krovím alebo kamením a iné plochy, ktoré neposkytujú trvalý úžitok"
+    },
+    {
+        "area": 1245,
+        "cadastralunitcode": 857386,
+        "cadastralunitname": "Spišská Nová Ves",
+        "foliono": 3129,
+        "folioownerscount": 13,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "- rozh.OÚ č. 72/92-8MK - 1798/2002",
+            "Osvedčenie o dedičstve D-1183/93-25,D 1184/93-25-2426/98,"
+        ],
+        "parcelno": "9455/19",
+        "parceltype": "C",
+        "participantratio": 4.166666666666667,
+        "participanttypename": "Vlastník",
+        "utilisationname": "Pozemok využívaný pre rastlinnú výrobu, na ktorom sa pestujú obilniny, okopaniny, krmoviny, technické plodiny, zelenina a iné poľnohospodárske plodiny alebo pozemok dočasne nevyužívaný pre rastlinnú výrobu"
+    },
+    {
+        "area": 321,
+        "cadastralunitcode": 857386,
+        "cadastralunitname": "Spišská Nová Ves",
+        "foliono": 3129,
+        "folioownerscount": 13,
+        "landusename": "Ostatná plocha",
+        "legalrighttexts": [
+            "- rozh.OÚ č. 72/92-8MK - 1798/2002",
+            "Osvedčenie o dedičstve D-1183/93-25,D 1184/93-25-2426/98,"
+        ],
+        "parcelno": "9466/6",
+        "parceltype": "C",
+        "participantratio": 4.166666666666667,
+        "participanttypename": "Vlastník",
+        "utilisationname": "Pozemok, na ktorom sú skaly, svahy, rokliny, výmole, vysoké medze s krovím alebo kamením a iné plochy, ktoré neposkytujú trvalý úžitok"
+    },
+    {
+        "area": 753,
+        "cadastralunitcode": 857386,
+        "cadastralunitname": "Spišská Nová Ves",
+        "foliono": 8461,
+        "folioownerscount": 3,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "Zmluva o bezodplatnom prevode vlast.k pozemkom V 2133/2001 - 1239/2002,Zámenná zmluva V-164/2004-546/2004,"
+        ],
+        "parcelno": "9237/18",
+        "parceltype": "C",
+        "participantratio": 33.333333333333336,
+        "participanttypename": "Vlastník",
+        "utilisationname": "Pozemok využívaný pre rastlinnú výrobu, na ktorom sa pestujú obilniny, okopaniny, krmoviny, technické plodiny, zelenina a iné poľnohospodárske plodiny alebo pozemok dočasne nevyužívaný pre rastlinnú výrobu"
+    },
+    {
+        "area": 3452,
+        "cadastralunitcode": 857386,
+        "cadastralunitname": "Spišská Nová Ves",
+        "foliono": 8461,
+        "folioownerscount": 3,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "Zmluva o bezodplatnom prevode vlast.k pozemkom V 2133/2001 - 1239/2002,Zámenná zmluva V-164/2004-546/2004,"
+        ],
+        "parcelno": "9204/53",
+        "parceltype": "C",
+        "participantratio": 33.333333333333336,
+        "participanttypename": "Vlastník",
+        "utilisationname": "Pozemok využívaný pre rastlinnú výrobu, na ktorom sa pestujú obilniny, okopaniny, krmoviny, technické plodiny, zelenina a iné poľnohospodárske plodiny alebo pozemok dočasne nevyužívaný pre rastlinnú výrobu"
+    },
+    {
+        "area": 1489,
+        "cadastralunitcode": 857386,
+        "cadastralunitname": "Spišská Nová Ves",
+        "foliono": 7939,
+        "folioownerscount": 24,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "- Zmluva o bezodpl.prevode vlast. k pozemkom V 2133/2002 - 1241/2002"
+        ],
+        "parcelno": "9204/41",
+        "parceltype": "C",
+        "participantratio": 1.4775016789791806,
+        "participanttypename": "Vlastník",
+        "utilisationname": "Pozemok využívaný pre rastlinnú výrobu, na ktorom sa pestujú obilniny, okopaniny, krmoviny, technické plodiny, zelenina a iné poľnohospodárske plodiny alebo pozemok dočasne nevyužívaný pre rastlinnú výrobu"
+    },
+    {
+        "area": 1721,
+        "cadastralunitcode": 857386,
+        "cadastralunitname": "Spišská Nová Ves",
+        "foliono": 9537,
+        "folioownerscount": 11,
+        "landusename": "Ostatná plocha",
+        "legalrighttexts": [
+            "Hodnovernosť údajov k parcele C KN č.9455/12-ostatné plochy o výmere 1721 m2 je vyvrátená,podľa § 71 odc.3 zákona 162/1995 Z.z.(katastrálneho zákona) údaje,ktorých hodnovernosť je vyvrátená, sa nesmú používať, duplicitné vlastníctvo s LV 9245-Poznámka: Pozemok v kat.území Spišská Nová Ves podľa V-243/05 časť parcely C KN č.9470/1 o výmere 1402 m2-/X-133/2010-Pz/-1767/2010,",
+            "Rozhodnutie OÚ č.72/1992-8 MK-Pol.VZ 1798/2002,312/07 vl.č.1644",
+            "Rozhodnutie Správy katastra Sp. Nová Ves č. ROEP 29/58/2011, právoplatné 7.10.2011; Z 3235/2011; PVZ 3089/11"
+        ],
+        "parcelno": "9455/12",
+        "parceltype": "C",
+        "participantratio": 4.166666666666667,
+        "participanttypename": "Vlastník",
+        "utilisationname": "Pozemok, na ktorom sú skaly, svahy, rokliny, výmole, vysoké medze s krovím alebo kamením a iné plochy, ktoré neposkytujú trvalý úžitok"
+    },
+    {
+        "area": 282,
+        "cadastralunitcode": 804096,
+        "cadastralunitname": "Staré Mesto",
+        "foliono": 6206,
+        "folioownerscount": 40,
+        "landusename": "Zastavaná plocha a nádvorie",
+        "legalrighttexts": [],
+        "parcelno": "749",
+        "parceltype": "C",
+        "participantratio": 4.59,
+        "participanttypename": "Vlastník",
+        "utilisationname": "Pozemok, na ktorom je postavená bytová budova označená súpisným číslom"
+    },
+    {
+        "area": 387,
+        "cadastralunitcode": 804096,
+        "cadastralunitname": "Staré Mesto",
+        "foliono": 6206,
+        "folioownerscount": 40,
+        "landusename": "Zastavaná plocha a nádvorie",
+        "legalrighttexts": [],
+        "parcelno": "747",
+        "parceltype": "C",
+        "participantratio": 4.59,
+        "participanttypename": "Vlastník",
+        "utilisationname": "Pozemok, na ktorom je postavená bytová budova označená súpisným číslom"
+    },
+    {
+        "area": 1015,
+        "cadastralunitcode": 804096,
+        "cadastralunitname": "Staré Mesto",
+        "foliono": 6206,
+        "folioownerscount": 40,
+        "landusename": "Zastavaná plocha a nádvorie",
+        "legalrighttexts": [],
+        "parcelno": "748",
+        "parceltype": "C",
+        "participantratio": 4.59,
+        "participanttypename": "Vlastník",
+        "utilisationname": "Pozemok, na ktorom je postavená bytová budova označená súpisným číslom"
+    },
+    {
+        "area": 282,
+        "cadastralunitcode": 804096,
+        "cadastralunitname": "Staré Mesto",
+        "foliono": 6206,
+        "folioownerscount": 40,
+        "landusename": "Zastavaná plocha a nádvorie",
+        "legalrighttexts": [
+            "Kúpna zmluva V-19011/06 zo dňa 18.12.2006."
+        ],
+        "parcelno": "749",
+        "parceltype": "C",
+        "participantratio": 4.59,
+        "participanttypename": "Vlastník",
+        "utilisationname": "Pozemok, na ktorom je postavená bytová budova označená súpisným číslom"
+    },
+    {
+        "area": 387,
+        "cadastralunitcode": 804096,
+        "cadastralunitname": "Staré Mesto",
+        "foliono": 6206,
+        "folioownerscount": 40,
+        "landusename": "Zastavaná plocha a nádvorie",
+        "legalrighttexts": [
+            "Kúpna zmluva V-19011/06 zo dňa 18.12.2006."
+        ],
+        "parcelno": "747",
+        "parceltype": "C",
+        "participantratio": 4.59,
+        "participanttypename": "Vlastník",
+        "utilisationname": "Pozemok, na ktorom je postavená bytová budova označená súpisným číslom"
+    },
+    {
+        "area": 1015,
+        "cadastralunitcode": 804096,
+        "cadastralunitname": "Staré Mesto",
+        "foliono": 6206,
+        "folioownerscount": 40,
+        "landusename": "Zastavaná plocha a nádvorie",
+        "legalrighttexts": [
+            "Kúpna zmluva V-19011/06 zo dňa 18.12.2006."
+        ],
+        "parcelno": "748",
+        "parceltype": "C",
+        "participantratio": 4.59,
+        "participanttypename": "Vlastník",
+        "utilisationname": "Pozemok, na ktorom je postavená bytová budova označená súpisným číslom"
+    },
+    {
+        "area": 90,
+        "cadastralunitcode": 819000,
+        "cadastralunitname": "Hradište pod Vrátnom",
+        "foliono": 760,
+        "folioownerscount": 1,
+        "landusename": "Záhrada",
+        "legalrighttexts": [
+            "Kúpa R.I. 2330/92-vz. 77/92.",
+            "Osvedčenie N-220/04, Z-819/04 vz.41/04\r\nKúpna zmluva V-1165/09 zo dňa 27.7.2009 vz.70/09\r\nVýmaz záložného práva V-474/02, Z-1606/09 vz.71/09\r\nZápis do KN - Z-2911/09 vz.2/10"
+        ],
+        "parcelno": "483/2",
+        "parceltype": "C",
+        "participantratio": 100.0,
+        "participanttypename": "Vlastník",
+        "utilisationname": "Pozemok prevažne v zastavanom území obce alebo v záhradkárskej osade, na ktorom sa pestuje zelenina, ovocie, okrasná nízka a vysoká zeleň a iné poľnohospodárske plodiny"
+    },
+    {
+        "area": 187,
+        "cadastralunitcode": 819000,
+        "cadastralunitname": "Hradište pod Vrátnom",
+        "foliono": 760,
+        "folioownerscount": 1,
+        "landusename": "Trvalý trávnatý porast",
+        "legalrighttexts": [
+            "Kúpa R.I. 2330/92-vz. 77/92.",
+            "Osvedčenie N-220/04, Z-819/04 vz.41/04\r\nKúpna zmluva V-1165/09 zo dňa 27.7.2009 vz.70/09\r\nVýmaz záložného práva V-474/02, Z-1606/09 vz.71/09\r\nZápis do KN - Z-2911/09 vz.2/10"
+        ],
+        "parcelno": "484/6",
+        "parceltype": "C",
+        "participantratio": 100.0,
+        "participanttypename": "Vlastník",
+        "utilisationname": "Pozemok lúky a pasienku trvalo porastený trávami alebo pozemok dočasne nevyužívaný pre trvalý trávny porast"
+    },
+    {
+        "area": 245,
+        "cadastralunitcode": 819000,
+        "cadastralunitname": "Hradište pod Vrátnom",
+        "foliono": 760,
+        "folioownerscount": 1,
+        "landusename": "Zastavaná plocha a nádvorie",
+        "legalrighttexts": [
+            "Kúpa R.I. 2330/92-vz. 77/92.",
+            "Osvedčenie N-220/04, Z-819/04 vz.41/04\r\nKúpna zmluva V-1165/09 zo dňa 27.7.2009 vz.70/09\r\nVýmaz záložného práva V-474/02, Z-1606/09 vz.71/09\r\nZápis do KN - Z-2911/09 vz.2/10"
+        ],
+        "parcelno": "484/8",
+        "parceltype": "C",
+        "participantratio": 100.0,
+        "participanttypename": "Vlastník",
+        "utilisationname": "Pozemok, na ktorom je postavená budova bez označenia súpisným číslom"
+    },
+    {
+        "area": 113,
+        "cadastralunitcode": 819000,
+        "cadastralunitname": "Hradište pod Vrátnom",
+        "foliono": 760,
+        "folioownerscount": 1,
+        "landusename": "Zastavaná plocha a nádvorie",
+        "legalrighttexts": [
+            "Kúpa R.I. 2330/92-vz. 77/92.",
+            "Osvedčenie N-220/04, Z-819/04 vz.41/04\r\nKúpna zmluva V-1165/09 zo dňa 27.7.2009 vz.70/09\r\nVýmaz záložného práva V-474/02, Z-1606/09 vz.71/09\r\nZápis do KN - Z-2911/09 vz.2/10"
+        ],
+        "parcelno": "484/7",
+        "parceltype": "C",
+        "participantratio": 100.0,
+        "participanttypename": "Vlastník",
+        "utilisationname": "Pozemok, na ktorom je postavená bytová budova označená súpisným číslom"
+    },
+    {
+        "area": 436,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 411,
+        "folioownerscount": 15,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "tit. dedenia D 1097/90, VZ 13/90"
+        ],
+        "parcelno": "79/3",
+        "parceltype": "E",
+        "participantratio": 1.1111111111111112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 233,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 453,
+        "folioownerscount": 15,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "tit. dedenia D 1097/90, VZ 13/90"
+        ],
+        "parcelno": "80/1",
+        "parceltype": "E",
+        "participantratio": 1.1111111111111112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 105,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 278,
+        "folioownerscount": 15,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "tit. dedenia D 1097/90, VZ 13/90"
+        ],
+        "parcelno": "96/3",
+        "parceltype": "E",
+        "participantratio": 1.1111111111111112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 64,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 278,
+        "folioownerscount": 15,
+        "landusename": "Trvalý trávnatý porast",
+        "legalrighttexts": [
+            "tit. dedenia D 1097/90, VZ 13/90"
+        ],
+        "parcelno": "96/8",
+        "parceltype": "E",
+        "participantratio": 1.1111111111111112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 50,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 278,
+        "folioownerscount": 15,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "tit. dedenia D 1097/90, VZ 13/90"
+        ],
+        "parcelno": "97/7",
+        "parceltype": "E",
+        "participantratio": 1.1111111111111112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 101,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 278,
+        "folioownerscount": 15,
+        "landusename": "Trvalý trávnatý porast",
+        "legalrighttexts": [
+            "tit. dedenia D 1097/90, VZ 13/90"
+        ],
+        "parcelno": "97/9",
+        "parceltype": "E",
+        "participantratio": 1.1111111111111112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 216,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 60,
+        "folioownerscount": 6,
+        "landusename": "Trvalý trávnatý porast",
+        "legalrighttexts": [
+            "Rozh.PÚ č.72/92-1-VD-22/94,"
+        ],
+        "parcelno": "104/3",
+        "parceltype": "E",
+        "participantratio": 4.166666666666667,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 331,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 60,
+        "folioownerscount": 6,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "Rozh.PÚ č.72/92-1-VD-22/94,"
+        ],
+        "parcelno": "104/4",
+        "parceltype": "E",
+        "participantratio": 4.166666666666667,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 2669,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 60,
+        "folioownerscount": 6,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "Rozh.PÚ č.72/92-1-VD-22/94,"
+        ],
+        "parcelno": "130",
+        "parceltype": "E",
+        "participantratio": 4.166666666666667,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 478,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 75,
+        "folioownerscount": 5,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "tit. dedenia D 1097/90 - 13/90, III.etapa - 63/91"
+        ],
+        "parcelno": "143/1",
+        "parceltype": "E",
+        "participantratio": 11.11111111111111,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 478,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 278,
+        "folioownerscount": 15,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "tit. dedenia D 1097/90, VZ 13/90"
+        ],
+        "parcelno": "143/2",
+        "parceltype": "E",
+        "participantratio": 1.1111111111111112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 491,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 278,
+        "folioownerscount": 15,
+        "landusename": "Trvalý trávnatý porast",
+        "legalrighttexts": [
+            "tit. dedenia D 1097/90, VZ 13/90"
+        ],
+        "parcelno": "144/3",
+        "parceltype": "E",
+        "participantratio": 1.1111111111111112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 491,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 75,
+        "folioownerscount": 5,
+        "landusename": "Trvalý trávnatý porast",
+        "legalrighttexts": [
+            "tit. dedenia D 1097/90 - 13/90, III.etapa - 63/91"
+        ],
+        "parcelno": "144/4",
+        "parceltype": "E",
+        "participantratio": 11.11111111111111,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 614,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 75,
+        "folioownerscount": 5,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "tit. dedenia D 1097/90 - 13/90, III.etapa - 63/91"
+        ],
+        "parcelno": "145/1",
+        "parceltype": "E",
+        "participantratio": 11.11111111111111,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 614,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 278,
+        "folioownerscount": 15,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "tit. dedenia D 1097/90, VZ 13/90"
+        ],
+        "parcelno": "145/2",
+        "parceltype": "E",
+        "participantratio": 1.1111111111111112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 1593,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 452,
+        "folioownerscount": 15,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "tit. dedenia D 1097/90, VZ 13/90"
+        ],
+        "parcelno": "146/1",
+        "parceltype": "E",
+        "participantratio": 1.1111111111111112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 709,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 452,
+        "folioownerscount": 15,
+        "landusename": "Trvalý trávnatý porast",
+        "legalrighttexts": [
+            "tit. dedenia D 1097/90, VZ 13/90"
+        ],
+        "parcelno": "147/2",
+        "parceltype": "E",
+        "participantratio": 1.1111111111111112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 929,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 278,
+        "folioownerscount": 15,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "tit. dedenia D 1097/90, VZ 13/90"
+        ],
+        "parcelno": "148/1",
+        "parceltype": "E",
+        "participantratio": 1.1111111111111112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 3393,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 278,
+        "folioownerscount": 15,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "tit. dedenia D 1097/90, VZ 13/90"
+        ],
+        "parcelno": "151/2",
+        "parceltype": "E",
+        "participantratio": 1.1111111111111112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 1773,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 278,
+        "folioownerscount": 15,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "tit. dedenia D 1097/90, VZ 13/90"
+        ],
+        "parcelno": "152/1",
+        "parceltype": "E",
+        "participantratio": 1.1111111111111112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 4490,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 60,
+        "folioownerscount": 6,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "Rozh.PÚ č.72/92-1-VD-22/94,"
+        ],
+        "parcelno": "157/1",
+        "parceltype": "E",
+        "participantratio": 4.166666666666667,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 1603,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 233,
+        "folioownerscount": 14,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "titulom osvedčenia N 345/95, VZ 19/95"
+        ],
+        "parcelno": "183/2",
+        "parceltype": "E",
+        "participantratio": 1.1111111111111112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 3899,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 233,
+        "folioownerscount": 14,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "titulom osvedčenia N 345/95, VZ 19/95"
+        ],
+        "parcelno": "184/1",
+        "parceltype": "E",
+        "participantratio": 1.1111111111111112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 1164,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 461,
+        "folioownerscount": 15,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "tit. dedenia D 1097/90, VZ 13/90"
+        ],
+        "parcelno": "212/1",
+        "parceltype": "E",
+        "participantratio": 1.1111111111111112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 1369,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 278,
+        "folioownerscount": 15,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "tit. dedenia D 1097/90, VZ 13/90"
+        ],
+        "parcelno": "213/4",
+        "parceltype": "E",
+        "participantratio": 1.1111111111111112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 2503,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 60,
+        "folioownerscount": 6,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "Rozh.PÚ č.72/92-1-VD-22/94,"
+        ],
+        "parcelno": "221",
+        "parceltype": "E",
+        "participantratio": 4.166666666666667,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 1455,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 278,
+        "folioownerscount": 15,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "tit. dedenia D 1097/90, VZ 13/90"
+        ],
+        "parcelno": "245/4",
+        "parceltype": "E",
+        "participantratio": 1.1111111111111112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 3075,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 278,
+        "folioownerscount": 15,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "tit. dedenia D 1097/90, VZ 13/90"
+        ],
+        "parcelno": "246/1",
+        "parceltype": "E",
+        "participantratio": 1.1111111111111112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 2167,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 60,
+        "folioownerscount": 6,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "Rozh.PÚ č.72/92-1-VD-22/94,"
+        ],
+        "parcelno": "262/1",
+        "parceltype": "E",
+        "participantratio": 4.166666666666667,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 2598,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 60,
+        "folioownerscount": 6,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "Rozh.PÚ č.72/92-1-VD-22/94,"
+        ],
+        "parcelno": "263/2",
+        "parceltype": "E",
+        "participantratio": 4.166666666666667,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 6829,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 60,
+        "folioownerscount": 6,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "Rozh.PÚ č.72/92-1-VD-22/94,"
+        ],
+        "parcelno": "263/3",
+        "parceltype": "E",
+        "participantratio": 4.166666666666667,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 141,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 278,
+        "folioownerscount": 15,
+        "landusename": "Trvalý trávnatý porast",
+        "legalrighttexts": [
+            "tit. dedenia D 1097/90, VZ 13/90"
+        ],
+        "parcelno": "283/1",
+        "parceltype": "E",
+        "participantratio": 1.1111111111111112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 1897,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 278,
+        "folioownerscount": 15,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "tit. dedenia D 1097/90, VZ 13/90"
+        ],
+        "parcelno": "284/4",
+        "parceltype": "E",
+        "participantratio": 1.1111111111111112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 4435,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 278,
+        "folioownerscount": 15,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "tit. dedenia D 1097/90, VZ 13/90"
+        ],
+        "parcelno": "285/4",
+        "parceltype": "E",
+        "participantratio": 1.1111111111111112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 4270,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 278,
+        "folioownerscount": 15,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "tit. dedenia D 1097/90, VZ 13/90"
+        ],
+        "parcelno": "286/2",
+        "parceltype": "E",
+        "participantratio": 1.1111111111111112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 4351,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 278,
+        "folioownerscount": 15,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "tit. dedenia D 1097/90, VZ 13/90"
+        ],
+        "parcelno": "286/4",
+        "parceltype": "E",
+        "participantratio": 1.1111111111111112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 4406,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 278,
+        "folioownerscount": 15,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "tit. dedenia D 1097/90, VZ 13/90"
+        ],
+        "parcelno": "287/1",
+        "parceltype": "E",
+        "participantratio": 1.1111111111111112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 538,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 278,
+        "folioownerscount": 15,
+        "landusename": "Trvalý trávnatý porast",
+        "legalrighttexts": [
+            "tit. dedenia D 1097/90, VZ 13/90"
+        ],
+        "parcelno": "288/2",
+        "parceltype": "E",
+        "participantratio": 1.1111111111111112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 1143,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 452,
+        "folioownerscount": 15,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "tit. dedenia D 1097/90, VZ 13/90"
+        ],
+        "parcelno": "293/1",
+        "parceltype": "E",
+        "participantratio": 1.1111111111111112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 2167,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 60,
+        "folioownerscount": 6,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "Rozh.PÚ č.72/92-1-VD-22/94,"
+        ],
+        "parcelno": "298/1",
+        "parceltype": "E",
+        "participantratio": 4.166666666666667,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 1146,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 60,
+        "folioownerscount": 6,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "Rozh.PÚ č.72/92-1-VD-22/94,"
+        ],
+        "parcelno": "309/2",
+        "parceltype": "E",
+        "participantratio": 4.166666666666667,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 1093,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 452,
+        "folioownerscount": 15,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "tit. dedenia D 1097/90, VZ 13/90"
+        ],
+        "parcelno": "314/4",
+        "parceltype": "E",
+        "participantratio": 1.1111111111111112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 2172,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 278,
+        "folioownerscount": 15,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "tit. dedenia D 1097/90, VZ 13/90"
+        ],
+        "parcelno": "315/2",
+        "parceltype": "E",
+        "participantratio": 1.1111111111111112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 1342,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 278,
+        "folioownerscount": 15,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "tit. dedenia D 1097/90, VZ 13/90"
+        ],
+        "parcelno": "347",
+        "parceltype": "E",
+        "participantratio": 1.1111111111111112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 1175,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 75,
+        "folioownerscount": 5,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "tit. dedenia D 1097/90 - 13/90, III.etapa - 63/91"
+        ],
+        "parcelno": "358/1",
+        "parceltype": "E",
+        "participantratio": 11.11111111111111,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 69,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 75,
+        "folioownerscount": 5,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "tit. dedenia D 1097/90 - 13/90, III.etapa - 63/91"
+        ],
+        "parcelno": "358/2",
+        "parceltype": "E",
+        "participantratio": 11.11111111111111,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 1230,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 278,
+        "folioownerscount": 15,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "tit. dedenia D 1097/90, VZ 13/90"
+        ],
+        "parcelno": "359/1",
+        "parceltype": "E",
+        "participantratio": 1.1111111111111112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 61,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 452,
+        "folioownerscount": 15,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "tit. dedenia D 1097/90, VZ 13/90"
+        ],
+        "parcelno": "359/2",
+        "parceltype": "E",
+        "participantratio": 1.1111111111111112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 1252,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 60,
+        "folioownerscount": 6,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "Rozh.PÚ č.72/92-1-VD-22/94,"
+        ],
+        "parcelno": "365",
+        "parceltype": "E",
+        "participantratio": 4.166666666666667,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 797,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 60,
+        "folioownerscount": 6,
+        "landusename": "Trvalý trávnatý porast",
+        "legalrighttexts": [
+            "Rozh.PÚ č.72/92-1-VD-22/94,"
+        ],
+        "parcelno": "395",
+        "parceltype": "E",
+        "participantratio": 4.166666666666667,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 1592,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 452,
+        "folioownerscount": 15,
+        "landusename": "Trvalý trávnatý porast",
+        "legalrighttexts": [
+            "tit. dedenia D 1097/90, VZ 13/90"
+        ],
+        "parcelno": "397",
+        "parceltype": "E",
+        "participantratio": 1.1111111111111112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 764,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 278,
+        "folioownerscount": 15,
+        "landusename": "Trvalý trávnatý porast",
+        "legalrighttexts": [
+            "tit. dedenia D 1097/90, VZ 13/90"
+        ],
+        "parcelno": "400",
+        "parceltype": "E",
+        "participantratio": 1.1111111111111112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 1065,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 60,
+        "folioownerscount": 6,
+        "landusename": "Trvalý trávnatý porast",
+        "legalrighttexts": [
+            "Rozh.PÚ č.72/92-1-VD-22/94,"
+        ],
+        "parcelno": "429",
+        "parceltype": "E",
+        "participantratio": 4.166666666666667,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 2166,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 278,
+        "folioownerscount": 15,
+        "landusename": "Trvalý trávnatý porast",
+        "legalrighttexts": [
+            "tit. dedenia D 1097/90, VZ 13/90"
+        ],
+        "parcelno": "430",
+        "parceltype": "E",
+        "participantratio": 1.1111111111111112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 1082,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 278,
+        "folioownerscount": 15,
+        "landusename": "Trvalý trávnatý porast",
+        "legalrighttexts": [
+            "tit. dedenia D 1097/90, VZ 13/90"
+        ],
+        "parcelno": "440",
+        "parceltype": "E",
+        "participantratio": 1.1111111111111112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 2052,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 452,
+        "folioownerscount": 15,
+        "landusename": "Trvalý trávnatý porast",
+        "legalrighttexts": [
+            "tit. dedenia D 1097/90, VZ 13/90"
+        ],
+        "parcelno": "458",
+        "parceltype": "E",
+        "participantratio": 1.1111111111111112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 978,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 278,
+        "folioownerscount": 15,
+        "landusename": "Trvalý trávnatý porast",
+        "legalrighttexts": [
+            "tit. dedenia D 1097/90, VZ 13/90"
+        ],
+        "parcelno": "469",
+        "parceltype": "E",
+        "participantratio": 1.1111111111111112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 939,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 60,
+        "folioownerscount": 6,
+        "landusename": "Trvalý trávnatý porast",
+        "legalrighttexts": [
+            "Rozh.PÚ č.72/92-1-VD-22/94,"
+        ],
+        "parcelno": "477",
+        "parceltype": "E",
+        "participantratio": 4.166666666666667,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 838,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 60,
+        "folioownerscount": 6,
+        "landusename": "Trvalý trávnatý porast",
+        "legalrighttexts": [
+            "Rozh.PÚ č.72/92-1-VD-22/94,"
+        ],
+        "parcelno": "484",
+        "parceltype": "E",
+        "participantratio": 4.166666666666667,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 878,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 452,
+        "folioownerscount": 15,
+        "landusename": "Trvalý trávnatý porast",
+        "legalrighttexts": [
+            "tit. dedenia D 1097/90, VZ 13/90"
+        ],
+        "parcelno": "490",
+        "parceltype": "E",
+        "participantratio": 1.1111111111111112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 1543,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 278,
+        "folioownerscount": 15,
+        "landusename": "Trvalý trávnatý porast",
+        "legalrighttexts": [
+            "tit. dedenia D 1097/90, VZ 13/90"
+        ],
+        "parcelno": "509",
+        "parceltype": "E",
+        "participantratio": 1.1111111111111112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 1902,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 278,
+        "folioownerscount": 15,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "tit. dedenia D 1097/90, VZ 13/90"
+        ],
+        "parcelno": "517",
+        "parceltype": "E",
+        "participantratio": 1.1111111111111112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 1854,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 278,
+        "folioownerscount": 15,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "tit. dedenia D 1097/90, VZ 13/90"
+        ],
+        "parcelno": "546",
+        "parceltype": "E",
+        "participantratio": 1.1111111111111112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 1960,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 452,
+        "folioownerscount": 15,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "tit. dedenia D 1097/90, VZ 13/90"
+        ],
+        "parcelno": "557",
+        "parceltype": "E",
+        "participantratio": 1.1111111111111112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 17,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 452,
+        "folioownerscount": 15,
+        "landusename": "Trvalý trávnatý porast",
+        "legalrighttexts": [
+            "tit. dedenia D 1097/90, VZ 13/90"
+        ],
+        "parcelno": "592",
+        "parceltype": "E",
+        "participantratio": 1.1111111111111112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 1838,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 278,
+        "folioownerscount": 15,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "tit. dedenia D 1097/90, VZ 13/90"
+        ],
+        "parcelno": "593",
+        "parceltype": "E",
+        "participantratio": 1.1111111111111112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 1833,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 278,
+        "folioownerscount": 15,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "tit. dedenia D 1097/90, VZ 13/90"
+        ],
+        "parcelno": "594",
+        "parceltype": "E",
+        "participantratio": 1.1111111111111112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 20,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 452,
+        "folioownerscount": 15,
+        "landusename": "Trvalý trávnatý porast",
+        "legalrighttexts": [
+            "tit. dedenia D 1097/90, VZ 13/90"
+        ],
+        "parcelno": "595",
+        "parceltype": "E",
+        "participantratio": 1.1111111111111112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 18,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 278,
+        "folioownerscount": 15,
+        "landusename": "Trvalý trávnatý porast",
+        "legalrighttexts": [
+            "tit. dedenia D 1097/90, VZ 13/90"
+        ],
+        "parcelno": "625",
+        "parceltype": "E",
+        "participantratio": 1.1111111111111112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 1678,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 278,
+        "folioownerscount": 15,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "tit. dedenia D 1097/90, VZ 13/90"
+        ],
+        "parcelno": "626",
+        "parceltype": "E",
+        "participantratio": 1.1111111111111112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 1828,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 60,
+        "folioownerscount": 6,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "Rozh.PÚ č.72/92-1-VD-22/94,"
+        ],
+        "parcelno": "635",
+        "parceltype": "E",
+        "participantratio": 4.166666666666667,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 39,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 60,
+        "folioownerscount": 6,
+        "landusename": "Trvalý trávnatý porast",
+        "legalrighttexts": [
+            "Rozh.PÚ č.72/92-1-VD-22/94,"
+        ],
+        "parcelno": "636",
+        "parceltype": "E",
+        "participantratio": 4.166666666666667,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 1894,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 278,
+        "folioownerscount": 15,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "tit. dedenia D 1097/90, VZ 13/90"
+        ],
+        "parcelno": "665",
+        "parceltype": "E",
+        "participantratio": 1.1111111111111112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 835,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 278,
+        "folioownerscount": 15,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "tit. dedenia D 1097/90, VZ 13/90"
+        ],
+        "parcelno": "674",
+        "parceltype": "E",
+        "participantratio": 1.1111111111111112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 1127,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 278,
+        "folioownerscount": 15,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "tit. dedenia D 1097/90, VZ 13/90"
+        ],
+        "parcelno": "676",
+        "parceltype": "E",
+        "participantratio": 1.1111111111111112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 1773,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 278,
+        "folioownerscount": 15,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "tit. dedenia D 1097/90, VZ 13/90"
+        ],
+        "parcelno": "683/1",
+        "parceltype": "E",
+        "participantratio": 1.1111111111111112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 1400,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 60,
+        "folioownerscount": 6,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "Rozh.PÚ č.72/92-1-VD-22/94,"
+        ],
+        "parcelno": "701/1",
+        "parceltype": "E",
+        "participantratio": 4.166666666666667,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 3193,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 72,
+        "folioownerscount": 11,
+        "landusename": "Trvalý trávnatý porast",
+        "legalrighttexts": [
+            "D 1097/90-13/90"
+        ],
+        "parcelno": "90010/6",
+        "parceltype": "E",
+        "participantratio": 2.7777777777777777,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 331,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 72,
+        "folioownerscount": 11,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "D 1097/90-13/90"
+        ],
+        "parcelno": "90011",
+        "parceltype": "E",
+        "participantratio": 2.7777777777777777,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 421,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 433,
+        "folioownerscount": 7,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "Rozh.PÚ č.72/92-1-VD-22/94,"
+        ],
+        "parcelno": "90012/2",
+        "parceltype": "E",
+        "participantratio": 4.166666666666667,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 704,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 433,
+        "folioownerscount": 7,
+        "landusename": "Trvalý trávnatý porast",
+        "legalrighttexts": [
+            "Rozh.PÚ č.72/92-1-VD-22/94,"
+        ],
+        "parcelno": "90013/1",
+        "parceltype": "E",
+        "participantratio": 4.166666666666667,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 552,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 433,
+        "folioownerscount": 7,
+        "landusename": "Trvalý trávnatý porast",
+        "legalrighttexts": [
+            "Rozh.PÚ č.72/92-1-VD-22/94,"
+        ],
+        "parcelno": "90013/3",
+        "parceltype": "E",
+        "participantratio": 4.166666666666667,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 851,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 434,
+        "folioownerscount": 15,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "titulom osvedčenia N 345/95, VZ 19/95"
+        ],
+        "parcelno": "90184/1",
+        "parceltype": "E",
+        "participantratio": 1.1111111111111112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 740,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 248,
+        "folioownerscount": 15,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "Úradný záznam zo dňa 29.04.2016 -R -462/2016 -55/2016,",
+            "D 1097/90 - 13/90;"
+        ],
+        "parcelno": "90209/203",
+        "parceltype": "E",
+        "participantratio": 1.1111111111111112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 1375,
+        "cadastralunitcode": 832031,
+        "cadastralunitname": "Lieskovany",
+        "foliono": 435,
+        "folioownerscount": 16,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "tit. dedenia D 1097/90, VZ 13/90"
+        ],
+        "parcelno": "90212/5",
+        "parceltype": "E",
+        "participantratio": 1.1111111111111112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 4580,
+        "cadastralunitcode": 857386,
+        "cadastralunitname": "Spišská Nová Ves",
+        "foliono": 6578,
+        "folioownerscount": 12,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "Rozhodnutie Správy katastra Sp. Nová Ves č. ROEP 29/58/2011, právoplatné 7.10.2011; Z 3235/2011; PVZ 3089/11",
+            "Tit.:Rozhodnutie PÚ č.72/92-5 DN-Pol.VZ 1221/96 Tit.:Osvedčenie o ded.D 1183/93,D 1184/93-Pol.VZ 2426/98"
+        ],
+        "parcelno": "4460",
+        "parceltype": "E",
+        "participantratio": 4.166666666666667,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 5067,
+        "cadastralunitcode": 857386,
+        "cadastralunitname": "Spišská Nová Ves",
+        "foliono": 5426,
+        "folioownerscount": 10,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "Tit.:Osvedčenie o ded.D 1183/93-25,D 1184/93-25-Pol.VZ 2426/98",
+            "Rozhodnutie Správy katastra Sp. Nová Ves č. ROEP 29/58/2011, právoplatné 7.10.2011; Z 3235/2011; PVZ 3089/11"
+        ],
+        "parcelno": "4670",
+        "parceltype": "E",
+        "participantratio": 4.166666666666667,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 4511,
+        "cadastralunitcode": 857386,
+        "cadastralunitname": "Spišská Nová Ves",
+        "foliono": 5426,
+        "folioownerscount": 10,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "Tit.:Osvedčenie o ded.D 1183/93-25,D 1184/93-25-Pol.VZ 2426/98",
+            "Rozhodnutie Správy katastra Sp. Nová Ves č. ROEP 29/58/2011, právoplatné 7.10.2011; Z 3235/2011; PVZ 3089/11"
+        ],
+        "parcelno": "4671",
+        "parceltype": "E",
+        "participantratio": 4.166666666666667,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 413,
+        "cadastralunitcode": 857386,
+        "cadastralunitname": "Spišská Nová Ves",
+        "foliono": 5426,
+        "folioownerscount": 10,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "Tit.:Osvedčenie o ded.D 1183/93-25,D 1184/93-25-Pol.VZ 2426/98",
+            "Rozhodnutie Správy katastra Sp. Nová Ves č. ROEP 29/58/2011, právoplatné 7.10.2011; Z 3235/2011; PVZ 3089/11"
+        ],
+        "parcelno": "54576",
+        "parceltype": "E",
+        "participantratio": 4.166666666666667,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 885,
+        "cadastralunitcode": 857386,
+        "cadastralunitname": "Spišská Nová Ves",
+        "foliono": 6502,
+        "folioownerscount": 1,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "Osvedčenie o dedičstve 9D 147/2008-16,/z-365/2009/-784/2009,"
+        ],
+        "parcelno": "5493",
+        "parceltype": "E",
+        "participantratio": 100.0,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 3654,
+        "cadastralunitcode": 857386,
+        "cadastralunitname": "Spišská Nová Ves",
+        "foliono": 6502,
+        "folioownerscount": 1,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "Osvedčenie o dedičstve 9D 147/2008-16,/z-365/2009/-784/2009,"
+        ],
+        "parcelno": "5494",
+        "parceltype": "E",
+        "participantratio": 100.0,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 5646,
+        "cadastralunitcode": 857386,
+        "cadastralunitname": "Spišská Nová Ves",
+        "foliono": 9921,
+        "folioownerscount": 2,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "Osvedčenie o dedičstve 9D 147/2008-16,/z-365/2009/-784/2009,"
+        ],
+        "parcelno": "3229",
+        "parceltype": "E",
+        "participantratio": 66.66666666666667,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 568,
+        "cadastralunitcode": 857386,
+        "cadastralunitname": "Spišská Nová Ves",
+        "foliono": 11283,
+        "folioownerscount": 10,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "Tit.: Rozhodnutie PÚ č.j.: 72/92-2 DN,Rozhodnutie PÚ č.j : 72/92-4 Dn, Pol.VZ.-1221/96,D 1189/93-25,Pol.VZ.-2426/98,vl.č.678"
+        ],
+        "parcelno": "4920",
+        "parceltype": "E",
+        "participantratio": 5.555555555555555,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 11728,
+        "cadastralunitcode": 857386,
+        "cadastralunitname": "Spišská Nová Ves",
+        "foliono": 6579,
+        "folioownerscount": 10,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "Tit.: Rozhodnutie PÚ č.j.: 72/92-2 DN,Rozhodnutie PÚ č.j : 72/92-4 Dn, Pol.VZ.-1221/96,D 1189/93-25,Pol.VZ.-2426/98,vl.č.678"
+        ],
+        "parcelno": "4921",
+        "parceltype": "E",
+        "participantratio": 5.555555555555555,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 3540,
+        "cadastralunitcode": 857386,
+        "cadastralunitname": "Spišská Nová Ves",
+        "foliono": 7217,
+        "folioownerscount": 9,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "Tit.:Osvedčenie o ded.D 1184/93-25-Pol.VZ 2426/98,vl.č.1867",
+            "Rozhodnutie Správy katastra Sp. Nová Ves č. ROEP 29/58/2011, právoplatné 7.10.2011; Z 3235/2011; PVZ 3089/11",
+            "Tit.:Osvedčenie o ded.D 1184/93-25-Pol.VZ 2426/98,vl.č.3358"
+        ],
+        "parcelno": "4659",
+        "parceltype": "E",
+        "participantratio": 8.333333333333334,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 2768,
+        "cadastralunitcode": 857386,
+        "cadastralunitname": "Spišská Nová Ves",
+        "foliono": 7217,
+        "folioownerscount": 9,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "Tit.:Osvedčenie o ded.D 1184/93-25-Pol.VZ 2426/98,vl.č.1867",
+            "Rozhodnutie Správy katastra Sp. Nová Ves č. ROEP 29/58/2011, právoplatné 7.10.2011; Z 3235/2011; PVZ 3089/11",
+            "Tit.:Osvedčenie o ded.D 1184/93-25-Pol.VZ 2426/98,vl.č.3358"
+        ],
+        "parcelno": "4753",
+        "parceltype": "E",
+        "participantratio": 8.333333333333334,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 5591,
+        "cadastralunitcode": 857386,
+        "cadastralunitname": "Spišská Nová Ves",
+        "foliono": 7218,
+        "folioownerscount": 10,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "Tit.:Osvedčenie o ded.D 1183/93-25-Pol.VZ 2426/98",
+            "Rozhodnutie Správy katastra Sp. Nová Ves č. ROEP 29/58/2011, právoplatné 7.10.2011; Z 3235/2011; PVZ 3089/11"
+        ],
+        "parcelno": "4272",
+        "parceltype": "E",
+        "participantratio": 4.166666666666667,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 2097,
+        "cadastralunitcode": 857386,
+        "cadastralunitname": "Spišská Nová Ves",
+        "foliono": 7220,
+        "folioownerscount": 11,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "Rozhodnutie Správy katastra Sp. Nová Ves č. ROEP 29/58/2011, právoplatné 7.10.2011; Z 3235/2011; PVZ 3089/11",
+            "Tit.: Osvedčenie o ded. D 1184/93,5 D Not 399/98,Pol.VZ.-2426/98,vl.č.413"
+        ],
+        "parcelno": "4766",
+        "parceltype": "E",
+        "participantratio": 4.166666666666667,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 2097,
+        "cadastralunitcode": 857386,
+        "cadastralunitname": "Spišská Nová Ves",
+        "foliono": 7220,
+        "folioownerscount": 11,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "Rozhodnutie Správy katastra Sp. Nová Ves č. ROEP 29/58/2011, právoplatné 7.10.2011; Z 3235/2011; PVZ 3089/11",
+            "Tit.: Osvedčenie o ded. D 1184/93,5 D Not 399/98,Pol.VZ.-2426/98,vl.č.413"
+        ],
+        "parcelno": "4767",
+        "parceltype": "E",
+        "participantratio": 4.166666666666667,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 706,
+        "cadastralunitcode": 857386,
+        "cadastralunitname": "Spišská Nová Ves",
+        "foliono": 8519,
+        "folioownerscount": 12,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "Tit.:Rozhodnutie OÚ č.72/1992-8 MK-Pol.VZ 1798/2002",
+            "Rozhodnutie Správy katastra Sp. Nová Ves č. ROEP 29/58/2011, právoplatné 7.10.2011; Z 3235/2011; PVZ 3089/11"
+        ],
+        "parcelno": "54353",
+        "parceltype": "E",
+        "participantratio": 4.166666666666667,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 3813,
+        "cadastralunitcode": 857386,
+        "cadastralunitname": "Spišská Nová Ves",
+        "foliono": 7219,
+        "folioownerscount": 12,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "Tit.:Osvedčenie o ded.D 1184/93-25-Pol.VZ 2426/98",
+            "Rozhodnutie Správy katastra Sp. Nová Ves č. ROEP 29/58/2011, právoplatné 7.10.2011; Z 3235/2011; PVZ 3089/11"
+        ],
+        "parcelno": "54352/1",
+        "parceltype": "E",
+        "participantratio": 4.166666666666667,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 47,
+        "cadastralunitcode": 857386,
+        "cadastralunitname": "Spišská Nová Ves",
+        "foliono": 10440,
+        "folioownerscount": 15,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "Rozhodnutie Správy katastra Sp. Nová Ves č. ROEP 29/58/2011, právoplatné 7.10.2011; Z 3235/2011; PVZ 3089/11",
+            "Tit.:Rozhodnutie PÚ č.72/92-5 DN-Pol.VZ 1221/96 Tit.:Osvedčenie o ded.D 1183/93,D 1184/93-Pol.VZ 2426/98"
+        ],
+        "parcelno": "4459/1",
+        "parceltype": "E",
+        "participantratio": 4.166666666666667,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 383,
+        "cadastralunitcode": 857386,
+        "cadastralunitname": "Spišská Nová Ves",
+        "foliono": 10440,
+        "folioownerscount": 15,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "Rozhodnutie Správy katastra Sp. Nová Ves č. ROEP 29/58/2011, právoplatné 7.10.2011; Z 3235/2011; PVZ 3089/11",
+            "Tit.:Rozhodnutie PÚ č.72/92-5 DN-Pol.VZ 1221/96 Tit.:Osvedčenie o ded.D 1183/93,D 1184/93-Pol.VZ 2426/98"
+        ],
+        "parcelno": "4459/2",
+        "parceltype": "E",
+        "participantratio": 4.166666666666667,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 1180,
+        "cadastralunitcode": 857386,
+        "cadastralunitname": "Spišská Nová Ves",
+        "foliono": 7219,
+        "folioownerscount": 12,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "Tit.:Osvedčenie o ded.D 1184/93-25-Pol.VZ 2426/98",
+            "Rozhodnutie Správy katastra Sp. Nová Ves č. ROEP 29/58/2011, právoplatné 7.10.2011; Z 3235/2011; PVZ 3089/11"
+        ],
+        "parcelno": "54352/2",
+        "parceltype": "E",
+        "participantratio": 4.166666666666667,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 1699,
+        "cadastralunitcode": 836125,
+        "cadastralunitname": "Markušovce",
+        "foliono": 1095,
+        "folioownerscount": 10,
+        "landusename": "Trvalý trávnatý porast",
+        "legalrighttexts": [
+            "Rozhodnutie PÚ č.72/92-2-DN-72/97, Osvedčenie o dedičstve D 1183/93-72/97,",
+            "Rozhodnutie Správy katastra Spišská Nová Ves č.j.: ROEP C 9/2013 právoplatné 18.2.2013, Z 562/2013, pvz 53/2013 - prevzatie grafických výmer parciel EKN - 60/13;"
+        ],
+        "parcelno": "2207",
+        "parceltype": "E",
+        "participantratio": 8.333333333333334,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 1745,
+        "cadastralunitcode": 836125,
+        "cadastralunitname": "Markušovce",
+        "foliono": 1095,
+        "folioownerscount": 10,
+        "landusename": "Trvalý trávnatý porast",
+        "legalrighttexts": [
+            "Rozhodnutie PÚ č.72/92-2-DN-72/97, Osvedčenie o dedičstve D 1183/93-72/97,",
+            "Rozhodnutie Správy katastra Spišská Nová Ves č.j.: ROEP C 9/2013 právoplatné 18.2.2013, Z 562/2013, pvz 53/2013 - prevzatie grafických výmer parciel EKN - 60/13;"
+        ],
+        "parcelno": "2231",
+        "parceltype": "E",
+        "participantratio": 8.333333333333334,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 158,
+        "cadastralunitcode": 843164,
+        "cadastralunitname": "Odorín",
+        "foliono": 1090,
+        "folioownerscount": 171,
+        "landusename": "Trvalý trávnatý porast",
+        "legalrighttexts": [
+            "Rozhodnutie Správy katastra Sp. Nová Ves č.ROEP 31/92/2011, právoplatné 23.12.2011; Z4245/2011; PVZ 2/2012",
+            "Rozh.PÚ č.72/92-2-DN -37/97,"
+        ],
+        "parcelno": "323/2",
+        "parceltype": "E",
+        "participantratio": 0.043402777777777776,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 81,
+        "cadastralunitcode": 843164,
+        "cadastralunitname": "Odorín",
+        "foliono": 1219,
+        "folioownerscount": 168,
+        "landusename": "Trvalý trávnatý porast",
+        "legalrighttexts": [
+            "Rozhodnutie Správy katastra Sp. Nová Ves č.ROEP 31/92/2011, právoplatné 23.12.2011; Z4245/2011; PVZ 2/2012",
+            "Rozh.PÚ č.72/92-2-DN-37/97,"
+        ],
+        "parcelno": "324/2",
+        "parceltype": "E",
+        "participantratio": 0.04355400696864112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 14,
+        "cadastralunitcode": 843164,
+        "cadastralunitname": "Odorín",
+        "foliono": 1219,
+        "folioownerscount": 168,
+        "landusename": "Trvalý trávnatý porast",
+        "legalrighttexts": [
+            "Rozhodnutie Správy katastra Sp. Nová Ves č.ROEP 31/92/2011, právoplatné 23.12.2011; Z4245/2011; PVZ 2/2012",
+            "Rozh.PÚ č.72/92-2-DN-37/97,"
+        ],
+        "parcelno": "327/2",
+        "parceltype": "E",
+        "participantratio": 0.04355400696864112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 33,
+        "cadastralunitcode": 843164,
+        "cadastralunitname": "Odorín",
+        "foliono": 1219,
+        "folioownerscount": 168,
+        "landusename": "Trvalý trávnatý porast",
+        "legalrighttexts": [
+            "Rozhodnutie Správy katastra Sp. Nová Ves č.ROEP 31/92/2011, právoplatné 23.12.2011; Z4245/2011; PVZ 2/2012",
+            "Rozh.PÚ č.72/92-2-DN-37/97,"
+        ],
+        "parcelno": "328/2",
+        "parceltype": "E",
+        "participantratio": 0.04355400696864112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 51,
+        "cadastralunitcode": 843164,
+        "cadastralunitname": "Odorín",
+        "foliono": 1219,
+        "folioownerscount": 168,
+        "landusename": "Trvalý trávnatý porast",
+        "legalrighttexts": [
+            "Rozhodnutie Správy katastra Sp. Nová Ves č.ROEP 31/92/2011, právoplatné 23.12.2011; Z4245/2011; PVZ 2/2012",
+            "Rozh.PÚ č.72/92-2-DN-37/97,"
+        ],
+        "parcelno": "329/2",
+        "parceltype": "E",
+        "participantratio": 0.04355400696864112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 62,
+        "cadastralunitcode": 843164,
+        "cadastralunitname": "Odorín",
+        "foliono": 1219,
+        "folioownerscount": 168,
+        "landusename": "Trvalý trávnatý porast",
+        "legalrighttexts": [
+            "Rozhodnutie Správy katastra Sp. Nová Ves č.ROEP 31/92/2011, právoplatné 23.12.2011; Z4245/2011; PVZ 2/2012",
+            "Rozh.PÚ č.72/92-2-DN-37/97,"
+        ],
+        "parcelno": "330/2",
+        "parceltype": "E",
+        "participantratio": 0.04355400696864112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 56,
+        "cadastralunitcode": 843164,
+        "cadastralunitname": "Odorín",
+        "foliono": 1219,
+        "folioownerscount": 168,
+        "landusename": "Trvalý trávnatý porast",
+        "legalrighttexts": [
+            "Rozhodnutie Správy katastra Sp. Nová Ves č.ROEP 31/92/2011, právoplatné 23.12.2011; Z4245/2011; PVZ 2/2012",
+            "Rozh.PÚ č.72/92-2-DN-37/97,"
+        ],
+        "parcelno": "331/2",
+        "parceltype": "E",
+        "participantratio": 0.04355400696864112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 47,
+        "cadastralunitcode": 843164,
+        "cadastralunitname": "Odorín",
+        "foliono": 1219,
+        "folioownerscount": 168,
+        "landusename": "Trvalý trávnatý porast",
+        "legalrighttexts": [
+            "Rozhodnutie Správy katastra Sp. Nová Ves č.ROEP 31/92/2011, právoplatné 23.12.2011; Z4245/2011; PVZ 2/2012",
+            "Rozh.PÚ č.72/92-2-DN-37/97,"
+        ],
+        "parcelno": "356/2",
+        "parceltype": "E",
+        "participantratio": 0.04355400696864112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 123,
+        "cadastralunitcode": 843164,
+        "cadastralunitname": "Odorín",
+        "foliono": 1219,
+        "folioownerscount": 168,
+        "landusename": "Trvalý trávnatý porast",
+        "legalrighttexts": [
+            "Rozhodnutie Správy katastra Sp. Nová Ves č.ROEP 31/92/2011, právoplatné 23.12.2011; Z4245/2011; PVZ 2/2012",
+            "Rozh.PÚ č.72/92-2-DN-37/97,"
+        ],
+        "parcelno": "356/4",
+        "parceltype": "E",
+        "participantratio": 0.04355400696864112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 2764,
+        "cadastralunitcode": 843164,
+        "cadastralunitname": "Odorín",
+        "foliono": 1219,
+        "folioownerscount": 168,
+        "landusename": "Trvalý trávnatý porast",
+        "legalrighttexts": [
+            "Rozhodnutie Správy katastra Sp. Nová Ves č.ROEP 31/92/2011, právoplatné 23.12.2011; Z4245/2011; PVZ 2/2012",
+            "Rozh.PÚ č.72/92-2-DN-37/97,"
+        ],
+        "parcelno": "703/2",
+        "parceltype": "E",
+        "participantratio": 0.04355400696864112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 13,
+        "cadastralunitcode": 843164,
+        "cadastralunitname": "Odorín",
+        "foliono": 951,
+        "folioownerscount": 5,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "Rozh. PÚ č.72/92-1-VD - 22/94 Liesk. - 42/2006;"
+        ],
+        "parcelno": "104/11",
+        "parceltype": "E",
+        "participantratio": 4.166666666666667,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 462,
+        "cadastralunitcode": 843164,
+        "cadastralunitname": "Odorín",
+        "foliono": 951,
+        "folioownerscount": 5,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "Rozh. PÚ č.72/92-1-VD - 22/94 Liesk. - 42/2006;"
+        ],
+        "parcelno": "701/2",
+        "parceltype": "E",
+        "participantratio": 4.166666666666667,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 52,
+        "cadastralunitcode": 843164,
+        "cadastralunitname": "Odorín",
+        "foliono": 962,
+        "folioownerscount": 15,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "D 1097/90 - 13/90 Liesk. - 42/2006;"
+        ],
+        "parcelno": "96/6",
+        "parceltype": "E",
+        "participantratio": 1.1111111111111112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 75,
+        "cadastralunitcode": 843164,
+        "cadastralunitname": "Odorín",
+        "foliono": 962,
+        "folioownerscount": 15,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "D 1097/90 - 13/90 Liesk. - 42/2006;"
+        ],
+        "parcelno": "97/6",
+        "parceltype": "E",
+        "participantratio": 1.1111111111111112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 48,
+        "cadastralunitcode": 843164,
+        "cadastralunitname": "Odorín",
+        "foliono": 962,
+        "folioownerscount": 15,
+        "landusename": "Orná pôda",
+        "legalrighttexts": [
+            "D 1097/90 - 13/90 Liesk. - 42/2006;"
+        ],
+        "parcelno": "683/2",
+        "parceltype": "E",
+        "participantratio": 1.1111111111111112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 572,
+        "cadastralunitcode": 843164,
+        "cadastralunitname": "Odorín",
+        "foliono": 832,
+        "folioownerscount": 169,
+        "landusename": "Ostatná plocha",
+        "legalrighttexts": [
+            "Rozhodnutie Správy katastra Sp. Nová Ves č.ROEP 31/92/2011, právoplatné 23.12.2011; Z4245/2011; PVZ 2/2012",
+            "Rozh.PÚ č.72/92-2-DN-37/97,"
+        ],
+        "parcelno": "322/1",
+        "parceltype": "E",
+        "participantratio": 0.04355400696864112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 72,
+        "cadastralunitcode": 843164,
+        "cadastralunitname": "Odorín",
+        "foliono": 832,
+        "folioownerscount": 169,
+        "landusename": "Ostatná plocha",
+        "legalrighttexts": [
+            "Rozhodnutie Správy katastra Sp. Nová Ves č.ROEP 31/92/2011, právoplatné 23.12.2011; Z4245/2011; PVZ 2/2012",
+            "Rozh.PÚ č.72/92-2-DN-37/97,"
+        ],
+        "parcelno": "322/2",
+        "parceltype": "E",
+        "participantratio": 0.04355400696864112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    },
+    {
+        "area": 64,
+        "cadastralunitcode": 843164,
+        "cadastralunitname": "Odorín",
+        "foliono": 832,
+        "folioownerscount": 169,
+        "landusename": "Ostatná plocha",
+        "legalrighttexts": [
+            "Rozhodnutie Správy katastra Sp. Nová Ves č.ROEP 31/92/2011, právoplatné 23.12.2011; Z4245/2011; PVZ 2/2012",
+            "Rozh.PÚ č.72/92-2-DN-37/97,"
+        ],
+        "parcelno": "322/3",
+        "parceltype": "E",
+        "participantratio": 0.04355400696864112,
+        "participanttypename": "Vlastník",
+        "utilisationname": " "
+    }
+]

@@ -6,7 +6,7 @@ from paste import httpserver
 import webapp2
 import yaml
 
-from utils import download_cadastral_json, download_cadastral_pages, search_string, WGS84_to_Mercator, json_dump_utf8
+from utils import download_cadastral_json, download_cadastral_pages, search_string, WGS84_to_Mercator, json_load, json_dump_utf8
 
 CADASTRAL_API_ODATA = 'https://kataster.skgeodesy.sk/PortalOData/'
 
@@ -182,6 +182,15 @@ class MyServer(webapp2.RequestHandler):
         self.response.headers['Content-Type'] = 'application/json'
         self.response.write(json.dumps(j, separators=(',',':')))
 
+    def handle_exception(self, exception, debug):
+        #logging.exception(exception)
+        print(exception)
+        self.response.write('An error occurred.')
+        if isinstance(exception, webapp2.HTTPException):
+            response.set_status(exception.code)
+        else:
+            response.set_status(500)
+
     def get(self):
         self.process()
 
@@ -204,6 +213,15 @@ class KatasterInfoCompany(MyServer):
 class KatasterInfoPerson(MyServer):
     def process(self):
         return self.returnJSON({})
+
+class KatasterInfoPolitician(MyServer):
+    def process(self):
+        try:
+            politician_id = int(self.request.GET["id"])
+        except:
+            self.abort(400)
+        j = json_load('mock_report.json')
+        return self.returnJSON(j)
 
 def main():
   parser = argparse.ArgumentParser()
