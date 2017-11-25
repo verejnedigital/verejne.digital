@@ -3,12 +3,7 @@ from data_model import Firma, Obstaravanie, Firma, Candidate, Notification
 import db
 from dateutil.parser import parse
 import json
-import matplotlib.pyplot as plt
-from matplotlib.backends.backend_pdf import PdfPages
-import requests
-from requests_toolbelt.multipart.encoder import MultipartEncoder
 import yaml
-import zipfile
 
 def NormalizeIco(ico):
     if ico is None: return None
@@ -112,71 +107,65 @@ def obstaravanieToJson(obstaravanie, candidates, full_candidates=1, compute_rang
             current["kandidati"].append([]) 
     return current
 
+def getAddressJson(eid):
+    # json with all geocoded data
+    j = {}
+    with db.getCursor() as cur:
+        cur = db.execute(cur, "SELECT json FROM entities WHERE eid=%s", [eid])
+        row = cur.fetchone()
+        if row is None: return None
+        j = json.loads(row["json"])
+
+    # TODO: do not duplicate this with code in verejne/
+    def getComponent(json, typeName):
+        try:
+            for component in json[0]["address_components"]:
+                if typeName in component["types"]:
+                    return component["long_name"]        
+            return ""
+        except:
+            return ""
+
+    # types description: https://developers.google.com/maps/documentation/geocoding/intro#Types
+    # street / city can be defined in multiple ways
+    address = {
+        "street": (
+            getComponent(j, "street_address") +
+            getComponent(j, "route") +
+            getComponent(j, "intersection") + 
+            " " + getComponent(j, "street_number")
+        ),
+        "city": getComponent(j, "locality"),
+        "zip": getComponent(j, "postal_code"),
+        "country": getComponent(j, "country"),
+    }
+    return address
+
 
 # Generates report with notifications,
 # saving pdf file to filename
-def generateReport(notifications, filename):
-    pp = PdfPages(filename)
-    fig = plt.figure(figsize=(11.69,8.27)) #A4 paper size
-    fig.suptitle('Hello world', fontsize=28, fontweight='bold')
-    plt.savefig(pp, format='pdf')
-    pp.close()
-
-    with zipfile.ZipFile('/tmp/report.zip', 'w') as z:
-        z.write(filename)
-
-    # For now, create a dummy sender.
-    sender = {
-            "company": "ACME",
-            "name": "Jozko",
-            "surname": "Mrkvicka",
-            "address": "Zurichova 73",
-            "city": "Bratislava-Vrakuna",
-            "country": "SK",
-            "zip": "82101"
-    }
-
+def generateReport(notifications):
+    # Bail out if no notifications
+    if (len(notifications) == 0): return
+    data = {}
     company = notifications[0].candidate.company
-    recipient = {
-            "company": company.name,
-            "name": "",
-            "surname": "",
-            "address": getAddressForIco(company.ico),
-            "city": "Slovensko",
-            "country": "SK",
-            "zip": "82101"
-    }
 
-    metadata = {
-            "bundle": {
-                "delivery": [{
-                    "deliveryId": notifications[0].id,
-                    "sender": sender,
-                    "recipient": recipient,
-                    "files": ["report.pdf"]
-                }]
-            }
-    }
+    eid = getEidForIco(company.ico)
+    if eid is None: return
 
-    headers = {"Content-Type": "multipart/form-data"}
-    with open("/tmp/zelena_posta.yaml", "r") as stream:
-        config = yaml.load(stream)
-        print "config", config
-    with open('/tmp/report.zip', 'rb') as report_file:
-        multipart_data = MultipartEncoder(
-            fields=[
-                ("oauth_consumer_key", config["key"]),
-                ("oauth_signature", config["signature"]),
-                ("access_token", config["token"]),
-                ("payload", json.dumps(metadata)),
-                ("callback", "https://verejne.digital"),
-                ("file", ('report.zip', report_file, 'application/zip')),
-            ]
-        )
-        x = multipart_data.to_string()
-        r = requests.post("https://www.zelenaposta.sk/online-service/online-printer",
-                          data=x,
-                          headers={'Content-Type': multipart_data.content_type})
-        print r
+    data["company"] = {
+            "name": company.name,
+            "ico": company.ico,
+            "address_full": getAddressForIco(company.ico),
+    } + getAddressJson(eid)
+    notifications_json = []
+    for notification in notifications:
+        notifications_json.append({
+            "reason": obstaravanieToJson(
+                notification.candidate.reason, candidates=0, full_candidates=0),
+            "what": obstaravanieToJson(
+                notification.candidate.obstaravanie, candidates=0, full_candidates=0),
+        })
 
-
+    data["notifications"] = notifications_json
+    #print json.dumps(data, sort_keys=True, indent=4, separators=(',', ': '))

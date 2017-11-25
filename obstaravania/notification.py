@@ -2,16 +2,17 @@
 # -*- coding: utf-8 -*-
 from data_model import Candidate, MakeSession, Notification, NotificationStatus, Session, Obstaravanie, LastNotificationUpdate
 from sqlalchemy.sql import func
-import argparse
 import db
+from db import parser
 import logging
 import utils
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
-db.connect(False)
-
-parser = argparse.ArgumentParser()
+parser.add_argument("--generate_notifications", action="store_true")
+parser.add_argument("--test_report", action="store_true")
 options = parser.parse_args()
+
+db.connect(False)
 
 max_won = 5
 min_similarity = 0.6
@@ -116,8 +117,7 @@ def TestReport():
         for_report = session.query(Notification).order_by(Notification.id)[:2]
         for f in for_report:
             print f.candidate.company_id
-        utils.generateReport(for_report, '/tmp/report.pdf')
+        utils.generateReport(for_report)
 
-#TestReport()
-#GenerateNotifications()
-# TODO: make this executabe from command line
+if options.test_report: TestReport()
+if options.generate_notifications: GenerateNotifications()
