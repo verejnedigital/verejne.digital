@@ -8,12 +8,13 @@ class Table extends Component {
     return (
       <table className="table">
         <thead>
-          <tr>
+          <tr>            
+            <th></th>
             <th>Meno a priezvisko</th>
             <th className="party-column">Strana</th>
             <th className="number-column">Domy &amp; Byty</th>
-            <th className="number-column">Orna poda &amp; zahrady</th>
-            <th className="number-column">Ostatne</th>
+            <th className="number-column">Orná pôda &amp; záhrady</th>
+            <th className="number-column">Ostatné</th>
           </tr>
         </thead>
         <tbody>

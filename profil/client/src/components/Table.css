@@ -1,9 +1,10 @@
-
-
 .table {
   background-color: white;
 }
 
+.table .thumb-photo{
+  height: 32px;	
+}
 
 .table .number-column {
   text-align: center;   
