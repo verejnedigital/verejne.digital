@@ -3,7 +3,9 @@ import React from 'react';
 
 const DetailKatasterLV = ({lv}) => (
 <tr>
-  <td>{`${lv.landusename} ${lv.participantratio}% podiel`}
+  <td>
+    <div>{`${lv.landusename} ${Number(lv.participantratio).toFixed(2)}% podiel`}</div>
+    <div>{`${lv.cadastralunitname}, cislo parcely: ${lv.parcelno}; LV c. ${lv.foliono}`}</div>
   </td>
 </tr>
 );
