@@ -24,14 +24,7 @@ class MyServer(webapp2.RequestHandler):
 
 class UpdateNotifications:
     def get(self):
-        # Check that the request know the secret code
-        with open("/tmp/secret.yaml", "r") as stream:
-            config = yaml.load(stream)
-            if (self.response.GET['secret'] != config['secret']):
-                self.response.write('Unauthorized request')
-                return
-
-        self.response.write("update_notificationas")
+        self.response.write("update_notifications")
         # As a response, we expect parameters called all_notificationid to
         # specify which notifications are affected. If on_notificationid is also
         # present, that means that the notification is approved.
@@ -55,8 +48,10 @@ class UpdateNotifications:
                 notification = session.query(Notification).filter_by(id=nid).first()
                 notification.status = NotificationStatus.DECLINED
 
-            generateReport(for_report, '/tmp/report.pdf')
-            session.commit()
+            if generateReport(for_report):
+                session.commit()
+
+        self.response.write("Done!")
 
 class ServeNotifications(MyServer):
     def get(self):

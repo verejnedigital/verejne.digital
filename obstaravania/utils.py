@@ -3,6 +3,7 @@ from data_model import Firma, Obstaravanie, Firma, Candidate, Notification
 import db
 from dateutil.parser import parse
 import json
+import os
 import yaml
 
 def NormalizeIco(ico):
@@ -71,8 +72,10 @@ def obstaravanieToJson(obstaravanie, candidates, full_candidates=1, compute_rang
     
     if obstaravanie.title is not None:
         current["title"] = obstaravanie.title
-    current["bulletin_year"] = obstaravanie.bulletin_year
-    current["bulletin_number"] = obstaravanie.bulleting_number
+    if (obstaravanie.bulletin_year is not None):
+        current["bulletin_year"] = obstaravanie.bulletin_year
+    if (obstaravanie.bulleting_number is not None):
+        current["bulletin_number"] = obstaravanie.bulleting_number
     current["price"] = getValue(obstaravanie)
     predictions = obstaravanie.predictions
     if (predictions is not None) and (len(predictions) > 0):
@@ -146,18 +149,19 @@ def getAddressJson(eid):
 # saving pdf file to filename
 def generateReport(notifications):
     # Bail out if no notifications
-    if (len(notifications) == 0): return
-    data = {}
+    if (len(notifications) == 0): return False
+
     company = notifications[0].candidate.company
-
     eid = getEidForIco(company.ico)
-    if eid is None: return
+    if eid is None: return False
 
+    data = {}
     data["company"] = {
             "name": company.name,
             "ico": company.ico,
             "address_full": getAddressForIco(company.ico),
-    } + getAddressJson(eid)
+    }
+    data["company"].update(getAddressJson(eid))
     notifications_json = []
     for notification in notifications:
         notifications_json.append({
@@ -168,4 +172,13 @@ def generateReport(notifications):
         })
 
     data["notifications"] = notifications_json
-    #print json.dumps(data, sort_keys=True, indent=4, separators=(',', ': '))
+
+    # Generate .json file atomically into the following directory. It is picked up
+    # from there and automatically turned into .pdf and then send.
+    shared_path = "/data/notifikacie/in/"
+    tmp_filename = shared_path + ("json_%d_%d.tmp" % (eid, os.getpid()))
+    final_filename = shared_path + ("data_%d_%d.json" % (eid, os.getpid()))
+    with open(tmp_filename, "w") as tmp_file:
+        json.dump(data, tmp_file, sort_keys=True, indent=4, separators=(',', ': '))
+    os.rename(tmp_filename, final_filename)
+    return True

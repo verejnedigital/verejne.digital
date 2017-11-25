@@ -13,14 +13,14 @@ class Search extends Component {
     this.searchOnClick = this.searchOnClick.bind(this);
   }
 
+  searchOnClick() {
+    alert(this.state.search);
+  }
+
   updateInputValue(e) {
     this.setState({
       [e.target.id]: e.target.value,
-    });
-  }
-
-  searchOnClick() {
-    alert(this.state.search);
+    });    
   }
 
   searchOnClickOnEnter(e) {

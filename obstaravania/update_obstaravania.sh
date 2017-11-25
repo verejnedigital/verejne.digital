@@ -1,6 +1,6 @@
 #!/bin/sh
 # Script to download the latest contracts, update the model, compute predictions and estimates and
-# create the static files.
+# create the static files and to precompute notifications
 
 JSON_DIR=/tmp/ 
 STATIC_DIR=/tmp/
@@ -22,3 +22,6 @@ python main.py \
 
 cp ${STATIC_DIR}/obstaravania.html $OUTPUT_DIR
 cp ${STATIC_DIR}/obstaravania-firmy.html $OUTPUT_DIR
+
+# Compute notifications
+python notification.py --generate_notifications

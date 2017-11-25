@@ -1,8 +1,8 @@
-var serverURL = '/api/v/';
-var katasterURL = '/api/k/';
+//var serverURL = '/api/v/';
+//var katasterURL = '/api/k/';
 // For frontend development, use 
-// var serverURL = 'https://verejne.digital/api/v/';
-// var katasterURL = 'https://verejne.digital/api/k/';
+var serverURL = 'https://verejne.digital/api/v/';
+var katasterURL = 'https://verejne.digital/api/k/';
 
 var kNormalColor = "#0062db";
 var kPoliticianColor = "#e55600";

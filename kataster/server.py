@@ -6,6 +6,7 @@ from paste import httpserver
 import webapp2
 import yaml
 
+from db import db_connect, db_query
 from utils import download_cadastral_json, download_cadastral_pages, search_string, WGS84_to_Mercator, json_load, json_dump_utf8
 
 CADASTRAL_API_ODATA = 'https://kataster.skgeodesy.sk/PortalOData/'
@@ -187,9 +188,9 @@ class MyServer(webapp2.RequestHandler):
         print(exception)
         self.response.write('An error occurred.')
         if isinstance(exception, webapp2.HTTPException):
-            response.set_status(exception.code)
+            self.response.set_status(exception.code)
         else:
-            response.set_status(500)
+            self.response.set_status(500)
 
     def get(self):
         self.process()
@@ -223,10 +224,42 @@ class KatasterInfoPolitician(MyServer):
         j = json_load('mock_report.json')
         return self.returnJSON(j)
 
+class InfoPolitician(MyServer):
+    def process(self):
+        try:
+            politician_id = int(self.request.GET["id"])
+        except:
+            self.abort(400, detail="Could not parse parameter 'id' as int")
+        j = json_load('mock_info.json')
+        return self.returnJSON(j)
+
 class ListPoliticians(MyServer):
     def process(self):
-        j = json_load('mock_list.json')
-        return self.returnJSON(j)
+        db = db_connect()
+        q = """
+            SELECT DISTINCT ON (id)
+                kataster.politicians.id,
+                kataster.politicians.surname,
+                kataster.politicians.firstname,
+                kataster.politicians.title,
+                kataster.politicianterms.picture_url AS picture,
+                kataster.parties.abbreviation AS party_abbreviation,
+                kataster.parties.name AS party_nom,
+                kataster.terms.start AS term_start,
+                kataster.terms.finish AS term_finish
+            FROM
+                kataster.politicians
+            JOIN
+                kataster.politicianterms ON kataster.politicianterms.politicianid=kataster.politicians.id
+            JOIN
+                kataster.terms ON kataster.terms.id=kataster.politicianterms.termid
+            JOIN
+                kataster.parties ON kataster.parties.id=kataster.politicianterms.party_nomid
+            ORDER BY
+                kataster.politicians.id, kataster.terms.finish DESC, kataster.politicians.surname
+            ;"""
+        politicians = db_query(db, q)
+        return self.returnJSON(politicians)
 
 def main():
   parser = argparse.ArgumentParser()
@@ -242,6 +275,7 @@ def main():
       ('/kataster_info_person', KatasterInfoPerson),
       ('/kataster_info_politician', KatasterInfoPolitician),
       ('/list_politicians', ListPoliticians),
+      ('/info_politician', InfoPolitician),
       ], debug=False)
 
   httpserver.serve(

@@ -54,63 +54,58 @@ def GenerateNotifications():
     global ico_lat_lng
     ico_lat_lng = utils.IcoToLatLngMap()
 
-    session = MakeSession()
+    with Session() as session:
 
-    # Get the highest id that has been already processed
-    last_update = session.query(LastNotificationUpdate).first()
-    min_id = last_update.last_id if last_update is not None else 0
-    print "Last processed id", min_id
+        # Get the highest id that has been already processed
+        last_update = session.query(LastNotificationUpdate).first()
+        min_id = last_update.last_id if last_update is not None else 0
+        print "Last processed id", min_id
+ 
+        # compute id's of companies with <= max_won already won
+        cnts = session.query(func.count(Obstaravanie.winner_id), Obstaravanie.winner_id).\
+                group_by(Obstaravanie.winner_id)
+        eligible_companies = set()
+        for cnt, company_id in cnts:
+            if (cnt <= max_won): eligible_companies.add(company_id)
 
-    # compute id's of companies with <= max_won already won
-    cnts = session.query(func.count(Obstaravanie.winner_id), Obstaravanie.winner_id).\
-            group_by(Obstaravanie.winner_id)
-    eligible_companies = set()
-    for cnt, company_id in cnts:
-        if (cnt <= max_won): eligible_companies.add(company_id)
+        # keep track of already generated candidates, so that a notification is not
+        # generated twice
+        generated_notifications = set(e[0] for e in session.query(Notification.candidate_id).all())
 
-    # keep track of already generated candidates, so that a notification is not
-    # generated twice
-    generated_notifications = set(e[0] for e in session.query(Notification.candidate_id).all())
-
-    gens = 0
-    max_id = None
-    for obst in session.query(Obstaravanie).\
-                        filter(Obstaravanie.id >= min_id).\
-                        order_by(-Obstaravanie.id).limit(1000):
-        if (max_id is None): max_id = obst.id
-        if (obst.winner_id is not None): continue
-        if (obst.finished): continue
-        eligible = []
-        good_candidates = 0
-        for candidate in obst.candidates:
-            if (IsGoodCandidate(obst, candidate)):
-                good_candidates += 1
-                if (good_candidates > max_good_candidates_per_obst): break
-                # TODO: function for this
-                if (candidate.company_id in eligible_companies) and \
-                    not (candidate.id in generated_notifications) and \
-                    (candidate.reason.customer.ico != obst.customer.ico):
-                    # Process only candidates, for which we know address
+        gens = 0
+        max_id = None
+        for obst in session.query(Obstaravanie).\
+                            filter(Obstaravanie.id >= min_id).\
+                            order_by(-Obstaravanie.id).limit(1000):
+            if (max_id is None): max_id = obst.id
+            if (obst.winner_id is not None): continue
+            if (obst.finished): continue
+            good_candidates = 0
+            for candidate in obst.candidates:
+                if (IsGoodCandidate(obst, candidate)):
+                    good_candidates += 1
+                    if (good_candidates > max_good_candidates_per_obst): break
+                    # Process only candidates, for which we know the address
                     if utils.getAddressForIco(candidate.company.ico) == "": continue
-                    notification = Notification(
-                        candidate_id=candidate.id,
-                        status=NotificationStatus.GENERATED,
-                        date_generated=func.now(),
-                        date_modified=func.now())
-                    eligible.append(notification)
-        if (good_candidates <= max_good_candidates_per_obst):
-            for n in eligible:
-                gens += 1
-                session.add(n)
-    print "Generated #notifications:", gens
+                    if ((candidate.company_id in eligible_companies) and
+                        not (candidate.id in generated_notifications) and
+                        (candidate.reason.customer.ico != obst.customer.ico)):
+                        notification = Notification(
+                            candidate_id=candidate.id,
+                            status=NotificationStatus.GENERATED,
+                            date_generated=func.now(),
+                            date_modified=func.now())
+                        gens += 1
+                        session.add(notification)
+        print "Generated #notifications:", gens
 
-    # Update the highest synced obstaravanie.id
-    session.query(LastNotificationUpdate).delete(synchronize_session=False)
-    last_update = LastNotificationUpdate(last_id=max_id)
-    session.add(last_update)
+        # Update the highest synced obstaravanie.id
+        session.query(LastNotificationUpdate).delete(synchronize_session=False)
+        last_update = LastNotificationUpdate(last_id=max_id)
+        session.add(last_update)
 
-    session.commit()
-    session.close()
+        session.commit()
+        session.close()
 
 def TestReport():
     with Session() as session:
