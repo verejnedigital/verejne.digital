@@ -52,8 +52,6 @@
 {% for batch in data %}
   <h2>{{batch.name}}, {{batch.address}}</h2>
   <form action='updateNotifications'>
-    <input type="hidden" name="secret" value='{{secret}}'>
-    <input type="hidden" name="updateNotifications" value='true'>
     <table class="table">
       <td>Posli</td><td>Obstaravanie</td><td>Obstaravatel</td><td>Dovod</td>
       {% for message in batch.notifications %}
