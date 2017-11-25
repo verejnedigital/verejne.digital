@@ -18,3 +18,8 @@
   font-size: large;
 }
 
+.App-body {
+  margin: auto;
+  width: 800px;
+}
+
