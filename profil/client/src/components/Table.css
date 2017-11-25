@@ -5,6 +5,13 @@
 }
 
 
-.table .numbercolumn {
+.table .number-column {
   text-align: center;   
+}
+
+.table .party-column {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 150px;
 }

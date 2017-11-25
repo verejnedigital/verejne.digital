@@ -10,10 +10,10 @@ class Table extends Component {
         <thead>
           <tr>
             <th>Meno a priezvisko</th>
-            <th>Strana</th>
-            <th className="numbercolumn">Domy &amp; Byty</th>
-            <th className="numbercolumn">Orna poda &amp; zahrady</th>
-            <th className="numbercolumn">Ostatne</th>
+            <th className="party-column">Strana</th>
+            <th className="number-column">Domy &amp; Byty</th>
+            <th className="number-column">Orna poda &amp; zahrady</th>
+            <th className="number-column">Ostatne</th>
           </tr>
         </thead>
         <tbody>
