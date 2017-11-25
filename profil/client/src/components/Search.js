@@ -32,12 +32,6 @@ class Search extends Component {
   render() {
     return (
       <div className="searchForm">
-        <div className="searchLabel row">
-          <div className="col-sm-offset-2 col-sm-10 col-xs-offset-2 col-xs-10">
-            <h2 className="searchTitle">Vyhľadaj</h2>
-            najkratšie spojenie medzi dvojicou:
-          </div>
-        </div>
         <div className="form-horizontal">
           <div className="entitysearch">
             <input
