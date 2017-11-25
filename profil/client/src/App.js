@@ -43,7 +43,7 @@ class App extends Component {
       <div className="App">
         <div className="App-header">
           <div className="App-title">
-            <h1>profil.verejne.digital</h1>
+            <h1><span class="bolder">profil.</span>verejne.digital</h1>
             <h3>Majetok verejných činiteľov podľa katastra SR</h3>
           </div>
         </div>

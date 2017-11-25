@@ -23,3 +23,7 @@
   padding-bottom: 30px;
   padding-top: 30px;
 }
+
+.App .bolder {
+  font-weight: bolder;
+}
