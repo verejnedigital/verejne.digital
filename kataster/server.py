@@ -175,6 +175,34 @@ def get_cadastral_data_for_company(company_name, circumvent_geoblocking, verbose
     response = {'company_name': company_name, 'Folios': Folios}
     return response
 
+def get_query_politicians(sql_filter=''):
+    return """
+        SELECT DISTINCT ON (id)
+            kataster.politicians.id,
+            kataster.politicians.surname,
+            kataster.politicians.firstname,
+            kataster.politicians.title,
+            kataster.politicianterms.picture_url AS picture,
+            kataster.parties.abbreviation AS party_abbreviation,
+            kataster.parties.name AS party_nom,
+            kataster.terms.start AS term_start,
+            kataster.terms.finish AS term_finish,
+            kataster.offices.name_male AS office_name_male,
+            kataster.offices.name_female AS office_name_female
+        FROM
+            kataster.politicians
+        JOIN
+            kataster.politicianterms ON kataster.politicianterms.politicianid=kataster.politicians.id
+        JOIN
+            kataster.terms ON kataster.terms.id=kataster.politicianterms.termid
+        JOIN
+            kataster.offices ON kataster.offices.id=kataster.terms.officeid
+        JOIN
+            kataster.parties ON kataster.parties.id=kataster.politicianterms.party_nomid
+        """ + sql_filter + """
+        ORDER BY
+            kataster.politicians.id, kataster.terms.finish DESC, kataster.politicians.surname
+        ;"""
 
 # All individual hooks inherit from this class outputting jsons
 # Actual work of subclasses is done in method process
@@ -227,12 +255,26 @@ class KatasterInfoPolitician(MyServer):
 
 class InfoPolitician(MyServer):
     def process(self):
+        # Parse politician id
         try:
             politician_id = int(self.request.GET["id"])
         except:
             self.abort(400, detail="Could not parse parameter 'id' as int")
-        j = json_load('mock_info.json')
-        return self.returnJSON(j)
+
+        # Find politician data in the database
+        db = db_connect()
+        sql_filter = """WHERE kataster.politicians.id=%s"""
+        sql_filter_data = (politician_id,)
+        q = get_query_politicians(sql_filter)
+        politicians = db_query(db, q, sql_filter_data)
+        db.close()
+        if len(politicians) == 0:
+            self.abort(404, detail="Could not find politician with provided 'id'")
+        assert len(politicians) == 1
+        politician = politicians[0]
+
+        # Return politician information as a JSON
+        return self.returnJSON(politician)
 
 class AssetDeclaration(MyServer):
     def process(self):
@@ -246,32 +288,7 @@ class AssetDeclaration(MyServer):
 class ListPoliticians(MyServer):
     def process(self):
         db = db_connect()
-        q = """
-            SELECT DISTINCT ON (id)
-                kataster.politicians.id,
-                kataster.politicians.surname,
-                kataster.politicians.firstname,
-                kataster.politicians.title,
-                kataster.politicianterms.picture_url AS picture,
-                kataster.parties.abbreviation AS party_abbreviation,
-                kataster.parties.name AS party_nom,
-                kataster.terms.start AS term_start,
-                kataster.terms.finish AS term_finish,
-                kataster.offices.name_male AS office_name_male,
-                kataster.offices.name_female AS office_name_female
-            FROM
-                kataster.politicians
-            JOIN
-                kataster.politicianterms ON kataster.politicianterms.politicianid=kataster.politicians.id
-            JOIN
-                kataster.terms ON kataster.terms.id=kataster.politicianterms.termid
-            JOIN
-                kataster.offices ON kataster.offices.id=kataster.terms.officeid
-            JOIN
-                kataster.parties ON kataster.parties.id=kataster.politicianterms.party_nomid
-            ORDER BY
-                kataster.politicians.id, kataster.terms.finish DESC, kataster.politicians.surname
-            ;"""
+        q = get_query_politicians()
         politicians = db_query(db, q)
         return self.returnJSON(politicians)
 
