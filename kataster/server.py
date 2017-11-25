@@ -6,6 +6,7 @@ from paste import httpserver
 import webapp2
 import yaml
 
+from db import db_connect, db_query
 from utils import download_cadastral_json, download_cadastral_pages, search_string, WGS84_to_Mercator, json_load, json_dump_utf8
 
 CADASTRAL_API_ODATA = 'https://kataster.skgeodesy.sk/PortalOData/'
@@ -234,8 +235,31 @@ class InfoPolitician(MyServer):
 
 class ListPoliticians(MyServer):
     def process(self):
-        j = json_load('mock_list.json')
-        return self.returnJSON(j)
+        db = db_connect()
+        q = """
+            SELECT DISTINCT ON (id)
+                kataster.politicians.id,
+                kataster.politicians.surname,
+                kataster.politicians.firstname,
+                kataster.politicians.title,
+                kataster.politicianterms.picture_url AS picture,
+                kataster.parties.abbreviation AS party_abbreviation,
+                kataster.parties.name AS party_nom,
+                kataster.terms.start AS term_start,
+                kataster.terms.finish AS term_finish
+            FROM
+                kataster.politicians
+            JOIN
+                kataster.politicianterms ON kataster.politicianterms.politicianid=kataster.politicians.id
+            JOIN
+                kataster.terms ON kataster.terms.id=kataster.politicianterms.termid
+            JOIN
+                kataster.parties ON kataster.parties.id=kataster.politicianterms.party_nomid
+            ORDER BY
+                kataster.politicians.id, kataster.terms.finish DESC, kataster.politicians.surname
+            ;"""
+        politicians = db_query(db, q)
+        return self.returnJSON(politicians)
 
 def main():
   parser = argparse.ArgumentParser()
