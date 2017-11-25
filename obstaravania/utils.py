@@ -173,6 +173,8 @@ def generateReport(notifications):
 
     data["notifications"] = notifications_json
 
+    # Generate .json file atomically into the following directory. It is picked up
+    # from there and automatically turned into .pdf and then send.
     shared_path = "/data/notifikacie/in/"
     tmp_filename = shared_path + ("json_%d_%d.tmp" % (eid, os.getpid()))
     final_filename = shared_path + ("data_%d_%d.json" % (eid, os.getpid()))
