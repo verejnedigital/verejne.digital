@@ -246,13 +246,17 @@ class ListPoliticians(MyServer):
                 kataster.parties.abbreviation AS party_abbreviation,
                 kataster.parties.name AS party_nom,
                 kataster.terms.start AS term_start,
-                kataster.terms.finish AS term_finish
+                kataster.terms.finish AS term_finish,
+                kataster.offices.name_male AS office_name_male,
+                kataster.offices.name_female AS office_name_female
             FROM
                 kataster.politicians
             JOIN
                 kataster.politicianterms ON kataster.politicianterms.politicianid=kataster.politicians.id
             JOIN
                 kataster.terms ON kataster.terms.id=kataster.politicianterms.termid
+            JOIN
+                kataster.offices ON kataster.offices.id=kataster.terms.officeid
             JOIN
                 kataster.parties ON kataster.parties.id=kataster.politicianterms.party_nomid
             ORDER BY
