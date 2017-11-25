@@ -7,12 +7,13 @@ const DetailKatasterTable = ({kataster}) => (
 <table className="kataster table">
   <thead>
     <tr>
-      <th>Udaje z Katastra ({kataster.length})</th>
+      <th></th>
+      <th>Údaje z Katastra ({kataster.length})</th>
     </tr>
   </thead>
   <tbody>
-    {kataster.map(lv =>
-      <DetailKatasterLV key={lv.foliono}  lv={lv}/>,
+    {kataster.map((lv, key) =>
+      <DetailKatasterLV key={key} num={key+1} lv={lv}/>,
     )}
   </tbody>
 </table>

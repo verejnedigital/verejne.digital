@@ -14,7 +14,7 @@ class Search extends Component {
   }
 
   searchOnClick() {
-    alert(this.state.search);
+    this.props.filterNames(this.state.search);
   }
 
   updateInputValue(e) {
@@ -24,6 +24,7 @@ class Search extends Component {
   }
 
   searchOnClickOnEnter(e) {
+    console.log(this.props.names);  // Rasto: Tu mas mena
     if (e.key === 'Enter') {
       this.searchOnClick();
     }

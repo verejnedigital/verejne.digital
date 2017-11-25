@@ -4,6 +4,8 @@ import './DetailPage.css';
 import * as serverAPI from './actions/serverAPI';
 import DetailVizitka from './components/DetailVizitka';
 import DetailKatasterTable from './components/DetailKatasterTable';
+import DetailAssetDeclaration from './components/DetailAssetDeclaration';
+import Footer from './components/Footer';
 
 
 class App extends Component {
@@ -12,18 +14,20 @@ class App extends Component {
     super(props);
     this.state = {
       politician: {},
-      kataster: []
+      kataster: [],
+      assetsFromDeclaration: []
     };
-    this.loadPoliticiant = this.loadPoliticiant.bind(this);
   }
 
   componentWillMount() {
-    this.loadPoliticiant();
-    this.loadKataster();
+    const id = this.props.params.id;
+    this.loadPoliticiant(id);
+    this.loadKataster(id);
+    this.loadAssetDeclaration(id);
   }
 
-  loadPoliticiant() {
-    serverAPI.loadPoliticiant(this.props.params.id,
+  loadPoliticiant(id) {
+    serverAPI.loadPoliticiant(id,
       (politician) => {
         this.setState({
           politician
@@ -31,12 +35,22 @@ class App extends Component {
       });
   }
 
-  loadKataster() {
-    serverAPI.katasterInfo(this.props.params.id,
+  loadKataster(id) {
+    serverAPI.katasterInfo(id,
       (kataster) => {
         console.log(kataster[0]);
         this.setState({
           kataster
+        });
+      });
+  }
+
+  loadAssetDeclaration(id) {
+    serverAPI.loadAssetDeclaration(id,
+      (report) => {
+        const assetsFromDeclaration = report["nehnuteľný majetok"].split('\n');
+        this.setState({
+          assetsFromDeclaration
         });
       });
   }
@@ -51,8 +65,12 @@ class App extends Component {
         </div>
         <div className="detail-body">
           <DetailVizitka politician={this.state.politician} />
-          <DetailKatasterTable kataster={this.state.kataster} />
+          <div className="data-tables">
+            <DetailAssetDeclaration assets={this.state.assetsFromDeclaration} />
+            <DetailKatasterTable kataster={this.state.kataster} />
+          </div>
         </div>
+        <Footer />
       </div>
     );
   }

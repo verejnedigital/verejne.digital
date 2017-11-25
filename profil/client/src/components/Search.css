@@ -4,6 +4,7 @@
     border-color: #cddae3;
     border-style: solid;
     background-color: white;
+    box-shadow: 0 4px 12px 0 rgba(187, 198, 206, 0.5);
   }
   
   .searchForm {

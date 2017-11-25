@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import argparse
 from data_model import Firma, Obstaravanie, Firma, Candidate, Session, Notification, NotificationStatus
 import db
 from utils import obstaravanieToJson, getEidForIco, generateReport, getAddressForIco
@@ -22,7 +23,7 @@ class MyServer(webapp2.RequestHandler):
         self.response.set_status(code)
         self.returnJSON({'code': code, 'message': 'ERROR: ' + message})
 
-class UpdateNotifications:
+class UpdateNotifications(MyServer):
     def get(self):
         self.response.write("update_notifications")
         # As a response, we expect parameters called all_notificationid to
@@ -147,11 +148,16 @@ def main():
            ('/updateNotifications', UpdateNotifications),
           ], debug=False)
 
-  port = 8082 # default port for the app. TODO: move this to a flag
+  parser = argparse.ArgumentParser()
+  parser.add_argument('--listen',
+                    help='host:port to listen on',
+                    default='127.0.0.1:8082')
+  args = parser.parse_args()
+  host, port = args.listen.split(':')
 
   httpserver.serve(
       app,
-      host='127.0.0.1',
+      host=host,
       port=port)
   
 if __name__ == '__main__':

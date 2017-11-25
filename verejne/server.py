@@ -38,7 +38,6 @@ def errorJSON(code, text):
 ########################################
 
 entities = state.Entities()
-entities.loadFromDirectory("/data/www/verejne.digital/serving/prod/")
 
 ###########################################
 # Implemenatation of the server hooks
@@ -229,7 +228,12 @@ def main():
     parser.add_argument('--listen',
                         default='127.0.0.1:8080',
                         help='host:port to listen on')
+    parser.add_argument('--serving_directory',
+                        default='/data/www/verejne.digital/serving/prod/',
+                        help='Directory with serving data')
     args = parser.parse_args()
+
+    entities.loadFromDirectory(args.serving_directory)
     host, port = args.listen.split(':')
 
     app = webapp2.WSGIApplication(
