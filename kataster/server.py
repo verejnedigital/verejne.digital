@@ -7,6 +7,7 @@ import webapp2
 import yaml
 
 from db import db_connect, db_query
+from db_search import get_Parcels_from_database
 from utils import download_cadastral_json, download_cadastral_pages, search_string, is_contained_ci, WGS84_to_Mercator, json_load, json_dump_utf8
 
 CADASTRAL_API_ODATA = 'https://kataster.skgeodesy.sk/PortalOData/'
@@ -263,12 +264,20 @@ class KatasterInfoPerson(MyServer):
 
 class KatasterInfoPolitician(MyServer):
     def process(self):
+        # Parse politician id
         try:
             politician_id = int(self.request.GET["id"])
         except:
             self.abort(400, detail="Could not parse parameter 'id' as int")
-        j = json_load('mock_report.json')
-        return self.returnJSON(j)
+
+        # Find politician data in the database
+        politician_id = int(args_dict['id'])
+        politician = self.get_politician_by_id(politician_id)
+        search_params = ['firstname', 'surname']
+        db = db_connect()
+        Parcels = get_Parcels_from_database(db, politician, search_params)
+        db.close()
+        return self.returnJSON(Parcels)
 
 class InfoPolitician(MyServer):
     def process(self):
