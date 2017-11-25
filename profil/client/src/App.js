@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import './App.css';
 
 import Table from './components/Table';
+import Search from './components/Search';
 
 class App extends Component {
   render() {
@@ -12,6 +13,10 @@ class App extends Component {
             <h1>profil.verejne.digital</h1>
             <h3>Majetok verejnych cinitelov podla katastra SR</h3>
           </div>
+        </div>
+
+        <div className="App-search">
+          <Search/>
         </div>
 
         <div className="App-body">
