@@ -70,6 +70,11 @@ def WGS84_to_Mercator(lat, lon):
 
 
 # --- IO ---
+def json_load(path):
+    with open(path, 'r') as f:
+        data_json = json.load(f)
+    return data_json
+
 def json_dump_utf8(var, path, indent=4, flatten_level=None):
     with io.open(path, 'w', encoding='utf-8') as f:
         data = json.dumps(var, f, indent=indent, sort_keys=True, separators=(',', ': '), ensure_ascii=False)
