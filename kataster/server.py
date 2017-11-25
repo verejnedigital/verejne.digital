@@ -7,7 +7,7 @@ import webapp2
 import yaml
 
 from db import db_connect, db_query
-from utils import download_cadastral_json, download_cadastral_pages, search_string, WGS84_to_Mercator, json_load, json_dump_utf8
+from utils import download_cadastral_json, download_cadastral_pages, search_string, is_contained_ci, WGS84_to_Mercator, json_load, json_dump_utf8
 
 CADASTRAL_API_ODATA = 'https://kataster.skgeodesy.sk/PortalOData/'
 
@@ -204,6 +204,7 @@ def get_query_politicians(sql_filter=''):
             kataster.politicians.id, kataster.terms.finish DESC, kataster.politicians.surname
         ;"""
 
+
 # All individual hooks inherit from this class outputting jsons
 # Actual work of subclasses is done in method process
 class MyServer(webapp2.RequestHandler):
@@ -223,6 +224,22 @@ class MyServer(webapp2.RequestHandler):
 
     def get(self):
         self.process()
+
+    def get_politician_by_id(self, id):
+        # Get politicians with given id
+        db = db_connect()
+        sql_filter = """WHERE kataster.politicians.id=%s"""
+        sql_filter_data = (id,)
+        q = get_query_politicians(sql_filter)
+        politicians = db_query(db, q, sql_filter_data)
+        db.close()
+
+        # Check uniqueness
+        if len(politicians) == 0:
+            self.abort(404, detail="Could not find politician with provided 'id'")
+        assert len(politicians) == 1
+        politician = politicians[0]
+        return politician
 
 class KatasterInfoLocation(MyServer):
     def process(self):
@@ -261,29 +278,34 @@ class InfoPolitician(MyServer):
         except:
             self.abort(400, detail="Could not parse parameter 'id' as int")
 
-        # Find politician data in the database
-        db = db_connect()
-        sql_filter = """WHERE kataster.politicians.id=%s"""
-        sql_filter_data = (politician_id,)
-        q = get_query_politicians(sql_filter)
-        politicians = db_query(db, q, sql_filter_data)
-        db.close()
-        if len(politicians) == 0:
-            self.abort(404, detail="Could not find politician with provided 'id'")
-        assert len(politicians) == 1
-        politician = politicians[0]
-
-        # Return politician information as a JSON
+        # Find politician data in the database and return as JSON
+        politician = self.get_politician_by_id(politician_id)
         return self.returnJSON(politician)
 
 class AssetDeclaration(MyServer):
     def process(self):
+        # Parse politician id
         try:
             politician_id = int(self.request.GET["id"])
         except:
             self.abort(400, detail="Could not parse parameter 'id' as int")
-        j = json_load('mock_declaration.json')
-        return self.returnJSON(j)
+
+        # Find politician data in the database
+        politician = self.get_politician_by_id(politician_id)
+        firstname, surname = politician['firstname'], politician['surname']
+
+        # Find asset declaration of this politician
+        path_declarations = '/home/matej_balog/data/declarations.json'
+        declarations = json_load(path_declarations)
+        matched_declaration = {}
+        for declaration in declarations:
+            meno = declaration['meno']
+            if is_contained_ci(firstname, meno) and is_contained_ci(surname, meno):
+                matched_declaration = declaration
+                break
+
+        # Return matched declaration as JSON
+        return self.returnJSON(matched_declaration)
 
 class ListPoliticians(MyServer):
     def process(self):

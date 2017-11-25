@@ -59,6 +59,9 @@ def search_string(s):
         the OData cadastral API. """
     return remove_accents(s).replace(' ', '').replace('.', '').replace(',', '').replace('-', '').lower()
 
+def is_contained_ci(pattern, text):
+    return pattern.lower() in text.lower()
+
 
 # --- MATH ---
 EARTH_EQUATORIAL_RADIUS = 6378137;
