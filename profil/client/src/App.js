@@ -5,6 +5,7 @@ import * as serverAPI from './actions/serverAPI';
 
 import Table from './components/Table';
 import Search from './components/Search';
+import Footer from './components/Footer';
 
 class App extends Component {
 
@@ -56,9 +57,7 @@ class App extends Component {
           <Table politicians={this.state.politicians}/>        
         </div>
 
-        <div className="App-footer">
-        O projekte | <a href="https://www.facebook.com/verejne.digital/">Kontaktujte nás cez facebook</a>
-        </div>
+        <Footer />
       </div>
     );
   }
