@@ -37,7 +37,7 @@ class App extends Component {
         <div className="App-header">
           <div className="App-title">
             <h1>profil.verejne.digital</h1>
-            <h3>Majetok verejnych cinitelov podla katastra SR</h3>
+            <h3>Majetok verejných činiteľov podľa katastra SR</h3>
           </div>
         </div>
 
@@ -50,7 +50,7 @@ class App extends Component {
         </div>
 
         <div className="App-footer">
-        O projekte | <a href="https://www.facebook.com/verejne.digital/">Kontaktujte nas cez facebook</a>
+        O projekte | <a href="https://www.facebook.com/verejne.digital/">Kontaktujte nás cez facebook</a>
         </div>
       </div>
     );
