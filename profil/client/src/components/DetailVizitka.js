@@ -4,7 +4,8 @@ import './DetailVizitka.css';
 const DetailVizitka = ({politician}) => (
 <div className="vizitka">
   <div className="vizitka-info">
-    <h2 className="name">{politician.firstname} {politician.surname}</h2>    
+    <h2 className="name">{politician.firstname} {politician.surname}, {politician.title}</h2>
+    <br/>    
     <div><span className="bolder">Funkcia:</span> {politician.office_name_male}, {politician.term_start} - {politician.term_finish}</div>
     <div><span className="bolder">Strana:</span> {politician.party_nom}</div>
   </div>
