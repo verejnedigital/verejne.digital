@@ -21,3 +21,10 @@
   width: 800px;
   margin: auto;
 }
+
+.data-tables {
+  display: flex;
+  padding-right: 30px;
+  padding-left: 30px;
+  justify-content: space-between;
+}

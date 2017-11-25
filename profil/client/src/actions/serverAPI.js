@@ -36,3 +36,11 @@ export function loadPoliticiant(id, cb) {
     .then(parseJSON)
     .then(cb);
 }
+
+export function loadAssetDeclaration(id, cb) {
+  fetch(`/api/k/asset_declaration?id=${id}`, {
+    accept: 'application/json',
+  }).then(checkStatus)
+    .then(parseJSON)
+    .then(cb);
+}
