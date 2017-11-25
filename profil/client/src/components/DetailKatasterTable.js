@@ -11,8 +11,8 @@ const DetailKatasterTable = ({kataster}) => (
     </tr>
   </thead>
   <tbody>
-    {kataster.map(lv =>
-      <DetailKatasterLV key={lv.foliono}  lv={lv}/>,
+    {kataster.map((lv, key) =>
+      <DetailKatasterLV key={key}  lv={lv}/>,
     )}
   </tbody>
 </table>
