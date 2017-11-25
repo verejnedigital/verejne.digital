@@ -9,7 +9,8 @@ class App extends Component {
       <div className="App">
         <div className="App-header">
           <div className="App-title">
-            New New Social Network
+            <h1>profil.verejne.digital</h1>
+            <h3>Majetok verejnych cinitelov podla katastra SR</h3>
           </div>
         </div>
 
