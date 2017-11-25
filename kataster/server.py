@@ -187,9 +187,9 @@ class MyServer(webapp2.RequestHandler):
         print(exception)
         self.response.write('An error occurred.')
         if isinstance(exception, webapp2.HTTPException):
-            response.set_status(exception.code)
+            self.response.set_status(exception.code)
         else:
-            response.set_status(500)
+            self.response.set_status(500)
 
     def get(self):
         self.process()
