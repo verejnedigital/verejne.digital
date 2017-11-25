@@ -66,8 +66,8 @@
   {% endif %}  
 {% endmacro %}
 
-{% macro tableHeader(obstaravanie, count) %}
-{% if count == 0 %}
+{% macro tableHeader(obstaravanie, is_first) %}
+{% if is_first %}
   <div class="panel panel-default" style="max-width:1000px;border-top-left-radius:0px">
   <br>
 {% endif %}
@@ -78,7 +78,7 @@
 </span>
 </p>
 
-{% if count > 0 %}
+{% if not is_first %}
   <div class="panel panel-default" style="max-width:1000px">
 {% endif %}
 <table class="table table-striped table-hover" style="max-width:1000px">    
@@ -153,18 +153,16 @@ Našim cieľom je identifikovať a notifikovať uchádzačov, ktorí by sa mali 
   <li role="presentation"><a class="obstaravania-selected" href="obstaravania-firmy.html">Zoraď podľa firiem</a></li>
 </ul>
 
-{% set count = 0 %}
-{{ tableHeader(obstaravania[0], count) }}
-{% set last_bulletin_number = -1 %}
-{% set count = 1 + count %}
+{{ tableHeader(obstaravania[0], False) }}
+{% set bulletin_numbers = [] %}
 {% for obstaravanie in obstaravania %}
-  {% if last_bulletin_number != obstaravanie.bulletin_number and last_bulletin_number > 0 %}
+  {% if bulletin_numbers and bulletin_numbers[-1] != obstaravanie.bulletin_number %}
   </tbody>
   </table>
   </div>
-  {{tableHeader(obstaravanie, count)}}
+  {{tableHeader(obstaravanie, True)}}
   {% endif %}
-  {% set last_bulletin_number = obstaravanie.bulletin_number %}
+  {% set _ = bulletin_numbers.append(obstaravanie.bulletin_number) %}
 <tr id={{"row_" + obstaravanie.id|string}}>  
   <td>
     {% if obstaravanie.title %}
