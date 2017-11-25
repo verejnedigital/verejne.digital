@@ -24,7 +24,7 @@ Jinja2==2.9.5
 MarkupSafe==1.0
 mock==1.3.0
 ndg-httpsclient==0.4.2
-numpy==1.11.2
+numpy
 packaging==16.8
 parsedatetime==2.1
 Paste==2.0.3
