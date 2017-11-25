@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import argparse
 import heapq
 import json
 from paste import httpserver
@@ -152,11 +153,7 @@ class MyServer(webapp2.RequestHandler):
 
     def get(self):
         self.process()
-        try:
-            pass
-        except:
-            self.returnJSON(errorJSON(
-                500, "Internal server error: sa mi neda vycentrovat!"))
+
 
 def parseStartEnd(request):
     try:
@@ -191,10 +188,17 @@ def main():
       ('/neighbourhood', Neighbourhood)
       ], debug=False)
 
+  parser = argparse.ArgumentParser()
+  parser.add_argument('--listen',
+                    help='host:port to listen on',
+                    default='127.0.0.1:8081')
+  args = parser.parse_args()
+  host, port = args.listen.split(':')
+
   httpserver.serve(
       app,
-      host='127.0.0.1',
-      port='8081')
+      host=host,
+      port=port)
   
 if __name__ == '__main__':
   main()
