@@ -235,6 +235,7 @@ def main():
       ('/kataster_info_location', KatasterInfoLocation),
       ('/kataster_info_company', KatasterInfoCompany),
       ('/kataster_info_person', KatasterInfoPerson),
+      ('/kataster_info_politician', KatasterInfoPolitician),
       ], debug=False)
 
   httpserver.serve(
