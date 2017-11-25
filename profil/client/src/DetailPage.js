@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import './App.css';
+import './DetailPage.css';
 
 import * as serverAPI from './actions/serverAPI';
 import DetailVizitka from './components/DetailVizitka';
@@ -43,10 +43,16 @@ class App extends Component {
 
   render() {
     return (
-      <div className="App">
-        <a href="../..">profil.verejne.digital</a>
-        <DetailVizitka politician={this.state.politician} />
-        <DetailKatasterTable kataster={this.state.kataster} />
+      <div className="detail-page">
+        <div className="detail-header">
+          <div className="detail-navigation">
+            <a href="../.." className="brand">profil.verejne.digital</a>
+          </div>
+        </div>
+        <div className="detail-body">
+          <DetailVizitka politician={this.state.politician} />
+          <DetailKatasterTable kataster={this.state.kataster} />
+        </div>
       </div>
     );
   }
