@@ -9,14 +9,15 @@ const DetailAssetDeclaration = ({assets}) => (
       <th></th>
       <th>
         Majetkové priznanie ({assets.length})
-        <span className="assets-declaration source"> &nbsp; &nbsp; &nbsp; &nbsp;zdroj <a href="http://www.nrsr.sk">NRSR <i class="fa fa-external-link" aria-hidden="true"></i></a></span>
+        <span className="assets-declaration source">zdroj </span>
+        <a href="http://www.nrsr.sk">NRSR <i class="fa fa-external-link" aria-hidden="true"></i></a>
       </th>
     </tr>
   </thead>
   <tbody>
     {assets.map((asset, key) =>
       <tr key={key}>
-        <td>{key + 1}</td>
+        <td className="key">{key < 9 ? "0" + (key + 1) : (key + 1)}</td>
         <td>
           {asset}
         </td>

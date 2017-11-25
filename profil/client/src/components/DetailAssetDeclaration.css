@@ -1,9 +1,14 @@
 .assets-declaration {
   width: 350px;
-  flex-basis: auto;
+  flex-basis: auto;  
 }
 
 .assets-declaration .source {
 	color: gray;
-	font-weight: normal;	
+	font-weight: normal;
+	padding-left: 50px;	
+}
+
+.assets-declaration .key {
+	color: gray;
 }
