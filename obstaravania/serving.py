@@ -23,7 +23,7 @@ class MyServer(webapp2.RequestHandler):
         self.response.set_status(code)
         self.returnJSON({'code': code, 'message': 'ERROR: ' + message})
 
-class UpdateNotifications:
+class UpdateNotifications(MyServer):
     def get(self):
         self.response.write("update_notifications")
         # As a response, we expect parameters called all_notificationid to
