@@ -21,8 +21,16 @@ export function listPoliticians(cb) {
     .then(cb);
 }
 
-export function loadPoliticiant(id, cb) {
+export function katasterInfo(id, cb) {
   fetch(`/api/k/kataster_info_politician?id=${id}`, {
+    accept: 'application/json',
+  }).then(checkStatus)
+    .then(parseJSON)
+    .then(cb);
+}
+
+export function loadPoliticiant(id, cb) {
+  fetch(`/api/k/info_politician?id=${id}`, {
     accept: 'application/json',
   }).then(checkStatus)
     .then(parseJSON)

@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import './App.css';
 
 import * as serverAPI from './actions/serverAPI';
+import DetailVizitka from './components/DetailVizitka';
+import DetailKatasterTable from './components/DetailKatasterTable';
 
 
 class App extends Component {
@@ -9,22 +11,32 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      politician: {}
+      politician: {},
+      kataster: []
     };
     this.loadPoliticiant = this.loadPoliticiant.bind(this);
   }
 
   componentWillMount() {
-    console.log(this.props);
     this.loadPoliticiant();
+    this.loadKataster();
   }
 
   loadPoliticiant() {
     serverAPI.loadPoliticiant(this.props.params.id,
       (politician) => {
-        console.log(politician);
         this.setState({
           politician
+        });
+      });
+  }
+
+  loadKataster() {
+    serverAPI.katasterInfo(this.props.params.id,
+      (kataster) => {
+        console.log(kataster[0]);
+        this.setState({
+          kataster
         });
       });
   }
@@ -32,8 +44,9 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <a href="../..">Home</a>
-        <h2> id = {this.props.params.id}</h2>
+        <a href="../..">profil.verejne.digital</a>
+        <DetailVizitka politician={this.state.politician} />
+        <DetailKatasterTable kataster={this.state.kataster} />
       </div>
     );
   }
