@@ -5,6 +5,7 @@ import * as serverAPI from './actions/serverAPI';
 import DetailVizitka from './components/DetailVizitka';
 import DetailKatasterTable from './components/DetailKatasterTable';
 import DetailAssetDeclaration from './components/DetailAssetDeclaration';
+import Footer from './components/Footer';
 
 
 class App extends Component {
@@ -69,6 +70,7 @@ class App extends Component {
             <DetailKatasterTable kataster={this.state.kataster} />
           </div>
         </div>
+        <Footer />
       </div>
     );
   }
