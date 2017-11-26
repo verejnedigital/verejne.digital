@@ -1,6 +1,9 @@
 argparse
 enum34
+gensim
+htmlmin
 jinja2
+numpy
 paste
 psycopg2
 python-dateutil

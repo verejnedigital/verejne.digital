@@ -1,34 +1,28 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import argparse
 from data_model import Obstaravanie, Firma, Candidate, Prediction, RawNotice, LastSync, MakeSession, Session
 from utils import obstaravanieToJson, getEidForIco
 
 from sqlalchemy import Column, Float, Integer, String, Boolean, and_
-from ast import literal_eval
 import csv
-from dateutil.parser import parse
 from gensim import corpora, models, similarities
 import htmlmin
 import logging
 import numpy as np
-from optparse import OptionParser
 import os
-import re
-import sqlite3
+from os import sys, path
 import time
 import urllib2
 import xml.etree.ElementTree as ET
-import resource
 import urllib, json
 from jinja2 import Template
 # Dirty hack to improt from parent directory. TODO packaging...
-from os import sys, path
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 import db
-from db import parser
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
-#parser = OptionParser()
+parser = argparse.ArgumentParser()
 parser.add_argument("--download_datanest", action="store_true")
 parser.add_argument("--data_url", default="http://datanest.fair-play.sk/api/dataset_records?dataset_id=77")
 parser.add_argument("--create_data_files", action="store_true")
