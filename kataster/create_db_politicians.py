@@ -4,10 +4,11 @@ import psycopg2.extras
 psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
 psycopg2.extensions.register_type(psycopg2.extensions.UNICODEARRAY)
 
+from datetime import datetime
 from itertools import groupby
 
 from db import db_execute, db_query, db_insert_jsons
-from utils import json_load
+from utils import json_load, hash_timestamp
 
 
 DIR_DATA = '/home/matej_balog/data/'
@@ -66,7 +67,8 @@ def main(args_dict):
             id          serial  PRIMARY KEY,
             firstname   text,
             surname     text,
-            title       text
+            title       text,
+            dobhash     int
         );
 
         CREATE TABLE IF NOT EXISTS kataster.politicianterms(
@@ -102,26 +104,25 @@ def main(args_dict):
     # Insert poslanci NRSR
     path_poslanci_NRSR = DIR_DATA + 'poslanci_NRSR.json'
     poslanci_NRSR = json_load(path_poslanci_NRSR)
+    for poslanec in poslanci_NRSR:
+        poslanec['dobhash'] = hash_timestamp(datetime.strptime(poslanec['birthdate'], '%Y-%m-%dT%H:%M:%SZ'))
     poslanci_NRSR_sorted = sorted(poslanci_NRSR, key=lambda p: (p['PoslanecID'], p['CisObdobia']))
     poslanci_NRSR_unique = [next(group) for key, group in groupby(poslanci_NRSR_sorted, key=lambda p: p['PoslanecID'])]
-    columns_politicians = ['firstname', 'surname', 'title']
+    columns_politicians = ['firstname', 'surname', 'title', 'dobhash']
     db_insert_jsons(db, 'kataster.politicians', poslanci_NRSR_unique, columns_politicians)
 
-    # Commit insertions
-    db.commit()
-
     # Obtain assigned IDs
-    q = """SELECT id, firstname, surname, title FROM kataster.politicians;"""
+    q = """SELECT id, firstname, surname, dobhash FROM kataster.politicians;"""
     politicians = db_query(db, q)
-    fst_to_politicianid = {(p['firstname'], p['surname'], p['title']): p['id'] for p in politicians}
+    fsd_to_politicianid = {(p['firstname'], p['surname'], p['dobhash']): p['id'] for p in politicians}
 
     # Construct politicianterms relations for poslanci NRSR
     CisObdobia_to_termid = {term['CisObdobia']: term['id'] for term in terms if 'CisObdobia' in term}
     party_name_to_id = {party['name']: party['id'] for party in parties}
     for poslanec in poslanci_NRSR:
         # Obtain politicianid
-        key_fst = (poslanec['firstname'], poslanec['surname'], poslanec['title'])
-        politicianid = fst_to_politicianid[key_fst]
+        key_fsd = (poslanec['firstname'], poslanec['surname'], poslanec['dobhash'])
+        politicianid = fsd_to_politicianid[key_fsd]
 
         # Obtain termid
         termid = CisObdobia_to_termid[poslanec['CisObdobia']]
