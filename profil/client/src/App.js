@@ -6,6 +6,7 @@ import * as serverAPI from './actions/serverAPI';
 import Table from './components/Table';
 import Search from './components/Search';
 import Footer from './components/Footer';
+import Navigation from './components/Navigation';
 
 class App extends Component {
 
@@ -42,12 +43,10 @@ class App extends Component {
     return (
       <div className="App">
         <div className="App-header">
-          <div className="App-title">
-            <h1><span class="bolder">profil.</span>verejne.digital</h1>
-            <h3>Majetok verejných činiteľov podľa katastra SR</h3>
+          <Navigation />
+          <div className="App-title">                                  
           </div>
         </div>
-
         <div className="App-search">
           <Search filterNames={this.filterNames} names={this.state.politicians.map(politician => { return {
             firstname: politician.firstname, 

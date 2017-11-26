@@ -5,9 +5,10 @@
 }
 
 .App-header {
-  height: 150px;
+  height: auto;
   padding: 20px;
-  margin-bottom: 30px;
+  padding-left: 0px;
+  margin-bottom: 0px;
   text-align: center;
 }
 
@@ -20,7 +21,7 @@
 }
 
 .App-search {
-  padding-bottom: 30px;
+  padding-bottom: 60px;
   padding-top: 30px;
 }
 
