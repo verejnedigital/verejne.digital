@@ -7,12 +7,15 @@
 
 .vizitka {
   padding: 10px;
-  border: 1;
+  border: 3px;
+  border-color: #cddae3;
+  border-style: solid;
   background-color: white;
   margin-top: 30px;
   margin-bottom: 20px;
   position: relative;
   height: 190px;
+  box-shadow: 0 4px 12px 0 rgba(187, 198, 206, 0.5);
 }
 
 .bolder {

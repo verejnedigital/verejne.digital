@@ -10,8 +10,9 @@
 }
 
 .brand {
-  font-family: 'Source Code Pro', monospace;
-  color:  #333333;
+  /*font-family: 'Source Code Pro', monospace;*/
+  font-family: monospace;
+  /*color:  #333333;*/
   font-size: 14px;
   font-weight: 400;
   text-align: left;
@@ -20,11 +21,12 @@
 .detail-navigation {
   width: 800px;
   margin: auto;
+  text-align: left;
 }
 
 .data-tables {
   display: flex;
   padding-right: 30px;
   padding-left: 30px;
-  justify-content: space-between;
+  justify-content: space-between;  
 }
