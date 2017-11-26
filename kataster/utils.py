@@ -1,3 +1,4 @@
+import datetime
 import io
 import json
 import math
@@ -71,6 +72,9 @@ def WGS84_to_Mercator(lat, lon):
     y = math.log(math.tan(math.pi / 4 + math.radians(lat) / 2)) * EARTH_EQUATORIAL_RADIUS
     return x, y
 
+def hash_timestamp(timestamp):
+    prime = 1543
+    return int((timestamp - datetime.datetime.utcfromtimestamp(0)).total_seconds() % prime)
 
 # --- IO ---
 def json_load(path):

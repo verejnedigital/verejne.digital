@@ -179,10 +179,11 @@ def get_cadastral_data_for_company(company_name, circumvent_geoblocking, verbose
 def get_query_politicians(sql_filter=''):
     return """
         SELECT DISTINCT ON (id)
-            kataster.politicians.id,
-            kataster.politicians.surname,
-            kataster.politicians.firstname,
-            kataster.politicians.title,
+            kataster.politicians.id AS id,
+            kataster.politicians.surname AS surname,
+            kataster.politicians.firstname AS firstname,
+            kataster.politicians.title AS title,
+            kataster.politicians.dobhash AS dobhash,
             kataster.politicianterms.picture_url AS picture,
             kataster.parties.abbreviation AS party_abbreviation,
             kataster.parties.name AS party_nom,
@@ -262,7 +263,7 @@ class KatasterInfoPolitician(MyServer):
 
         # Find politician data in the database
         politician = self.get_politician_by_id(politician_id)
-        search_params = ['firstname', 'surname']
+        search_params = ['firstname', 'surname', 'dobhash']
         db = db_connect()
         Parcels = get_Parcels_from_database(db, politician, search_params)
         db.close()

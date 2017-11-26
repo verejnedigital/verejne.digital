@@ -1,5 +1,5 @@
 from db import db_query
-from utils import search_string
+from utils import search_string, hash_timestamp
 
 
 def construct_SQL_filter_data(person, search_params):
@@ -17,6 +17,7 @@ def construct_SQL_filter(person, search_params):
     SQL_filters = {
         'firstname': """kataster.Subjects.FirstNameSearch=%s""",
         'surname': """kataster.Subjects.SurnameSearch=%s""",
+        'dobhash': """kataster.Subjects.DobHash=%s""",
     }
     SQL_filter = ' AND '.join([SQL_filters[param] for param in search_params])
     SQL_filter_data = construct_SQL_filter_data(person, search_params)
