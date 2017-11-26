@@ -28,9 +28,9 @@ def get_Parcels_from_database(db, person, search_params):
     q = """
         WITH
         Parcels AS (
-            SELECT FolioId, No, Area, Id, LandUseId, UtilisationId, CadastralUnitId, 'C' AS ParcelType FROM kataster.ParcelsC
+            SELECT FolioId, No, Area, Id, LandUseId, UtilisationId, CadastralUnitId, ValidTo, 'C' AS ParcelType FROM kataster.ParcelsC
             UNION
-            SELECT FolioId, No, Area, Id, LandUseId, UtilisationId, CadastralUnitId, 'E' AS ParcelType FROM kataster.ParcelsE
+            SELECT FolioId, No, Area, Id, LandUseId, UtilisationId, CadastralUnitId, ValidTo, 'E' AS ParcelType FROM kataster.ParcelsE
         ),
         OwnershipRecordsWithLegalRightTexts AS (
             SELECT
@@ -46,7 +46,7 @@ def get_Parcels_from_database(db, person, search_params):
             GROUP BY
                 kataster.OwnershipRecords.Id
         )
-        SELECT DISTINCT
+        SELECT DISTINCT ON (CadastralUnitCode, FolioNo, ParcelNo, ParticipantTypeName)
             Parcels.ParcelType AS ParcelType,
             Parcels.No AS ParcelNo,
             Parcels.Area AS Area,
@@ -82,7 +82,10 @@ def get_Parcels_from_database(db, person, search_params):
         INNER JOIN
             kataster.CadastralUnits ON kataster.CadastralUnits.Id = Parcels.CadastralUnitId
         WHERE
-            """ + SQL_filter + """;"""
+            """ + SQL_filter + """
+        ORDER BY
+            CadastralUnitCode, FolioNo, ParcelNo, ParticipantTypeName, Parcels.ValidTo DESC
+        ;"""
     rows = db_query(db, q, SQL_filter_data)
 
     # Convert ParticipantRatio to floats for JSON serialisability
