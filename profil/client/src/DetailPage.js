@@ -15,7 +15,7 @@ class App extends Component {
     this.state = {
       politician: {},
       kataster: [],
-      assetsFromDeclaration: []
+      assetsFromDeclaration: [],      
     };
   }
 
@@ -23,7 +23,7 @@ class App extends Component {
     const id = this.props.params.id;
     this.loadPoliticiant(id);
     this.loadKataster(id);
-    this.loadAssetDeclaration(id);
+    this.loadAssetDeclaration(id);    
   }
 
   loadPoliticiant(id) {
@@ -37,8 +37,7 @@ class App extends Component {
 
   loadKataster(id) {
     serverAPI.katasterInfo(id,
-      (kataster) => {
-        console.log(kataster[0]);
+      (kataster) => {        
         this.setState({
           kataster
         });
@@ -47,9 +46,12 @@ class App extends Component {
 
   loadAssetDeclaration(id) {
     serverAPI.loadAssetDeclaration(id,
-      (report) => {        
-        const assetsFromDeclaration = (typeof report["nehnuteľný majetok"] !== 'undefined')
-            ? report["nehnuteľný majetok"].split('\n') : [];
+      (report) => {                        
+        // Report contains asset declarations for several years.
+        // TODO: Make sure it is sorted by year from the most recent to the oldest
+        const assetsFromDeclaration = (typeof report[0] !== 'undefined' 
+          && typeof report[0]["nehnuteľný majetok"] !== 'undefined')
+            ? report[0]["nehnuteľný majetok"].split('\n') : [];
         this.setState({
           assetsFromDeclaration
         });
@@ -67,7 +69,7 @@ class App extends Component {
         <div className="detail-body">
           <DetailVizitka politician={this.state.politician} />
           <div className="data-tables">
-            <DetailAssetDeclaration assets={this.state.assetsFromDeclaration} />
+            <DetailAssetDeclaration assets={this.state.assetsFromDeclaration} year="2016"/>
             <DetailKatasterTable kataster={this.state.kataster} />
           </div>
         </div>

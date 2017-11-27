@@ -2,7 +2,7 @@ import React from 'react';
 import './DetailAssetDeclaration.css';
 
 
-const DetailAssetDeclaration = ({assets}) => (
+const DetailAssetDeclaration = ({assets, year}) => (
 <table className="assets-declaration table">
   <thead>
     <tr>
@@ -13,6 +13,11 @@ const DetailAssetDeclaration = ({assets}) => (
         <a href="http://www.nrsr.sk">NRSR <i className="fa fa-external-link" aria-hidden="true"></i></a>
       </th>
     </tr>
+    <tr>
+      <td colspan="2" className="year_navigation">
+      &larr; rok {year} &rarr;
+      </td>
+    </tr>
   </thead>
   <tbody>
     {assets.map((asset, key) =>
@@ -22,7 +27,7 @@ const DetailAssetDeclaration = ({assets}) => (
           {asset}
         </td>
       </tr>
-    )}
+    )}    
   </tbody>
 </table>
 );

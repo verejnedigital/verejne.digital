@@ -10,6 +10,7 @@ class Table extends Component {
         <thead>
           <tr>            
             <th></th>
+            <th></th>
             <th>Meno a priezvisko</th>
             <th className="party-column">Strana</th>
             <th className="number-column">Domy &amp; Byty</th>
@@ -19,7 +20,7 @@ class Table extends Component {
         </thead>
         <tbody>
           {this.props.politicians.map(politician =>
-            <TableLine key={politician.id}  politician={politician}/>,
+            <TableLine key={politician.id}  politician={politician} poradie={3}/>,
           )}
           
         </tbody>

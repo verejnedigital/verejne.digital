@@ -66,7 +66,7 @@ function sortListPoliticians(res) {
 }
 
 export function listPoliticians(cb) {
-  fetch(`/api/k/list_politicians?x=3`, {
+  fetch(`/api/k/list_politicians`, {
     accept: 'application/json',
   }).then(checkStatus)
     .then(parseJSON)
