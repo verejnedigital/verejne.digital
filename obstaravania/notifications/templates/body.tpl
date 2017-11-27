@@ -66,11 +66,9 @@
 	<tr><td colspan="6">Nakoľko ste robili projekt</td></tr>
 	<tr class="title_row"><td class="title_cell" colspan="5">{$notification['reason']['title']}</td>
 		<td class="date_cell">
-			{if isset($notification['reason']['bulletin_day']}
+			{if isset($notification['reason']['bulletin_day'])}
 				<img src="resources/date2.png" />
-				<span class="date">
-					{$notification['reason']['bulletin_day']}.{$notification['reason']['bulletin_month']}.{$notification['reason']['bulletin_year']}
-				</span>
+				<span class="date">{$notification['reason']['bulletin_day']}.{$notification['reason']['bulletin_month']}.{$notification['reason']['bulletin_year']}</span>
 			{/if}
 		</td>
 	</tr>
@@ -102,9 +100,8 @@
 		<td colspan="2" class="date_cell">
 			{if isset($offer['bulletin_day'])}
 				Vyhlásené dňa:
-				<img src="resources/date2.png" /><span class="date">
-				{$offer['bulletin_day']}.{$offer['bulletin_month']}.{$offer['bulletin_year']}
-				</span>
+				<img src="resources/date2.png" />
+				<span class="date">{$offer['bulletin_day']}.{$offer['bulletin_month']}.{$offer['bulletin_year']}</span>
 			{/if}
 		</td>
 	</tr>

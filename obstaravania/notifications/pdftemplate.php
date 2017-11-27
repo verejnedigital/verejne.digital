@@ -71,6 +71,7 @@ class pdfTemplate extends TCPDF {
 
 	public function createDocument() {
 		if ($this->smarty === null) {
+			Smarty::muteExpectedErrors();
 			$this->smarty = new Smarty();
 			$this->smarty->setTemplateDir(self::TEMPLATE_DIR);
 			$this->smarty->setCompileDir(self::TEMPLATE_COMPILE);
