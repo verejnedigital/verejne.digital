@@ -13,11 +13,64 @@ function parseJSON(res) {
   return res.json();
 }
 
+function compareKatasterForSameLandUse(a, b) {
+  if (a.cadastralunitcode < b.cadastralunitcode) return -1;
+  if (a.cadastralunitcode > b.cadastralunitcode) return 1;
+  if (a.foliono < b.foliono) return -1;
+  if (a.foliono > b.foliono) return 1;
+  return 0;
+}
+
+function compareKataster(a, b) {
+  if (a.landusename === b.landusename) return compareKatasterForSameLandUse(a, b);
+  var plocha = 'Zastavaná plocha a nádvorie';
+  if (a.landusename === plocha) return -1;
+  if (b.landusename === plocha) return 1;
+  if (a.landusename < b.landusename) return -1;
+  if (a.landusename > b.landusename) return 1;  
+}
+
+function sortKatasterInfo(res) {  
+  return res.sort(compareKataster);
+}
+
+function mergeParcely(res) {
+  var new_res = [];
+  var last_index = -1;
+  for (var i = 0; i < res.length; i++) {
+    if (last_index > 0 && res[i].cadastralunitcode === res[last_index].cadastralunitcode &&
+      res[i].foliono === res[last_index].foliono) {
+      res[last_index].parcelno = res[last_index].parcelno + ', ' + res[i].parcelno;
+    } else {
+      last_index = i;
+      new_res.push(res[i]);
+    }
+  }
+  return new_res;
+}
+
+function comparePolitician(a, b) {
+  if (a.num_houses_flats > b.num_houses_flats) return -1;
+  if (a.num_houses_flats < b.num_houses_flats) return 1;
+  if (a.num_fields_gardens > b.num_fields_gardens) return -1;
+  if (a.num_fields_gardens < b.num_fields_gardens) return 1;
+  if (a.num_others > b.num_others) return -1;
+  if (a.num_others < b.num_others) return 1;
+  if (a.surname < b.surname) return -1;
+  if (a.surname > b.surname) return 1;
+  return 0;
+}
+
+function sortListPoliticians(res) {  
+  return res.sort(comparePolitician);
+}
+
 export function listPoliticians(cb) {
-  fetch(`/api/k/list_politicians`, {
+  fetch(`/api/k/list_politicians?x=3`, {
     accept: 'application/json',
   }).then(checkStatus)
     .then(parseJSON)
+    .then(sortListPoliticians)
     .then(cb);
 }
 
@@ -26,6 +79,8 @@ export function katasterInfo(id, cb) {
     accept: 'application/json',
   }).then(checkStatus)
     .then(parseJSON)
+    .then(sortKatasterInfo)
+    .then(mergeParcely)
     .then(cb);
 }
 
@@ -38,7 +93,7 @@ export function loadPoliticiant(id, cb) {
 }
 
 export function loadAssetDeclaration(id, cb) {
-  fetch(`/api/k/asset_declaration?id=${id}`, {
+  fetch(`/api/k/asset_declarations?id=${id}`, {
     accept: 'application/json',
   }).then(checkStatus)
     .then(parseJSON)

@@ -14,15 +14,15 @@ const Navigation = () =>
           <span className="icon-bar"></span>
         </button>
         <h1 className="navbar-brand"><span className="bolder">profil</span>.verejne.digital</h1>
-        <h3>Majetok verejných činiteľov podľa katastra SR</h3>
+        <h3 className="sub_title">Majetok poslancov podľa priznaní a katastra</h3>
       </div>
       <div className="collapse navbar-collapse">
         <ul className="nav navbar-nav">
-          <li><a href="../index.html">verejne.digital</a></li>          
-          <li><a href="../obstaravania/index.html">obstaravania.verejne.digital</a></li>
-          <li><a href="../prepojenia/index.html">prepojenia.verejne.digital</a></li>
+          <li><a href="https://verejne.digital">verejne.digital</a></li>          
+          <li><a href="https://obstaravania.verejne.digital">obstaravania.verejne.digital</a></li>
+          <li><a href="https://prepojenia.verejne.digital">prepojenia.verejne.digital</a></li>
           <li><a href="http://www.facebook.com/verejne.digital" target="_blank" rel="noopener noreferrer">kontaktuj nás na Facebooku</a></li>
-          <li><a href="../index.html?about">o projekte</a></li>
+          <li><a href="https://verejne.digital/?about">o projekte</a></li>
         </ul>
       </div>
     </nav>

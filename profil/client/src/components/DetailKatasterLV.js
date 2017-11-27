@@ -10,10 +10,9 @@ const DetailKatasterLV = ({num, lv}) => (
   <td>
     <div>
       <a target="_BLANK" href={"https://kataster.skgeodesy.sk/EsknBo/Bo.svc/GeneratePrf?prfNumber=" + lv.foliono + "&cadastralUnitCode=" + lv.cadastralunitcode + "&outputType=html"}>{lv.landusename}
-      &nbsp;<i className="fa fa-external-link" aria-hidden="true"></i></a>
-      <span className="podiel">{`${Number(lv.participantratio).toFixed(2)}% podiel`}</span>
+      &nbsp;<i className="fa fa-external-link" aria-hidden="true"></i></a>      
     </div>
-    <div>{`${lv.cadastralunitname}, číslo parcely: ${lv.parcelno}; LV č. ${lv.foliono}`}</div>
+    <div>{`${lv.cadastralunitname}, LV č. ${lv.foliono}; parcely: ${lv.parcelno}`}</div>
   </td>
 </tr>
 );

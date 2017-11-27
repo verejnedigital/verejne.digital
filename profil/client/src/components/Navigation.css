@@ -32,6 +32,10 @@
   font-weight: 700;
 }
 
+.sub_title {
+  color: grey;
+  font-weight: 300;
+}
 .navbar-brand:hover {
   color:  #333333;
 }
