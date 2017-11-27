@@ -281,7 +281,7 @@ class InfoPolitician(MyServer):
         politician = self.get_politician_by_id(politician_id)
         return self.returnJSON(politician)
 
-class AssetDeclaration(MyServer):
+class AssetDeclarations(MyServer):
     def process(self):
         # Parse politician id
         try:
@@ -294,17 +294,16 @@ class AssetDeclaration(MyServer):
         firstname, surname = politician['firstname'], politician['surname']
 
         # Find asset declaration of this politician
-        path_declarations = '/home/matej_balog/data/declarations.json'
+        path_declarations = '/home/matej_balog/data/NRSR_asset_declarations.json'
         declarations = json_load(path_declarations)
-        matched_declaration = {}
+        matched_declarations = []
         for declaration in declarations:
             meno = declaration['meno']
             if is_contained_ci(firstname, meno) and is_contained_ci(surname, meno):
-                matched_declaration = declaration
-                break
+                matched_declarations.append(declaration)
 
         # Return matched declaration as JSON
-        return self.returnJSON(matched_declaration)
+        return self.returnJSON(matched_declarations)
 
 class ListPoliticians(MyServer):
     def process(self):
@@ -359,7 +358,7 @@ def main():
       ('/kataster_info_politician', KatasterInfoPolitician),
       ('/list_politicians', ListPoliticians),
       ('/info_politician', InfoPolitician),
-      ('/asset_declaration', AssetDeclaration),
+      ('/asset_declarations', AssetDeclarations),
       ], debug=False)
 
   httpserver.serve(
