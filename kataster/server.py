@@ -7,7 +7,7 @@ import webapp2
 import yaml
 
 from db import db_connect, db_query
-from db_search import get_Parcels_from_database
+from db_search import get_Parcels_from_database, count_Parcels_in_database
 from utils import download_cadastral_json, download_cadastral_pages, search_string, is_contained_ci, WGS84_to_Mercator, json_load, json_dump_utf8
 
 CADASTRAL_API_ODATA = 'https://kataster.skgeodesy.sk/PortalOData/'
@@ -309,8 +309,39 @@ class AssetDeclaration(MyServer):
 class ListPoliticians(MyServer):
     def process(self):
         db = db_connect()
+
+        # Get list of politicians from the database
         q = get_query_politicians()
         politicians = db_query(db, q)
+
+        # For each politician, obtain property counts
+        rows = count_Parcels_in_database(db)
+        db.close()
+        for politician in politicians:
+            firstname_search = search_string(politician['firstname'])
+            surname_search = search_string(politician['surname'])
+            dobhash = politician['dobhash']
+
+            num_houses_flats = 0
+            num_fields_gardens = 0
+            num_others = 0
+            for row in rows:
+                if (row['firstnamesearch'] == firstname_search) and (row['surnamesearch'] == surname_search) and (row['dobhash'] == dobhash):
+                    LandUseName = row['landusename']
+                    cnt = row['groupcount']
+                    if LandUseName == u'Zastavan\xe1 plocha a n\xe1dvorie':
+                        num_houses_flats += cnt
+                    elif LandUseName in [u'Orn\xe1 p\xf4da', u'Z\xe1hrada']:
+                        num_fields_gardens += cnt
+                    else:
+                        num_others += cnt
+
+            # Save the counts
+            politician['num_houses_flats'] = num_houses_flats
+            politician['num_fields_gardens'] = num_fields_gardens
+            politician['num_others'] = num_others
+
+        # Return politicians augmented with property counts as JSON
         return self.returnJSON(politicians)
 
 def main():

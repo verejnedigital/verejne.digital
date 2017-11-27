@@ -94,3 +94,51 @@ def get_Parcels_from_database(db, person, search_params):
             row['participantratio'] = float(row['participantratio'])
 
     return rows
+
+def count_Parcels_in_database(db):
+    q = """
+        WITH
+        Parcels AS (
+            SELECT FolioId, No, Area, Id, LandUseId, UtilisationId, CadastralUnitId, ValidTo, 'C' AS ParcelType FROM kataster.ParcelsC
+            UNION
+            SELECT FolioId, No, Area, Id, LandUseId, UtilisationId, CadastralUnitId, ValidTo, 'E' AS ParcelType FROM kataster.ParcelsE
+        ),
+        ParcelsOwned AS (
+            SELECT DISTINCT ON (CadastralUnitCode, FolioNo, ParcelNo)
+                Parcels.No AS ParcelNo,
+                kataster.Folios.No AS FolioNo,
+                kataster.LandUses.Name AS LandUseName,
+                kataster.CadastralUnits.Code AS CadastralUnitCode,
+                kataster.Subjects.FirstNameSearch AS FirstNameSearch,
+                kataster.Subjects.SurnameSearch AS SurnameSearch,
+                kataster.Subjects.DobHash AS DobHash
+            FROM
+                Parcels
+            INNER JOIN
+                kataster.Folios ON kataster.Folios.Id = Parcels.FolioId
+            INNER JOIN
+                kataster.OwnershipRecords ON kataster.OwnershipRecords.FolioId = kataster.Folios.Id
+            INNER JOIN
+                kataster.Participants ON kataster.Participants.OwnershipRecordId = kataster.OwnershipRecords.Id
+            INNER JOIN
+                kataster.SubjectParticipant ON kataster.SubjectParticipant.ParticipantId = kataster.Participants.Id
+            INNER JOIN
+                kataster.Subjects ON kataster.Subjects.Id = kataster.SubjectParticipant.SubjectId
+            INNER JOIN
+                kataster.LandUses ON kataster.LandUses.Id = Parcels.LandUseId
+            INNER JOIN
+                kataster.CadastralUnits ON kataster.CadastralUnits.Id = Parcels.CadastralUnitId
+            WHERE
+                kataster.Participants.TypeId=1
+            ORDER BY
+                CadastralUnitCode, FolioNo, ParcelNo, Parcels.ValidTo DESC
+        )
+        SELECT
+            FirstNameSearch, SurnameSearch, DobHash, LandUseName, COUNT(*) AS GroupCount
+        FROM
+            ParcelsOwned
+        GROUP BY
+            FirstNameSearch, SurnameSearch, DobHash, LandUseName
+        ;"""
+    rows = db_query(db, q)
+    return rows
