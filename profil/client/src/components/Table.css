@@ -20,6 +20,6 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
-  max-width: 150px;
-  vertical-align: center;
+  text-align: center;
+  max-width: 150px;  
 }

@@ -12,6 +12,7 @@ class Table extends Component {
             <th></th>
             <th></th>
             <th>Meno a priezvisko</th>
+            <th>Obdobie</th>
             <th className="party-column">Strana</th>
             <th className="number-column">Domy &amp; Byty</th>
             <th className="number-column">Orná pôda &amp; záhrady</th>
