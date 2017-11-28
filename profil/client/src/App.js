@@ -14,8 +14,9 @@ class App extends Component {
     super(props);
     this.state = {
       politicians: [],
-    };
-    this.loadListOfPoliticiants = this.loadListOfPoliticiants.bind(this);
+      original_politicians: [],     
+    };    
+    this.loadListOfPoliticiants = this.loadListOfPoliticiants.bind(this);        
     this.filterNames = this.filterNames.bind(this);
   }
 
@@ -28,14 +29,17 @@ class App extends Component {
       (list) => {
         this.setState({
           politicians: list,
+          original_politicians : list,
         });
       });
-  }
+  }  
 
   filterNames(query) {
-    const politicians = this.state.politicians.filter(p => p.firstname === query);
+    query = query.toLowerCase();    
+    const politicians = this.state.original_politicians.filter(p => 
+      (p.firstname.toLowerCase().startsWith(query) || p.surname.toLowerCase().startsWith(query) || p.party_abbreviation.toLowerCase() === query));    
     this.setState({
-      politicians
+      politicians : politicians, 
     })
   }
 

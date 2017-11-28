@@ -13,20 +13,21 @@ class Search extends Component {
     this.searchOnClick = this.searchOnClick.bind(this);
   }
 
-  searchOnClick() {
-    this.props.filterNames(this.state.search);
+  searchOnClick(val) {    
+    this.props.filterNames(val);
   }
 
-  updateInputValue(e) {
+  updateInputValue(e) {    
     this.setState({
       [e.target.id]: e.target.value,
+      search : e.target.value,
     });    
+    this.searchOnClick(e.target.value);    
   }
 
-  searchOnClickOnEnter(e) {
-    console.log(this.props.names);  // Rasto: Tu mas mena
+  searchOnClickOnEnter(e) {    
     if (e.key === 'Enter') {
-      this.searchOnClick();
+      this.searchOnClick(e.target.value);
     }
   }
 
@@ -39,7 +40,7 @@ class Search extends Component {
               id="search" className="form-control" type="text"
               value={this.state.search} onChange={this.updateInputValue}
               onKeyPress={this.searchOnClickOnEnter}
-              placeholder="Meno a priezvisko"
+              placeholder="Meno a priezvisko alebo politická strana"
             />
           </div>
         </div>
