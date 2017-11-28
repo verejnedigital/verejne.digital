@@ -70,8 +70,7 @@ class App extends Component {
             var key = keys[i];
             prijmyAssetsFromDeclaration.push(key+': ' + report[0][key]);
           }            
-        }
-        console.log(report);
+        }        
         this.setState({
           katasterAssetsFromDeclaration : katasterAssetsFromDeclaration,
           hnutelnyAssetsFromDeclaration : hnutelnyAssetsFromDeclaration,
