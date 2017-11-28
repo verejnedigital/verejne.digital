@@ -4,8 +4,6 @@ var entities = [];
 var markers = [];
 // contains id for given eid.
 var reverse = {};
-// this maps lines for object i.
-var all_lines = {};
 // make server calls only when this is true
 var server_calls_enabled = true;
 
@@ -195,7 +193,7 @@ function sortEntities(a, b) {
 // extra_caption funugje len ak su entity na vstupe zoradene.
 function getListHtml(sorted_entities, extra_caption) {
   var html = [];
-  for (i = 0; i < sorted_entities.length; i++) {
+  for (i = 0; i < sorted_entities.length && i < 40; i++) {
     var index = reverse[sorted_entities[i].eid];
     var entity = entities[index];    
     var color = "list-group-item-info"; // green
