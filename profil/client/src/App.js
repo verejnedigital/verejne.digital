@@ -50,11 +50,14 @@ class App extends Component {
           <Navigation />
           <div className="App-title">                                  
           </div>
-        </div>
+        </div>         
         <div className="App-search">
           <Search filterNames={this.filterNames} names={this.state.politicians.map(politician => { return {
             firstname: politician.firstname, 
             surname: politician.surname}})}/>
+        </div>
+        <div className="fbframe">
+            <iframe src="https://www.facebook.com/plugins/like.php?href=https%3A%2F%2Fwww.facebook.com%2Fverejne.digital&width=111&layout=button_count&action=like&size=small&show_faces=true&share=true&height=46&appId=" width="151" height="23" className="fbIframe" scrolling="no" frameBorder="0" allowTransparency="true" />
         </div>
         <div className="App-body">
           <Table politicians={this.state.politicians}/>        

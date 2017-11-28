@@ -21,10 +21,16 @@
 }
 
 .App-search {
-  padding-bottom: 60px;
+  padding-bottom: 30px;
   padding-top: 30px;
 }
 
 .App .bolder {
   font-weight: bolder;
+}
+
+.App .fbframe {
+  text-align: right;
+  padding-right: 0px;
+  margin-right: -30px;
 }
