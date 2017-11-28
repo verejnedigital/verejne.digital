@@ -72,6 +72,11 @@ def WGS84_to_Mercator(lat, lon):
     y = math.log(math.tan(math.pi / 4 + math.radians(lat) / 2)) * EARTH_EQUATORIAL_RADIUS
     return x, y
 
+def Mercator_to_WGS84(x, y):
+    lat = math.degrees(2 * math.atan(math.exp(y / EARTH_EQUATORIAL_RADIUS)) - math.pi / 2)
+    lon = math.degrees(x / EARTH_EQUATORIAL_RADIUS)
+    return lat, lon
+
 def hash_timestamp(timestamp):
     prime = 1543
     return int((timestamp - datetime.datetime.utcfromtimestamp(0)).total_seconds() % prime)

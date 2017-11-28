@@ -1,5 +1,5 @@
 from db import db_query
-from utils import search_string, hash_timestamp
+from utils import search_string, hash_timestamp, Mercator_to_WGS84
 
 
 def construct_SQL_filter_data(person, search_params):
@@ -28,9 +28,9 @@ def get_Parcels_from_database(db, person, search_params):
     q = """
         WITH
         Parcels AS (
-            SELECT FolioId, No, Area, Id, LandUseId, UtilisationId, CadastralUnitId, ValidTo, 'C' AS ParcelType FROM kataster.ParcelsC
+            SELECT FolioId, No, Area, minX, maxX, minY, maxY, Id, LandUseId, UtilisationId, CadastralUnitId, ValidTo, 'C' AS ParcelType FROM kataster.ParcelsC
             UNION
-            SELECT FolioId, No, Area, Id, LandUseId, UtilisationId, CadastralUnitId, ValidTo, 'E' AS ParcelType FROM kataster.ParcelsE
+            SELECT FolioId, No, Area, minX, maxX, minY, maxY, Id, LandUseId, UtilisationId, CadastralUnitId, ValidTo, 'E' AS ParcelType FROM kataster.ParcelsE
         ),
         OwnershipRecordsWithLegalRightTexts AS (
             SELECT
@@ -45,51 +45,63 @@ def get_Parcels_from_database(db, person, search_params):
                 kataster.LegalRights ON kataster.LegalRights.Id = kataster.OwnershipRecordLegalRights.LegalRightId
             GROUP BY
                 kataster.OwnershipRecords.Id
+        ),
+        ParcelsFiltered AS (
+            SELECT
+                Parcels.ParcelType AS ParcelType,
+                Parcels.No AS ParcelNo,
+                Parcels.Area AS Area,
+                0.5 * (Parcels.minX + Parcels.maxX) AS CoordinateX,
+                0.5 * (Parcels.minY + Parcels.maxY) AS CoordinateY,
+                kataster.Folios.No AS FolioNo,
+                kataster.Folios.OwnersCount AS FolioOwnersCount,
+                OwnershipRecordsWithLegalRightTexts.LegalRightTexts AS LegalRightTexts,
+                kataster.LandUses.Name AS LandUseName,
+                kataster.Utilisations.Name AS UtilisationName,
+                kataster.CadastralUnits.Code AS CadastralUnitCode,
+                kataster.CadastralUnits.Name AS CadastralUnitName,
+                100.0 * kataster.Participants.Numerator / kataster.Participants.Denominator AS ParticipantRatio,
+                kataster.Subjects.FirstName AS FirstName,
+                kataster.Subjects.Surname AS Surname,
+                Parcels.ValidTo AS ValidTo
+            FROM
+                Parcels
+            INNER JOIN
+                kataster.Folios ON kataster.Folios.Id = Parcels.FolioId
+            INNER JOIN
+                OwnershipRecordsWithLegalRightTexts ON OwnershipRecordsWithLegalRightTexts.FolioId = kataster.Folios.Id
+            INNER JOIN
+                kataster.Participants ON kataster.Participants.OwnershipRecordId = OwnershipRecordsWithLegalRightTexts.Id
+            INNER JOIN
+                kataster.SubjectParticipant ON kataster.SubjectParticipant.ParticipantId = kataster.Participants.Id
+            INNER JOIN
+                kataster.Subjects ON kataster.Subjects.Id = kataster.SubjectParticipant.SubjectId
+            INNER JOIN
+                kataster.LandUses ON kataster.LandUses.Id = Parcels.LandUseId
+            INNER JOIN
+                kataster.Utilisations ON kataster.Utilisations.Id = Parcels.UtilisationId
+            INNER JOIN
+                kataster.CadastralUnits ON kataster.CadastralUnits.Id = Parcels.CadastralUnitId
+            WHERE
+                kataster.Participants.TypeId=1 AND
+                """ + SQL_filter + """
         )
-        SELECT DISTINCT ON (CadastralUnitCode, FolioNo, ParcelNo, ParticipantTypeName)
-            Parcels.ParcelType AS ParcelType,
-            Parcels.No AS ParcelNo,
-            Parcels.Area AS Area,
-            kataster.Folios.No AS FolioNo,
-            kataster.Folios.OwnersCount AS FolioOwnersCount,
-            OwnershipRecordsWithLegalRightTexts.LegalRightTexts AS LegalRightTexts,
-            kataster.LandUses.Name AS LandUseName,
-            kataster.Utilisations.Name AS UtilisationName,
-            kataster.ParticipantTypes.Name AS ParticipantTypeName,
-            kataster.CadastralUnits.Code AS CadastralUnitCode,
-            kataster.CadastralUnits.Name AS CadastralUnitName,
-            100.0 * kataster.Participants.Numerator / kataster.Participants.Denominator AS ParticipantRatio,
-            kataster.Subjects.FirstName AS FirstName,
-            kataster.Subjects.Surname AS Surname
+        SELECT DISTINCT ON (CadastralUnitCode, FolioNo, ParcelNo)
+            *
         FROM
-            Parcels
-        INNER JOIN
-            kataster.Folios ON kataster.Folios.Id = Parcels.FolioId
-        INNER JOIN
-            OwnershipRecordsWithLegalRightTexts ON OwnershipRecordsWithLegalRightTexts.FolioId = kataster.Folios.Id
-        INNER JOIN
-            kataster.Participants ON kataster.Participants.OwnershipRecordId = OwnershipRecordsWithLegalRightTexts.Id
-        INNER JOIN
-            kataster.SubjectParticipant ON kataster.SubjectParticipant.ParticipantId = kataster.Participants.Id
-        INNER JOIN
-            kataster.Subjects ON kataster.Subjects.Id = kataster.SubjectParticipant.SubjectId
-        INNER JOIN
-            kataster.LandUses ON kataster.LandUses.Id = Parcels.LandUseId
-        INNER JOIN
-            kataster.Utilisations ON kataster.Utilisations.Id = Parcels.UtilisationId
-        INNER JOIN
-            kataster.ParticipantTypes ON kataster.ParticipantTypes.Id = kataster.Participants.TypeId
-        INNER JOIN
-            kataster.CadastralUnits ON kataster.CadastralUnits.Id = Parcels.CadastralUnitId
-        WHERE
-            """ + SQL_filter + """
+            ParcelsFiltered
         ORDER BY
-            CadastralUnitCode, FolioNo, ParcelNo, ParticipantTypeName, Parcels.ValidTo DESC
+            CadastralUnitCode, FolioNo, ParcelNo, ValidTo DESC
         ;"""
     rows = db_query(db, q, SQL_filter_data)
 
-    # Convert ParticipantRatio to floats for JSON serialisability
+    # Convert the coordinates to WGS84
     for row in rows:
+        row['coordinatex'], row['coordinatey'] = Mercator_to_WGS84(row['coordinatex'], row['coordinatey'])
+
+    # Ensure JSON serialisability: convert ParticipantRatio to float
+    for row in rows:
+        del row['validto']
         if row['participantratio'] is not None:
             row['participantratio'] = float(row['participantratio'])
 
