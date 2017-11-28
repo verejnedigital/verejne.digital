@@ -6,7 +6,7 @@ import DetailVizitka from './components/DetailVizitka';
 import DetailKatasterTable from './components/DetailKatasterTable';
 import DetailAssetDeclaration from './components/DetailAssetDeclaration';
 import Footer from './components/Footer';
-
+import MapContainer from './components/MapContainer';
 
 class App extends Component {
 
@@ -108,9 +108,10 @@ class App extends Component {
             </div>
             <DetailKatasterTable kataster={this.state.kataster} />
           </div>
-        </div>
-        <div id = "map">      
-        </div>                
+          <div className="mapa">
+            <MapContainer assets={this.state.kataster} />
+          </div>
+        </div>        
         <Footer />
       </div>
     );
