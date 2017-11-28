@@ -51,8 +51,8 @@ def get_Parcels_from_database(db, person, search_params):
                 Parcels.ParcelType AS ParcelType,
                 Parcels.No AS ParcelNo,
                 Parcels.Area AS Area,
-                0.5 * (Parcels.minX + Parcels.maxX) AS CoordinateX,
-                0.5 * (Parcels.minY + Parcels.maxY) AS CoordinateY,
+                0.5 * (Parcels.minX + Parcels.maxX) AS MercatorX,
+                0.5 * (Parcels.minY + Parcels.maxY) AS MercatorY,
                 kataster.Folios.No AS FolioNo,
                 kataster.Folios.OwnersCount AS FolioOwnersCount,
                 OwnershipRecordsWithLegalRightTexts.LegalRightTexts AS LegalRightTexts,
@@ -97,7 +97,9 @@ def get_Parcels_from_database(db, person, search_params):
 
     # Convert the coordinates to WGS84
     for row in rows:
-        row['coordinatex'], row['coordinatey'] = Mercator_to_WGS84(row['coordinatex'], row['coordinatey'])
+        row['lat'], row['lon'] = Mercator_to_WGS84(row['mercatorx'], row['mercatory'])
+        del row['mercatorx']
+        del row['mercatory']
 
     # Ensure JSON serialisability: convert ParticipantRatio to float
     for row in rows:
