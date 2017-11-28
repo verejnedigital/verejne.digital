@@ -2,7 +2,6 @@
 // Global variables capturing the state.
 var entities = [];
 var markers = [];
-var related = {};
 // contains id for given eid.
 var reverse = {};
 // this maps lines for object i.
@@ -18,8 +17,8 @@ var global_select_order = 1;
 var last_opened_info_window = null;
 var last_opened_info_window_data = null;
 
-// this should be used only after computeListOfSelectedOrRelatedEntities()
-var listOfSelectedOrRelatedEntities = [];
+// this should be used only after computeListOfSelectedEntities()
+var listOfSelectedEntities = [];
 
 // contains params from url
 var searchString;
@@ -44,7 +43,6 @@ function Entity(eid, lat, lng, title, size, ds, level) {
   this.lng = lng;
   this.lat = lat;
   this.selected = false;
-  this.related = false;
   this.title = title;
   this.size = size;
   this.level = level;
@@ -59,7 +57,6 @@ function EntityCopy(entity) {
   copy_entity.lat = entity.lat;
   copy_entity.lng = entity.lng;
   copy_entity.selected = entity.selected;
-  copy_entity.related = entity.related;
   copy_entity.title = entity.title;
   copy_entity.size = entity.size;
   copy_entity.level = entity.level;
@@ -79,8 +76,7 @@ function entityForMarker(i) {
     for (j = 1; j < markers[i].xx_eid.length; j++) {
       entity = entities[reverse[markers[i].xx_eid[j]]];
       // Merge to summary
-      summary.selected = summary.selected || entity.selected;
-      summary.related = summary.related || entity.related;
+      summary.selected = summary.selected || entity.selected;      
       summary.visible = summary.visible || entity.visible;
       // merge datasource values
       if (summary.ds != null && entity.ds != null && summary.ds.length == 4 && entity.ds.length == 4) {
@@ -96,8 +92,7 @@ function entityForMarker(i) {
 function shouldBeVisible(id, map) {
   var entLatLng = new google.maps.LatLng(parseFloat(entities[id].lat),parseFloat(entities[id].lng));
   return ((entities[id].level == getLevel(map) && map.getBounds().contains(entLatLng)) || 
-          (entities[id].selected == true) || 
-          (entities[id].related == true));
+          (entities[id].selected == true));
 }
 
 function getLevel(map) {
@@ -193,10 +188,7 @@ function sortEntities(a, b) {
   if (a.selected == b.selected) {
     if (a.selected) {      
       return a.select_order > b.select_order ? -1 : 1;
-    }
-    if (a.related == b.related) {
-      return b.size - a.size;
-    } else return a.related > b.related ? -1 : 1;
+    }    
   } else return a.selected > b.selected ? -1 : 1;
 }
 
@@ -209,12 +201,12 @@ function getListHtml(sorted_entities, extra_caption) {
     var color = "list-group-item-info"; // green
     if (isIndividual(entity.eid)) color = "list-group-item-info"; // blue
     if (entity.selected) color = "list-group-item-danger"; // red    
-    if (i > 0 && extra_caption && !entity.selected && !entity.related) {
+    if (i > 0 && extra_caption && !entity.selected) {
       var prev_entity = entities[reverse[sorted_entities[i-1].eid]];
-      if (prev_entity.selected || prev_entity.related) {
+      if (prev_entity.selected) {
         html.push('<label>Firmy a ľudia v geografickom okolí:</label>');
       }
-    } else if (i == 0 && extra_caption && !entity.selected && !entity.related && isIndividual(entity.eid)) {
+    } else if (i == 0 && extra_caption && !entity.selected && isIndividual(entity.eid)) {
       html.push('<label>Firmy a ľudia v geografickom okolí:</label>');
     }
     // TODO: Refactor this
@@ -294,12 +286,7 @@ function drawMarker(i, map) {
 function selectMarker(i) {
   var map = global_map;
   if (entities[i].selected) {
-    entities[i].selected = false;    
-    for (j = 0; j < related[i].length; j++) {
-      // TODO: This is incorrect if that entity was related to more selected entities.
-      entities[related[i][j]].related = false;
-    }
-    related[i] = [];
+    entities[i].selected = false;        
   } else if (isIndividual(entities[i].eid)) {
     console.log('Entity selected.');
     entities[i].selected = true;
@@ -457,10 +444,10 @@ function DoesMarkerExist(i) {
   if (i > 0 && (entities[i].lat == entities[i-1].lat && entities[i].lng == entities[i-1].lng)) {
     return i - 1;
   }
-  for (j = 0; j < listOfSelectedOrRelatedEntities.length; j++) {
-    if (entities[listOfSelectedOrRelatedEntities[j]].lng == entities[i].lng &&
-        entities[listOfSelectedOrRelatedEntities[j]].lat == entities[i].lat) {
-      return listOfSelectedOrRelatedEntities[j];
+  for (j = 0; j < listOfSelectedEntities.length; j++) {
+    if (entities[listOfSelectedEntities[j]].lng == entities[i].lng &&
+        entities[listOfSelectedEntities[j]].lat == entities[i].lat) {
+      return listOfSelectedEntities[j];
     }
   }
   return -1;
@@ -524,12 +511,12 @@ function deleteMarker(i) {
   markers[i] = null;
 }
 
-function computeListOfSelectedOrRelatedEntities(upper_bound) {
-  listOfSelectedOrRelatedEntities = [];
+function computeListOfSelectedEntities(upper_bound) {
+  listOfSelectedEntities = [];
   for (i = 0; i < entities.length && i < upper_bound; i++) {
-    if (entities[i].related == true || entities[i].selected == true) {
-      listOfSelectedOrRelatedEntities.push(i);
-      console.log("Adding selected or related: " + i + " " + (entities[i].related) + (entities[i].selected));
+    if (entities[i].selected == true) {
+      listOfSelectedEntities.push(i);
+      console.log("Adding selected: " + i + " " + (entities[i].selected));
     }    
   }
 }
@@ -538,7 +525,7 @@ function computeListOfSelectedOrRelatedEntities(upper_bound) {
 function generateMarkers(map, start_from) {
   console.log('GenerateMarkers from ' + start_from + ' to ' + entities.length);
   // the following list is used by AddMarker
-  computeListOfSelectedOrRelatedEntities(start_from);
+  computeListOfSelectedEntities(start_from);
   var count_deleted = 0;
   var to_delete = []
   for (i = 0; i < entities.length; i++) {
