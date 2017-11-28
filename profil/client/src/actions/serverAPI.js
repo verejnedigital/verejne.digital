@@ -18,6 +18,8 @@ function compareKatasterForSameLandUse(a, b) {
   if (a.cadastralunitcode > b.cadastralunitcode) return 1;
   if (a.foliono < b.foliono) return -1;
   if (a.foliono > b.foliono) return 1;
+  if (a.parcelno < b.parcelno) return -1;
+  if (a.parcelno > b.parcelno) return 1;  
   return 0;
 }
 
@@ -36,15 +38,15 @@ function sortKatasterInfo(res) {
 
 function mergeParcely(res) {
   var new_res = [];
-  var last_index = -1;
-  for (var i = 0; i < res.length; i++) {
-    if (last_index > 0 && res[i].cadastralunitcode === res[last_index].cadastralunitcode &&
+  var last_index = -1;  
+  for (var i = 0; i < res.length; i++) {    
+    if (last_index >= 0 && res[i].cadastralunitcode === res[last_index].cadastralunitcode &&
       res[i].foliono === res[last_index].foliono) {
       res[last_index].parcelno = res[last_index].parcelno + ', ' + res[i].parcelno;
     } else {
       last_index = i;
       new_res.push(res[i]);
-    }
+    }    
   }
   return new_res;
 }

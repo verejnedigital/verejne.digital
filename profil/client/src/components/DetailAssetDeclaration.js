@@ -2,22 +2,18 @@ import React from 'react';
 import './DetailAssetDeclaration.css';
 
 
-const DetailAssetDeclaration = ({assets, year}) => (
+const DetailAssetDeclaration = ({assets, year, title, source}) => (  
 <table className="assets-declaration table">
   <thead>
     <tr>
       <th></th>
       <th>
-        Majetkové priznanie ({assets.length})
+        {title} ({assets.length}) <br/>
         <span className="assets-declaration source">zdroj </span>
-        <a href="http://www.nrsr.sk">NRSR <i className="fa fa-external-link" aria-hidden="true"></i></a>
+        <a href={source} target="_BLANK">NRSR <i className="fa fa-external-link" aria-hidden="true"></i></a>
+        <span className="assets-declaration source">rok {year}</span>
       </th>
-    </tr>
-    <tr>
-      <td colspan="2" className="year_navigation">
-      &larr; rok {year} &rarr;
-      </td>
-    </tr>
+    </tr>    
   </thead>
   <tbody>
     {assets.map((asset, key) =>
