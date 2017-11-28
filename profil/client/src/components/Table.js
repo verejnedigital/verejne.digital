@@ -20,7 +20,7 @@ class Table extends Component {
         </thead>
         <tbody>
           {this.props.politicians.map(politician =>
-            <TableLine key={politician.id}  politician={politician} poradie={3}/>,
+            <TableLine key={politician.id}  politician={politician}/>,
           )}
           
         </tbody>

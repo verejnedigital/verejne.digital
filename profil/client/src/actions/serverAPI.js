@@ -61,8 +61,12 @@ function comparePolitician(a, b) {
   return 0;
 }
 
-function sortListPoliticians(res) {  
-  return res.sort(comparePolitician);
+function sortListPoliticians(res) {
+  res = res.sort(comparePolitician);
+  for (var i = 0; i < res.length; i++) {
+    res[i].order = i + 1;
+  }
+  return res;
 }
 
 export function listPoliticians(cb) {

@@ -12,7 +12,8 @@
 }
 
 .table .number-column {
-  text-align: center;   
+  text-align: center;
+  vertical-align: center;   
 }
 
 .table .party-column {
@@ -20,4 +21,5 @@
   white-space: nowrap;
   overflow: hidden;
   max-width: 150px;
+  vertical-align: center;
 }
