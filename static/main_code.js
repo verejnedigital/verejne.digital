@@ -294,8 +294,7 @@ function drawMarker(i, map) {
 function selectMarker(i) {
   var map = global_map;
   if (entities[i].selected) {
-    entities[i].selected = false;
-    removeLines(i, map);
+    entities[i].selected = false;    
     for (j = 0; j < related[i].length; j++) {
       // TODO: This is incorrect if that entity was related to more selected entities.
       entities[related[i][j]].related = false;
@@ -306,8 +305,7 @@ function selectMarker(i) {
     entities[i].selected = true;
     entities[i].select_order = global_select_order;
     global_select_order += 1;
-    console.log('Global select order: ' + global_select_order + ' : ' + entities[i].select_order);
-    getRelated(i, map);
+    console.log('Global select order: ' + global_select_order + ' : ' + entities[i].select_order);    
   } else {
     console.log('Clicked on group item. Zooming there!');
     console.log('box: ' + entities[i].lat1 + ', ' + entities[i].lng1 + ',' +  entities[i].lat2 + ', ' + entities[i].lng2);
@@ -570,23 +568,6 @@ function generateMarkers(map, start_from) {
   console.log('# Deleted markers: ' + count_deleted);
 }
 
-function getRelated(id, map) {
-  var req = serverURL + 'getRelated?eid=' + entities[id].eid;
-  var xmlhttp = new XMLHttpRequest();
-  xmlhttp.onreadystatechange = function() {
-      if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-          var myArr = JSON.parse(xmlhttp.responseText);
-          // Add possibly missing entities
-          freshListOfEntities(myArr, map);
-          // Add relations
-          freshRelated(id, myArr, map);
-      }
-  }
-  xmlhttp.open("GET", req, true);
-  xmlhttp.send();
-  console.log('getRelated request: ' + req);
-}
-
 function getInfo(id) {
   var req = serverURL + 'getInfo?eid=' + entities[id].eid;
   var xmlhttp = new XMLHttpRequest();
@@ -604,63 +585,6 @@ function getInfo(id) {
   xmlhttp.send();
   console.log('getInfo request: ' + req);
   if (last_opened_info_window != null) last_opened_info_window.close();
-}
-
-function freshRelated(id, arr, map) {
-  if (arr == undefined || arr.length == undefined) {
-    console.log('No related in response');
-    return;
-  }
-  console.log('Related results: ' + arr.length);
-  var related_list = [];
-  for (i = 0; i < arr.length; i++) {
-    related_list.push(reverse[arr[i].eid]);
-    entities[reverse[arr[i].eid]].related = true;
-    console.log("!" + arr[i].eid + '#' + related_list[i] + '@');
-  }
-  related[id] = related_list;
-  drawLines(id, map);
-}
-
-function drawLine(i, j, map) {
-  if (i > entities.length || j > entities.length) {
-    console.log("Line cannot be drawn.");
-    return;
-  }
-  var lineSymbol = {
-      path: google.maps.SymbolPath.CIRCLE,
-      scale: 5,      
-      strokeWeight : 0
-  };
-  console.log('draw ' + i + '->' + j);
-  // Create the polyline and add the symbol to it via the 'icons' property.
-  var line = new google.maps.Polyline({
-    path: [ { lat : entities[i].lat, lng : entities[i].lng}, { lat : entities[j].lat, lng : entities[j].lng}],
-    icons: [{
-      icon: lineSymbol,
-      offset: '100%'
-    }],
-    strokeWeight : 1,
-    map: map,
-    strokeColor: '#0062db'
-  });
-  if (!all_lines.hasOwnProperty(i)) {
-    all_lines[i] = [];
-  }
-  all_lines[i].push(line);
-}
-
-function drawLines(i, map) {
-  for (j = 0; j < related[i].length; j++) {
-    drawLine(i, related[i][j], map);
-  }
-}
-
-function removeLines(i, map) {
-  if (all_lines[i] == undefined) return;
-  for (j = 0; j < all_lines[i].length; j++) {
-    all_lines[i][j].setMap(null);
-  }
 }
 
 function initMap() {
