@@ -11,7 +11,7 @@ const DetailAssetDeclaration = ({assets, year, title, source}) => (
         {title} ({assets.length}) <br/>
         <span className="assets-declaration source">zdroj </span>
         <a href={source} target="_BLANK">NRSR <i className="fa fa-external-link" aria-hidden="true"></i></a>
-        <span className="assets-declaration source">rok {year}</span>
+        <span className="assets-declaration source">{(year != 0 ? 'rok ' + year : '')}</span>
       </th>
     </tr>    
   </thead>
