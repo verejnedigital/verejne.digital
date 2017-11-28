@@ -21,17 +21,16 @@ class ZelenaPosta
 	CONST SENDER_ZIP = '';
 	CONST SENDER_COUNTRY = '';
 
-	CONST USERNAME = '';
-	CONST PASSWORD = '';
-	CONST TOKEN = '';
-
 	private $pdf = null;
 	private $json = null;
 	/** @var SentClient $client */
 	private $client = null;
 
-	function __construct()
+	function __construct(string $username, string $password)
 	{
+		$this->username = $username;
+		$this->password = $password;
+
 		//$clientFactory = new ClientFactory(UserClient::class);
 		$clientFactory = new ClientFactory(\zelenaposta\api2\SentClient::class);
 
@@ -42,7 +41,7 @@ class ZelenaPosta
 		$clientBuilder->withHandler(\Phpro\SoapClient\Soap\Handler\GuzzleHandle::createWithDefaultClient());
 
 		$wsse = new Auth();
-		$wsse->setUsernameAndPassword(self::USERNAME, self::PASSWORD);
+		$wsse->setUsernameAndPassword($this->username, $this->password);
 		//Not working yet
 		//$wsse->setToken(self::USERNAME, self::TOKEN);
 

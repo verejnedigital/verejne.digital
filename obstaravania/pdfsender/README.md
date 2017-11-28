@@ -4,6 +4,7 @@
 * soap-client (https://github.com/phpro/soap-client)
 * guzzlehttp/guzzle (http://docs.guzzlephp.org/en/stable/)
 * http-factory-guzzle (https://github.com/http-interop/http-factory-guzzle)
+* nategood/commando (https://github.com/nategood/commando)
 
 ### Dev
 * zend-code (https://docs.zendframework.com/zend-code/)

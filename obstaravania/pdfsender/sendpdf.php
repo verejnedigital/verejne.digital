@@ -1,25 +1,41 @@
 <?php
-if ($argc < 3) {
-	echo "Usage: php sendpdf.php <input json> <input pdf> or vice-versa.\n";
-	exit(1);
-}
-
 require ('vendor/autoload.php');
+
+$arguments = new \Commando\Command();
+$arguments->option('u')
+	->aka('username')
+	->describedAs('Username used in remote service call.')
+	->require();
+
+$arguments->option('p')
+	->aka('password')
+	->describedAs('Password used in remote service call.')
+	->require();
+
+$arguments->option()
+	->file()
+	->describedAs('Input json file.')
+	->require();
+
+$arguments->option()
+	->file()
+	->describedAs('Input pdf file.')
+	->require();
 
 $start = microtime(true);
 
-$ext1 = substr($argv[1], -4);
-$ext2 = substr($argv[2], -4);
+$ext1 = substr($arguments[0], -4);
+$ext2 = substr($arguments[1], -4);
 $jsonFile = '';
 $pdfFile = '';
 if ($ext1 == '.pdf' && $ext2 == 'json') {
-	$jsonFile = $argv[2];
-	$pdfFile = $argv[1];
+	$jsonFile = $arguments[1];
+	$pdfFile = $arguments[0];
 } else if ($ext1 == 'json' && $ext2 == '.pdf') {
-	$jsonFile = $argv[1];
-	$pdfFile = $argv[2];
+	$jsonFile = $arguments[0];
+	$pdfFile = $arguments[1];
 } else {
-	echo sprintf("Input files %s, %s are not json and pdf.\n", $argv[1], $argv[2]);
+	echo sprintf("Input files %s, %s are not json and pdf.\n", $arguments[0], $arguments[1]);
 	exit(1);
 }
 
@@ -40,7 +56,7 @@ if ($pdf === null) {
 	exit(1);
 }
 
-$zelenaPosta = new \ZelenaPosta();
+$zelenaPosta = new \ZelenaPosta($arguments['u'], $arguments['p']);
 $zelenaPosta->setJson($json);
 $zelenaPosta->setPdf($pdf);
 $result = $zelenaPosta->sendFiles();
