@@ -28,9 +28,6 @@ class ZelenaPosta
 
 	function __construct(string $username, string $password)
 	{
-		$this->username = $username;
-		$this->password = $password;
-
 		//$clientFactory = new ClientFactory(UserClient::class);
 		$clientFactory = new ClientFactory(\zelenaposta\api2\SentClient::class);
 
@@ -41,7 +38,7 @@ class ZelenaPosta
 		$clientBuilder->withHandler(\Phpro\SoapClient\Soap\Handler\GuzzleHandle::createWithDefaultClient());
 
 		$wsse = new Auth();
-		$wsse->setUsernameAndPassword($this->username, $this->password);
+		$wsse->setUsernameAndPassword($username, $password);
 		//Not working yet
 		//$wsse->setToken(self::USERNAME, self::TOKEN);
 
