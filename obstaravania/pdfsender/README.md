@@ -15,11 +15,13 @@
 
 # Usage / Testing
 ## Directly
-`php sendpdf.php <input_json_file> <input_pdf_file>`
+`php sendpdf.php -u <username> -p <password> <input_json_file> <input_pdf_file>`
 
 example:
 
-`php sendpdf.php input/four_new.json input/four_new.pdf`
+`php sendpdf.php -u verejne -p digital input/four_new.json input/four_new.pdf`
+
+see also `php sendpdf.php --help`
 
 ## As batch process
 * create directory `[1]` where are input json and pdf files. PDF generated from json must have same name (and different extension)
