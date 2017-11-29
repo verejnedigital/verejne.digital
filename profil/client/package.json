@@ -18,5 +18,5 @@
     "eject": "react-scripts eject"
   },
   "proxy": "https://verejne.digital/",
-  "homepage": "."
+  "homepage": "/profil"
 }
