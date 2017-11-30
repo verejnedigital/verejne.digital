@@ -7,6 +7,7 @@ import Table from './components/Table';
 import Search from './components/Search';
 import Footer from './components/Footer';
 import Navigation from './components/Navigation';
+import DetailPage from './DetailPage';
 
 class App extends Component {
 
@@ -44,8 +45,10 @@ class App extends Component {
   }
 
   render() {
-    return (
-      <div className="App">
+    return (this.props.params.splat.length > 0) ?
+     (<DetailPage id={this.props.params.splat} />) :
+     (
+      <div className="App">        
         <div className="App-header">
           <Navigation />
           <div className="App-title">                                  
