@@ -87,7 +87,7 @@ class DetailPage extends Component {
       <div className="detail-page">
         <div className="detail-header">
           <div className="detail-navigation">
-            <a href="../.." className="brand">&lt;&lt;&nbsp;profil.verejne.digital</a>
+            <a href=".." className="brand">&lt;&lt;&nbsp;profil.verejne.digital</a>
           </div>
         </div>        
         <div className="detail-body">
