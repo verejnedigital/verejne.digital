@@ -45,7 +45,7 @@ class App extends Component {
   }
 
   render() {
-    return (this.props.params.splat.length > 0) ?
+    return (this.props.params.splat.length > 0 && this.props.params.splat !== "profil") ?
      (<DetailPage id={this.props.params.splat} />) :
      (
       <div className="App">        
