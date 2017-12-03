@@ -64,9 +64,7 @@ class App extends Component {
         </div>
         <div className="App-body">
           <Table politicians={this.state.politicians}/>        
-        </div>
-
-        <Footer />
+        </div>        
       </div>
     );
   }
