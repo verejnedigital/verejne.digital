@@ -5,11 +5,6 @@
     margin: auto;
   }  
 }
-@media (max-width: 1200px) {
-  .navbar-brand {
-    float: none;
-  }
-}
 
 .App-header {
   height: auto;

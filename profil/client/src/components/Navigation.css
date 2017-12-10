@@ -28,6 +28,13 @@
   margin-bottom: 0px;
 }
 
+@media (max-width: 1199px) {
+  .navbar-brand {
+    float: none;
+    padding-top: 40px;
+  }
+}
+
 .bolder {
   font-weight: 700;
 }
