@@ -4,11 +4,28 @@
   background-color: white
 }
 
-.detail-body {
-  width: 800px;
-  margin: auto;
+@media (max-width: 1199px) {
+  .assets-tables {
+    width: 100%;
+  }
 }
 
+@media (min-width: 1200px) {
+  .detail-page {
+    width: 800px;
+    margin: auto;
+  }
+  .mapa {
+    height: 420px;
+    width: 800px;
+    margin: auto;
+  }
+
+  .data-tables {
+    padding-right: 30px;
+    padding-left: 30px;
+  }
+}
 .brand {
   /*font-family: 'Source Code Pro', monospace;*/
   font-family: monospace;
@@ -26,13 +43,11 @@
 
 .data-tables {
   display: flex;
-  padding-right: 30px;
-  padding-left: 30px;
   justify-content: space-between;  
+  flex-wrap: wrap;
 }
 
-.mapa {  
-  height: 420px;  
+.mapa {   
   padding-top: 40px;
   text-align: center;
 }

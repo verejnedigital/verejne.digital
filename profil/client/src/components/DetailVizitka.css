@@ -1,9 +1,20 @@
-.vizitka-picture {  
-  height: 180px;
+.vizitka-picture {
+  height: 80px;
   position: absolute;
-  top: -20px;
-  right: 50px;
+  top: -10px;
+  right: 20px;
 }
+
+@media (min-width: 1200px) {
+  .vizitka-picture {  
+    height: 180px;
+    position: absolute;
+    top: -20px;
+    right: 50px;
+  }
+}
+
+
 
 .vizitka {
   padding: 10px;

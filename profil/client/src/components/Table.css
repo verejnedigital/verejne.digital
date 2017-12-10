@@ -7,6 +7,13 @@
   box-shadow: 0 4px 12px 0 rgba(187, 198, 206, 0.5);
 }
 
+@media (max-width: 480px) {
+  .table {
+    overflow: auto;
+    display: block;
+  }
+}
+
 .table .thumb-photo{
   height: 30px;	  
 }

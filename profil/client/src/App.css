@@ -1,7 +1,9 @@
 
-.App {
-  width: 800px;
-  margin: auto;
+@media (min-width: 1200px) {
+  .App {
+    width: 800px;
+    margin: auto;
+  }  
 }
 
 .App-header {

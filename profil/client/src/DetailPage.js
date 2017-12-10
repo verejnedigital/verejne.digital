@@ -84,7 +84,7 @@ class DetailPage extends Component {
 
   render() {    
     return (      
-      <div className="detail-page">
+      <div className="detail-page container">
         <div className="detail-header">
           <div className="detail-navigation">
             <a href="./" className="brand">&lt;&lt;&nbsp;profil.verejne.digital</a>
@@ -93,7 +93,7 @@ class DetailPage extends Component {
         <div className="detail-body">
           <DetailVizitka politician={this.state.politician} />
           <div className="data-tables">
-            <div>
+            <div className="assets-tables">
               <DetailAssetDeclaration assets={this.state.katasterAssetsFromDeclaration}              
                 year={(this.state.report[this.state.index] !== undefined ? this.state.report[this.state.index].year : 0)}
                 title="Majetkové priznanie: Nehnuteľnosti"

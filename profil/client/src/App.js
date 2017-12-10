@@ -5,7 +5,6 @@ import * as serverAPI from './actions/serverAPI';
 
 import Table from './components/Table';
 import Search from './components/Search';
-import Footer from './components/Footer';
 import Navigation from './components/Navigation';
 import DetailPage from './DetailPage';
 
@@ -48,7 +47,7 @@ class App extends Component {
     return (this.props.params.splat.length > 0 && this.props.params.splat !== "profil" && this.props.params.splat !== "profil/") ?
      (<DetailPage id={this.props.params.splat.replace("profil/", "")} />) :
      (
-      <div className="App">        
+      <div className="App container">        
         <div className="App-header">
           <Navigation />
           <div className="App-title">                                  
