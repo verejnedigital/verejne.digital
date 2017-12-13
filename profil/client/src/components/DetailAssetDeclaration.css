@@ -1,6 +1,12 @@
 .assets-declaration {
-  width: 350px;
   flex-basis: auto;  
+  width: 100%;
+}
+
+@media (min-width: 1200px) {
+  .assets-declaration {
+    width: 350px;
+  }
 }
 
 .assets-declaration .source {

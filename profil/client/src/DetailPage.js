@@ -8,7 +8,7 @@ import DetailAssetDeclaration from './components/DetailAssetDeclaration';
 import Footer from './components/Footer';
 import MapContainer from './components/MapContainer';
 
-class App extends Component {
+class DetailPage extends Component {
 
   constructor(props) {
     super(props);
@@ -24,7 +24,8 @@ class App extends Component {
   }
 
   componentWillMount() {
-    const id = this.props.params.id;
+    console.log(this.props.id);
+    const id = this.props.id;
     this.loadPoliticiant(id);
     this.loadKataster(id);
     this.loadAssetDeclaration(id);    
@@ -81,18 +82,18 @@ class App extends Component {
       });
   }
 
-  render() {
-    return (
-      <div className="detail-page">
+  render() {    
+    return (      
+      <div className="detail-page container">
         <div className="detail-header">
           <div className="detail-navigation">
-            <a href="../.." className="brand">&lt;&lt;&nbsp;profil.verejne.digital</a>
+            <a href="./" className="brand">&lt;&lt;&nbsp;profil.verejne.digital</a>
           </div>
-        </div>
+        </div>        
         <div className="detail-body">
           <DetailVizitka politician={this.state.politician} />
           <div className="data-tables">
-            <div>
+            <div className="assets-tables">
               <DetailAssetDeclaration assets={this.state.katasterAssetsFromDeclaration}              
                 year={(this.state.report[this.state.index] !== undefined ? this.state.report[this.state.index].year : 0)}
                 title="Majetkové priznanie: Nehnuteľnosti"
@@ -118,4 +119,4 @@ class App extends Component {
   }
 }
 
-export default App;
+export default DetailPage;
