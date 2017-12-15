@@ -2,7 +2,7 @@ import React from 'react';
 import './DetailAssetDeclaration.css';
 
 
-const DetailAssetDeclaration = ({assets, year, title, source}) => (  
+const DetailAssetDeclaration = ({assets, year, title, image, source}) => (
 <table className="assets-declaration table">
   <thead>
     <tr>
@@ -25,6 +25,7 @@ const DetailAssetDeclaration = ({assets, year, title, source}) => (
       </tr>
     )}    
   </tbody>
+  {image !== undefined ? <tfoot><tr><td colspan="2"><img className="assets-declaration plot" alt="majetok" src={image} /></td></tr></tfoot> : ''}
 </table>
 );
 export default DetailAssetDeclaration;
