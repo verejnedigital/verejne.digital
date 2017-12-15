@@ -22,3 +22,8 @@
 .assets-declaration .year_navigation {
 	text-align: center;
 }
+
+.assets-declaration .plot {
+	max-width: 100%;
+	max-height: 100%;
+}

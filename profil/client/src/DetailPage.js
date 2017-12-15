@@ -77,7 +77,7 @@ class DetailPage extends Component {
           hnutelnyAssetsFromDeclaration : hnutelnyAssetsFromDeclaration,
           prijmyAssetsFromDeclaration : prijmyAssetsFromDeclaration,
           report : report,
-          index : 0,          
+          index : 0,
         });
       });
   }
@@ -97,6 +97,7 @@ class DetailPage extends Component {
               <DetailAssetDeclaration assets={this.state.katasterAssetsFromDeclaration}              
                 year={(this.state.report[this.state.index] !== undefined ? this.state.report[this.state.index].year : 0)}
                 title="Majetkové priznanie: Nehnuteľnosti"
+                image={`https://verejne.digital/img/majetok/${this.state.politician.surname}_${this.state.politician.firstname}.png`}
                 source={(this.state.report[this.state.index] !== undefined ? this.state.report[this.state.index]["source"] : "http://www.nrsr.sk")}/>
               <DetailAssetDeclaration assets={this.state.hnutelnyAssetsFromDeclaration}              
                 year={(this.state.report[this.state.index] !== undefined ? this.state.report[this.state.index].year : 0)}
