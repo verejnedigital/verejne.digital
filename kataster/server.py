@@ -7,7 +7,7 @@ import webapp2
 import yaml
 
 from db import db_connect, db_query
-from db_search import get_Parcels_from_database, get_politicians_with_Folio_counts
+from db_search import get_Parcels_from_database, get_politicians_with_Folio_counts, get_asset_declarations
 from utils import download_cadastral_json, download_cadastral_pages, search_string, is_contained_ci, WGS84_to_Mercator, json_load, json_dump_utf8
 
 CADASTRAL_API_ODATA = 'https://kataster.skgeodesy.sk/PortalOData/'
@@ -293,17 +293,9 @@ class AssetDeclarations(MyServer):
         politician = self.get_politician_by_id(politician_id)
         firstname, surname = politician['firstname'], politician['surname']
 
-        # Find asset declaration of this politician
-        path_declarations = '/home/matej_balog/data/NRSR_asset_declarations.json'
-        declarations = json_load(path_declarations)
-        matched_declarations = []
-        for declaration in declarations:
-            meno = declaration['meno']
-            if is_contained_ci(firstname, meno) and is_contained_ci(surname, meno):
-                matched_declarations.append(declaration)
-
-        # Return matched declaration as JSON
-        return self.returnJSON(matched_declarations)
+        # Retrieve asset declarations based on firstname and surname
+        declarations = get_asset_declarations(firstname, surname)
+        return self.returnJSON(declarations)
 
 class ListPoliticians(MyServer):
     def process(self):
