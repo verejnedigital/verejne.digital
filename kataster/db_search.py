@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from db import db_query
+from db import db_connect, db_query
 from utils import search_string, hash_timestamp, Mercator_to_WGS84
 
 
@@ -203,3 +203,26 @@ def get_politicians_with_Folio_counts(db):
         ;"""
     rows = db_query(db, q)
     return rows
+
+def get_asset_declarations(firstname, surname):
+    db = db_connect()
+    q = """
+        SELECT
+            unmovable_assets,
+            movable_assets,
+            income,
+            compensations,
+            other_income,
+            offices_other,
+            year
+        FROM
+            kataster.AssetDeclarations
+        WHERE
+            firstname=%s AND surname=%s
+        ORDER BY
+            year DESC
+        ;"""
+    q_data = (firstname, surname)
+    declarations = db_query(db, q, q_data)
+    db.close()
+    return declarations
