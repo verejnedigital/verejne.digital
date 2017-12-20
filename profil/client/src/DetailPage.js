@@ -62,14 +62,15 @@ class DetailPage extends Component {
       (report) => {                        
         // Report contains asset declarations for several years.
         // TODO: Make sure it is sorted by year from the most recent to the oldest
-        const katasterAssetsFromDeclaration = this.split_assets(report[0], "nehnuteľný majetok");          
-        const hnutelnyAssetsFromDeclaration = this.split_assets(report[0], "hnuteľný majetok, majetkové právo alebo iná majetková hodnota, existujúce záväzky, ktorých menovitá hodnota, bežná cena alebo peňažné plnenie presahuje 35-násobok minimálnej mzdy");
+        const katasterAssetsFromDeclaration = this.split_assets(report[0], "unmovable_assets");
+        const hnutelnyAssetsFromDeclaration = this.split_assets(report[0], "movable_assets");
         var prijmyAssetsFromDeclaration = [];        
         if (report[0] !== undefined) {
-          var keys = ["príjmy za rok " + report[0].year, "paušálne náhrady za rok " + report[0].year, "ostatné príjmy za rok " + report[0].year, "počas výkonu verejnej funkcie má tieto funkcie (čl. 7 ods. 1 písm. c) u. z. 357/2004)"];          
+          var keys = ["income", "compensations", "other_income", "offices_other"]
+          var descriptions = ["príjmy ", "paušálne náhrady", "ostatné príjmy", "počas výkonu verejnej funkcie má tieto funkcie (čl. 7 ods. 1 písm. c) u. z. 357/2004)"];
           for (var i = 0; i < keys.length; i++) {
             var key = keys[i];
-            prijmyAssetsFromDeclaration.push(key+': ' + report[0][key]);
+            prijmyAssetsFromDeclaration.push(descriptions[i]+': ' + report[0][key]);
           }            
         }        
         this.setState({
