@@ -160,22 +160,42 @@ def get_politicians_with_Folio_counts(db):
             WHERE
                 kataster.Participants.TypeId=1
         ),
-        PoliticianCounts AS (
+        Politicians AS (
             SELECT
                 kataster.politicians.Id AS Id,
                 kataster.politicians.FirstName AS FirstName,
                 kataster.politicians.Surname AS Surname,
                 kataster.politicians.Title AS Title,
+                kataster.politicians.FirstNameSearch AS FirstNameSearch,
+                kataster.politicians.SurnameSearch AS SurnameSearch,
+                kataster.politicians.DobHash AS DobHash
+            FROM
+                kataster.politicians
+            WHERE
+                EXISTS (
+                    SELECT 1
+                    FROM kataster.AssetDeclarations
+                    WHERE kataster.AssetDeclarations.firstname=kataster.politicians.FirstName
+                        AND kataster.AssetDeclarations.surname=kataster.politicians.Surname
+                        AND kataster.AssetDeclarations.year=2016
+                )
+        ),
+        PoliticianCounts AS (
+            SELECT
+                Politicians.Id AS Id,
+                Politicians.FirstName AS FirstName,
+                Politicians.Surname AS Surname,
+                Politicians.Title AS Title,
                 COUNT(*) FILTER (WHERE LandUseName = 'Zastavaná plocha a nádvorie') AS num_houses_flats,
                 COUNT(*) FILTER (WHERE LandUseName = 'Orná pôda' OR LandUseName = 'Záhrada') AS num_fields_gardens,
                 COUNT(*) FILTER (WHERE LandUseName != 'Zastavaná plocha a nádvorie' AND LandUseName != 'Orná pôda' AND LandUseName != 'Záhrada') AS num_others
             FROM
-                kataster.politicians
+                Politicians
             LEFT OUTER JOIN
                 ParcelsOwned ON
-                    ParcelsOwned.SubjectFirstNameSearch = kataster.politicians.FirstNameSearch AND
-                    ParcelsOwned.SubjectSurnameSearch = kataster.politicians.SurnameSearch AND
-                    ParcelsOwned.SubjectDobHash = kataster.politicians.DobHash
+                    ParcelsOwned.SubjectFirstNameSearch = Politicians.FirstNameSearch AND
+                    ParcelsOwned.SubjectSurnameSearch = Politicians.SurnameSearch AND
+                    ParcelsOwned.SubjectDobHash = Politicians.DobHash
             GROUP BY
                 Id, FirstName, Surname, Title
         )
