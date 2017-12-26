@@ -7,7 +7,7 @@ import webapp2
 import yaml
 
 from db import db_connect, db_query
-from db_search import get_Parcels_from_database, get_politicians_with_Folio_counts, get_asset_declarations
+from db_search import get_politician_by_PersonId, get_Parcels_owned_by_Person, get_politicians_with_Folio_counts, get_asset_declarations
 from utils import download_cadastral_json, download_cadastral_pages, search_string, is_contained_ci, WGS84_to_Mercator, json_load, json_dump_utf8
 
 CADASTRAL_API_ODATA = 'https://kataster.skgeodesy.sk/PortalOData/'
@@ -176,36 +176,6 @@ def get_cadastral_data_for_company(company_name, circumvent_geoblocking, verbose
     response = {'company_name': company_name, 'Folios': Folios}
     return response
 
-def get_query_politicians(sql_filter=''):
-    return """
-        SELECT DISTINCT ON (id)
-            kataster.politicians.id AS id,
-            kataster.politicians.surname AS surname,
-            kataster.politicians.firstname AS firstname,
-            kataster.politicians.title AS title,
-            kataster.politicians.dobhash AS dobhash,
-            kataster.politicianterms.picture_url AS picture,
-            kataster.parties.abbreviation AS party_abbreviation,
-            kataster.parties.name AS party_nom,
-            kataster.terms.start AS term_start,
-            kataster.terms.finish AS term_finish,
-            kataster.offices.name_male AS office_name_male,
-            kataster.offices.name_female AS office_name_female
-        FROM
-            kataster.politicians
-        JOIN
-            kataster.politicianterms ON kataster.politicianterms.politicianid=kataster.politicians.id
-        JOIN
-            kataster.terms ON kataster.terms.id=kataster.politicianterms.termid
-        JOIN
-            kataster.offices ON kataster.offices.id=kataster.terms.officeid
-        JOIN
-            kataster.parties ON kataster.parties.id=kataster.politicianterms.party_nomid
-        """ + sql_filter + """
-        ORDER BY
-            kataster.politicians.id, kataster.terms.finish DESC, kataster.politicians.surname
-        ;"""
-
 
 # All individual hooks inherit from this class outputting jsons
 # Actual work of subclasses is done in method process
@@ -216,22 +186,6 @@ class MyServer(webapp2.RequestHandler):
 
     def get(self):
         self.process()
-
-    def get_politician_by_id(self, id):
-        # Get politicians with given id
-        db = db_connect()
-        sql_filter = """WHERE kataster.politicians.id=%s"""
-        sql_filter_data = (id,)
-        q = get_query_politicians(sql_filter)
-        politicians = db_query(db, q, sql_filter_data)
-        db.close()
-
-        # Check uniqueness
-        if len(politicians) == 0:
-            self.abort(404, detail="Could not find politician with provided 'id'")
-        assert len(politicians) == 1
-        politician = politicians[0]
-        return politician
 
 class KatasterInfoLocation(MyServer):
     def process(self):
@@ -261,11 +215,8 @@ class KatasterInfoPolitician(MyServer):
         except:
             self.abort(400, detail="Could not parse parameter 'id' as int")
 
-        # Find politician data in the database
-        politician = self.get_politician_by_id(politician_id)
-        search_params = ['firstname', 'surname', 'dobhash']
         db = db_connect()
-        Parcels = get_Parcels_from_database(db, politician, search_params)
+        Parcels = get_Parcels_owned_by_Person(db, politician_id)
         db.close()
         return self.returnJSON(Parcels)
 
@@ -277,8 +228,13 @@ class InfoPolitician(MyServer):
         except:
             self.abort(400, detail="Could not parse parameter 'id' as int")
 
-        # Find politician data in the database and return as JSON
-        politician = self.get_politician_by_id(politician_id)
+        # Get politician with given id
+        db = db_connect()
+        politician = get_politician_by_PersonId(db, politician_id)
+        db.close()
+
+        if politician is None:
+            self.abort(404, detail="Could not find politician with provided 'id'")
         return self.returnJSON(politician)
 
 class AssetDeclarations(MyServer):
@@ -289,12 +245,9 @@ class AssetDeclarations(MyServer):
         except:
             self.abort(400, detail="Could not parse parameter 'id' as int")
 
-        # Find politician data in the database
-        politician = self.get_politician_by_id(politician_id)
-        firstname, surname = politician['firstname'], politician['surname']
-
-        # Retrieve asset declarations based on firstname and surname
-        declarations = get_asset_declarations(firstname, surname)
+        db = db_connect()
+        declarations = get_asset_declarations(db, politician_id)
+        db.close()
         return self.returnJSON(declarations)
 
 class ListPoliticians(MyServer):
