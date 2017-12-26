@@ -108,6 +108,7 @@ def get_politicians_with_Folio_counts(db):
                 Persons.Id
         )
         SELECT DISTINCT ON (Persons.Id)
+            Persons.Id AS Id,
             Persons.FirstName AS FirstName,
             Persons.Surname AS Surname,
             Persons.Title AS Title,
