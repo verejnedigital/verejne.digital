@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from db import db_connect, db_query
-from utils import search_string, hash_timestamp, Mercator_to_WGS84
+from utils import search_string, Mercator_to_WGS84
 
 
 def construct_SQL_filter_data(person, search_params):
@@ -112,114 +112,66 @@ def get_Parcels_from_database(db, person, search_params):
     return rows
 
 def get_politicians_with_Folio_counts(db):
-    q = """
+    q = """SET search_path TO kataster;"""
+    q += """
         WITH
-        ParcelsAll AS (
-            SELECT FolioId, No, Area, Id, LandUseId, UtilisationId, CadastralUnitId, ValidTo, 'C' AS ParcelType FROM kataster.ParcelsC
-            UNION ALL
-            SELECT FolioId, No, Area, Id, LandUseId, UtilisationId, CadastralUnitId, ValidTo, 'E' AS ParcelType FROM kataster.ParcelsE
-        ),
-        Parcels AS (
-            SELECT DISTINCT ON (CadastralUnitCode, FolioNo, No)
-                ParcelsAll.*,
-                kataster.CadastralUnits.Code AS CadastralUnitCode,
-                kataster.Folios.No AS FolioNo
-            FROM
-                ParcelsAll
-            INNER JOIN
-                kataster.Folios ON kataster.Folios.Id = ParcelsAll.FolioId
-            INNER JOIN
-                kataster.CadastralUnits ON kataster.CadastralUnits.Id = ParcelsAll.CadastralUnitId
-            ORDER BY
-                CadastralUnitCode, FolioNo, No, ValidTo DESC
-        ),
-        ParcelsOwned AS (
-            SELECT DISTINCT
-                kataster.Folios.No AS FolioNo,
-                kataster.LandUses.Name AS LandUseName,
-                kataster.CadastralUnits.Code AS CadastralUnitCode,
-                kataster.Subjects.FirstNameSearch AS SubjectFirstNameSearch,
-                kataster.Subjects.SurnameSearch AS SubjectSurnameSearch,
-                kataster.Subjects.DobHash AS SubjectDobHash
-            FROM
-                Parcels
-            INNER JOIN
-                kataster.Folios ON kataster.Folios.Id = Parcels.FolioId
-            INNER JOIN
-                kataster.OwnershipRecords ON kataster.OwnershipRecords.FolioId = kataster.Folios.Id
-            INNER JOIN
-                kataster.Participants ON kataster.Participants.OwnershipRecordId = kataster.OwnershipRecords.Id
-            INNER JOIN
-                kataster.SubjectParticipant ON kataster.SubjectParticipant.ParticipantId = kataster.Participants.Id
-            INNER JOIN
-                kataster.Subjects ON kataster.Subjects.Id = kataster.SubjectParticipant.SubjectId
-            INNER JOIN
-                kataster.LandUses ON kataster.LandUses.Id = Parcels.LandUseId
-            INNER JOIN
-                kataster.CadastralUnits ON kataster.CadastralUnits.Id = Parcels.CadastralUnitId
-            WHERE
-                kataster.Participants.TypeId=1
-        ),
-        Politicians AS (
+        PersonCounts AS (
             SELECT
-                kataster.politicians.Id AS Id,
-                kataster.politicians.FirstName AS FirstName,
-                kataster.politicians.Surname AS Surname,
-                kataster.politicians.Title AS Title,
-                kataster.politicians.FirstNameSearch AS FirstNameSearch,
-                kataster.politicians.SurnameSearch AS SurnameSearch,
-                kataster.politicians.DobHash AS DobHash
+                Persons.Id AS PersonId,
+                COUNT(DISTINCT (Folios.CadastralUnitId, Folios.No)) FILTER
+                    (WHERE LandUses.Name = 'Zastavaná plocha a nádvorie')
+                    AS num_houses_flats,
+                COUNT(DISTINCT (Folios.CadastralUnitId, Folios.No)) FILTER
+                    (WHERE LandUses.Name = 'Orná pôda' OR LandUses.Name = 'Záhrada')
+                    AS num_fields_gardens,
+                COUNT(DISTINCT (Folios.CadastralUnitId, Folios.No)) FILTER
+                    (WHERE LandUses.Name != 'Zastavaná plocha a nádvorie' AND LandUses.Name != 'Orná pôda' AND LandUses.Name != 'Záhrada')
+                    AS num_others
             FROM
-                kataster.politicians
-            WHERE
-                EXISTS (
-                    SELECT 1
-                    FROM kataster.AssetDeclarations
-                    WHERE kataster.AssetDeclarations.firstname=kataster.politicians.FirstName
-                        AND kataster.AssetDeclarations.surname=kataster.politicians.Surname
-                        AND kataster.AssetDeclarations.year=2016
-                )
-        ),
-        PoliticianCounts AS (
-            SELECT
-                Politicians.Id AS Id,
-                Politicians.FirstName AS FirstName,
-                Politicians.Surname AS Surname,
-                Politicians.Title AS Title,
-                COUNT(*) FILTER (WHERE LandUseName = 'Zastavaná plocha a nádvorie') AS num_houses_flats,
-                COUNT(*) FILTER (WHERE LandUseName = 'Orná pôda' OR LandUseName = 'Záhrada') AS num_fields_gardens,
-                COUNT(*) FILTER (WHERE LandUseName != 'Zastavaná plocha a nádvorie' AND LandUseName != 'Orná pôda' AND LandUseName != 'Záhrada') AS num_others
-            FROM
-                Politicians
+                Persons
             LEFT OUTER JOIN
-                ParcelsOwned ON
-                    ParcelsOwned.SubjectFirstNameSearch = Politicians.FirstNameSearch AND
-                    ParcelsOwned.SubjectSurnameSearch = Politicians.SurnameSearch AND
-                    ParcelsOwned.SubjectDobHash = Politicians.DobHash
+                PersonFolios ON PersonFolios.PersonId=Persons.Id
+            LEFT OUTER JOIN
+                Folios ON Folios.Id=PersonFolios.FolioId
+            LEFT OUTER JOIN
+                Parcels ON Parcels.FolioId=Folios.Id
+            LEFT OUTER JOIN
+                LandUses ON LandUses.Id = Parcels.LandUseId
             GROUP BY
-                Id, FirstName, Surname, Title
+                Persons.Id
         )
-        SELECT DISTINCT ON (PoliticianCounts.Id)
-            PoliticianCounts.*,
-            kataster.politicianterms.picture_url AS picture,
-            kataster.parties.abbreviation AS party_abbreviation,
-            kataster.parties.name AS party_nom,
-            kataster.terms.start AS term_start,
-            kataster.terms.finish AS term_finish,
-            kataster.offices.name_male AS office_name_male,
-            kataster.offices.name_female AS office_name_female
+        SELECT DISTINCT ON (Persons.Id)
+            Persons.FirstName AS FirstName,
+            Persons.Surname AS Surname,
+            Persons.Title AS Title,
+            PersonCounts.num_houses_flats AS num_houses_flats,
+            PersonCounts.num_fields_gardens AS num_fields_gardens,
+            PersonCounts.num_others AS num_others,
+            PersonTerms.picture_url AS picture,
+            Parties2.abbreviation AS party_abbreviation,
+            Parties2.name AS party_nom,
+            Terms2.start AS term_start,
+            Terms2.finish AS term_finish,
+            Offices2.name_male AS office_name_male,
+            Offices2.name_female AS office_name_female
         FROM
-            PoliticianCounts
+            Persons
+        INNER JOIN
+            AssetDeclarations2 ON AssetDeclarations2.PersonId=Persons.Id
         JOIN
-            kataster.politicianterms ON kataster.politicianterms.politicianid=Id
+            PersonCounts ON PersonCounts.PersonId=Persons.Id
         JOIN
-            kataster.terms ON kataster.terms.id=kataster.politicianterms.termid
+            PersonTerms ON PersonTerms.PersonId=Persons.Id
         JOIN
-            kataster.offices ON kataster.offices.id=kataster.terms.officeid
+            Terms2 ON Terms2.id=PersonTerms.TermId
         JOIN
-            kataster.parties ON kataster.parties.id=kataster.politicianterms.party_nomid
+            Offices2 ON Offices2.id=Terms2.OfficeId
+        JOIN
+            Parties2 ON Parties2.id=PersonTerms.party_nomid
+        WHERE
+            AssetDeclarations2.Year=2016
         ORDER BY
-            PoliticianCounts.Id, kataster.terms.finish DESC
+            Persons.Id, Terms2.finish DESC
         ;"""
     rows = db_query(db, q)
     return rows
