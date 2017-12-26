@@ -12,26 +12,26 @@ def get_politician_by_PersonId(db, PersonId):
             Persons.firstname AS firstname,
             Persons.title AS title,
             PersonTerms.picture_url AS picture,
-            Parties2.abbreviation AS party_abbreviation,
-            Parties2.name AS party_nom,
-            Terms2.start AS term_start,
-            Terms2.finish AS term_finish,
-            Offices2.name_male AS office_name_male,
-            Offices2.name_female AS office_name_female
+            Parties.abbreviation AS party_abbreviation,
+            Parties.name AS party_nom,
+            Terms.start AS term_start,
+            Terms.finish AS term_finish,
+            Offices.name_male AS office_name_male,
+            Offices.name_female AS office_name_female
         FROM
             Persons
         JOIN
             PersonTerms ON PersonTerms.PersonId=Persons.id
         JOIN
-            Terms2 ON Terms2.id=PersonTerms.termid
+            Terms ON Terms.id=PersonTerms.termid
         JOIN
-            Offices2 ON Offices2.id=Terms2.officeid
+            Offices ON Offices.id=Terms.officeid
         JOIN
-            Parties2 ON Parties2.id=PersonTerms.party_nomid
+            Parties ON Parties.id=PersonTerms.party_nomid
         WHERE
             Persons.Id=%s
         ORDER BY
-            Persons.Id, Terms2.finish DESC
+            Persons.Id, Terms.finish DESC
         ;"""
     q_data = (PersonId,)
     politicians = db_query(db, q, q_data)
@@ -116,30 +116,30 @@ def get_politicians_with_Folio_counts(db):
             PersonCounts.num_fields_gardens AS num_fields_gardens,
             PersonCounts.num_others AS num_others,
             PersonTerms.picture_url AS picture,
-            Parties2.abbreviation AS party_abbreviation,
-            Parties2.name AS party_nom,
-            Terms2.start AS term_start,
-            Terms2.finish AS term_finish,
-            Offices2.name_male AS office_name_male,
-            Offices2.name_female AS office_name_female
+            Parties.abbreviation AS party_abbreviation,
+            Parties.name AS party_nom,
+            Terms.start AS term_start,
+            Terms.finish AS term_finish,
+            Offices.name_male AS office_name_male,
+            Offices.name_female AS office_name_female
         FROM
             Persons
         INNER JOIN
-            AssetDeclarations2 ON AssetDeclarations2.PersonId=Persons.Id
+            AssetDeclarations ON AssetDeclarations.PersonId=Persons.Id
         JOIN
             PersonCounts ON PersonCounts.PersonId=Persons.Id
         JOIN
             PersonTerms ON PersonTerms.PersonId=Persons.Id
         JOIN
-            Terms2 ON Terms2.id=PersonTerms.TermId
+            Terms ON Terms.id=PersonTerms.TermId
         JOIN
-            Offices2 ON Offices2.id=Terms2.OfficeId
+            Offices ON Offices.id=Terms.OfficeId
         JOIN
-            Parties2 ON Parties2.id=PersonTerms.party_nomid
+            Parties ON Parties.id=PersonTerms.party_nomid
         WHERE
-            AssetDeclarations2.Year=2016
+            AssetDeclarations.Year=2016
         ORDER BY
-            Persons.Id, Terms2.finish DESC
+            Persons.Id, Terms.finish DESC
         ;"""
     rows = db_query(db, q)
     return rows
@@ -156,7 +156,7 @@ def get_asset_declarations(db, PersonId):
             offices_other,
             year
         FROM
-            AssetDeclarations2
+            AssetDeclarations
         WHERE
             PersonId=%s
         ORDER BY
