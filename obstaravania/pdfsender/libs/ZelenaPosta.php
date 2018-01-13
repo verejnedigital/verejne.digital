@@ -15,11 +15,11 @@ class ZelenaPosta
 	CONST WSDL_SENT = 'https://gateway.zelenaposta.sk/api/2/sent?wsdl';
 	//localhost testing
 	//CONST WSDL_SENT = 'http://localhost:8081/api/2/sent?wsdl';
-	CONST SENDER_NAME = '';
-	CONST SENDER_STREET = '';
-	CONST SENDER_CITY = '';
-	CONST SENDER_ZIP = '';
-	CONST SENDER_COUNTRY = '';
+	CONST SENDER_NAME = 'OZ Chcemvediet.sk';
+	CONST SENDER_STREET = 'Karpatska 10A';
+	CONST SENDER_CITY = 'Bratislava';
+	CONST SENDER_ZIP = '83106';
+	CONST SENDER_COUNTRY = 'Slovensko';
 
 	private $pdf = null;
 	private $json = null;
