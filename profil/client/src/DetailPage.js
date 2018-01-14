@@ -90,7 +90,8 @@ class DetailPage extends Component {
           <div className="detail-navigation">
             <a href="./" className="brand">&lt;&lt;&nbsp;profil.verejne.digital</a>
           </div>
-        </div>        
+        </div>
+        {this.state.politician.surname &&
         <div className="detail-body">
           <DetailVizitka politician={this.state.politician} />
           <div className="data-tables">
@@ -115,6 +116,7 @@ class DetailPage extends Component {
             <MapContainer assets={this.state.kataster} />
           </div>
         </div>        
+        }
         <Footer />
       </div>
     );
