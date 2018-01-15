@@ -60,6 +60,10 @@ class ZelenaPosta
 		$this->json = $json;
 	}
 
+	/**
+	 * @return mixed
+	 * @throws Exception|RetryableException
+	 */
 	public function sendFiles()
 	{
 		$req = \zelenaposta\api2\Request::createObjectFromArray(
@@ -70,25 +74,26 @@ class ZelenaPosta
 			/** @var \Phpro\SoapClient\Type\MixedResult $response */
 			$response = $this->client->sendMailings($req);
 			$result = $response->getResult();
-			echo sprintf("New mailing created as slotId %s for %s€.\n", $result->slotId, $result->totalPrice);
+			fwrite(STDERR, sprintf("New mailing created as slotId %s for %s€.\n", $result->slotId, $result->totalPrice));
 		} catch (\Phpro\SoapClient\Exception\SoapException $e) {
 			$exc = $e->getPrevious();
 			if ($exc instanceof \GuzzleHttp\Exception\ServerException) {
 				/** @var \GuzzleHttp\Exception\ServerException $exc */
 				/** @var \GuzzleHttp\Psr7\Request $origRequest */
 				$origRequest = $exc->getRequest();
-				echo sprintf("Request to %s.\n%s\n", $exc->getRequest()->getUri(), $origRequest->getBody());
-				echo sprintf("Response code %s, message: %s.\n", $exc->getCode(), $exc->getMessage());
+				fwrite(STDERR, sprintf("Request to %s.\n%s\n", $exc->getRequest()->getUri(), $origRequest->getBody()));
+				fwrite(STDERR, sprintf("Response code %s, message: %s.\n", $exc->getCode(), $exc->getMessage()));
 				if ($exc->hasResponse()) {
 					$body = $exc->getResponse()->getBody();
 					//TODO: parse body for details
-					echo sprintf("Content: %s\n", $body->getContents());
+					fwrite(STDERR, sprintf("Content: %s\n", $body->getContents()));
 				}
+				throw new RetryableException($e->getMessage());
 			}
-			return false;
+			throw $exc;
 		}
 
-		return true;
+		return $result;
 	}
 
 	protected function createRequest() {
