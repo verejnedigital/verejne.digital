@@ -12,18 +12,16 @@
 
 # Usage / Testing
 ## Directly
-`php makepdf.php <input_json_file> <output_directory>`
+`php makepdf.php <input_json_file> <output_pdf_file>`
 
 example:
 
-`php makepdf.php sample_data/three_new.json ../pdfsender/input/`
+`php makepdf.php sample_data/three_new.json ../pdfsender/input/three_new.pdf`
 
-## As batch process
-* create directory `[1]` where are input files
-* execute `./makepdf_dir.sh [1]`
-  * successfully created result will be put into `../sendpdf/input/`
-  * successfully processed files with log files are moved to `[1]/done`
-  * failed to processed files with log files are moved to `[1]/err`
+## Return codes
+* `0` - PDF successfully created.
+* `1` - Error during PDF creation.
+* `2` - Temporary error during PDF creation. Try again later.
 
 # Directory structure
 * `[vendor]` *- directory for libraries installed by composer*

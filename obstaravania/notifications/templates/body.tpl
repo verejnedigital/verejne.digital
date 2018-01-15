@@ -81,7 +81,7 @@
 		</td>
 		<td colspan="3">
 			{if isset($notification['reason']['price'])}
-				<span>Cena</span>{prettyfyPrice price=$notification['reason']['price']}
+				<span>Cena</span> {prettyfyPrice price=$notification['reason']['price']}
 			{/if}
 		</td>
 	</tr>

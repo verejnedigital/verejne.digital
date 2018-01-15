@@ -1,24 +1,25 @@
 <?php
 if ($argc < 3) {
-	echo 'Usage: php makepdf.php <input file> <output directory>, where input file is json. Output will be put into output directory.';
+	fwrite(STDERR, "Usage: php makepdf.php <input file> <output pdf>, where input file is json, Output is PDF.\n
+Return 0 on success, 1 on error, 2 on temporary error.");
 	exit(1);
 }
 
 $data = file_get_contents($argv[1]);
 if ($data === false) {
-	echo 'Unable to read input file.';
+	fwrite(STDERR, "Unable to read input file.\n");
 	exit(1);
 }
 
 $json = json_decode($data, true);
 if ($json === null) {
-	echo 'Unable to decode input file to json.';
+	fwrite(STDERR, "Unable to decode input file to json.\n");
 	exit(1);
 }
 
-if (file_exists($argv[2]) && !is_dir($argv[2])) {
-	echo sprintf("%s is not a directory.", $argv[2]);
-	exit(1);
+if (file_exists($argv[2])) {
+	fwrite(STDERR, sprintf("%s already exists.\n", $argv[2]));
+	exit(2);
 }
 
 function groupBySource($data) {
@@ -70,16 +71,23 @@ require ('pdftemplate.php');
 $pdfTemplate = new \pdfTemplate();
 $pdfTemplate->setData($groupedData);
 
-$baseFileName = sprintf('%s_%s', date('Ymd-His'), $groupedData['company']['ico']);
-is_dir($argv[2]) || mkdir($argv[2]);
-if (!is_file($argv[2] . '/'.$baseFileName.'.pdf')) {
-	file_put_contents($argv[2] . '/'.$baseFileName.'.pdf', $pdfTemplate->createDocument());
-	file_put_contents($argv[2] . '/'.$baseFileName.'.json', $data);
-	$end = microtime(true);
-	echo sprintf("%fms to generate PDF (%s{.json, .pdf})\n", ($end - $start), $argv[2] . '/' . $baseFileName);
-} else {
-	$end = microtime(true);
-	echo sprintf("%s{.json, .pdf} already exists, skipping...\n", ($end - $start), $argv[2] . '/' . $baseFileName);
+try {
+	$pdfData = $pdfTemplate->createDocument();
+	if ($pdfData === null) {
+		throw new Exception("Unable to render PDF.");
+	}
+	$res = file_put_contents($argv[2], $pdfData);
+	//Maybe check error details to classify whether it's temporary (like no free space) or finite error (no permissions).
+	if ($res === false) {
+		throw new Exception("Save PDF file failed.");
+	}
+} catch (Exception $e) {
+	fwrite(STDERR, sprintf("Failed to create PDF. Reason: %s\n", $e->getMessage()));
+	exit(1);
 }
+
+$end = microtime(true);
+fwrite(STDERR, sprintf("%fms to generate PDF (%s)\n", ($end - $start), $argv[2]));
+exit(0);
 
 ?>
