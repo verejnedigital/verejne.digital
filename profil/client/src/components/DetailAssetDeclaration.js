@@ -11,8 +11,11 @@ class DetailAssetDeclaration extends Component {
     }
   }
 
+  componentWillMount() {
+    this.checkImage(this.props.image);
+  }
+
   checkImage(imageSrc) {
-    console.log('mito' + imageSrc + this.state.isImageOnServer);
     if (imageSrc && !this.state.seachedForImageOnServer) {
       this.setState({
         seachedForImageOnServer: true
@@ -29,7 +32,6 @@ class DetailAssetDeclaration extends Component {
 
   render() {
     let {assets, year, title, image, source} = this.props;
-    this.checkImage(image);
     return (
       <table className="assets-declaration table">
         <thead>
@@ -53,7 +55,7 @@ class DetailAssetDeclaration extends Component {
             </tr>
           )}
         </tbody>
-        {this.state.isImageOnServer && <tfoot><tr><td colspan="2"><img className="assets-declaration plot" alt="majetok" src={image} /></td></tr></tfoot>}
+        {this.state.isImageOnServer && <tfoot><tr><td colSpan="2"><img className="assets-declaration plot" alt="majetok" src={image} /></td></tr></tfoot>}
       </table>
       );
   }

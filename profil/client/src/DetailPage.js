@@ -24,7 +24,7 @@ class DetailPage extends Component {
   }
 
   componentWillMount() {
-    console.log(this.props.id);
+    // console.log(this.props.id);
     const id = this.props.id;
     this.loadPoliticiant(id);
     this.loadKataster(id);
