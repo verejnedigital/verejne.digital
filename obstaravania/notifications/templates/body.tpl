@@ -56,7 +56,7 @@
 <p class="welcome">
 	Dobrý deň {$companyName},<br/><br/>
 	<br/>
-	&nbsp;&nbsp;&nbsp;&nbsp;sme z <strong>verejne</strong>.digital. Našim cieľom je zvyšovať kvalitu, konkurencu a transparentnosť verejných obstarávaní využitím dát, ktoré zverejňuje štát. Nakoľko ste už úspešne vyhrali verejné obstarávanie v minulosti, myslíme si, že by ste boli dobrý kandidát aj na podobné práve prebiehajúce verejné obstarávanie. Preto Vám v tomto liste zasielame niektoré z aktuálnych verejných obstarávaní, o ktorých si myslíme, že by Vás mohli zaujímať.
+	&nbsp;&nbsp;&nbsp;&nbsp;Sme z <strong>verejne</strong>.digital. Našim cieľom je zvyšovať kvalitu, konkurencu a transparentnosť verejných obstarávaní využitím dát, ktoré zverejňuje štát. Nakoľko ste už úspešne vyhrali verejné obstarávanie v minulosti, myslíme si, že by ste boli dobrý kandidát aj na podobné práve prebiehajúce verejné obstarávanie. Preto Vám v tomto liste zasielame niektoré z aktuálnych verejných obstarávaní, o ktorých si myslíme, že by Vás mohli zaujímať.
 </p>
 <p></p>
 
@@ -130,7 +130,7 @@ Ak máte ľubovoľné otázky, pripomienky, alebo si neželáte dostávať podob
 </p>
 	
 <p class="signature">
-	S pozdravom,<br/>
+	S pozdravom,<br/><br/><br/>
 
 	<em>Tím <strong>verejne</strong>.digital</em><br/>
 	OZ Chcemvediet.sk<br/>
