@@ -23,12 +23,10 @@ example:
 
 see also `php sendpdf.php --help`
 
-## As batch process
-* create directory `[1]` where are input json and pdf files. PDF generated from json must have same name (and different extension)
-  * example: `20171117-162810_36502464.json`, `20171117-162810_36502464.pdf` (date-time_ico)
-* execute `./send_dir.sh [1]`
-  * successfully send files with log files are moved to `[1]/done`
-  * failed to send files with log files are moved to `[1]/err`
+## Return codes
+* `0` - PDF successfully created.
+* `1` - Error during PDF creation.
+* `2` - Temporary error during PDF creation. Try again later.
 
 # Directory structure
 * `[vendor]` *- directory for libraries installed by composer*

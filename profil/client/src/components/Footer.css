@@ -1,5 +1,10 @@
 .app-footer {
-  width: 800px;
-  margin: auto;
   height: 40px;
+}
+
+@media (min-width: 1200px) {
+  .app-footer {
+    width: 800px;
+    margin: auto;
+  }  
 }

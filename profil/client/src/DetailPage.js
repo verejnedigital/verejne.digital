@@ -24,7 +24,7 @@ class DetailPage extends Component {
   }
 
   componentWillMount() {
-    console.log(this.props.id);
+    // console.log(this.props.id);
     const id = this.props.id;
     this.loadPoliticiant(id);
     this.loadKataster(id);
@@ -62,14 +62,15 @@ class DetailPage extends Component {
       (report) => {                        
         // Report contains asset declarations for several years.
         // TODO: Make sure it is sorted by year from the most recent to the oldest
-        const katasterAssetsFromDeclaration = this.split_assets(report[0], "nehnuteľný majetok");          
-        const hnutelnyAssetsFromDeclaration = this.split_assets(report[0], "hnuteľný majetok, majetkové právo alebo iná majetková hodnota, existujúce záväzky, ktorých menovitá hodnota, bežná cena alebo peňažné plnenie presahuje 35-násobok minimálnej mzdy");
+        const katasterAssetsFromDeclaration = this.split_assets(report[0], "unmovable_assets");
+        const hnutelnyAssetsFromDeclaration = this.split_assets(report[0], "movable_assets");
         var prijmyAssetsFromDeclaration = [];        
         if (report[0] !== undefined) {
-          var keys = ["príjmy za rok " + report[0].year, "paušálne náhrady za rok " + report[0].year, "ostatné príjmy za rok " + report[0].year, "počas výkonu verejnej funkcie má tieto funkcie (čl. 7 ods. 1 písm. c) u. z. 357/2004)"];          
+          var keys = ["income", "compensations", "other_income", "offices_other"]
+          var descriptions = ["príjmy ", "paušálne náhrady", "ostatné príjmy", "počas výkonu verejnej funkcie má tieto funkcie (čl. 7 ods. 1 písm. c) u. z. 357/2004)"];
           for (var i = 0; i < keys.length; i++) {
             var key = keys[i];
-            prijmyAssetsFromDeclaration.push(key+': ' + report[0][key]);
+            prijmyAssetsFromDeclaration.push(descriptions[i]+': ' + report[0][key]);
           }            
         }        
         this.setState({
@@ -77,7 +78,7 @@ class DetailPage extends Component {
           hnutelnyAssetsFromDeclaration : hnutelnyAssetsFromDeclaration,
           prijmyAssetsFromDeclaration : prijmyAssetsFromDeclaration,
           report : report,
-          index : 0,          
+          index : 0,
         });
       });
   }
@@ -87,16 +88,18 @@ class DetailPage extends Component {
       <div className="detail-page">
         <div className="detail-header">
           <div className="detail-navigation">
-            <a href="./" className="brand">&lt;&lt;&nbsp;profil.verejne.digital</a>
+            <a href="./" className="brand"><b>profil</b>.verejne.digital <i class="fa fa-home"></i></a>
           </div>
-        </div>        
+        </div>
+        {this.state.politician.surname &&
         <div className="detail-body">
           <DetailVizitka politician={this.state.politician} />
           <div className="data-tables">
-            <div>
+            <div className="assets-tables">
               <DetailAssetDeclaration assets={this.state.katasterAssetsFromDeclaration}              
                 year={(this.state.report[this.state.index] !== undefined ? this.state.report[this.state.index].year : 0)}
                 title="Majetkové priznanie: Nehnuteľnosti"
+                image={`https://verejne.digital/img/majetok/${this.state.politician.surname}_${this.state.politician.firstname}.png`}
                 source={(this.state.report[this.state.index] !== undefined ? this.state.report[this.state.index]["source"] : "http://www.nrsr.sk")}/>
               <DetailAssetDeclaration assets={this.state.hnutelnyAssetsFromDeclaration}              
                 year={(this.state.report[this.state.index] !== undefined ? this.state.report[this.state.index].year : 0)}
@@ -111,8 +114,9 @@ class DetailPage extends Component {
           </div>
           <div className="mapa">
             <MapContainer assets={this.state.kataster} />
-          </div>
+          </div>          
         </div>                
+        }
       </div>
     );
   }

@@ -22,7 +22,9 @@ const Navigation = () =>
           <li><a href="https://obstaravania.verejne.digital">obstaravania.verejne.digital</a></li>
           <li><a href="https://prepojenia.verejne.digital">prepojenia.verejne.digital</a></li>
           <li><a href="http://www.facebook.com/verejne.digital" target="_blank" rel="noopener noreferrer">kontaktuj nás na Facebooku</a></li>
-          <li><a href="https://verejne.digital/?about">o projekte</a></li>
+          <li><a
+          href="https://medium.com/@verejne.digital/o-%C4%8Do-ide-verejne-digital-14a1c6dcbe09"
+          target="_blank">o projekte</a></li>
         </ul>
       </div>
     </nav>

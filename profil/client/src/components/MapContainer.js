@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import {Map, InfoWindow, Marker, GoogleApiWrapper} from 'google-maps-react';
+import {Map, Marker, GoogleApiWrapper} from 'google-maps-react';
 import './MapContainer.css';
 
 export class MapContainer extends Component { 
 render() {
     return (
-      <Map google={this.props.google} zoom={7} style={{width: '800px', height: '360px', position: 'absolute'}} className="detailMap"
+      <Map google={this.props.google} zoom={7} style={{height: '360px', position: 'relative'}} className="detailMap"
       center={{lat: 48.6, lng: 19.5}}>             
       {this.props.assets.map((asset, key) =>        
         <Marker

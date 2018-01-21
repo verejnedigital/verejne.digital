@@ -77,9 +77,6 @@ def Mercator_to_WGS84(x, y):
     lon = math.degrees(x / EARTH_EQUATORIAL_RADIUS)
     return lat, lon
 
-def hash_timestamp(timestamp):
-    prime = 1543
-    return int((timestamp - datetime.datetime.utcfromtimestamp(0)).total_seconds() % prime)
 
 # --- IO ---
 def json_load(path):

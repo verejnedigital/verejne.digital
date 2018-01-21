@@ -8,7 +8,7 @@ function checkStatus(response) {
   console.log(error); // eslint-disable-line no-console
   throw error;
 }
-  
+
 function parseJSON(res) {
   return res.json();
 }
@@ -19,7 +19,7 @@ function compareKatasterForSameLandUse(a, b) {
   if (a.foliono < b.foliono) return -1;
   if (a.foliono > b.foliono) return 1;
   if (a.parcelno < b.parcelno) return -1;
-  if (a.parcelno > b.parcelno) return 1;  
+  if (a.parcelno > b.parcelno) return 1;
   return 0;
 }
 
@@ -29,24 +29,24 @@ function compareKataster(a, b) {
   if (a.landusename === plocha) return -1;
   if (b.landusename === plocha) return 1;
   if (a.landusename < b.landusename) return -1;
-  if (a.landusename > b.landusename) return 1;  
+  if (a.landusename > b.landusename) return 1;
 }
 
-function sortKatasterInfo(res) {  
+function sortKatasterInfo(res) {
   return res.sort(compareKataster);
 }
 
 function mergeParcely(res) {
   var new_res = [];
-  var last_index = -1;  
-  for (var i = 0; i < res.length; i++) {    
+  var last_index = -1;
+  for (var i = 0; i < res.length; i++) {
     if (last_index >= 0 && res[i].cadastralunitcode === res[last_index].cadastralunitcode &&
       res[i].foliono === res[last_index].foliono) {
       res[last_index].parcelno = res[last_index].parcelno + ', ' + res[i].parcelno;
     } else {
       last_index = i;
       new_res.push(res[i]);
-    }    
+    }
   }
   return new_res;
 }
@@ -72,7 +72,7 @@ function sortListPoliticians(res) {
 }
 
 export function listPoliticians(cb) {
-  fetch(`/api/k/list_politicians`, {
+  fetch(`/api/k/list_politicians?cachebreak`, {
     accept: 'application/json',
   }).then(checkStatus)
     .then(parseJSON)

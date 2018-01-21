@@ -1,99 +1,74 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 from db import db_query
-from utils import search_string, hash_timestamp, Mercator_to_WGS84
+from utils import Mercator_to_WGS84
 
 
-def construct_SQL_filter_data(person, search_params):
-    def format_datum(param, person):
-        if param == 'firstname' or param == 'surname':
-            return search_string(person[param])
-        return person[param]
-    SQL_filter_data = tuple(format_datum(param, person) for param in search_params)
-    return SQL_filter_data
-
-def construct_SQL_filter(person, search_params):
-    """ Construct an SQL filtering expression from the search_params
-        fields of the person dictionary (JSON). Returns the SQL expression
-        with placeholders, and values to feed for those placeholders. """
-    SQL_filters = {
-        'firstname': """kataster.Subjects.FirstNameSearch=%s""",
-        'surname': """kataster.Subjects.SurnameSearch=%s""",
-        'dobhash': """kataster.Subjects.DobHash=%s""",
-    }
-    SQL_filter = ' AND '.join([SQL_filters[param] for param in search_params])
-    SQL_filter_data = construct_SQL_filter_data(person, search_params)
-    return SQL_filter, SQL_filter_data
-
-def get_Parcels_from_database(db, person, search_params):
-    SQL_filter, SQL_filter_data = construct_SQL_filter(person, search_params)
-    q = """
-        WITH
-        Parcels AS (
-            SELECT FolioId, No, Area, minX, maxX, minY, maxY, Id, LandUseId, UtilisationId, CadastralUnitId, ValidTo, 'C' AS ParcelType FROM kataster.ParcelsC
-            UNION
-            SELECT FolioId, No, Area, minX, maxX, minY, maxY, Id, LandUseId, UtilisationId, CadastralUnitId, ValidTo, 'E' AS ParcelType FROM kataster.ParcelsE
-        ),
-        OwnershipRecordsWithLegalRightTexts AS (
-            SELECT
-                kataster.OwnershipRecords.Id AS Id,
-                kataster.OwnershipRecords.FolioId AS FolioId,
-                array_remove(array_agg(kataster.LegalRights.TextEscaped), NULL) AS LegalRightTexts
-            FROM
-                kataster.OwnershipRecords
-            LEFT JOIN
-                kataster.OwnershipRecordLegalRights ON kataster.OwnershipRecordLegalRights.OwnershipRecordId = kataster.OwnershipRecords.Id
-            LEFT JOIN
-                kataster.LegalRights ON kataster.LegalRights.Id = kataster.OwnershipRecordLegalRights.LegalRightId
-            GROUP BY
-                kataster.OwnershipRecords.Id
-        ),
-        ParcelsFiltered AS (
-            SELECT
-                Parcels.ParcelType AS ParcelType,
-                Parcels.No AS ParcelNo,
-                Parcels.Area AS Area,
-                0.5 * (Parcels.minX + Parcels.maxX) AS MercatorX,
-                0.5 * (Parcels.minY + Parcels.maxY) AS MercatorY,
-                kataster.Folios.No AS FolioNo,
-                kataster.Folios.OwnersCount AS FolioOwnersCount,
-                OwnershipRecordsWithLegalRightTexts.LegalRightTexts AS LegalRightTexts,
-                kataster.LandUses.Name AS LandUseName,
-                kataster.Utilisations.Name AS UtilisationName,
-                kataster.CadastralUnits.Code AS CadastralUnitCode,
-                kataster.CadastralUnits.Name AS CadastralUnitName,
-                100.0 * kataster.Participants.Numerator / kataster.Participants.Denominator AS ParticipantRatio,
-                kataster.Subjects.FirstName AS FirstName,
-                kataster.Subjects.Surname AS Surname,
-                Parcels.ValidTo AS ValidTo
-            FROM
-                Parcels
-            INNER JOIN
-                kataster.Folios ON kataster.Folios.Id = Parcels.FolioId
-            INNER JOIN
-                OwnershipRecordsWithLegalRightTexts ON OwnershipRecordsWithLegalRightTexts.FolioId = kataster.Folios.Id
-            INNER JOIN
-                kataster.Participants ON kataster.Participants.OwnershipRecordId = OwnershipRecordsWithLegalRightTexts.Id
-            INNER JOIN
-                kataster.SubjectParticipant ON kataster.SubjectParticipant.ParticipantId = kataster.Participants.Id
-            INNER JOIN
-                kataster.Subjects ON kataster.Subjects.Id = kataster.SubjectParticipant.SubjectId
-            INNER JOIN
-                kataster.LandUses ON kataster.LandUses.Id = Parcels.LandUseId
-            INNER JOIN
-                kataster.Utilisations ON kataster.Utilisations.Id = Parcels.UtilisationId
-            INNER JOIN
-                kataster.CadastralUnits ON kataster.CadastralUnits.Id = Parcels.CadastralUnitId
-            WHERE
-                kataster.Participants.TypeId=1 AND
-                """ + SQL_filter + """
-        )
-        SELECT DISTINCT ON (CadastralUnitCode, FolioNo, ParcelNo)
-            *
+def get_politician_by_PersonId(db, PersonId):
+    q = """SET search_path TO kataster;"""
+    q += """
+        SELECT DISTINCT ON (Persons.Id)
+            Persons.surname AS surname,
+            Persons.firstname AS firstname,
+            Persons.title AS title,
+            PersonTerms.picture_url AS picture,
+            Parties.abbreviation AS party_abbreviation,
+            Parties.name AS party_nom,
+            Terms.start AS term_start,
+            Terms.finish AS term_finish,
+            Offices.name_male AS office_name_male,
+            Offices.name_female AS office_name_female
         FROM
-            ParcelsFiltered
+            Persons
+        JOIN
+            PersonTerms ON PersonTerms.PersonId=Persons.id
+        JOIN
+            Terms ON Terms.id=PersonTerms.termid
+        JOIN
+            Offices ON Offices.id=Terms.officeid
+        JOIN
+            Parties ON Parties.id=PersonTerms.party_nomid
+        WHERE
+            Persons.Id=%s
         ORDER BY
-            CadastralUnitCode, FolioNo, ParcelNo, ValidTo DESC
+            Persons.Id, Terms.finish DESC
         ;"""
-    rows = db_query(db, q, SQL_filter_data)
+    q_data = (PersonId,)
+    politicians = db_query(db, q, q_data)
+    assert len(politicians) <= 1
+    if len(politicians) == 0:
+        return None
+    else:
+        return politicians[0]
+
+def get_Parcels_owned_by_Person(db, PersonId):
+    q = """SET search_path TO kataster;"""
+    q += """
+        SELECT DISTINCT ON (CadastralUnitCode, FolioNo, ParcelNo)
+            Parcels.No AS ParcelNo,
+            0.5 * (Parcels.minX + Parcels.maxX) AS MercatorX,
+            0.5 * (Parcels.minY + Parcels.maxY) AS MercatorY,
+            Folios.No AS FolioNo,
+            LandUses.Name AS LandUseName,
+            CadastralUnits.Code AS CadastralUnitCode,
+            CadastralUnits.Name AS CadastralUnitName
+        FROM
+            Parcels
+        INNER JOIN
+            LandUses ON LandUses.Id=Parcels.LandUseId
+        INNER JOIN
+            CadastralUnits ON CadastralUnits.Id=Parcels.CadastralUnitId
+        INNER JOIN
+            Folios ON Folios.Id=Parcels.FolioId
+        INNER JOIN
+            PersonFolios ON PersonFolios.FolioId=Folios.Id
+        WHERE
+            PersonFolios.PersonId=%s
+        ORDER BY
+            CadastralUnitCode, FolioNo, ParcelNo, Parcels.ValidTo DESC
+        ;"""
+    q_data = (PersonId,)
+    rows = db_query(db, q, q_data)
 
     # Convert the coordinates to WGS84
     for row in rows:
@@ -101,69 +76,93 @@ def get_Parcels_from_database(db, person, search_params):
         del row['mercatorx']
         del row['mercatory']
 
-    # Ensure JSON serialisability: convert ParticipantRatio to float
-    for row in rows:
-        del row['validto']
-        if row['participantratio'] is not None:
-            row['participantratio'] = float(row['participantratio'])
-
     return rows
 
-def count_Parcels_in_database(db):
-    q = """
+def get_politicians_with_Folio_counts(db):
+    q = """SET search_path TO kataster;"""
+    q += """
         WITH
-        ParcelsAll AS (
-            SELECT FolioId, No, Area, Id, LandUseId, UtilisationId, CadastralUnitId, ValidTo, 'C' AS ParcelType FROM kataster.ParcelsC
-            UNION
-            SELECT FolioId, No, Area, Id, LandUseId, UtilisationId, CadastralUnitId, ValidTo, 'E' AS ParcelType FROM kataster.ParcelsE
-        ),
-        Parcels AS (
-            SELECT DISTINCT ON (CadastralUnitCode, FolioNo, No)
-                ParcelsAll.*,
-                kataster.CadastralUnits.Code AS CadastralUnitCode,
-                kataster.Folios.No AS FolioNo
+        PersonCounts AS (
+            SELECT
+                Persons.Id AS PersonId,
+                COUNT(DISTINCT (Folios.CadastralUnitId, Folios.No)) FILTER
+                    (WHERE LandUses.Name = 'Zastavaná plocha a nádvorie')
+                    AS num_houses_flats,
+                COUNT(DISTINCT (Folios.CadastralUnitId, Folios.No)) FILTER
+                    (WHERE LandUses.Name = 'Orná pôda' OR LandUses.Name = 'Záhrada')
+                    AS num_fields_gardens,
+                COUNT(DISTINCT (Folios.CadastralUnitId, Folios.No)) FILTER
+                    (WHERE LandUses.Name != 'Zastavaná plocha a nádvorie' AND LandUses.Name != 'Orná pôda' AND LandUses.Name != 'Záhrada')
+                    AS num_others
             FROM
-                ParcelsAll
-            INNER JOIN
-                kataster.Folios ON kataster.Folios.Id = ParcelsAll.FolioId
-            INNER JOIN
-                kataster.CadastralUnits ON kataster.CadastralUnits.Id = ParcelsAll.CadastralUnitId
-            ORDER BY
-                CadastralUnitCode, FolioNo, No, ValidTo DESC
-        ),
-        ParcelsOwned AS (
-            SELECT DISTINCT
-                kataster.Folios.No AS FolioNo,
-                kataster.LandUses.Name AS LandUseName,
-                kataster.CadastralUnits.Code AS CadastralUnitCode,
-                kataster.Subjects.FirstNameSearch AS FirstNameSearch,
-                kataster.Subjects.SurnameSearch AS SurnameSearch,
-                kataster.Subjects.DobHash AS DobHash
-            FROM
-                Parcels
-            INNER JOIN
-                kataster.Folios ON kataster.Folios.Id = Parcels.FolioId
-            INNER JOIN
-                kataster.OwnershipRecords ON kataster.OwnershipRecords.FolioId = kataster.Folios.Id
-            INNER JOIN
-                kataster.Participants ON kataster.Participants.OwnershipRecordId = kataster.OwnershipRecords.Id
-            INNER JOIN
-                kataster.SubjectParticipant ON kataster.SubjectParticipant.ParticipantId = kataster.Participants.Id
-            INNER JOIN
-                kataster.Subjects ON kataster.Subjects.Id = kataster.SubjectParticipant.SubjectId
-            INNER JOIN
-                kataster.LandUses ON kataster.LandUses.Id = Parcels.LandUseId
-            INNER JOIN
-                kataster.CadastralUnits ON kataster.CadastralUnits.Id = Parcels.CadastralUnitId
-            WHERE
-                kataster.Participants.TypeId=1
+                Persons
+            LEFT OUTER JOIN
+                PersonFolios ON PersonFolios.PersonId=Persons.Id
+            LEFT OUTER JOIN
+                Folios ON Folios.Id=PersonFolios.FolioId
+            LEFT OUTER JOIN
+                Parcels ON Parcels.FolioId=Folios.Id
+            LEFT OUTER JOIN
+                LandUses ON LandUses.Id = Parcels.LandUseId
+            GROUP BY
+                Persons.Id
         )
-        SELECT
-            FirstNameSearch, SurnameSearch, DobHash, LandUseName, COUNT(*) AS GroupCount
+        SELECT DISTINCT ON (Persons.Id)
+            Persons.Id AS Id,
+            Persons.FirstName AS FirstName,
+            Persons.Surname AS Surname,
+            Persons.Title AS Title,
+            PersonCounts.num_houses_flats AS num_houses_flats,
+            PersonCounts.num_fields_gardens AS num_fields_gardens,
+            PersonCounts.num_others AS num_others,
+            PersonTerms.picture_url AS picture,
+            Parties.abbreviation AS party_abbreviation,
+            Parties.name AS party_nom,
+            Terms.start AS term_start,
+            Terms.finish AS term_finish,
+            Offices.name_male AS office_name_male,
+            Offices.name_female AS office_name_female
         FROM
-            ParcelsOwned
-        GROUP BY
-            FirstNameSearch, SurnameSearch, DobHash, LandUseName
+            Persons
+        INNER JOIN
+            AssetDeclarations ON AssetDeclarations.PersonId=Persons.Id
+        JOIN
+            PersonCounts ON PersonCounts.PersonId=Persons.Id
+        JOIN
+            PersonTerms ON PersonTerms.PersonId=Persons.Id
+        JOIN
+            Terms ON Terms.id=PersonTerms.TermId
+        JOIN
+            Offices ON Offices.id=Terms.OfficeId
+        JOIN
+            Parties ON Parties.id=PersonTerms.party_nomid
+        WHERE
+            AssetDeclarations.Year=2016
+        ORDER BY
+            Persons.Id, Terms.finish DESC
         ;"""
     rows = db_query(db, q)
     return rows
+
+def get_asset_declarations(db, PersonId):
+    q = """SET search_path TO kataster;"""
+    q += """
+        SELECT
+            unmovable_assets,
+            movable_assets,
+            income,
+            compensations,
+            other_income,
+            offices_other,
+            year,
+            source
+        FROM
+            AssetDeclarations
+        WHERE
+            PersonId=%s
+        ORDER BY
+            year DESC
+        ;"""
+    q_data = (PersonId,)
+    declarations = db_query(db, q, q_data)
+    return declarations
