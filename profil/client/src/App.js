@@ -43,9 +43,10 @@ class App extends Component {
     })
   }
 
-  render() {    
-    return (this.props.params.splat.length > 0 && this.props.params.splat !== "profil" && this.props.params.splat !== "profil/") ?
-     (<DetailPage id={this.props.params.splat.replace("profil/", "").replace("?", "")} />) :
+  render() {
+    var detail_id = window.location.href.replace(/.*\?/,"");    
+    return (window.location.href.indexOf("?") !== -1) ?
+     (<DetailPage id={detail_id} />) :
      (
       <div className="App container">        
         <div className="App-header">

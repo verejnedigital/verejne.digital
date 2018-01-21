@@ -5,7 +5,6 @@ import * as serverAPI from './actions/serverAPI';
 import DetailVizitka from './components/DetailVizitka';
 import DetailKatasterTable from './components/DetailKatasterTable';
 import DetailAssetDeclaration from './components/DetailAssetDeclaration';
-import Footer from './components/Footer';
 import MapContainer from './components/MapContainer';
 
 class DetailPage extends Component {
@@ -59,7 +58,7 @@ class DetailPage extends Component {
 
   loadAssetDeclaration(id) {
     serverAPI.loadAssetDeclaration(id,
-      (report) => {                        
+      (report) => {
         // Report contains asset declarations for several years.
         // TODO: Make sure it is sorted by year from the most recent to the oldest
         const katasterAssetsFromDeclaration = this.split_assets(report[0], "unmovable_assets");
@@ -88,7 +87,7 @@ class DetailPage extends Component {
       <div className="detail-page">
         <div className="detail-header">
           <div className="detail-navigation">
-            <a href="./" className="brand"><b>profil</b>.verejne.digital <i class="fa fa-home"></i></a>
+            <a href="./" className="brand"><b>profil</b>.verejne.digital <i className="fa fa-home"></i></a>
           </div>
         </div>
         {this.state.politician.surname &&
