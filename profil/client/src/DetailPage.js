@@ -112,8 +112,7 @@ class DetailPage extends Component {
           <div className="mapa">
             <MapContainer assets={this.state.kataster} />
           </div>
-        </div>        
-        <Footer />
+        </div>                
       </div>
     );
   }

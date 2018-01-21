@@ -46,7 +46,7 @@ class App extends Component {
 
   render() {
     return (this.props.params.splat.length > 0 && this.props.params.splat !== "profil" && this.props.params.splat !== "profil/") ?
-     (<DetailPage id={this.props.params.splat.replace("profil/", "")} />) :
+     (<DetailPage id={this.props.params.splat.replace("profil/?", "")} />) :
      (
       <div className="App">        
         <div className="App-header">
