@@ -24,7 +24,7 @@ class DetailPage extends Component {
   }
 
   componentWillMount() {
-    console.log(this.props.id);
+    // console.log(this.props.id);
     const id = this.props.id;
     this.loadPoliticiant(id);
     this.loadKataster(id);
@@ -85,12 +85,13 @@ class DetailPage extends Component {
 
   render() {    
     return (      
-      <div className="detail-page container">
+      <div className="detail-page">
         <div className="detail-header">
           <div className="detail-navigation">
-            <a href="./" className="brand">&lt;&lt;&nbsp;profil.verejne.digital</a>
+            <a href="./" className="brand"><b>profil</b>.verejne.digital <i class="fa fa-home"></i></a>
           </div>
-        </div>        
+        </div>
+        {this.state.politician.surname &&
         <div className="detail-body">
           <DetailVizitka politician={this.state.politician} />
           <div className="data-tables">
@@ -115,6 +116,7 @@ class DetailPage extends Component {
             <MapContainer assets={this.state.kataster} />
           </div>
         </div>        
+        }
         <Footer />
       </div>
     );

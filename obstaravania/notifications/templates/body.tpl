@@ -56,8 +56,7 @@
 <p class="welcome">
 	Dobrý deň {$companyName},<br/><br/>
 	<br/>
-	&nbsp;&nbsp;&nbsp;&nbsp;sme z <strong>verejne</strong>.digital. Našim cieľom je zvyšovať transparentnosť, konkurenciu a kvalitu verejných obstarávaní využitím dát, ktoré poskytuje štát.
-	Preto Vám v tomto liste zasielame niektoré z aktuálnych verejných obstarávaní, o ktorých si myslíme, že by Vás mohli zaujímať.
+	&nbsp;&nbsp;&nbsp;&nbsp;Sme z <strong>verejne</strong>.digital. Našim cieľom je zvyšovať kvalitu, konkurencu a transparentnosť verejných obstarávaní využitím dát, ktoré zverejňuje štát. Nakoľko ste už úspešne vyhrali verejné obstarávanie v minulosti, myslíme si, že by ste boli dobrý kandidát aj na podobné práve prebiehajúce verejné obstarávanie. Preto Vám v tomto liste zasielame niektoré z aktuálnych verejných obstarávaní, o ktorých si myslíme, že by Vás mohli zaujímať.
 </p>
 <p></p>
 
@@ -81,7 +80,7 @@
 		</td>
 		<td colspan="3">
 			{if isset($notification['reason']['price'])}
-				<span>Cena</span>{prettyfyPrice price=$notification['reason']['price']}
+				<span>Cena</span> {prettyfyPrice price=$notification['reason']['price']}
 			{/if}
 		</td>
 	</tr>
@@ -123,10 +122,19 @@
 {/foreach}
 
 <p class="ending">
-	&nbsp;&nbsp;&nbsp;&nbsp;Veríme, že Vás aspoň jedno obstarávanie zaujalo. Pre získanie zoznamu všetkých aktuálnych obstarávaní odporúčame navštíviť <em>{$linkMore}</em>
-	alebo oficiálnu stránku Úradu pre Verejné Obstarávania: <em>www.uvo.gov.sk</em>.
+	&nbsp;&nbsp;&nbsp;&nbsp;Veríme, že Vás aspoň jedno obstarávanie zaujalo. Pre získanie zoznamu všetkých aktuálnych obstarávaní odporúčame navštíviť našu stránku: <em>obstaravania.verejne.digital</em> alebo oficiálnu stránku Úradu pre Verejné Obstarávania: <em>www.uvo.gov.sk</em>.
+
+<p class="ending">
+Ak máte ľubovoľné otázky, pripomienky, alebo si neželáte dostávať podobné notifikácie v budúcnosti, prosím kontaktuje nás na ľubovoľnú z nižšie uvedených adries.
+</p>
 	
-	<p class="signature">
-	S pozdravom,<br/>
-	<em>Tím <strong>verejne</strong>.digital</em></p>
+<p class="signature">
+	S pozdravom,<br/><br/><br/>
+
+	<em>Tím <strong>verejne.digital</strong></em><br/>
+	OZ Chcemvediet.sk<br/>
+	Karpatské námestie 10A<br/>
+	83106 Bratislava<br/>
+	<br/>
+	<i>facebook.com/verejne.digital</i><br/>
 </p>

@@ -154,7 +154,8 @@ def get_asset_declarations(db, PersonId):
             compensations,
             other_income,
             offices_other,
-            year
+            year,
+            source
         FROM
             AssetDeclarations
         WHERE
