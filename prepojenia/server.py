@@ -91,7 +91,7 @@ class Relations:
         return path
 
     # Start exploring from list start. Never explore beyond distance cap.
-    # If return_all is True, return id's of all explored vertices
+    # If return_all is True, return distances of all explored vertices from the start set
     # If return_all is False, return the shortest path to a vertex in the list end
     def dijkstra(self, start, end, cap=999999999, return_all=False):
         # If start and end share entities, return the intersection
@@ -131,7 +131,7 @@ class Relations:
                 if (edge[0] != vertex): break
                 add(edge[1], distance + edge[2], vertex)
         
-        if return_all: return pred.keys()
+        if return_all: return distances
 
         if found == -1: return []
         path = []
@@ -142,7 +142,30 @@ class Relations:
         path.reverse()
         return path
 
+    def subgraph(self, set_A, set_B):
+        # Compute distance of each vertex from A and from B
+        dists_A = self.dijkstra(set_A, set_B, return_all=True)
+        dists_B = self.dijkstra(set_B, set_A, return_all=True)
+
+        # Build subpgraph's vertices
+        vertices = set()
+        vertices.update(set_A)
+        vertices.update(set_B)
+        cap = 10
+        for v in dists_A:
+            if (v in dists_B) and (dists_A[v] + dists_B[v] <= cap):
+                vertices.add(v)
+
+        # Build subgraph's edges
+        edges = []
+        for v1, v2, length in self.edges:
+            if (v1 in vertices) and (v2 in vertices):
+                edges.append((v1, v2, length))
+
+        return {'vertices': vertices, 'edges': edges}
+
 relations = Relations()
+
 
 # All individual hooks inherit from this class outputting jsons
 # Actual work of subclasses is done in method process
@@ -181,11 +204,20 @@ class Neighbourhood(MyServer):
         cap = int(self.request.GET["cap"])
         return self.returnJSON(relations.dijkstra(start, [], cap=cap, return_all=True))
 
+class Subgraph(MyServer):
+    def process(self):
+        data = parseStartEnd(self.request)
+        if data is None:
+            self.abort(400, detail="Could not parse start and/or end eIDs")
+        start, end = data
+        return self.returnJSON(relations.subgraph(start, end))
+
 def main():
   app = webapp2.WSGIApplication([
       ('/connection', Connection),
       ('/shortest', ShortestPath),
-      ('/neighbourhood', Neighbourhood)
+      ('/neighbourhood', Neighbourhood),
+      ('/subgraph', Subgraph),
       ], debug=False)
 
   parser = argparse.ArgumentParser()

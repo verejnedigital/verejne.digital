@@ -3,6 +3,7 @@ import io
 import json
 import math
 import requests
+import sys
 import time
 import unicodedata
 
@@ -92,3 +93,8 @@ def json_dump_utf8(var, path, indent=4, flatten_level=None):
             data = data.replace(flatten_string, ' ')
             data = data.replace('\n' + ' '*(indent*(flatten_level-1)) + ']', ']')
         f.write(unicode(data))
+
+# --- REPORTING ---
+def print_progress(string):
+    sys.stdout.write('\r%s' % (string))
+    sys.stdout.flush()
