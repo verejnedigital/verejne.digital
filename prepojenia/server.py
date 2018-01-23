@@ -11,6 +11,8 @@ import random
 import webapp2
 import yaml
 
+from db import db_connect, db_query
+
 def log(s):
   print "LOG: " + s
 
@@ -147,14 +149,36 @@ class Relations:
         dists_A = self.dijkstra(set_A, set_B, return_all=True)
         dists_B = self.dijkstra(set_B, set_A, return_all=True)
 
-        # Build subpgraph's vertices (as a set)
-        vertices = set()
-        vertices.update(set_A)
-        vertices.update(set_B)
-        cap = 10
+        # Determine subpgraph's vertices (eIDs)
+        vertices_eids = set()
+        vertices_eids.update(set_A)
+        vertices_eids.update(set_B)
+        cap = 8
         for v in dists_A:
             if (v in dists_B) and (dists_A[v] + dists_B[v] <= cap):
-                vertices.add(v)
+                vertices_eids.add(v)
+
+        # Obtain entity name for chosen vertices
+        db = db_connect()
+        q = """
+            SET search_path = 'mysql';
+            SELECT eid, entity_name FROM entities
+            WHERE entities.eid IN %s;
+            """
+        q_data = (tuple(vertices_eids),)
+        rows = db_query(db, q, q_data)
+        db.close()
+        eid_to_name = {row['eid']: row['entity_name'] for row in rows}
+
+        # Add entity names and distances to vertices
+        vertices = []
+        for eid in vertices_eids:
+            vertices.append({
+                'eid': eid,
+                'entity_name': eid_to_name[eid],
+                'distance_from_A': dists_A.get(eid, None),
+                'distance_from_B': dists_B.get(eid, None),
+                })
 
         # Build subgraph's edges
         edges = []
@@ -162,8 +186,6 @@ class Relations:
             if (v1 in vertices) and (v2 in vertices):
                 edges.append((v1, v2, length))
 
-        # Convert vertices into a list and return
-        vertices = list(vertices)
         return {'vertices': vertices, 'edges': edges}
 
 relations = Relations()
