@@ -183,7 +183,7 @@ class Relations:
         # Build subgraph's edges
         edges = []
         for v1, v2, length in self.edges:
-            if (v1 in vertices) and (v2 in vertices):
+            if (v1 in vertices_eids) and (v2 in vertices_eids):
                 edges.append((v1, v2, length))
 
         return {'vertices': vertices, 'edges': edges}
