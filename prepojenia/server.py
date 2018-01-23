@@ -147,7 +147,7 @@ class Relations:
         dists_A = self.dijkstra(set_A, set_B, return_all=True)
         dists_B = self.dijkstra(set_B, set_A, return_all=True)
 
-        # Build subpgraph's vertices
+        # Build subpgraph's vertices (as a set)
         vertices = set()
         vertices.update(set_A)
         vertices.update(set_B)
@@ -162,6 +162,8 @@ class Relations:
             if (v1 in vertices) and (v2 in vertices):
                 edges.append((v1, v2, length))
 
+        # Convert vertices into a list and return
+        vertices = list(vertices)
         return {'vertices': vertices, 'edges': edges}
 
 relations = Relations()
