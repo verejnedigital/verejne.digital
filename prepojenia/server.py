@@ -148,14 +148,15 @@ class Relations:
         # Compute distance of each vertex from A and from B
         dists_A = self.dijkstra(set_A, set_B, return_all=True)
         dists_B = self.dijkstra(set_B, set_A, return_all=True)
+        dist_AB = min([dists_A[v] for v in set_B if v in dists_A])
 
-        # Determine subpgraph's vertices (eIDs)
+        # Determine subgraph's vertices (eIDs)
         vertices_eids = set()
         vertices_eids.update(set_A)
         vertices_eids.update(set_B)
-        cap = 8
+        tolerance = 1
         for v in dists_A:
-            if (v in dists_B) and (dists_A[v] + dists_B[v] <= cap):
+            if (v in dists_B) and (dists_A[v] + dists_B[v] <= dist_AB + tolerance):
                 vertices_eids.add(v)
 
         # Obtain entity name for chosen vertices

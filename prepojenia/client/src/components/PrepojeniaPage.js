@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { browserHistory } from 'react-router';
 import InfoLoader from './info/InfoLoader';
+import Subgraph from './Subgraph';
 import * as serverAPI from '../actions/serverAPI';
 
 import Navigation from './Navigation';
@@ -34,6 +35,7 @@ class PrepojeniaPage extends Component {
       query: {
         eid1: entitysearch1,
         eid2: entitysearch2,
+        graph: this.props.location.query.graph,
       },
     });
     this.setState({
@@ -137,6 +139,7 @@ class PrepojeniaPage extends Component {
             </div>
             {this.state.connections && this.state.connections.length > 0 ? (
               <div className="results container-fluid">
+                {this.props.location.query.graph ? <Subgraph eids_A={this.state.entity1.eids} eids_B={this.state.entity2.eids} /> : ""}
                 {this.state.connections.map(connEid =>
                   <InfoLoader key={connEid} eid={connEid} hasConnectLine />,
                 )}

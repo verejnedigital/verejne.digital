@@ -23,7 +23,15 @@ export function searchEntity(query, cb) {
 }
 
 export function connection(eid1, eid2, cb) {
-  fetch(`api/v/connection?eid1=${eid1}&eid2=${eid2}`, {
+  fetch(`api/p/connection?eid1=${eid1}&eid2=${eid2}`, {
+    accept: 'application/json',
+  }).then(checkStatus)
+    .then(parseJSON)
+    .then(cb);
+}
+
+export function subgraph(eid1, eid2, cb) {
+  fetch(`api/p/subgraph?eid1=${eid1}&eid2=${eid2}&ueao`, {
     accept: 'application/json',
   }).then(checkStatus)
     .then(parseJSON)
@@ -32,6 +40,14 @@ export function connection(eid1, eid2, cb) {
 
 export function getInfo(eid, cb) {
   fetch(`api/v/getInfo?eid=${eid}`, {
+    accept: 'application/json',
+  }).then(checkStatus)
+    .then(parseJSON)
+    .then(cb);
+}
+
+export function getRelated(eid, cb) {
+  fetch(`api/v/getRelated?eid=${eid}`, {
     accept: 'application/json',
   }).then(checkStatus)
     .then(parseJSON)
