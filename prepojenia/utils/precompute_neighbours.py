@@ -183,7 +183,7 @@ def is_merge_desired(name1, name2):
     # return True
 
 def consolidate_people(db):
-    print('Consolidating people...')
+    log('Consolidating people...')
 
     # Get helper data
     surnames = read_surnames()
@@ -244,39 +244,28 @@ def consolidate_people(db):
     IDs_list, eIDs_list = zip(*[(ID, eIDs[ID]) for ID in sorted(eIDs.keys()) if ID != eIDs[ID]])
     return IDs_list, eIDs_list, edges
 
-def consolidate_companies():
-    # Connect to database
-    log("Merging companies.")
-    log("Connecting to the database")
-    with open("utils/db_config.yaml", "r") as stream:
-        config = yaml.load(stream)
+def consolidate_companies(db):
+    log('Merging companies...')
 
-    db = psycopg2.connect(user=config["user"], dbname=config["db"])
-    cur = db.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    cur.execute("SET search_path = 'mysql'")
+    # For each ID, compute the smallest ID sharing the same ICO
+    q = """
+        SELECT id, minid FROM (
+            SELECT
+                id, min(id) OVER (PARTITION BY ico) AS minid
+            FROM (
+                (SELECT ico, id FROM firmy_data WHERE (ico > 10000) AND id IS NOT NULL) UNION
+                (SELECT ico, id FROM new_orsr_data WHERE (ico > 10000) AND id IS NOT NULL) UNION
+                (SELECT ico, id FROM orsresd_data WHERE (ico > 10000) AND id IS NOT NULL)
+            ) AS companies
+        ) AS withMinID
+        WHERE id != minid;
+        """
+    rows = db.query(q)
 
-    sql = "((SELECT ico, id FROM firmy_data WHERE (ico > 10000) and id IS NOT NULL) union " \
-        + "(SELECT ico, id FROM new_orsr_data WHERE (ico > 10000) and id IS NOT NULL) union " \
-        + "(SELECT ico, id FROM orsresd_data WHERE (ico > 10000) and id IS NOT NULL)) ORDER BY ico LIMIT %s"
-    cur.execute(sql, [int(config["relations_to_load"])])
-    ids = []
-    eids = []
-    last_ico = -1
-    last_eid = -1
-    for row in cur:
-        current_eid = row["id"]
-        current_ico = row["ico"]
-        if (last_ico == current_ico):
-            ids.append(current_eid)
-            eids.append(last_eid);
-            current_eid = last_eid
-        last_ico = current_ico
-        last_eid = current_eid
-
-    cur.close()
-    db.close()
-    log("DONE consolidate companies")
-    return ids, eids
+    # set eID to the smallest ID with the same ICO
+    IDs, eIDs = zip(*[(row['id'], row['minid']) for row in rows])
+    log("DONE consolidating companies")
+    return IDs, eIDs
 
 def update_eids_of_ids(cur, ids, eids):
     print "Updating eids", len(ids), len(eids)
@@ -292,7 +281,7 @@ def consolidate_entities(read_only):
     db = DatabaseConnection(path_config='utils/db_config.yaml', search_path='mysql')
 
     ids1, eids1, edges = consolidate_people(db)
-    ids2, eids2 = consolidate_companies()
+    ids2, eids2 = consolidate_companies(db)
 
     cur = db.dict_cursor()
     # 1. Reset eids to be equal to ids in entities.
