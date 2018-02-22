@@ -194,18 +194,18 @@ class KatasterInfoLocation(MyServer):
         tolerance = 0.00001
         circumvent_geoblocking = True
         verbose = False
-        return self.returnJSON(get_cadastral_data_for_coordinates(lat, lon, tolerance, circumvent_geoblocking, verbose))
+        self.returnJSON(get_cadastral_data_for_coordinates(lat, lon, tolerance, circumvent_geoblocking, verbose))
 
 class KatasterInfoCompany(MyServer):
     def process(self):
         company_name = self.request.GET["name"].encode("utf8").decode("utf8")
         circumvent_geoblocking = True
         verbose = False
-        return self.returnJSON(get_cadastral_data_for_company(company_name, circumvent_geoblocking, verbose))
+        self.returnJSON(get_cadastral_data_for_company(company_name, circumvent_geoblocking, verbose))
 
 class KatasterInfoPerson(MyServer):
     def process(self):
-        return self.returnJSON({})
+        self.returnJSON({})
 
 class KatasterInfoPolitician(MyServer):
     def process(self):
@@ -218,7 +218,7 @@ class KatasterInfoPolitician(MyServer):
         db = db_connect()
         Parcels = get_Parcels_owned_by_Person(db, politician_id)
         db.close()
-        return self.returnJSON(Parcels)
+        self.returnJSON(Parcels)
 
 class InfoPolitician(MyServer):
     def process(self):
@@ -235,7 +235,7 @@ class InfoPolitician(MyServer):
 
         if politician is None:
             self.abort(404, detail="Could not find politician with provided 'id'")
-        return self.returnJSON(politician)
+        self.returnJSON(politician)
 
 class AssetDeclarations(MyServer):
     def process(self):
@@ -248,7 +248,7 @@ class AssetDeclarations(MyServer):
         db = db_connect()
         declarations = get_asset_declarations(db, politician_id)
         db.close()
-        return self.returnJSON(declarations)
+        self.returnJSON(declarations)
 
 class ListPoliticians(MyServer):
     def process(self):
@@ -257,7 +257,8 @@ class ListPoliticians(MyServer):
         db.close()
 
         # Return politicians augmented with property counts as JSON
-        return self.returnJSON(politicians)
+        self.returnJSON(politicians)
+
 
 def main():
   parser = argparse.ArgumentParser()
