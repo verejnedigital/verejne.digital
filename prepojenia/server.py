@@ -13,12 +13,10 @@ import yaml
 
 from db import db_connect, db_query
 
+
 def log(s):
   print "LOG: " + s
 
-def errorJSON(code, text):
-  d = {"code": code, "message": "ERROR: " + text}
-  return d
 
 class Relations:
     edges = []
@@ -215,14 +213,14 @@ class Connection(MyServer):
     def process(self):
         data = parseStartEnd(self.request)
         if data is None:
-          self.returnJSON(errorJSON(400, "Incorrect input text"))
-        else:
-          self.returnJSON(relations.bfs(data[0], data[1]))
+          self.abort(400, detail="Incorrect input text")
+        self.returnJSON(relations.bfs(data[0], data[1]))
 
 class ShortestPath(MyServer):
     def process(self):
         data = parseStartEnd(self.request)
-        if data is None: self.returnJSON(errorJSON(400, "Incorrect input text"))
+        if data is None:
+          self.abort(400, detail="Incorrect input text")
         else: self.returnJSON(relations.dijkstra(data[0], data[1]))
 
 class Neighbourhood(MyServer):

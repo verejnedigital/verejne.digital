@@ -29,10 +29,6 @@ loadDataSources()
 def log(s):
     print "LOG: " + s
 
-def errorJSON(code, text):
-    d = {"code": code, "message": "ERROR: " + text}
-    return d
-
 ########################################
 # Server state is stored in this class
 ########################################
@@ -62,27 +58,25 @@ class GetEntities(MyServer):
                     self.request.GET.get("restrictToSlovakia", False))
             level = int(self.request.GET.get("level", 3))
         except:
-            self.returnJSON(errorJSON(400, "Inputs are not floating points"))
-            return
+            self.abort(400, detail="Inputs are not floating points")
 
         if (level == 0) and ((lat2 - lat1) + (lng2 - lng1) > 2):
-            self.returnJSON(errorJSON(400, 
-                        "Requested area is too large. If you want to download "
-                        "data for your own use, please contact us on Facebook."))
-            return
+            self.abort(400, detail=("Requested area is too large. If you want to download "
+                                    "data for your own use, please contact us on Facebook."))
 
         self.response.headers['Content-Type'] = 'application/json'
         entities.getEntities(
                 self.response, lat1, lng1, lat2, lng2, level, restrictToSlovakia)
   
+
 class GetRelated(MyServer):
     def get(self):
        try:
            eid = int(self.request.GET["eid"])
        except:
-           self.returnJSON(errorJSON(400, "Input is not an integer"))
-           return
+           self.abort(400, detail="Input is not an integer")
        self.returnJSON(entities.getRelated(eid)) 
+
 
 # Read info from all info tables and returns all related entities for the given eid
 class GetInfo(MyServer):
@@ -91,8 +85,7 @@ class GetInfo(MyServer):
         try:
             eid = int(self.request.GET["eid"])
         except:
-            self.returnJSON(errorJSON(400, "Input is not an integer"))
-            return
+            self.abort(400, detail="Input is not an integer")
 
         # Copy total sum of contracts if present
         result = {}
@@ -127,8 +120,7 @@ class SearchEntity(MyServer):
             text = self.request.GET["text"].encode("utf8")
         except:
             print "unable to parse"
-            self.returnJSON(errorJSON(400, "Incorrect input text"))
-            return
+            self.abort(400, detail="Incorrect input text")
         with db.getCursor() as cur:
             sql = "SELECT DISTINCT eid AS eid FROM entities " + \
                   "WHERE to_tsvector('unaccent', entity_name) @@ plainto_tsquery('unaccent', %s) " + \
@@ -154,8 +146,7 @@ class SearchEntityByNameAndAddress(MyServer):
             address = self.request.GET["address"].encode("utf8")
         except:
             print("SearchEntityByNameAndAddress: Unable to parse input")
-            self.returnJSON(errorJSON(400, "Incorrect input text"))
-            return
+            self.abort(400, "Incorrect input text")
 
         # Carry-out the logic
         q = """
@@ -204,8 +195,7 @@ class IcoRedirect(MyServer):
         try:
             ico = int(self.request.GET["ico"])
         except:
-            self.returnJSON(errorJSON(400, "Incorrect input ico"))
-            return
+            self.abort(400, "Incorrect input ico")
         eid = self.getEidForIco(ico)
         log("icoredirect " + str(ico) + " " + str(eid))
         if (eid is None) or (not eid in entities.eid_to_index):
