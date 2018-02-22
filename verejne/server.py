@@ -239,9 +239,9 @@ def main():
         app,
         host=host,
         port=port,
-        use_threadpool=True,
         request_queue_size=128,
-        threadpoolworkers=32,
+        use_threadpool=True,
+        threadpool_workers=32,
     )
   
 if __name__ == '__main__':
