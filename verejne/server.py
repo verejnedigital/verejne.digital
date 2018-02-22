@@ -82,10 +82,7 @@ class GetRelated(MyServer):
        except:
            self.returnJSON(errorJSON(400, "Input is not an integer"))
            return
-       if str(eid)[0].isdigit(): 
-           self.returnJSON(entities.getRelated(eid)) 
-           return
-       self.returnJSON(errorJSON(400, "Not an entity id"))
+       self.returnJSON(entities.getRelated(eid)) 
 
 # Read info from all info tables and returns all related entities for the given eid
 class GetInfo(MyServer):
@@ -121,7 +118,7 @@ class GetInfo(MyServer):
                 result[table] = current
 
         result["related"] = entities.getRelated(eid)
-        return self.returnJSON(result)
+        self.returnJSON(result)
 
 # Search entity by name
 class SearchEntity(MyServer):
@@ -143,7 +140,7 @@ class SearchEntity(MyServer):
                     result.append({"eid": row["eid"]})
                 except:
                     pass
-            return self.returnJSON(result)
+            self.returnJSON(result)
 
 class SearchEntityByNameAndAddress(MyServer):
     """ Server hook allowing to search for entities by name and address
@@ -180,7 +177,7 @@ class SearchEntityByNameAndAddress(MyServer):
                     result.append({"eid": row["eid"]})
                 except:
                     pass
-            return self.returnJSON(result)
+            self.returnJSON(result)
 
 # For given ico, find the corresponding eid and redirect to to its url.
 # If no matching entity found redirect to default
