@@ -72,7 +72,7 @@ class GetEntities(MyServer):
                 self.response, lat1, lng1, lat2, lng2, level, restrictToSlovakia)
   
 class GetRelated(MyServer):
-    def process(self):
+    def get(self):
        try:
            eid = int(self.request.GET["eid"])
        except:
@@ -85,7 +85,7 @@ class GetRelated(MyServer):
 
 # Read info from all info tables and returns all related entities for the given eid
 class GetInfo(MyServer):
-    def process(self):
+    def get(self):
         global data_sources
         try:
             eid = int(self.request.GET["eid"])
@@ -121,7 +121,7 @@ class GetInfo(MyServer):
 
 # Search entity by name
 class SearchEntity(MyServer):
-    def process(self):
+    def get(self):
         try:
             text = self.request.GET["text"].encode("utf8")
         except:
@@ -145,7 +145,7 @@ class SearchEntityByNameAndAddress(MyServer):
     """ Server hook allowing to search for entities by name and address
         (given in text format). Returns a list of dictionaries, with each
         dictionary of the form {'eid': 123456}. """
-    def process(self):
+    def get(self):
         # Parse input
         try:
             firstname = self.request.GET["firstname"].encode("utf8")
@@ -199,7 +199,7 @@ class IcoRedirect(MyServer):
         if eid is None: eid = getForTable("orsresd_data")
         return eid
 
-    def process(self):
+    def get(self):
         try:
             ico = int(self.request.GET["ico"])
         except:
