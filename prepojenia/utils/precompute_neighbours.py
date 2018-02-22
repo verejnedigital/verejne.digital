@@ -1,8 +1,10 @@
+import argparse
 import codecs
-import sys
 import json
+import os
 import psycopg2
 import psycopg2.extras
+import sys
 import yaml
 
 from collections import defaultdict
@@ -10,7 +12,8 @@ from itertools import groupby
 from math import ceil
 from operator import itemgetter
 
-import read_entities
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../data/db')))
+from db import DatabaseConnection
 
 """
 Input:
@@ -179,50 +182,48 @@ def is_merge_desired(name1, name2):
     #         return False
     # return True
 
-def consolidate_people():
+def consolidate_people(db):
+    log('Consolidating people...')
+
     # Get helper data
     surnames = read_surnames()
     titles = read_titles()
-    
-    # Get entity data
-    #reader = read_entities.read_entities_mock
-    reader = read_entities.read_entities
-    names, ids, lats, lngs = reader()
-    num_entities = len(ids)
 
-    # Arrange entities for sorting by location and subsequent grouping
-    entities_for_grouping = [((lat, lng), name, iid) for name, iid, lat, lng in zip(names, ids, lats, lngs)]
+    # Read from database
+    # TODO: Store locations in a separate database table
+    q = """
+        SELECT
+            array_agg(id ORDER BY id) AS ids,
+            array_agg(entity_name ORDER BY id) AS names
+        FROM entities
+        GROUP BY lat, lng;
+        """
+    cur = db.get_server_side_cursor(q, buffer_size=10000)
 
-    # Initialize eIDs to equal IDs
-    eIDs = {iid: iid for iid in ids}
-
-    # Edges are tuples (ID1, ID2, length)
+    # Initialise map ID->eID and edge list; edges are tuples (ID1, ID2, length)
+    eIDs = {}
     edges = []
 
-    # Iterate through groups of entities sharing same (lat, lng)
-    num_entities_seen = 0
+    # Initialise statistics (for reporting only)
+    num_locations_done = 0
     num_edges = defaultdict(float)
     num_merged = 0
-    last_promile = -1.0
-    for location, group in groupby(sorted(entities_for_grouping), key=itemgetter(0)):
-        # Get IDs and names in this group, sorted by increasing ID
-        ids, names = zip(*sorted([(iid, name) for _, name, iid in group]))
-        group_size = len(ids)
-        #print('Location: %s; group size %d' % (str(location), group_size))
 
+    # Iterate through entity groups sharing same (lat, lng)
+    for ids, names in cur:
         # Parse names in this group
         names_parsed = [parse_entity_name(name, surnames, titles, verbose=False) for name in names]
 
-        # Iterate through distinct pairs of entities at this location
+        # Iterate through distinct pairs of entities in this group
+        group_size = len(ids)
         for i in xrange(group_size):
             for j in xrange(i + 1, group_size):
                 # Check if merge should happen
                 if is_merge_desired(names_parsed[i], names_parsed[j]):
-                    if eIDs[ids[j]] > ids[i]:
+                    if ids[j] not in eIDs:
                         # Thanks to sorting ids[i] < ids[j]
                         eIDs[ids[j]] = ids[i]
                         num_merged += 1
-                        #print('Set eID of %d to %d' % (ids[j], ids[i]))
                 # If no merge is desired, consider adding an edge
                 else:
                     # Compute edge length (depends on group_size and any surnames similarity)
@@ -231,71 +232,40 @@ def consolidate_people():
                         edges.append((ids[i], ids[j], length))
                         num_edges[length] += 1
 
-        num_entities_seen += group_size
-
-        promile = 1000.0 * num_entities_seen / num_entities
-        if promile > last_promile:
-            report_entities = 'Processed entities: %d / %d = %.1f%%' % (num_entities_seen, num_entities, promile / 10)
+        num_locations_done += 1
+        if num_locations_done % 10000 == 0:
+            report_entities = 'Processed locations: %d' % (num_locations_done)
             report_edges = 'Edges: ' + ', '.join(['%.0f: %d' % (l, num_edges[l]) for l in sorted(num_edges.keys())])
             print_progress(report_entities + '; ' + report_edges)
-            last_promile = ceil(promile)
-    print('')
-
-    print('Number of merged eIDs: %d' % (num_merged))
+    print('\nNumber of merged eIDs: %d; number of edges: %d' % (num_merged, len(edges)))
+    cur.close()
 
     # Construct parallel lists of IDs and eIDs
     IDs_list, eIDs_list = zip(*[(ID, eIDs[ID]) for ID in sorted(eIDs.keys()) if ID != eIDs[ID]])
-    '''
-    # (TEMP) Print the lists to a file
-    file_output_merge = '/tmp/output/merge.txt'
-    with open(file_output_merge, 'w') as f:
-        for ID, eID in zip(IDs_list, eIDs_list):
-            f.write('%d | %d\n' % (ID, eID))
-            #print('%d | %d' % (ID, eID))
-
-    # (TEMP) Print the edges to a file
-    file_output_edges = '/tmp/output/edges.txt'
-    with open(file_output_edges, 'w') as f:
-        for ID1, name1, ID2, name2, length in edges:
-            f.write('Add edge of length %.2f between:\n' % (length))
-            f.write('    %d | %s\n' % (ID1, name1.encode('utf-8')))
-            f.write('    %d | %s\n' % (ID2, name2.encode('utf-8')))
-    '''
     return IDs_list, eIDs_list, edges
 
-def consolidate_companies():
-    # Connect to database
-    log("Merging companies.")
-    log("Connecting to the database")
-    with open("utils/db_config.yaml", "r") as stream:
-        config = yaml.load(stream)
+def consolidate_companies(db):
+    log('Merging companies...')
 
-    db = psycopg2.connect(user=config["user"], dbname=config["db"])
-    cur = db.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    cur.execute("SET search_path = 'mysql'")
+    # For each ID, compute the smallest ID sharing the same ICO
+    q = """
+        SELECT id, minid FROM (
+            SELECT
+                id, min(id) OVER (PARTITION BY ico) AS minid
+            FROM (
+                (SELECT ico, id FROM firmy_data WHERE (ico > 10000) AND id IS NOT NULL) UNION
+                (SELECT ico, id FROM new_orsr_data WHERE (ico > 10000) AND id IS NOT NULL) UNION
+                (SELECT ico, id FROM orsresd_data WHERE (ico > 10000) AND id IS NOT NULL)
+            ) AS companies
+        ) AS withMinID
+        WHERE id != minid;
+        """
+    rows = db.query(q)
 
-    sql = "((SELECT ico, id FROM firmy_data WHERE (ico > 10000) and id IS NOT NULL) union " \
-        + "(SELECT ico, id FROM new_orsr_data WHERE (ico > 10000) and id IS NOT NULL) union " \
-        + "(SELECT ico, id FROM orsresd_data WHERE (ico > 10000) and id IS NOT NULL)) ORDER BY ico LIMIT %s"
-    cur.execute(sql, [int(config["relations_to_load"])])
-    ids = []
-    eids = []
-    last_ico = -1
-    last_eid = -1
-    for row in cur:
-        current_eid = row["id"]
-        current_ico = row["ico"]
-        if (last_ico == current_ico):
-            ids.append(current_eid)
-            eids.append(last_eid);
-            current_eid = last_eid
-        last_ico = current_ico
-        last_eid = current_eid
-
-    cur.close()
-    db.close()
-    log("DONE consolidate companies")
-    return ids, eids
+    # set eID to the smallest ID with the same ICO
+    IDs, eIDs = zip(*[(row['id'], row['minid']) for row in rows])
+    log("DONE consolidating companies")
+    return IDs, eIDs
 
 def update_eids_of_ids(cur, ids, eids):
     print "Updating eids", len(ids), len(eids)
@@ -308,16 +278,12 @@ def add_neighbour_edges(cur, edges):
     cur.executemany(sql, ((id1, id1, id2, id2, 'neighbour', l) for (id1, id2, l) in edges))
 
 def consolidate_entities(read_only):
-    ids1, eids1, edges = consolidate_people()
-    ids2, eids2 = consolidate_companies()
-    if read_only:
-        return
+    db = DatabaseConnection(path_config='utils/db_config.yaml', search_path='mysql')
 
-    with open("utils/db_config.yaml", "r") as stream:
-        config = yaml.load(stream)
-    db = psycopg2.connect(user=config["user"], dbname=config["db"])
-    cur = db.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    cur.execute("SET search_path = 'mysql'")
+    ids1, eids1, edges = consolidate_people(db)
+    ids2, eids2 = consolidate_companies(db)
+
+    cur = db.dict_cursor()
     # 1. Reset eids to be equal to ids in entities.
     print "Reset eids"
     cur.execute("update entities set eid = id;")
@@ -337,9 +303,24 @@ def consolidate_entities(read_only):
     cur.execute("UPDATE related SET eid1=entities.eid FROM entities WHERE related.id1=entities.id;")
     cur.execute("UPDATE related SET eid2=entities.eid FROM entities WHERE related.id2=entities.id;")
     cur.close()
-    db.commit()
+    if not read_only:
+        db.commit()
     db.close()
 
-if __name__ == '__main__':
-    consolidate_entities(False)
 
+def main(args_dict):
+    read_only = args_dict['dry_run']
+    consolidate_entities(read_only)
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--dry_run', dest='dry_run', help='do not update the database', action='store_true', default=False)
+    args_dict = vars(parser.parse_args())
+    try:
+        main(args_dict)
+    except:
+        import pdb, sys, traceback
+        type, value, tb = sys.exc_info()
+        traceback.print_exc()
+        pdb.post_mortem(tb)
+        raise

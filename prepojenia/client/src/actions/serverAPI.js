@@ -31,7 +31,7 @@ export function connection(eid1, eid2, cb) {
 }
 
 export function subgraph(eid1, eid2, cb) {
-  fetch(`api/p/subgraph?eid1=${eid1}&eid2=${eid2}&ueao`, {
+  fetch(`api/p/subgraph?eid1=${eid1}&eid2=${eid2}`, {
     accept: 'application/json',
   }).then(checkStatus)
     .then(parseJSON)

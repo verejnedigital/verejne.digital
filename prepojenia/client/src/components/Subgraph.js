@@ -1,29 +1,73 @@
 import React, { Component } from 'react';
+import InfoLoader from './info/InfoLoader';
 import * as serverAPI from '../actions/serverAPI';
 
 import Graph from 'react-graph-vis';
+
+import './Subgraph.css';
 
 const options = {
   layout: {
     hierarchical: false
   },
   edges: {
-    color: "#000000"
+    arrows: {to: {enabled: false}},
+    color: "#000000",
+    hoverWidth: 0,
+  },
+  groups: {
+    source: {
+      color: {background: "#337ab7", border: "#245580", highlight: {background: "#337ab7", border: "#245580"}},
+      font: {color: '#ffffff'}
+    },
+    target: {
+      color: {background: "#337ab7", border: "#245580", highlight: {background: "#337ab7", border: "#245580"}},
+      font: {color: '#ffffff'}
+    },
   },
   interaction: {
-    hover: true
+    hover: false,
+    multiselect: true,
+  },
+  nodes: {
+    color: {
+      background: "white",
+      border: "#cddae3",
+      highlight: {background: "#f2f5f8", border: "#cddae3"}
+    },
+    font: {size: 15, color: "#0062db"},
+    labelHighlightBold: false,
+    shape: "box",
+    shapeProperties: {borderRadius: 4},
   },
   physics:{
     enabled: true,
     barnesHut: {
       gravitationalConstant: -2000,
       centralGravity: 0.3,
-      springLength: 95,
+      springLength: 90,
       springConstant: 0.004,
       damping: 0.09,
-      avoidOverlap: 0
+      avoidOverlap: 0.001
     },
   },
+};
+const style = {
+  width: "100%",
+  height: "600px",
+};
+
+// add (undirected) edge a<->b to edges if not yet present
+function add_edge_if_missing(a, b, edges) {
+  for (var i = 0; i < edges.length; i++)
+    if ((edges.from === a && edges.to === b) || (edges.from === b && edges.to === a))
+      return;
+  edges.push({from: a, to: b});
+};
+
+// hack: extract eID (id) of a given node via converting it to a string
+function get_node_eID(node) {
+  return parseInt(node.toString(), 10)
 };
 
 class Subgraph extends Component {
@@ -33,6 +77,7 @@ class Subgraph extends Component {
       eids_A: props.eids_A,
       eids_B: props.eids_B,
       loading: true,
+      eIDs_detail: [],
     };
     this.loadSubgraph = this.loadSubgraph.bind(this);
   }
@@ -41,31 +86,23 @@ class Subgraph extends Component {
     this.loadSubgraph(this.state.eids_A, this.state.eids_B);
   }
 
-  handleNodeClick(event) {
+  handleSelect(event) {
     var { nodes, edges } = event;
-    if (false) {
-      console.log("Clicked nodes:");
-      console.log(nodes);
-      console.log("Clicked edges:");
-      console.log(edges);
-    }
-    var eid_clicked = parseInt(nodes[0].toString(), 10);
-    console.log("eID of clicked node: " + eid_clicked.toString());
+    var eIDs_selected = nodes.map(get_node_eID);
+    this.setState({eIDs_detail: eIDs_selected});
+  }
 
+  handleNodeDoubleClick(event) {
+    // Query the API for neighbours of the double-clicked node
+    var eid_clicked = get_node_eID(event.nodes);
     serverAPI.getRelated(eid_clicked, (neighbours) => {
+      // Update graph with new neighbours
       var nodes = this.state.graph.nodes.slice();
-      var edges = this.state.graph.edges.slice(); 
-      //neighbours.map(neighbour => {
+      var edges = this.state.graph.edges.slice();
       for (var i = 0; i < neighbours.length; i++) {
         var eid = neighbours[i].eid;
-        var label = neighbours[i].name;
-        console.log("Found related eID " + eid.toString());
-        console.log(label);
-        // TODO: Do we need to guard against re-adding an existing node and/or edge?
-        // Yes, at least edges are duplicated (can see stronger spring behaviour)
-        nodes.push({id: eid, label: label});
-        edges.push({from: eid, to: eid_clicked});
-        edges.push({from: eid_clicked, to: eid});
+        nodes.push({id: eid, label: neighbours[i].name});
+        add_edge_if_missing(eid, eid_clicked, edges);
       }
       var graph = {nodes: nodes, edges: edges};
       this.setState({graph: graph});
@@ -77,51 +114,31 @@ class Subgraph extends Component {
       this.state.eids_A.map(eid => eid.eid).join(),
       this.state.eids_B.map(eid => eid.eid).join(),
       (subgraph) => {
-        var distAB = 4.0;
-
         // construct events
         var events = {
-          select: function(event) {
-            var { nodes, edges } = event;
-            console.log("Selected nodes:");
-            console.log(nodes);
-            console.log("Selected edges:");
-            console.log(edges);
-          },
-          click: this.handleNodeClick.bind(this),
+          select: this.handleSelect.bind(this),
+          doubleClick: this.handleNodeDoubleClick.bind(this),
         };
 
         // build graph
         var subgraph_nodes = subgraph['vertices'];
         var nodes = [];
         for (var i = 0; i < subgraph_nodes.length; i++) {
-          var node = subgraph_nodes[i];
-          var eid = node['eid'];
-          //var label = subgraph_nodes[i]['entity_name'];
-          var label = node['entity_name'];// + "( " + node['distance_from_A'] + ", " + node['distance_from_B'] + ")";
-          var distA = node['distance_from_A'] == null ? 10.0 : node['distance_from_A'];
-          var distB = node['distance_from_B'] == null ? 10.0 : node['distance_from_B'];
-          if (distA > 0 && distA + distAB <= distB)
+          // skip nodes that are not connected to the other end
+          var distA = subgraph_nodes[i]['distance_from_A'];
+          var distB = subgraph_nodes[i]['distance_from_B'];
+          if (distA == null || distB == null)
             continue;
-          if (distB > 0 && distB + distAB <= distA)
-            continue;
-          if (distA + distB > distAB + 1.0)
-            continue;
-          var colorR = 255.0 - 200.0 * distA / distAB;
-          var colorG = 255.0 - 200.0 * distB / distAB;
-          var color = "rgba(" + colorR.toString() + ", " + colorG.toString() + ", 50, 1)";
 
-          var vis_node = {id: eid, label: label, title: 'I have a popup!', color: color};
-          if (distA === 0) {
-            nodes.push({id: eid, label: label, title: label, color: color, x: 100, fixed: {x: true}});
-            continue;
-          }
-          if (distB === 0) {
-            nodes.push({id: eid, label: label, title: label, color: color, x: 800, fixed: {x: true}});
-            continue
-          }
-
-          nodes.push(vis_node);
+          // add node to the graph, with special groups for the source and target nodes
+          var eid = subgraph_nodes[i]['eid'];
+          var label = subgraph_nodes[i]['entity_name'];
+          if (distA === 0)
+            nodes.push({id: eid, label: label, group: "source", x: 0.0});
+          else if (distB === 0)
+            nodes.push({id: eid, label: label, group: "target", x: 150.0 * distA});
+          else
+            nodes.push({id: eid, label: label});
         }
 
         var edges = [];
@@ -129,7 +146,7 @@ class Subgraph extends Component {
         for (i = 0; i < subgraph_edges.length; i++) {
           var from = subgraph_edges[i][0];
           var to = subgraph_edges[i][1];
-          edges.push({from: from, to: to});
+          add_edge_if_missing(from, to, edges);
         }
 
         this.setState({
@@ -146,7 +163,18 @@ class Subgraph extends Component {
         {this.state.loading ? (
           'Prebieha načítavanie grafu ...'
         ) : (
-          <Graph graph={this.state.graph} options={options} events={this.state.events} style={{ height: "400px" }} />
+          <div>
+            Ovládanie:
+            <ul>
+              <li>Ťahanie vrchola: premiestnenie vrchola v grafe</li>
+              <li>Klik na vrchol: zobraziť detailné informácie o vrchole (v boxe pod grafom)</li>
+              <li>Dvojklik na vrchol: pridať do grafu chýbajúcich susedov</li>
+            </ul>
+            <div className="graph">
+              <Graph graph={this.state.graph} options={options} events={this.state.events} style={style} className="graph" />
+            </div>
+            {this.state.eIDs_detail.map(eID => <InfoLoader key={eID} eid={eID} />)}
+          </div>
         )}
       </div>
     );
