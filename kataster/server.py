@@ -280,7 +280,11 @@ def main():
   httpserver.serve(
       app,
       host=host,
-      port=port)
+      port=port,
+      request_queue_size=128,
+      use_threadpool=True,
+      threadpool_workers=32,
+  )
   
 if __name__ == '__main__':
   main()

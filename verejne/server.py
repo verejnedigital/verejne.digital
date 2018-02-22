@@ -29,10 +29,6 @@ loadDataSources()
 def log(s):
     print "LOG: " + s
 
-def errorJSON(code, text):
-    d = {"code": code, "message": "ERROR: " + text}
-    return d
-
 ########################################
 # Server state is stored in this class
 ########################################
@@ -50,16 +46,9 @@ class MyServer(webapp2.RequestHandler):
         self.response.headers['Content-Type'] = 'application/json'
         self.response.write(json.dumps(j, separators=(',',':')))
 
-    def get(self):
-        try:
-            self.process()
-        except:
-            self.returnJSON(errorJSON(
-                500, "Internal server error: sa mi neda vycentrovat!"))
-            traceback.print_exc(file=sys.stdout)
 
 class GetEntities(MyServer):
-    def process(self):
+    def get(self):
         try:
             lat1 = float(self.request.GET["lat1"])
             lat2 = float(self.request.GET["lat2"])
@@ -250,7 +239,10 @@ def main():
         app,
         host=host,
         port=port,
-        use_threadpool=True)
+        use_threadpool=True,
+        request_queue_size=128,
+        threadpoolworkers=32,
+    )
   
 if __name__ == '__main__':
   main()
