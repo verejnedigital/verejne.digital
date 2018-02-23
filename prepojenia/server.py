@@ -197,9 +197,6 @@ class MyServer(webapp2.RequestHandler):
         self.response.headers['Content-Type'] = 'application/json'
         self.response.write(json.dumps(j, separators=(',',':')))
 
-    def get(self):
-        self.process()
-
 
 def parseStartEnd(request):
     try:
@@ -210,27 +207,27 @@ def parseStartEnd(request):
         return None
 
 class Connection(MyServer):
-    def process(self):
+    def get(self):
         data = parseStartEnd(self.request)
         if data is None:
           self.abort(400, detail="Incorrect input text")
         self.returnJSON(relations.bfs(data[0], data[1]))
 
 class ShortestPath(MyServer):
-    def process(self):
+    def get(self):
         data = parseStartEnd(self.request)
         if data is None:
           self.abort(400, detail="Incorrect input text")
         else: self.returnJSON(relations.dijkstra(data[0], data[1]))
 
 class Neighbourhood(MyServer):
-    def process(self):
+    def get(self):
         start = [int(x) for x in (self.request.GET["eid"].split(","))[:50]]
         cap = int(self.request.GET["cap"])
         self.returnJSON(relations.dijkstra(start, [], cap=cap, return_all=True))
 
 class Subgraph(MyServer):
-    def process(self):
+    def get(self):
         data = parseStartEnd(self.request)
         if data is None:
             self.abort(400, detail="Could not parse start and/or end eIDs")

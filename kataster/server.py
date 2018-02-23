@@ -184,11 +184,8 @@ class MyServer(webapp2.RequestHandler):
         self.response.headers['Content-Type'] = 'application/json'
         self.response.write(json.dumps(j, separators=(',',':')))
 
-    def get(self):
-        self.process()
-
 class KatasterInfoLocation(MyServer):
-    def process(self):
+    def get(self):
         lat = float(self.request.GET["lat"])
         lon = float(self.request.GET["lon"])
         tolerance = 0.00001
@@ -197,18 +194,18 @@ class KatasterInfoLocation(MyServer):
         self.returnJSON(get_cadastral_data_for_coordinates(lat, lon, tolerance, circumvent_geoblocking, verbose))
 
 class KatasterInfoCompany(MyServer):
-    def process(self):
+    def get(self):
         company_name = self.request.GET["name"].encode("utf8").decode("utf8")
         circumvent_geoblocking = True
         verbose = False
         self.returnJSON(get_cadastral_data_for_company(company_name, circumvent_geoblocking, verbose))
 
 class KatasterInfoPerson(MyServer):
-    def process(self):
+    def get(self):
         self.returnJSON({})
 
 class KatasterInfoPolitician(MyServer):
-    def process(self):
+    def get(self):
         # Parse politician id
         try:
             politician_id = int(self.request.GET["id"])
@@ -221,7 +218,7 @@ class KatasterInfoPolitician(MyServer):
         self.returnJSON(Parcels)
 
 class InfoPolitician(MyServer):
-    def process(self):
+    def get(self):
         # Parse politician id
         try:
             politician_id = int(self.request.GET["id"])
@@ -238,7 +235,7 @@ class InfoPolitician(MyServer):
         self.returnJSON(politician)
 
 class AssetDeclarations(MyServer):
-    def process(self):
+    def get(self):
         # Parse politician id
         try:
             politician_id = int(self.request.GET["id"])
@@ -251,7 +248,7 @@ class AssetDeclarations(MyServer):
         self.returnJSON(declarations)
 
 class ListPoliticians(MyServer):
-    def process(self):
+    def get(self):
         db = db_connect()
         politicians = get_politicians_with_Folio_counts(db)
         db.close()
