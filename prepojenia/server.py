@@ -13,12 +13,10 @@ import yaml
 
 from db import db_connect, db_query
 
+
 def log(s):
   print "LOG: " + s
 
-def errorJSON(code, text):
-  d = {"code": code, "message": "ERROR: " + text}
-  return d
 
 class Relations:
     edges = []
@@ -199,9 +197,6 @@ class MyServer(webapp2.RequestHandler):
         self.response.headers['Content-Type'] = 'application/json'
         self.response.write(json.dumps(j, separators=(',',':')))
 
-    def get(self):
-        self.process()
-
 
 def parseStartEnd(request):
     try:
@@ -212,30 +207,32 @@ def parseStartEnd(request):
         return None
 
 class Connection(MyServer):
-    def process(self):
+    def get(self):
         data = parseStartEnd(self.request)
-        if data is None: self.returnJSON(errorJSON(400, "Incorrect input text"))
-        else: return self.returnJSON(relations.bfs(data[0], data[1]))
+        if data is None:
+          self.abort(400, detail="Incorrect input text")
+        self.returnJSON(relations.bfs(data[0], data[1]))
 
 class ShortestPath(MyServer):
-    def process(self):
+    def get(self):
         data = parseStartEnd(self.request)
-        if data is None: self.returnJSON(errorJSON(400, "Incorrect input text"))
-        else: return self.returnJSON(relations.dijkstra(data[0], data[1]))
+        if data is None:
+          self.abort(400, detail="Incorrect input text")
+        else: self.returnJSON(relations.dijkstra(data[0], data[1]))
 
 class Neighbourhood(MyServer):
-    def process(self):
+    def get(self):
         start = [int(x) for x in (self.request.GET["eid"].split(","))[:50]]
         cap = int(self.request.GET["cap"])
-        return self.returnJSON(relations.dijkstra(start, [], cap=cap, return_all=True))
+        self.returnJSON(relations.dijkstra(start, [], cap=cap, return_all=True))
 
 class Subgraph(MyServer):
-    def process(self):
+    def get(self):
         data = parseStartEnd(self.request)
         if data is None:
             self.abort(400, detail="Could not parse start and/or end eIDs")
         start, end = data
-        return self.returnJSON(relations.subgraph(start, end))
+        self.returnJSON(relations.subgraph(start, end))
 
 def main():
   app = webapp2.WSGIApplication([

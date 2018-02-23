@@ -58,30 +58,25 @@ class GetEntities(MyServer):
                     self.request.GET.get("restrictToSlovakia", False))
             level = int(self.request.GET.get("level", 3))
         except:
-            self.returnJSON(errorJSON(400, "Inputs are not floating points"))
-            return
+            self.abort(400, detail="Inputs are not floating points")
 
         if (level == 0) and ((lat2 - lat1) + (lng2 - lng1) > 2):
-            self.returnJSON(errorJSON(400, 
-                        "Requested area is too large. If you want to download "
-                        "data for your own use, please contact us on Facebook."))
-            return
+            self.abort(400, detail=("Requested area is too large. If you want to download "
+                                    "data for your own use, please contact us on Facebook."))
 
         self.response.headers['Content-Type'] = 'application/json'
         entities.getEntities(
                 self.response, lat1, lng1, lat2, lng2, level, restrictToSlovakia)
   
+
 class GetRelated(MyServer):
     def get(self):
        try:
            eid = int(self.request.GET["eid"])
        except:
-           self.returnJSON(errorJSON(400, "Input is not an integer"))
-           return
-       if str(eid)[0].isdigit(): 
-           self.returnJSON(entities.getRelated(eid)) 
-           return
-       self.returnJSON(errorJSON(400, "Not an entity id"))
+           self.abort(400, detail="Input is not an integer")
+       self.returnJSON(entities.getRelated(eid)) 
+
 
 # Read info from all info tables and returns all related entities for the given eid
 class GetInfo(MyServer):
@@ -90,8 +85,7 @@ class GetInfo(MyServer):
         try:
             eid = int(self.request.GET["eid"])
         except:
-            self.returnJSON(errorJSON(400, "Input is not an integer"))
-            return
+            self.abort(400, detail="Input is not an integer")
 
         # Copy total sum of contracts if present
         result = {}
@@ -117,7 +111,7 @@ class GetInfo(MyServer):
                 result[table] = current
 
         result["related"] = entities.getRelated(eid)
-        return self.returnJSON(result)
+        self.returnJSON(result)
 
 # Search entity by name
 class SearchEntity(MyServer):
@@ -126,8 +120,7 @@ class SearchEntity(MyServer):
             text = self.request.GET["text"].encode("utf8")
         except:
             print "unable to parse"
-            self.returnJSON(errorJSON(400, "Incorrect input text"))
-            return
+            self.abort(400, detail="Incorrect input text")
         with db.getCursor() as cur:
             sql = "SELECT DISTINCT eid AS eid FROM entities " + \
                   "WHERE to_tsvector('unaccent', entity_name) @@ plainto_tsquery('unaccent', %s) " + \
@@ -139,7 +132,7 @@ class SearchEntity(MyServer):
                     result.append({"eid": row["eid"]})
                 except:
                     pass
-            return self.returnJSON(result)
+            self.returnJSON(result)
 
 class SearchEntityByNameAndAddress(MyServer):
     """ Server hook allowing to search for entities by name and address
@@ -153,8 +146,7 @@ class SearchEntityByNameAndAddress(MyServer):
             address = self.request.GET["address"].encode("utf8")
         except:
             print("SearchEntityByNameAndAddress: Unable to parse input")
-            self.returnJSON(errorJSON(400, "Incorrect input text"))
-            return
+            self.abort(400, "Incorrect input text")
 
         # Carry-out the logic
         q = """
@@ -176,7 +168,7 @@ class SearchEntityByNameAndAddress(MyServer):
                     result.append({"eid": row["eid"]})
                 except:
                     pass
-            return self.returnJSON(result)
+            self.returnJSON(result)
 
 # For given ico, find the corresponding eid and redirect to to its url.
 # If no matching entity found redirect to default
@@ -203,8 +195,7 @@ class IcoRedirect(MyServer):
         try:
             ico = int(self.request.GET["ico"])
         except:
-            self.returnJSON(errorJSON(400, "Incorrect input ico"))
-            return
+            self.abort(400, "Incorrect input ico")
         eid = self.getEidForIco(ico)
         log("icoredirect " + str(ico) + " " + str(eid))
         if (eid is None) or (not eid in entities.eid_to_index):
