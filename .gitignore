@@ -1,0 +1,5 @@
+# TODO this file is intended to be commited
+**/package-lock.json
+.vscode
+**/venv
+*.pyc
