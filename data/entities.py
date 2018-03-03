@@ -12,6 +12,8 @@ class Entities:
 
   def __init__(self, db):
       self.db = db
+      self.read_surnames()
+      self.read_titles()
   
   def read_surnames(self):
       """ Reads in a list of surnames from the provided data file """
@@ -183,16 +185,11 @@ class Entities:
         eid = self.AddNewEntity(ico, name, address_id)
         return eid
   
-  def main(self):
-    self.read_surnames()
-    self.read_titles()
-    print '$',self.GetEntity(123456, 'Rasto Inc.', 77)
-    print '$',self.GetEntity(123456, 'Rasto Inc. 2', 77)
-    print '$',self.GetEntity(None, 'Richard Fico', 77)
-    print '$',self.GetEntity(None, 'Richard Fico', 77)
-    print '$',self.GetEntity(None, 'MUDr Richard Fico', 77)
-    print '$',self.GetEntity(None, 'MUDr Richard Fico - zmrzlina', 77)
-    
 if __name__ == '__main__':
     e = Entities()
-    e.main()
+    print '$',e.GetEntity(123456, 'Rasto Inc.', 77)
+    print '$',e.GetEntity(123456, 'Rasto Inc. 2', 77)
+    print '$',e.GetEntity(None, 'Richard Fico', 77)
+    print '$',e.GetEntity(None, 'Richard Fico', 77)
+    print '$',e.GetEntity(None, 'MUDr Richard Fico', 77)
+    print '$',e.GetEntity(None, 'MUDr Richard Fico - zmrzlina', 77)
