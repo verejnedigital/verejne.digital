@@ -1,5 +1,6 @@
 import psycopg2
 import psycopg2.extras
+from psycopg2.extensions import AsIs
 psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
 psycopg2.extensions.register_type(psycopg2.extensions.UNICODEARRAY)
 import yaml
@@ -44,6 +45,16 @@ class DatabaseConnection():
     def close(self):
         self.conn.close()
 
+
+    def add_values(self, table, values):
+        with self.conn.cursor() as cur:
+            command = ( 
+                    "INSERT INTO %s VALUES (DEFAULT," +
+                    (",".join(["%s"] * len(values))) +
+                    ") RETURNING id"
+            )
+            cur.execute(command, [AsIs(table)] + values)
+            return cur.fetchone()[0]
 
     # --- HELPER METHODS ---
     def rename_schema(self, schema_old, schema_new, verbose=True):
