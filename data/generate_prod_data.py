@@ -5,6 +5,8 @@ import sys
 
 from psycopg2.extensions import AsIs
 
+import entities
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../data/db')))
 from db import DatabaseConnection
 
@@ -28,7 +30,7 @@ class Geocoder:
         with self.db.dict_cursor() as cur:
             cur.execute(
                     "SELECT address, original_address, lat, lng FROM " + cache_table +
-                    " LIMIT 1000000000",
+                    " LIMIT 10000",
             )
             for row in cur:
                 keys = set(
@@ -44,7 +46,7 @@ class Geocoder:
 
 
     def NormalizeAddress(self, address):
-        normalized = address.lower().strip()
+        return address.lower().strip()
 
 
     def GetKeysForAddress(self, address):
@@ -58,7 +60,7 @@ class Geocoder:
             for k in keys:
                 obj = re.search(self.prog, k)
                 if obj:
-                    new_n = k.replace(obj.group(0), " " + obj.group(2) + " ")
+                    new_k = k.replace(obj.group(0), " " + obj.group(2) + " ")
                     if (len(new_k) > 5): result.append(new_k)
             return result
 
@@ -103,7 +105,7 @@ class Geocoder:
         """ Get AddressId for a given string. If the address is not in the cache
         returns None and writes address into the list of address to be processed.
         """
-        print "Geocoding", address
+        #print "Geocoding", address
         for key in self.GetKeysForAddress(address):
             if not key in self.cache:
                 #TODO: insert into table to process later
@@ -111,7 +113,7 @@ class Geocoder:
                 continue
             self.cache_hit += 1
             lat, lng, formatted_address = self.cache[key]
-            print "address -> ", lat, lng, formatted_address
+            print address, " -> ", lat, lng, formatted_address
             with self.db_address_id.dict_cursor() as cur_id:
                 cur_id.execute(
                         "SELECT id FROM Addresses WHERE lat=%s and lng=%s",
@@ -166,12 +168,12 @@ def CreateAndSetProdSchema(db, prod_schema_name):
 
         cur.execute("""
             CREATE TABLE Entities (
-                eid SERIAL PRIMARY KEY,
+                id SERIAL PRIMARY KEY,
                 name TEXT,
                 address_id INTEGER REFERENCES Addresses(id)
             )
         """)
-
+        
 
 
 def ProcessSource(db_source, db_prod, geocoder, entities):
@@ -193,15 +195,16 @@ def ProcessSource(db_source, db_prod, geocoder, entities):
             if name is None: continue
 
             addressId = geocoder.GetAddressId(address.encode("utf8"))
-            print geocoder.GetKeysForAddress(address.encode("utf8"))
             if addressId is None:
                 missed += 1
                 continue
             found += 1;
 
-            eid = entities.GetEntityId(row["ico"], name, address)
+            eid = entities.GetEntity(row["ico"], name, addressId)
+            print name, "-> eid:", eid
             if eid is None:
                 missed_eid += 1
+            print eid
             found_eid += 1
     print "FOUND", found
     print "MISSED", missed
@@ -223,13 +226,15 @@ def main():
 
     geocoder = Geocoder(db_old, db_prod, "mysql.Entities")
     geocoder.GetAddressId("kukucinova 12 bratislava")
-    ProcessSource(db_source, db_prod, geocoder)
+
+    entities_lookup = entities.Entities(db_prod)
+    ProcessSource(db_source, db_prod, geocoder, entities_lookup)
 
 
     db_old.commit()
     db_old.close()
-    db_prod.conn.rollback()
-    #db_new.commit()
+    #db_prod.conn.rollback()
+    db_prod.commit()
     db_prod.close()
 
     db_source.commit()

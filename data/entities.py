@@ -6,10 +6,12 @@ class Entities:
   address2eid = {}
   eid2name = {}
   ico2eid = {}
-  # TODO: Delete usage of X
-  X = 1
   surnames = {}
   titles = []
+  db = None
+
+  def __init__(self, db):
+      self.db = db
   
   def read_surnames(self):
       """ Reads in a list of surnames from the provided data file """
@@ -34,7 +36,7 @@ class Entities:
           i += 1
       return i
   
-  def parse_entity_name(self, entity_name, surnames, titles, verbose=True):
+  def parse_entity_name(self, entity_name, surnames, titles, verbose=False):
       """
       Input: entity_name (can contain academic titles and name of Zivnost)
       Output:
@@ -137,7 +139,7 @@ class Entities:
     if not address_id in self.address2eid:
       return -1 
     for candidate in self.address2eid[address_id]:
-      print 'candidate:',candidate,self.eid2name[candidate]
+      #print 'candidate:',candidate,self.eid2name[candidate]
       if self.is_merge_desired(name, self.eid2name[candidate]):
         return candidate
     return -1
@@ -147,18 +149,18 @@ class Entities:
     self.ico2eid[ico] = eid  
     
   def AddNewEntity(self, ico, name, address_id):
-    print 'New Entity added to table', name, address_id
-    self.X = self.X + 1
+    #print 'New Entity added to table', name, address_id
+    eid = self.db.add_values("Entities", [name, address_id])
     # TODO: Add to database and get new X from DB
     if ico is None:
-      self.eid2name[self.X] = name
+      self.eid2name[eid] = name
       if address_id in self.address2eid:
-        self.address2eid[address_id].append(self.X)
+        self.address2eid[address_id].append(eid)
       else:
-        self.address2eid[address_id] = [self.X]
+        self.address2eid[address_id] = [eid]
     else:  
-      self.AddICO(self.X, ico)
-    return self.X
+      self.AddICO(eid, ico)
+    return eid
     
   def GetEntity(self, ico, name, address_id):
     eid = None
