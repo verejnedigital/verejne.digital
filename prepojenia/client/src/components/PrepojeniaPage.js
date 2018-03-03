@@ -85,6 +85,15 @@ class PrepojeniaPage extends Component {
       });
   }
 
+  translateZaznam(count) {
+    if (count === 1) {
+      return <span>Nájdený <strong>{count}</strong> záznam</span>;
+    } else if (count > 1 && count < 5) {
+      return <span>Nájdené <strong>{count}</strong> záznamy</span>;
+    }
+    return <span>Nájdených <strong>{count}</strong> záznamov</span>;
+  }
+
   render() {
     return (
       <div className="container-fluid">
@@ -126,20 +135,20 @@ class PrepojeniaPage extends Component {
               )}
               {this.state.entity1 &&
                 <span id="search-status1" className="searchStatus">
-                  Nájdených <strong>{this.state.entity1.eids.length}</strong> záznamov
-                  pre &quot;{this.state.entity1.name}&quot;.&nbsp;
+                  {this.translateZaznam(this.state.entity1.eids.length)} pre
+                  &quot;{this.state.entity1.name}&quot;.&nbsp;
                 </span>
               }
               {this.state.entity2 &&
                 <span id="search-status2" className="searchStatus">
-                  Nájdených <strong>{this.state.entity2.eids.length}</strong> záznamov
-                  pre &quot;{this.state.entity2.name}&quot;.&nbsp;
+                  {this.translateZaznam(this.state.entity2.eids.length)} pre
+                  &quot;{this.state.entity2.name}&quot;.&nbsp;
                 </span>
               }
             </div>
             {this.state.connections && this.state.connections.length > 0 ? (
               <div className="results container-fluid">
-                {this.props.location.query.graph ? <Subgraph eids_A={this.state.entity1.eids} eids_B={this.state.entity2.eids} /> : ""}
+                {this.props.location.query.graph ? <Subgraph eids_A={this.state.entity1.eids} eids_B={this.state.entity2.eids} /> : ''}
                 {this.state.connections.map(connEid =>
                   <InfoLoader key={connEid} eid={connEid} hasConnectLine />,
                 )}
