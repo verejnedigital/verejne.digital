@@ -10,9 +10,6 @@ X = 1
 surnames = {}
 titles = []
 
-def log(s):
-    print "LOG: " + s
-
 def read_surnames():
     """ Reads in a list of surnames from the provided data file """
     file_surnames = 'data_surnames.txt'
@@ -36,7 +33,7 @@ def longest_common_prefix(str1, str2):
         i += 1
     return i
 
-def parse_entity_name(entity_name, surnames, titles, verbose=False):
+def parse_entity_name(entity_name, surnames, titles, verbose=True):
     """
     Input: entity_name (can contain academic titles and name of Zivnost)
     Output:
@@ -185,13 +182,14 @@ def GetEntity(ico, name, address_id):
       return eid
 
 def main():
-  print '$',GetEntity(123456, 'Rasto Inc.', 77)
-  print '$',GetEntity(123456, 'Rasto Inc. 2', 77)
-  print '$',GetEntity(None, 'Rasto L', 77)
-  print '$',GetEntity(None, 'Rasto L', 77)
-  print '$',GetEntity(None, 'MUDr Rasto L', 77)
   surnames = read_surnames()
   titles = read_titles()
+  print '$',GetEntity(123456, 'Rasto Inc.', 77)
+  print '$',GetEntity(123456, 'Rasto Inc. 2', 77)
+  print '$',GetEntity(None, 'Richard Fico', 77)
+  print '$',GetEntity(None, 'Richard Fico', 77)
+  print '$',GetEntity(None, 'MUDr Richard Fico', 77)
+  print '$',GetEntity(None, 'MUDr Richard Fico - zmrzlina', 77)
   
 if __name__ == '__main__':
   main()
