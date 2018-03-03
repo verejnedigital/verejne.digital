@@ -67,14 +67,10 @@ def update_CSV_source(source, timestamp, dry_run):
         delimiter = str(source['delimiter']) # requires string, not unicode
         reader = csv.reader(f, delimiter=delimiter)
 
-        # Extract column names from header line
+        # Extract column names from header line and then the actual data
         header = next(reader)
         column_names = [column_name.decode('utf-8') for column_name in header]
-        if source['end_delimiter']:
-            column_names = column_names[:-1]
-
-        # Extract the actual data, ignoring the end delimiter if needed
-        data = [tuple(row[:-1]) if source['end_delimiter'] else tuple(row) for row in reader]
+        data = [tuple(row) for row in reader]
     print('Loaded CSV file with %d columns and %d data rows' % (len(column_names), len(data)))
 
     # Create postgres schema
