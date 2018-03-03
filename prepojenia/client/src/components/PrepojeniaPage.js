@@ -14,6 +14,7 @@ class PrepojeniaPage extends Component {
     this.state = {
       entitysearch1: (props.location && props.location.query.eid1) || '',
       entitysearch2: (props.location && props.location.query.eid2) || '',
+      namesCache: {},
       searching: false,
     };
     this.searchConnection = this.searchConnection.bind(this);
@@ -85,13 +86,39 @@ class PrepojeniaPage extends Component {
       });
   }
 
-  translateZaznam(count) {
+  translateZaznam(count, onClickMethod) {
+    const button = <strong onClick={onClickMethod}>{count}</strong>;
     if (count === 1) {
-      return <span>Nájdený <strong>{count}</strong> záznam</span>;
+      return <span>Nájdený {button} záznam</span>;
     } else if (count > 1 && count < 5) {
-      return <span>Nájdené <strong>{count}</strong> záznamy</span>;
+      return <span>Nájdené {button} záznamy</span>;
     }
-    return <span>Nájdených <strong>{count}</strong> záznamov</span>;
+    return <span>Nájdených {button} záznamov</span>;
+  }
+
+  showAlternatives(entity) {
+    this.loadAlternativeEid(this.state[entity].eids);
+  }
+
+  loadAlternativeEid(eids) {
+    eids.map(eid =>
+      !this.state.namesCache[eid.eid] &&
+        this.setState({
+          namesCache: {
+            ...this.state.namesCache,
+            [eid.eid]: 'loading',
+          },
+        }, () =>
+          serverAPI.getInfo(eid.eid, (data) => {
+            this.setState({
+              namesCache: {
+                ...this.state.namesCache,
+                [eid.eid]: data.entities[0].entity_name,
+              },
+            });
+          }),
+      ),
+    );
   }
 
   render() {
@@ -135,16 +162,24 @@ class PrepojeniaPage extends Component {
               )}
               {this.state.entity1 &&
                 <span id="search-status1" className="searchStatus">
-                  {this.translateZaznam(this.state.entity1.eids.length)} pre
+                  {this.translateZaznam(this.state.entity1.eids.length, () => this.showAlternatives('entity1'))} pre
                   &quot;{this.state.entity1.name}&quot;.&nbsp;
                 </span>
               }
               {this.state.entity2 &&
                 <span id="search-status2" className="searchStatus">
-                  {this.translateZaznam(this.state.entity2.eids.length)} pre
+                  {this.translateZaznam(this.state.entity2.eids.length, () => this.showAlternatives('entity2'))} pre
                   &quot;{this.state.entity2.name}&quot;.&nbsp;
                 </span>
               }
+              {this.state.entity1 && this.state.entity1.eids &&
+                this.state.entity1.eids.map(eid =>
+                  <span key={eid.eid}>{this.state.namesCache[eid.eid]}</span>,
+              )}
+              {this.state.entity2 && this.state.entity2.eids &&
+                this.state.entity2.eids.map(eid =>
+                  <span key={eid.eid}>{this.state.namesCache[eid.eid]}</span>,
+              )}
             </div>
             {this.state.connections && this.state.connections.length > 0 ? (
               <div className="results container-fluid">
