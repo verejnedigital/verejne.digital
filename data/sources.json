@@ -1,19 +1,40 @@
 [
     {
         "name": "ekosystem_RPO",
-        "path": "/home/matej_balog/data/source_ekosystem_RPO.sql.gz",
+        "path": "/tmp/source_ekosystem_RPO.sql.gz",
         "schemas":
         [
             "rpo"
         ],
+        "type": "SQL",
         "url": "https://s3.eu-central-1.amazonaws.com/ekosystem-slovensko-digital-dumps/rpo.sql.gz"
     },
     {
+        "delimiter": ";",
+        "end_delimiter": true,
+        "name": "finstat",
+        "path": "/tmp/source_finstat.csv",
+        "schemas": [],
+        "table_name": "company_stats",
+        "type": "CSV"
+    },
+    {
         "name": "internal_profil",
-        "path": "/home/matej_balog/data/source_internal_profil.sql",
+        "path": "/home/matej_balog/data/source_internal_profil.sql.gz",
         "schemas":
         [
             "kataster"
-        ]
+        ],
+        "type": "SQL"
+    },
+    {
+        "name": "vd_profil",
+        "path": "/tmp/source_vd_profil.sql.gz",
+        "schemas":
+        [
+            "kataster"
+        ],
+        "type": "SQL",
+        "url": "https://verejne.digital/source_internal_profil.sql.gz"
     }
 ]

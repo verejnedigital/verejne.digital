@@ -36,6 +36,8 @@ class Info extends Component {
     const { data, eid } = this.props;
     const entity = data.entities[0];
     const findata = getFinancialData(data, extractIco(data));
+    const zisk = findata.hasOwnProperty('zisk16') ? findata.zisk16 : findata.zisk15;
+    const trzby = findata.hasOwnProperty('trzby16') ? findata.trzby16 : findata.trzby15;
     return (
       <div className="result">
         <span className="entityName">
@@ -114,14 +116,14 @@ class Info extends Component {
                 </td>
               </tr>
             }
-            {findata.ico && findata.zisk15 !== undefined && findata.zisk15 !== 0 &&
+            {findata.ico && zisk !== undefined && zisk !== 0 &&
               <tr>
                 <td colSpan="2">
                   <span><strong>Zisk v 2016:</strong>&nbsp;
                     <TabLink
                       isMapView={false}
                       url={icoUrl(findata.ico)}
-                      text={showNumberCurrency(findata.zisk15)}
+                      text={showNumberCurrency(zisk)}
                     />
                   </span>
                   {findata.zisk_trend !== 0 &&
@@ -132,14 +134,14 @@ class Info extends Component {
                 </td>
               </tr>
               }
-            {findata.ico && findata.trzby15 !== undefined && findata.trzby15 !== 0 &&
+            {findata.ico && trzby !== undefined && trzby !== 0 &&
               <tr>
                 <td colSpan="2">
                   <span><strong>Tržby v 2016:</strong>&nbsp;
                     <TabLink
                       isMapView={false}
                       url={icoUrl(findata.ico)}
-                      text={showNumberCurrency(findata.trzby15)}
+                      text={showNumberCurrency(trzby)}
                     />
                   </span>
                   {findata.trzby_trend !== 0 &&

@@ -36,6 +36,34 @@
   height: 34px;
 }
 
+.tabs {
+  margin-bottom: 20px;
+  width: 100%;
+  text-align: center;
+}
+
+@media (min-width: 1200px) {
+  .tabs {
+    width: 350px;
+  }
+}
+
+.tab {
+  display: inline-block;
+  padding: 3px;
+  box-shadow: 0 4px 12px 0 rgba(187, 198, 206, 0.5);
+  border: 2px solid #cddae3;
+  background-color: white;
+  cursor: pointer;
+  margin: 5px;
+  min-width: 45px;
+}
+
+.tab.active {
+  color: #337ab7;
+  font-weight: bold;
+}
+
 a.brand:hover {
   text-decoration: none;
 }
