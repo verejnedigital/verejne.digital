@@ -127,6 +127,11 @@ class DetailPage extends Component {
       );
     }
 
+    let source = "http://www.nrsr.sk";
+    if (this.state.currentYear !== null && this.state.reportData[this.state.currentYear]["source"]) {
+        source = this.state.reportData[this.state.currentYear]["source"];
+    }
+
     return (      
       <div className="detail-page">
         <div className="detail-header">
@@ -146,15 +151,15 @@ class DetailPage extends Component {
                 year={this.state.currentYear}
                 title="Majetkové priznanie: Nehnuteľnosti"
                 image={`https://verejne.digital/img/majetok/${this.state.politician.surname}_${this.state.politician.firstname}.png`}
-                source={this.state.currentYear !== null ? this.state.reportData[this.state.currentYear]["source"] : "http://www.nrsr.sk"}/>
+                source={source}/>
               <DetailAssetDeclaration assets={this.state.hnutelnyAssetsFromDeclaration}              
                 year={this.state.currentYear}
                 title="Majetkové priznanie: Hnuteľný majetok"
-                source={this.state.currentYear !== null ? this.state.reportData[this.state.currentYear]["source"] : "http://www.nrsr.sk"}/>
+                source={source}/>
               <DetailAssetDeclaration assets={this.state.prijmyAssetsFromDeclaration}              
                 year={this.state.currentYear}
                 title="Majetkové priznanie: ostatné"
-                source={this.state.currentYear !== null ? this.state.reportData[this.state.currentYear]["source"] : "http://www.nrsr.sk"}/>
+                source={source}/>
             </div>
             <DetailKatasterTable kataster={this.state.kataster} />
           </div>
