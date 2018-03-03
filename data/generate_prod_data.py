@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
+import re
 import sys
 
 from psycopg2.extensions import AsIs
@@ -15,17 +16,19 @@ class Geocoder:
     cache_miss = 0
     cache_hit = 0
 
+
     def __init__(self, db, db_address_id, cache_table):
         self.cache_table = cache_table
         self.db = db
         self.db_address_id = db_address_id
         self.cache_table = cache_table
+        self.prog = re.compile(" ([0-9]+)\/([0-9]+)( |(, ))")
+        self.psc = re.compile("[0-9][0-9][0-9](([0-9][0-9])|( [0-9][0-9]))")
 
         with self.db.dict_cursor() as cur:
             cur.execute(
                     "SELECT address, original_address, lat, lng FROM " + cache_table +
-                    " WHERE original_address LIKE '%Bratislava'" +
-                    " LIMIT 100000000",
+                    " LIMIT 1000000000",
             )
             for row in cur:
                 keys = set(
@@ -40,36 +43,61 @@ class Geocoder:
                     print self.cache.keys()
 
 
-    def __del__(self):
-        self.db.close()
-
     def NormalizeAddress(self, address):
         normalized = address.lower().strip()
-        while normalized.endswith(","): normalized = normalized[:-1]
-        return normalized.strip()
+
 
     def GetKeysForAddress(self, address):
         """ Generates all possible keys an address can match to.
 
         For example removes slovenska republika from the end, etc
         """
-        normalized = self.NormalizeAddress(address)
-        result = [normalized]
-        drop_patterns = [
-                'Slovenská republika',
-                'Slovensko',
-                'Slovakia',
-                'Slovak Republic'
-        ]
-        drop_patterns = [
-                self.NormalizeAddress(pattern) for pattern in drop_patterns
-        ]
-        for pattern in drop_patterns:
-            if pattern in normalized:
-                without = normalized.replace(pattern, "")
-                if (len(without) > 5): result.append(without)
+        # Drop the first number in NUM/NUM in address. E.g, Hlavna Ulica 123/45
+        def ExpandKeysRemoveSlash(keys):
+            result = []
+            for k in keys:
+                obj = re.search(self.prog, k)
+                if obj:
+                    new_n = k.replace(obj.group(0), " " + obj.group(2) + " ")
+                    if (len(new_k) > 5): result.append(new_k)
+            return result
 
-        return [self.NormalizeAddress(res) for res in result]
+        # Remove PSC
+        def ExpandKeysRemovePSC(keys):
+            result = []
+            for k in keys:
+                obj = re.search(self.psc, k)
+                if obj:
+                    new_k = k.replace(obj.group(0), "")
+                    if (len(new_k) > 5): normalized.append(new_k)
+            return result
+
+        # Remove common suffixes not adding any value
+        def ExpandKeysRemoveSuffixes(keys):
+            drop_patterns = [
+                    'Slovenská republika',
+                    'Slovensko',
+                    'Slovakia',
+                    'Slovak Republic'
+            ]
+            drop_patterns = [
+                    self.NormalizeAddress(pattern) for pattern in drop_patterns
+            ]
+            result = []
+            for pattern in drop_patterns:
+                for k in keys:
+                    if pattern in k:
+                        without = k.replace(pattern, "")
+                        if (len(without) > 5): result.append(without)
+            return result
+
+        normalized = [self.NormalizeAddress(address)]
+        normalized += ExpandKeysRemoveSlash(normalized)
+        normalized += ExpandKeysRemovePSC(normalized)
+        normalized += ExpandKeysRemoveSuffixes(normalized)
+        return [self.NormalizeAddress(res.replace(" ", "").replace(",", ""))
+                for res in set(normalized)]
+
 
     def GetAddressId(self, address):
         """ Get AddressId for a given string. If the address is not in the cache
@@ -146,13 +174,18 @@ def CreateAndSetProdSchema(db, prod_schema_name):
 
 
 
-def ProcessSource(db_source, db_prod, geocoder):
+def ProcessSource(db_source, db_prod, geocoder, entities):
 
-    sql = "select distinct on(organizations.id) organizations.id as org_id,organization_identifier_entries.ipo as ico,organization_name_entries.name, organizations.established_on,organizations.terminated_on,concat_ws(' ',organization_address_entries.formatted_address,organization_address_entries.street,organization_address_entries.building_number,organization_address_entries.postal_code,organization_address_entries.municipality,organization_address_entries.country) as address from organizations,organization_identifier_entries,organization_name_entries,organization_address_entries where organizations.id=organization_identifier_entries.organization_id and organizations.id=organization_name_entries.organization_id and organizations.id=organization_address_entries.organization_id limit 100"
+    sql = "select distinct on(organizations.id) organizations.id as org_id,organization_identifier_entries.ipo as ico,organization_name_entries.name, organizations.established_on,organizations.terminated_on,concat_ws(' ',organization_address_entries.formatted_address,organization_address_entries.street,organization_address_entries.building_number,organization_address_entries.postal_code,organization_address_entries.municipality,organization_address_entries.country) as address from organizations,organization_identifier_entries,organization_name_entries,organization_address_entries where organizations.id=organization_identifier_entries.organization_id and organizations.id=organization_name_entries.organization_id and organizations.id=organization_address_entries.organization_id limit 1000"
+
+
     with db_source.dict_cursor() as cur:
         cur.execute(sql)
         missed = 0
         found = 0;
+
+        missed_eid = 0
+        found_eid = 0
         for row in cur:
             address = row["address"]
             if address is None: continue
@@ -165,13 +198,19 @@ def ProcessSource(db_source, db_prod, geocoder):
                 missed += 1
                 continue
             found += 1;
+
+            eid = entities.GetEntityId(row["ico"], name, address)
+            if eid is None:
+                missed_eid += 1
+            found_eid += 1
     print "FOUND", found
     print "MISSED", missed
+    print "FOUND EID", found_eid
+    print "MISSED EID", missed_eid
 
 
 
 def main():
-
     # TODO: make this a parameter
     prod_schema_name = "prod_20180303000000"
     source_schema_name = "source_ekosystem_rpo_20180303000000"
@@ -184,7 +223,6 @@ def main():
 
     geocoder = Geocoder(db_old, db_prod, "mysql.Entities")
     geocoder.GetAddressId("kukucinova 12 bratislava")
-
     ProcessSource(db_source, db_prod, geocoder)
 
 
