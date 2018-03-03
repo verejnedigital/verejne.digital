@@ -10,6 +10,26 @@
         "url": "https://s3.eu-central-1.amazonaws.com/ekosystem-slovensko-digital-dumps/rpo.sql.gz"
     },
     {
+        "name": "ekosystem_VVO",
+        "path": "/tmp/source_ekosystem_VVO.sql.gz",
+        "schemas":
+        [
+            "vvo"
+        ],
+        "type": "SQL",
+        "url": "https://s3.eu-central-1.amazonaws.com/ekosystem-slovensko-digital-dumps/vvo.sql.gz"
+    },
+    {
+        "name": "ekosystem_CRZ",
+        "path": "/tmp/source_ekosystem_CRZ.sql.gz",
+        "schemas":
+        [
+            "crz"
+        ],
+        "type": "SQL",
+        "url": "https://s3.eu-central-1.amazonaws.com/ekosystem-slovensko-digital-dumps/crz.sql.gz"
+    },
+    {
         "delimiter": ";",
         "name": "finstat",
         "path": "/tmp/source_finstat.csv",
