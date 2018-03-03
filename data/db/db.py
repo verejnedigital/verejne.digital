@@ -17,9 +17,10 @@ class DatabaseConnection():
         with self.conn.cursor() as cur:
             cur.execute(query, query_data)
 
-    def query(self, query, query_data=()):
+    def query(self, query, query_data=(), return_dicts=True):
         """ Executes query and returns all rows as a list of dicts """
-        with self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+        cursor_factory = psycopg2.extras.RealDictCursor if return_dicts else None
+        with self.conn.cursor(cursor_factory=cursor_factory) as cur:
             cur.execute(query, query_data)
             rows = cur.fetchall()
         return rows
@@ -30,6 +31,9 @@ class DatabaseConnection():
         cur.itersize = buffer_size
         cur.execute(query, query_data)
         return cur
+
+    def cursor(self):
+        return self.conn.cursor()
 
     def dict_cursor(self):
         return self.conn.cursor(cursor_factory=psycopg2.extras.DictCursor)

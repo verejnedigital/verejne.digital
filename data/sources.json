@@ -1,0 +1,19 @@
+[
+    {
+        "name": "ekosystem_RPO",
+        "path": "/home/matej_balog/data/source_ekosystem_RPO.sql.gz",
+        "schemas":
+        [
+            "rpo"
+        ],
+        "url": "https://s3.eu-central-1.amazonaws.com/ekosystem-slovensko-digital-dumps/rpo.sql.gz"
+    },
+    {
+        "name": "internal_profil",
+        "path": "/home/matej_balog/data/source_internal_profil.sql",
+        "schemas":
+        [
+            "kataster"
+        ]
+    }
+]
