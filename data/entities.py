@@ -6,6 +6,7 @@ class Entities:
   address2eid = {}
   eid2name = {}
   ico2eid = {}
+  org2eid = {}
   surnames = {}
   titles = []
   db = None
@@ -29,6 +30,9 @@ class Entities:
           self.titles = [line.strip().decode('utf-8') for line in f.readlines()]
       return self.titles
   
+  def AddOrg2Eid(self, org_id, eid):
+      self.org2eid[org_id] = eid
+
   def longest_common_prefix(self, str1, str2):
       """ Returns the length of the longest common prefix of two provided strings """
       i = 0
