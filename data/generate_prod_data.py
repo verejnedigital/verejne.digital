@@ -2,6 +2,7 @@
 import os
 import re
 import sys
+import yaml
 
 from psycopg2.extensions import AsIs
 
@@ -127,30 +128,6 @@ class Geocoder:
 
         return None
 
-# TODO: move this into a separate file
-class Entities:
-    geocoder = None
-    missing_addresses = 0
-
-    def __init__(self, geocoder):
-        self.geocoder = geocoder
-        pass
-
-    def GetEntityId(self, name, address):
-        """ Gets entity id for given combination of name and adress.
-        It geocodes the address into addressId. If (name, addressId) is present
-        in entities, returns its id, otherwise adds an entry into the database.
-
-        Returns None if the entity is not present or could not be added (eg
-        no address).
-        """
-        addressId = geocoder.GetAddressId(address)
-        if (addressId is None): 
-            missing_addresses += 1
-            return None
-
-        return None
-
 def CreateAndSetProdSchema(db, prod_schema_name):
     with db.dict_cursor() as cur:
         cur.execute("CREATE SCHEMA %s", [AsIs(prod_schema_name)])
@@ -176,13 +153,34 @@ def CreateAndSetProdSchema(db, prod_schema_name):
         
 
 
-def ProcessSource(db_source, db_prod, geocoder, entities):
+def ProcessSource(db_source, db_prod, geocoder, entities, config):
+    columns_for_table = {}
+    with db_prod.dict_cursor() as cur:
+        for table in config["tables"]:
+            table_config = config["tables"][table]
+            columns_for_table[table] = table_config["columns"]
+            cur.execute(table_config["create_command"])
 
-    sql = "select distinct on(organizations.id) organizations.id as org_id,organization_identifier_entries.ipo as ico,organization_name_entries.name, organizations.established_on,organizations.terminated_on,concat_ws(' ',organization_address_entries.formatted_address,organization_address_entries.street,organization_address_entries.building_number,organization_address_entries.postal_code,organization_address_entries.municipality,organization_address_entries.country) as address from organizations,organization_identifier_entries,organization_name_entries,organization_address_entries where organizations.id=organization_identifier_entries.organization_id and organizations.id=organization_name_entries.organization_id and organizations.id=organization_address_entries.organization_id limit 1000"
+    def AddToTable(row, table, eid):
+        columns = columns_for_table[table]
+        values = [row[column] for column in columns]
+        if all(v is None for v in values):
+            # Ignore this entry, all meaningful values are None
+            return
 
+        # TODO: find out how to build SQL statement properly
+        column_names = ",".join(["eid"] + columns)
+        values_params = ",".join(["%s"] * (1 + len(columns)))
+        command = (
+                "INSERT INTO %s (" + column_names + ") " +
+                "VALUES (" + values_params + ")"
+        )
+        with db_prod.dict_cursor() as cur:
+            cur.execute(command,
+                        [AsIs(table), eid] + [row[column] for column in columns])
 
     with db_source.dict_cursor() as cur:
-        cur.execute(sql)
+        cur.execute(config["command"])
         missed = 0
         found = 0;
 
@@ -202,10 +200,11 @@ def ProcessSource(db_source, db_prod, geocoder, entities):
 
             eid = entities.GetEntity(row["ico"], name, addressId)
             print name, "-> eid:", eid
-            if eid is None:
-                missed_eid += 1
-            print eid
+            if eid is None: missed_eid += 1
             found_eid += 1
+            for table in columns_for_table:
+                AddToTable(row, table, eid)
+
     print "FOUND", found
     print "MISSED", missed
     print "FOUND EID", found_eid
@@ -228,7 +227,11 @@ def main():
     geocoder.GetAddressId("kukucinova 12 bratislava")
 
     entities_lookup = entities.Entities(db_prod)
-    ProcessSource(db_source, db_prod, geocoder, entities_lookup)
+    with open('prod_tables.yaml', 'r') as stream:
+        config = yaml.load(stream)
+    key = list(config.keys())[0]
+    config = config[key]
+    ProcessSource(db_source, db_prod, geocoder, entities_lookup, config)
 
 
     db_old.commit()

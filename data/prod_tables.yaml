@@ -1,0 +1,16 @@
+rpo:
+    command:   "select distinct on(organizations.id) organizations.id as org_id,organization_identifier_entries.ipo as ico,organization_name_entries.name, organizations.established_on,organizations.terminated_on,concat_ws(' ',organization_address_entries.formatted_address,organization_address_entries.street,organization_address_entries.building_number,organization_address_entries.postal_code,organization_address_entries.municipality,organization_address_entries.country) as address from organizations,organization_identifier_entries,organization_name_entries,organization_address_entries where organizations.id=organization_identifier_entries.organization_id and organizations.id=organization_name_entries.organization_id and organizations.id=organization_address_entries.organization_id limit 1000"
+    tables:
+            CompanyInfo:
+                    columns: ["ico", "established_on", "terminated_on"]
+                    create_command: "
+                       CREATE TABLE CompanyInfo (
+                                id SERIAL PRIMARY KEY,
+                                eid INTEGER REFERENCES Entities(id),
+                                ico INT4,
+                                established_on DATE,
+                                terminated_on DATE
+                       )
+                    "
+
+
