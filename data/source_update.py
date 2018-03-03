@@ -117,7 +117,7 @@ def get_latest_schema(source_name):
     q = """
         SELECT schema_name
         FROM information_schema.schemata
-        WHERE schema_name LIKE 'source_""" + source_name + """_%%'
+        WHERE schema_name ILIKE 'source_""" + source_name + """_%%'
         ORDER BY schema_name DESC
         LIMIT 1;
         """
