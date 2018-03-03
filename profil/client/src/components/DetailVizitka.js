@@ -9,7 +9,7 @@ const DetailVizitka = ({politician}) => (
     <div><span className="bolder">Funkcia:</span> {politician.office_name_male}, {politician.term_start} - {politician.term_finish}</div>
     <div><span className="bolder">Strana:</span> {politician.party_nom}</div>
   </div>
-  <img className="vizitka-picture" src={politician.picture} alt="profilephoto"></img>
+  <img className="vizitka-picture" src={politician.picture} alt="profilephoto"/>
 </div>
 );
 export default DetailVizitka;

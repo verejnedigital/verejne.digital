@@ -36,7 +36,7 @@ class DetailAssetDeclaration extends Component {
       <table className="assets-declaration table">
         <thead>
           <tr>
-            <th></th>
+            <th/>
             <th>
               {title} ({assets.length}) <br/>
               <span className="assets-declaration source">zdroj </span>
