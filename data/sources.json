@@ -6,7 +6,17 @@
         [
             "rpo"
         ],
+        "type": "SQL",
         "url": "https://s3.eu-central-1.amazonaws.com/ekosystem-slovensko-digital-dumps/rpo.sql.gz"
+    },
+    {
+        "delimiter": ";",
+        "end_delimiter": true,
+        "name": "finstat",
+        "path": "/tmp/source_finstat.csv",
+        "schemas": [],
+        "table_name": "company_stats",
+        "type": "CSV"
     },
     {
         "name": "internal_profil",
@@ -14,7 +24,8 @@
         "schemas":
         [
             "kataster"
-        ]
+        ],
+        "type": "SQL"
     },
     {
         "name": "vd_profil",
@@ -23,6 +34,7 @@
         [
             "kataster"
         ],
+        "type": "SQL",
         "url": "https://verejne.digital/source_internal_profil.sql.gz"
     }
 ]

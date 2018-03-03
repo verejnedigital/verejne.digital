@@ -18,6 +18,10 @@ class DatabaseConnection():
         with self.conn.cursor() as cur:
             cur.execute(query, query_data)
 
+    def execute_values(self, query, query_data):
+        with self.conn.cursor() as cur:
+            psycopg2.extras.execute_values(cur, query, query_data)
+
     def query(self, query, query_data=(), return_dicts=True):
         """ Executes query and returns all rows as a list of dicts """
         cursor_factory = psycopg2.extras.RealDictCursor if return_dicts else None
