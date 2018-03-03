@@ -38,17 +38,25 @@ export function getFinancialData(data, ico) {
     findata.ico = ico;
     if (isValidValue(companyStats.datum_vzniku)) findata.zaciatok = companyStats.datum_vzniku;
     if (isValidValue(companyStats.datum_zaniku)) findata.koniec = companyStats.datum_zaniku;
+    if (isValidValue(companyStats.zisk2016)) findata.zisk16 = companyStats.zisk2016;
+    if (isValidValue(companyStats.trzby2016)) findata.trzby16 = companyStats.trzby2016;
     if (isValidValue(companyStats.zisk2015)) findata.zisk15 = companyStats.zisk2015;
     if (isValidValue(companyStats.trzby2015)) findata.trzby15 = companyStats.trzby2015;
     if (isValidValue(companyStats.zisk2014)) findata.zisk14 = companyStats.zisk2014;
     if (isValidValue(companyStats.trzby2014)) findata.trzby14 = companyStats.trzby2014;
-    if (isValidValue(companyStats.zisk2015)) {
+    if (isValidValue(companyStats.zisk2016)) {
+      findata.zisk_trend = computeTrend(findata.zisk16, findata.zisk15);
+    } else if (isValidValue(companyStats.zisk2015)) {
       findata.zisk_trend = computeTrend(findata.zisk15, findata.zisk14);
     }
-    if (isValidValue(companyStats.trzby2015)) {
+    if (isValidValue(companyStats.trzby2016)) {
+      findata.trzby_trend = computeTrend(findata.trzby16, findata.trzby15);
+    } else if (isValidValue(companyStats.trzby2015)) {
       findata.trzby_trend = computeTrend(findata.trzby15, findata.trzby14);
     }
-    if (isValidValue(companyStats.zamestnanci2015)) {
+    if (isValidValue(companyStats.zamestnanci2016)) {
+        findata.zamestnancov = companyStats.zamestnanci2016;
+    } else if (isValidValue(companyStats.zamestnanci2015)) {
       findata.zamestnancov = companyStats.zamestnanci2015;
     }
   }
