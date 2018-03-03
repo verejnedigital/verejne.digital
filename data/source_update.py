@@ -35,8 +35,7 @@ def update_source(source, timestamp):
 
     # Load into postgres, unzipping along the way
     if source['path'].endswith('.gz'):
-        # TODO
-        pass
+        call(['pg_restore', '-d', 'vd', source['path']])
     # Load into postgres directly
     else:
         # The options -q -o /dev/null just suppress output
