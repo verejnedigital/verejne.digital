@@ -37,7 +37,7 @@
 }
 
 .tabs {
-  margin-bottom: 20px;
+  margin-bottom: 15px;
   width: 100%;
   text-align: center;
 }
@@ -55,7 +55,7 @@
   border: 2px solid #cddae3;
   background-color: white;
   cursor: pointer;
-  margin: 5px;
+  margin: 0 5px 5px;
   min-width: 45px;
 }
 
