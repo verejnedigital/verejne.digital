@@ -43,3 +43,13 @@ class DatabaseConnection():
 
     def close(self):
         self.conn.close()
+
+
+    # --- HELPER METHODS ---
+    def rename_schema(self, schema_old, schema_new, verbose=True):
+        q = "ALTER SCHEMA %s RENAME TO %s;" % (
+            psycopg2.extensions.quote_ident(schema_old, self.conn),
+            psycopg2.extensions.quote_ident(schema_new, self.conn))
+        self.execute(q)
+        if verbose:
+            print('Renamed schema "%s" to "%s"' % (schema_old, schema_new))
