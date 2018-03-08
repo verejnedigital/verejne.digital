@@ -81,12 +81,13 @@ export class MapContainer extends Component {
     ];
 
   static defaultProps = {
-    center: {lat: 48.6, lng: 19.5}
+    center: {lat: 48.6, lng: 19.5},
+    google: null
   };
 
   shouldComponentUpdate(nextProps, nextState) {
     if (nextProps.google !== this.props.google) {
-      return true;
+        return true;
     }
 
     if (this.props.assets !== nextProps.assets) {
@@ -108,16 +109,16 @@ export class MapContainer extends Component {
   zoom = 7;
 
   render() {
-    let icon = {
-        path : this.props.google === undefined ? null : this.props.google.maps.SymbolPath.CIRCLE,
-        scale : 12,
-        strokeColor : '#0062db',
-        strokeWeight : 2.0,
-        fillColor : 'white',
-        fillOpacity : 0.75
-    };
+    if (this.markers.length !== this.props.assets.length && this.props.google) {
+        let icon = {
+            path : this.props.google.maps.SymbolPath.CIRCLE,
+            scale : 12,
+            strokeColor : '#0062db',
+            strokeWeight : 2.0,
+            fillColor : 'white',
+            fillOpacity : 0.75
+        };
 
-    if (this.markers.length !== this.props.assets.length) {
         this.markers = this.props.assets.map((asset, key) =>
             <Marker
                 key={key}
