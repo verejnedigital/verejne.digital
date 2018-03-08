@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
 import './DetailPage.css';
 
 import * as serverAPI from './actions/serverAPI';
@@ -20,7 +21,9 @@ class DetailPage extends Component {
       years: [],
       currentYear: null,
       reportData: {},
+      mapCenter: {lat: 48.6, lng: 19.5}
     };
+    this.goMap.bind(this);
   }
 
   componentWillMount() {
@@ -49,6 +52,17 @@ class DetailPage extends Component {
       });
   }
 
+  goMap(parcel) {
+    this.setState({
+      mapCenter: {lat: parcel.lat, lng: parcel.lon}
+    });
+
+    const node = ReactDOM.findDOMNode(this.refs.map);
+    if (node){
+      window.scrollTo(0, node.offsetTop);
+    }
+  }
+
   static split_assets(obj, split_str) {
     if (obj !== undefined && obj[split_str] !== undefined) {
       return obj[split_str].split('\n');
@@ -59,7 +73,6 @@ class DetailPage extends Component {
 
   static parseReport(reportYear) {
     // Report contains asset declarations for several years.
-    // TODO: Make sure it is sorted by year from the most recent to the oldest
     const katasterAssetsFromDeclaration = DetailPage.split_assets(reportYear, "unmovable_assets");
     const hnutelnyAssetsFromDeclaration = DetailPage.split_assets(reportYear, "movable_assets");
     let prijmyAssetsFromDeclaration = [];
@@ -161,10 +174,10 @@ class DetailPage extends Component {
                 title="Majetkové priznanie: ostatné"
                 source={source}/>
             </div>
-            <DetailKatasterTable kataster={this.state.kataster} />
+            <DetailKatasterTable kataster={this.state.kataster} onParcelShow={this.goMap.bind(this)} />
           </div>
           <div className="mapa">
-            <MapContainer assets={this.state.kataster} />
+            <MapContainer assets={this.state.kataster} center={this.state.mapCenter} ref="map"/>
           </div>          
         </div>                
         }

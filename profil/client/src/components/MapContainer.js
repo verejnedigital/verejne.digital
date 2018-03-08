@@ -26,7 +26,7 @@ export class MapContainer extends Component {
         {
             featureType: 'landscape.man_made',
             elementType: 'geometry.fill',
-            stylers: [{color: '#dae3ea' }]
+            stylers: [{color: '#dae3ea'}]
         },
         {
             featureType: 'road',
@@ -66,21 +66,48 @@ export class MapContainer extends Component {
         {
             featureType: 'landscape.natural',
             elementType: 'labels',
-            stylers: [{visibility: 'off' }]
+            stylers: [{visibility: 'off'}]
         },
         {
             featureType: 'road.highway',
             elementType: 'labels',
-            stylers: [{visibility: 'off' }]
+            stylers: [{visibility: 'off'}]
         },
         {
             featureType: 'road.arterial',
             elementType: 'labels',
-            stylers: [{visibility: 'off' }]
+            stylers: [{visibility: 'off'}]
         }
     ];
 
-render() {
+  static defaultProps = {
+    center: {lat: 48.6, lng: 19.5}
+  };
+
+  shouldComponentUpdate(nextProps, nextState) {
+    if (nextProps.google !== this.props.google) {
+      return true;
+    }
+
+    if (this.props.assets !== nextProps.assets) {
+      this.zoom = 7;
+      this.markers = [];
+      return true;
+    }
+
+    if (this.props.center !== nextProps.center) {
+      this.zoom = 18;
+      return true;
+    }
+
+    return false;
+  }
+
+  //reference cache to avoid map markers re-rendering
+  markers = [];
+  zoom = 7;
+
+  render() {
     let icon = {
         path : this.props.google === undefined ? null : this.props.google.maps.SymbolPath.CIRCLE,
         scale : 12,
@@ -90,28 +117,32 @@ render() {
         fillOpacity : 0.75
     };
 
+    if (this.markers.length !== this.props.assets.length) {
+        this.markers = this.props.assets.map((asset, key) =>
+            <Marker
+                key={key}
+                title={asset.landusename}
+                label={{
+                    text: '' + (key+1),
+                    color: '#337ab7',
+                    fontSize: '12px',
+                    fontWeight: 'bold'
+                }}
+                icon={icon}
+                position={{lat: asset.lat, lng: asset.lon}} />
+        );
+    }
+
     return (
       <Map
         google={this.props.google}
-        zoom={7}
+        zoom={this.zoom}
         style={{height: '360px', position: 'relative'}}
         className="detailMap"
-        center={{lat: 48.6, lng: 19.5}}
+        center={{lat: this.props.center.lat, lng: this.props.center.lng}} //Do not use direct reference (!)
         styles={this.mapStyles}
       >
-      {this.props.assets.map((asset, key) =>
-        <Marker
-          key={key}          
-          title={asset.landusename}          
-          label={{
-              text: '' + (key+1),
-              color: '#337ab7',
-              fontSize: '12px',
-              fontWeight: 'bold'
-          }}
-          icon={icon}
-          position={{lat: asset.lat, lng: asset.lon}} />          
-      )}
+      {this.markers}
       </Map>
     );
   }

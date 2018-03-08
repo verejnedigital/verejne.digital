@@ -9,8 +9,8 @@ class Table extends Component {
       <table className="table">
         <thead>
           <tr>            
-            <th></th>
-            <th></th>
+            <th/>
+            <th/>
             <th>Meno a priezvisko</th>
             <th>Obdobie</th>
             <th className="party-column">Strana</th>
