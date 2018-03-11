@@ -109,9 +109,9 @@ def ProcessSource(db_source, db_prod, geocoder, entities, config):
             eid = entities.GetEntity(row["ico"], name, addressId)
             print name, "-> eid:", eid
             
-            if config["save_org_id"]:
+            if config.get("save_org_id"):
                 entities.AddOrg2Eid(row["org_id"], eid)
-            if config["use_org_id_as_eid_relation"]:
+            if config.get("use_org_id_as_eid_relation"):
                 row["eid_relation"] = entities.GetEidForOrgId(row["org_id"])
                 
             if eid is None: missed_eid += 1
@@ -154,11 +154,9 @@ def main():
     # This is where all the population happens!!!
     # Go through all the specified data sources and process them, adding data
     # as needed.
-    for key in config.keys:
-        print 'X',key
-        config = config[key]
-        print 'XX',key,config[key]
-        ProcessSource(db_source, db_prod, geocoder, entities_lookup, config)
+    for key in config.keys():
+        config_per_source = config[key]
+        ProcessSource(db_source, db_prod, geocoder, entities_lookup, config_per_source)
 
 
     db_old.commit()
