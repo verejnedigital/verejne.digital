@@ -14,7 +14,7 @@ rpo:
                        )
                     "
 related:
-    command:   "select organization_id as org_id,stakeholder_type_id,ico,concat_ws(' ',full_name,person_given_name,person_family_name) as name,concat_ws(' ',address_formatted,address_street,address_building_number,address_postal_code,address_municipality,address_country) as address,effective_from,effective_to from organization_stakeholder_entries UNION select organization_id as org_id,stakeholder_type_id,ico,concat_ws('',full_name,person_given_name,person_family_name) as name,concat_ws('',address_formatted,address_street,address_building_number,address_postal_code,address_municipality,address_country) as address,effective_from,effective_to from organization_statutory_entries limit 5"
+    command:   "select organization_id as eid_relation,stakeholder_type_id,ico,concat_ws(' ',full_name,person_given_name,person_family_name) as name,concat_ws(' ',address_formatted,address_street,address_building_number,address_postal_code,address_municipality,address_country) as address,effective_from,effective_to from organization_stakeholder_entries UNION select organization_id as org_id,stakeholder_type_id,ico,concat_ws('',full_name,person_given_name,person_family_name) as name,concat_ws('',address_formatted,address_street,address_building_number,address_postal_code,address_municipality,address_country) as address,effective_from,effective_to from organization_statutory_entries limit 1000"
     use_org_id_as_eid_relation: true
     tables:
             Related:

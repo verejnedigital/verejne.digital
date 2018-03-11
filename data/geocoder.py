@@ -23,11 +23,13 @@ class Geocoder:
         self.psc = re.compile("[0-9][0-9][0-9](([0-9][0-9])|( [0-9][0-9]))")
 
         with self.db.dict_cursor() as cur:
+            print "Reading cache of geocoded addresses"
             # TODO: change this to read more addresses.
             cur.execute(
                     "SELECT address, original_address, lat, lng FROM " + cache_table +
-                    " LIMIT 10000",
+                    " LIMIT 100000",
             )
+            print "Geocoder cache ready"
             for row in cur:
                 # Create cache of all normalizations -> lat, lng. We notmalize both the
                 # given and the geocoded address

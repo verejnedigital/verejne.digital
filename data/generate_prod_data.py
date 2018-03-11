@@ -107,12 +107,15 @@ def ProcessSource(db_source, db_prod, geocoder, entities, config):
             found += 1;
 
             eid = entities.GetEntity(row["ico"], name, addressId)
-            print name, "-> eid:", eid
+            # print name, "-> eid:", eid
             
             if config.get("save_org_id"):
                 entities.AddOrg2Eid(row["org_id"], eid)
             if config.get("use_org_id_as_eid_relation"):
-                row["eid_relation"] = entities.GetEidForOrgId(row["org_id"])
+                eid2 = entities.GetEidForOrgId(row["eid_relation"])
+                if eid2 is None:
+                  continue
+                row["eid_relation"] = eid2 
                 
             if eid is None: missed_eid += 1
             found_eid += 1
@@ -155,6 +158,7 @@ def main():
     # Go through all the specified data sources and process them, adding data
     # as needed.
     for key in config.keys():
+        print "Working on source:", key
         config_per_source = config[key]
         ProcessSource(db_source, db_prod, geocoder, entities_lookup, config_per_source)
 

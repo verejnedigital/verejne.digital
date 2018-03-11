@@ -34,7 +34,7 @@ class Entities:
       self.org2eid[org_id] = eid
 
   def GetEidForOrgId(self, org_id):
-      return self.org2eid[org_id]
+      return self.org2eid.get(org_id)
 
   def longest_common_prefix(self, str1, str2):
       """ Returns the length of the longest common prefix of two provided strings """
@@ -148,19 +148,15 @@ class Entities:
     if not address_id in self.address2eid:
       return -1 
     for candidate in self.address2eid[address_id]:
-      #print 'candidate:',candidate,self.eid2name[candidate]
       if self.is_merge_desired(name, self.eid2name[candidate]):
         return candidate
     return -1
     
   def AddICO(self, eid, ico):
-    # TODO: Add to database
     self.ico2eid[ico] = eid  
     
   def AddNewEntity(self, ico, name, address_id):
-    #print 'New Entity added to table', name, address_id
     eid = self.db.add_values("Entities", [name, address_id])
-    # TODO: Add to database and get new X from DB
     if ico is None:
       self.eid2name[eid] = name
       if address_id in self.address2eid:
