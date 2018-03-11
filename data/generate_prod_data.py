@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 import os
-import re
 import sys
 import yaml
 
 from psycopg2.extensions import AsIs
 
-import geocoder
+import geocoder as geocoder_lib
 import entities
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../data/db')))
@@ -109,6 +108,12 @@ def ProcessSource(db_source, db_prod, geocoder, entities, config):
 
             eid = entities.GetEntity(row["ico"], name, addressId)
             print name, "-> eid:", eid
+            
+            if config["save_org_id"]:
+                entities.AddOrg2Eid(row["org_id"], eid)
+            if config["use_org_id_as_eid_relation"]:
+                row["eid_relation"] = entities.GetEidForOrgId(row["org_id"])
+                
             if eid is None: missed_eid += 1
             found_eid += 1
             for table in columns_for_table:
@@ -124,7 +129,7 @@ def ProcessSource(db_source, db_prod, geocoder, entities, config):
 def main():
     # TODO: make this a parameter
     # Write output into prod_schema_name
-    prod_schema_name = "prod_20180303000000"
+    prod_schema_name = "prod_20180303000001"
     # Read source from soruce_schema_name
     source_schema_name = "source_ekosystem_rpo_20180303000000"
 
@@ -139,7 +144,7 @@ def main():
     CreateAndSetProdSchema(db_prod, prod_schema_name)
 
     # Initialize geocoder
-    geocoder = Geocoder(db_old, db_prod, "mysql.Entities")
+    geocoder = geocoder_lib.Geocoder(db_old, db_prod, "mysql.Entities")
     # Initialize entity lookup
     entities_lookup = entities.Entities(db_prod)
     # Table prod_tables.yaml defines a specifications of SQL selects to read
@@ -150,7 +155,9 @@ def main():
     # Go through all the specified data sources and process them, adding data
     # as needed.
     for key in config.keys:
+        print 'X',key
         config = config[key]
+        print 'XX',key,config[key]
         ProcessSource(db_source, db_prod, geocoder, entities_lookup, config)
 
 

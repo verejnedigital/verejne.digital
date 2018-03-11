@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import re
+
 # Class to transform address -> address_id. The class takes care of caching and
 # address normalization (e.g lowercase, remove 'Slovensko',...)
 class Geocoder:
