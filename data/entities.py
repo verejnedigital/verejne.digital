@@ -34,7 +34,7 @@ class Entities:
       self.org2eid[org_id] = eid
 
   def GetEidForOrgId(self, org_id):
-      return org2eid[org_id]
+      return self.org2eid[org_id]
 
   def longest_common_prefix(self, str1, str2):
       """ Returns the length of the longest common prefix of two provided strings """
