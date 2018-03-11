@@ -22,7 +22,7 @@ select organization_id as org_id,stakeholder_type_id,ico,concat_ws('
 as address,effective_from,effective_to from organization_statutory_entries limit 5"
     use_org_id_as_eid_relation: true
     tables:
-            CompanyInfo:
+            Related:
                     columns: ["stakeholder_type_id", "eid2"]
                     create_command: "
                        CREATE TABLE Related (
