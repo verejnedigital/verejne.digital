@@ -12,6 +12,8 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../data
 from db import DatabaseConnection
 
 # TODO: move this into a separate file
+# Class to transform address -> address_id. The class takes care of caching and
+# address normalization (e.g lowercase, remove 'Slovensko',...)
 class Geocoder:
     cache_table = None
 
@@ -25,19 +27,27 @@ class Geocoder:
         self.db = db
         self.db_address_id = db_address_id
         self.cache_table = cache_table
+        # matches NUM/NUMx where x is either space (' ') or command followed by
+        # space (', ')
         self.prog = re.compile(" ([0-9]+)\/([0-9]+)( |(, ))")
+        # Match psc, either XXXXX or XXX XX.
         self.psc = re.compile("[0-9][0-9][0-9](([0-9][0-9])|( [0-9][0-9]))")
 
         with self.db.dict_cursor() as cur:
+            # TODO: change this to read more addresses.
             cur.execute(
                     "SELECT address, original_address, lat, lng FROM " + cache_table +
                     " LIMIT 10000",
             )
             for row in cur:
+                # Create cache of all normalizations -> lat, lng. We notmalize both the
+                # given and the geocoded address
                 keys = set(
                         self.GetKeysForAddress(row["address"].encode("utf8")) +
                         self.GetKeysForAddress(row["original_address"].encode("utf8"))
                 )
+                # TODO: save memory by storing lat, lng, address only once and reusing
+                # it between instances
                 for key in keys:
                     self.cache[key] = row["lat"], row["lng"], row["address"]
                 if (len(self.cache) < 10):
@@ -47,15 +57,19 @@ class Geocoder:
 
 
     def NormalizeAddress(self, address):
+        """ Simple syntactic normalization of an address."""
         return address.lower().strip()
 
 
     def GetKeysForAddress(self, address):
         """ Generates all possible keys an address can match to.
 
-        For example removes slovenska republika from the end, etc
+        For example removes slovenska republika from the end, simplifies PSC,
+        removes A/B, etc
         """
         # Drop the first number in NUM/NUM in address. E.g, Hlavna Ulica 123/45
+        # Here and below, the input is the set of keys. The function returns the
+        # keys after applying the transformation (if possible).
         def ExpandKeysRemoveSlash(keys):
             result = []
             for k in keys:
@@ -129,6 +143,13 @@ class Geocoder:
         return None
 
 def CreateAndSetProdSchema(db, prod_schema_name):
+    """ Initialized schema with core prod tables: Entities and Addresses.
+    
+    Creates tabales under given scheman (which is created) in the given db
+    connection.
+
+    Finally it sets the connection to use the just created schema.
+    """
     with db.dict_cursor() as cur:
         cur.execute("CREATE SCHEMA %s", [AsIs(prod_schema_name)])
         cur.execute("SET search_path = %s", [AsIs(prod_schema_name)])
@@ -154,14 +175,28 @@ def CreateAndSetProdSchema(db, prod_schema_name):
 
 
 def ProcessSource(db_source, db_prod, geocoder, entities, config):
+    """ Process one source table (read from db_source) using the config and
+    performing normalization using the given geocoder and entities lookup.
+
+    The produced data are written into db_prod connection. The function writes
+    new entities and addresses in to the Entities and Address tables. It also
+    creates and populates supplementary tables as specified by a config.
+    """
     columns_for_table = {}
     with db_prod.dict_cursor() as cur:
+        # Create supplementaty tables using the provided command.
+        # Also store the columns of the table for later use.
         for table in config["tables"]:
             table_config = config["tables"][table]
             columns_for_table[table] = table_config["columns"]
             cur.execute(table_config["create_command"])
 
     def AddToTable(row, table, eid):
+        """ Add values for the given row into the supplementary table 'table'.
+
+        It reads the corresponding values from the row and adds them into the
+        table with the corresponding eid.
+        """
         columns = columns_for_table[table]
         values = [row[column] for column in columns]
         if all(v is None for v in values):
@@ -180,6 +215,7 @@ def ProcessSource(db_source, db_prod, geocoder, entities, config):
                         [AsIs(table), eid] + [row[column] for column in columns])
 
     with db_source.dict_cursor() as cur:
+        # Read data using the given command.
         cur.execute(config["command"])
         missed = 0
         found = 0;
@@ -187,6 +223,9 @@ def ProcessSource(db_source, db_prod, geocoder, entities, config):
         missed_eid = 0
         found_eid = 0
         for row in cur:
+            # Read entries one by one and try to geocode them. If the address
+            # lookup succeeds, try to normalize the entities. If it succeeds,
+            # insert into Entities and supplementary tables.
             address = row["address"]
             if address is None: continue
             name = row["name"]
@@ -214,24 +253,35 @@ def ProcessSource(db_source, db_prod, geocoder, entities, config):
 
 def main():
     # TODO: make this a parameter
+    # Write output into prod_schema_name
     prod_schema_name = "prod_20180303000000"
+    # Read source from soruce_schema_name
     source_schema_name = "source_ekosystem_rpo_20180303000000"
 
+    # Create three database connections:
+    # Read geocoder cache from this one
     db_old = DatabaseConnection(path_config='db_config_cache_table')
+    # Read source tables from this one
     db_source = DatabaseConnection(path_config='db_config_update_source.yaml',
                                    search_path=source_schema_name)
+    # Write prod tables into this one
     db_prod = DatabaseConnection(path_config='db_config_update_source.yaml')
     CreateAndSetProdSchema(db_prod, prod_schema_name)
 
+    # Initialize geocoder
     geocoder = Geocoder(db_old, db_prod, "mysql.Entities")
-    geocoder.GetAddressId("kukucinova 12 bratislava")
-
+    # Initialize entity lookup
     entities_lookup = entities.Entities(db_prod)
+    # Table prod_tables.yaml defines a specifications of SQL selects to read
+    # source data and describtion of additional tables to be created.
     with open('prod_tables.yaml', 'r') as stream:
         config = yaml.load(stream)
-    key = list(config.keys())[0]
-    config = config[key]
-    ProcessSource(db_source, db_prod, geocoder, entities_lookup, config)
+    # This is where all the population happens!!!
+    # Go through all the specified data sources and process them, adding data
+    # as needed.
+    for key in config.keys:
+        config = config[key]
+        ProcessSource(db_source, db_prod, geocoder, entities_lookup, config)
 
 
     db_old.commit()
