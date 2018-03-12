@@ -1,4 +1,5 @@
 rpo:
+    source_schema: "ekosystem_rpo"
     command:   "select distinct on(organizations.id) organizations.id as org_id,organization_identifier_entries.ipo as ico,organization_name_entries.name, organizations.established_on,organizations.terminated_on,concat_ws(' ',organization_address_entries.formatted_address,organization_address_entries.street,organization_address_entries.building_number,organization_address_entries.postal_code,organization_address_entries.municipality,organization_address_entries.country) as address from organizations,organization_identifier_entries,organization_name_entries,organization_address_entries where organizations.id=organization_identifier_entries.organization_id and organizations.id=organization_name_entries.organization_id and organizations.id=organization_address_entries.organization_id limit 1000"
     save_org_id: true
     tables:
@@ -14,6 +15,7 @@ rpo:
                        )
                     "
 related:
+    source_schema: "ekosystem_rpo"
     command:   "select organization_id as eid_relation,stakeholder_type_id,ico,concat_ws(' ',full_name,person_given_name,person_family_name) as name,concat_ws(' ',address_formatted,address_street,address_building_number,address_postal_code,address_municipality,address_country) as address,effective_from,effective_to from organization_stakeholder_entries UNION select organization_id as org_id,stakeholder_type_id,ico,concat_ws('',full_name,person_given_name,person_family_name) as name,concat_ws('',address_formatted,address_street,address_building_number,address_postal_code,address_municipality,address_country) as address,effective_from,effective_to from organization_statutory_entries limit 1000"
     use_org_id_as_eid_relation: true
     tables:

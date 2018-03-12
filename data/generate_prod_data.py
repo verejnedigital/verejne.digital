@@ -45,7 +45,7 @@ def CreateAndSetProdSchema(db, prod_schema_name):
         
 
 
-def ProcessSource(db_source, db_prod, geocoder, entities, config):
+def ProcessSource(db_prod, geocoder, entities, config):
     """ Process one source table (read from db_source) using the config and
     performing normalization using the given geocoder and entities lookup.
 
@@ -53,6 +53,12 @@ def ProcessSource(db_source, db_prod, geocoder, entities, config):
     new entities and addresses in to the Entities and Address tables. It also
     creates and populates supplementary tables as specified by a config.
     """
+    source_schema_name = source_update.get_latest_schema(config["source_schema"])
+    print "Processing source_schema_name", source_schema_name
+    # Read source tables from this one
+    db_source = DatabaseConnection(path_config='db_config_update_source.yaml',
+                                   search_path=source_schema_name)
+    
     columns_for_table = {}
     with db_prod.dict_cursor() as cur:
         # Create supplementaty tables using the provided command.
@@ -128,23 +134,18 @@ def ProcessSource(db_source, db_prod, geocoder, entities, config):
     print "MISSED", missed
     print "FOUND EID", found_eid
     print "MISSED EID", missed_eid
+    db_source.commit()
+    db_source.close()
 
 def main():
-    # TODO: make this a parameter
     timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
     # Write output into prod_schema_name
     prod_schema_name = "prod_" + timestamp
     print "prod_schema_name", prod_schema_name
-    # Read source from soruce_schema_name
-    source_schema_name = source_update.get_latest_schema("ekosystem_rpo")
-    print "source_schema_name", source_schema_name
 
-    # Create three database connections:
+    # Create database connections:
     # Read geocoder cache from this one
     db_old = DatabaseConnection(path_config='db_config_cache_table')
-    # Read source tables from this one
-    db_source = DatabaseConnection(path_config='db_config_update_source.yaml',
-                                   search_path=source_schema_name)
     # Write prod tables into this one
     db_prod = DatabaseConnection(path_config='db_config_update_source.yaml')
     CreateAndSetProdSchema(db_prod, prod_schema_name)
@@ -163,7 +164,7 @@ def main():
     for key in config.keys():
         print "Working on source:", key
         config_per_source = config[key]
-        ProcessSource(db_source, db_prod, geocoder, entities_lookup, config_per_source)
+        ProcessSource(db_prod, geocoder, entities_lookup, config_per_source)
 
 
     db_old.commit()
@@ -171,9 +172,6 @@ def main():
     db_prod.conn.rollback()
     #db_prod.commit()
     #db_prod.close()
-
-    db_source.commit()
-    db_source.close()
 
     print "STATS"
     print "CACHE HITS", geocoder.cache_hit
