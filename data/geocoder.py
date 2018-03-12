@@ -118,7 +118,7 @@ class Geocoder:
                 continue
             self.cache_hit += 1
             lat, lng, formatted_address = self.cache[key]
-            print address, " -> ", lat, lng, formatted_address
+            # print address, " -> ", lat, lng, formatted_address
             with self.db_address_id.dict_cursor() as cur_id:
                 cur_id.execute(
                         "SELECT id FROM Addresses WHERE lat=%s and lng=%s",

@@ -7,6 +7,8 @@ from psycopg2.extensions import AsIs
 
 import geocoder as geocoder_lib
 import entities
+from datetime import datetime
+import source_update
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../data/db')))
 from db import DatabaseConnection
@@ -127,14 +129,15 @@ def ProcessSource(db_source, db_prod, geocoder, entities, config):
     print "FOUND EID", found_eid
     print "MISSED EID", missed_eid
 
-
-
 def main():
     # TODO: make this a parameter
+    timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
     # Write output into prod_schema_name
-    prod_schema_name = "prod_20180303000001"
+    prod_schema_name = "prod_" + timestamp
+    print "prod_schema_name", prod_schema_name
     # Read source from soruce_schema_name
-    source_schema_name = "source_ekosystem_rpo_20180303000000"
+    source_schema_name = source_update.get_latest_schema("ekosystem_rpo")
+    print "source_schema_name", source_schema_name
 
     # Create three database connections:
     # Read geocoder cache from this one
