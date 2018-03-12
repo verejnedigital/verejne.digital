@@ -9,13 +9,14 @@ class Geocoder:
     cache = {}
     cache_miss = 0
     cache_hit = 0
+    test_mode = False
 
-
-    def __init__(self, db, db_address_id, cache_table):
+    def __init__(self, db, db_address_id, cache_table, test_mode):
         self.cache_table = cache_table
         self.db = db
         self.db_address_id = db_address_id
         self.cache_table = cache_table
+        self.test_mode = test_mode
         # matches NUM/NUMx where x is either space (' ') or command followed by
         # space (', ')
         self.prog = re.compile(" ([0-9]+)\/([0-9]+)( |(, ))")
@@ -24,10 +25,12 @@ class Geocoder:
 
         with self.db.dict_cursor() as cur:
             print "Reading cache of geocoded addresses"
-            # TODO: change this to read more addresses.
+            suffix_for_testing = ""
+            if self.test_mode:
+                suffix_for_testing = " LIMIT 200000"
             cur.execute(
                     "SELECT address, original_address, lat, lng FROM " + cache_table +
-                    " LIMIT 100000",
+                    suffix_for_testing,
             )
             print "Geocoder cache ready"
             for row in cur:

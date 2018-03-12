@@ -13,6 +13,9 @@ import source_update
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../data/db')))
 from db import DatabaseConnection
 
+# TODO: Make this command-line option.
+test_mode = True
+
 def CreateAndSetProdSchema(db, prod_schema_name):
     """ Initialized schema with core prod tables: Entities and Addresses.
     
@@ -93,7 +96,12 @@ def ProcessSource(db_prod, geocoder, entities, config):
 
     with db_source.dict_cursor() as cur:
         # Read data using the given command.
-        cur.execute(config["command"])
+        print "Executing SQL command ..."
+        suffix_for_testing = ""
+        if test_mode:
+            suffix_for_testing = " LIMIT 1000"
+        cur.execute(config["command"] + suffix_for_testing)
+        print "Done."
         missed = 0
         found = 0;
 
@@ -151,7 +159,7 @@ def main():
     CreateAndSetProdSchema(db_prod, prod_schema_name)
 
     # Initialize geocoder
-    geocoder = geocoder_lib.Geocoder(db_old, db_prod, "mysql.Entities")
+    geocoder = geocoder_lib.Geocoder(db_old, db_prod, "mysql.Entities", test_mode)
     # Initialize entity lookup
     entities_lookup = entities.Entities(db_prod)
     # Table prod_tables.yaml defines a specifications of SQL selects to read
@@ -169,9 +177,11 @@ def main():
 
     db_old.commit()
     db_old.close()
-    db_prod.conn.rollback()
-    #db_prod.commit()
-    #db_prod.close()
+    if test_mode:
+        db_prod.conn.rollback()
+    else:
+        db_prod.commit()
+        db_prod.close()
 
     print "STATS"
     print "CACHE HITS", geocoder.cache_hit
