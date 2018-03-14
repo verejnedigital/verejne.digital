@@ -124,7 +124,9 @@ def ProcessSource(db_prod, geocoder, entities, config):
 
             eid = entities.GetEntity(row["ico"], name, addressId)
             # print name, "-> eid:", eid
-            
+            if found%20000==0:
+                print "Progress:",found
+
             if config.get("save_org_id"):
                 entities.AddOrg2Eid(row["org_id"], eid)
             if config.get("use_org_id_as_eid_relation"):
