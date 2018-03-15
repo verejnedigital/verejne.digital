@@ -15,6 +15,7 @@
 	.signature {
 		text-align: right;
 		font-family: helvetica;
+		page-break-inside: avoid;
 	}
 	.offer {
 		page-break-inside: avoid;
@@ -123,6 +124,7 @@
 
 <p class="ending">
 	&nbsp;&nbsp;&nbsp;&nbsp;Veríme, že Vás aspoň jedno obstarávanie zaujalo. Pre získanie zoznamu všetkých aktuálnych obstarávaní odporúčame navštíviť našu stránku: <em>obstaravania.verejne.digital</em> alebo oficiálnu stránku Úradu pre Verejné Obstarávania: <em>www.uvo.gov.sk</em>.
+</p>
 
 <p class="ending">
 Ak máte ľubovoľné otázky, pripomienky, alebo si neželáte dostávať podobné notifikácie v budúcnosti, prosím kontaktuje nás na ľubovoľnú z nižšie uvedených adries.

@@ -6,7 +6,10 @@
 		"phpro/soap-client": "^0.5.3",
 		"guzzlehttp/guzzle": "^6.2",
 		"http-interop/http-factory-guzzle": "^0.1.0",
-		"nategood/commando": "^0.2.9"
+		"nategood/commando": "^0.2.9",
+		"php": ">=7",
+		"ext-curl": "*",
+		"ext-soap": "*"
 	},
 	"authors": [
 		{

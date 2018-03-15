@@ -1,5 +1,9 @@
 # Development
 ## Dependencies
+### runtime
+* php 7+
+* php extensions: soap, curl, dom, json
+
 ### libraries
 * soap-client (https://github.com/phpro/soap-client)
 * guzzlehttp/guzzle (http://docs.guzzlephp.org/en/stable/)
