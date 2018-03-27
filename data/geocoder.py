@@ -124,13 +124,13 @@ class Geocoder:
             # print address, " -> ", lat, lng, formatted_address
             with self.db_address_id.dict_cursor() as cur_id:
                 cur_id.execute(
-                        "SELECT id FROM Addresses WHERE lat=%s and lng=%s",
+                        "SELECT id FROM Address WHERE lat=%s and lng=%s",
                         [lat, lng]
                 )
                 row_id = cur_id.fetchone()
                 if (row_id is None):
                     return self.db_address_id.add_values(
-                            "Addresses", [lat, lng, formatted_address])
+                            "Address", [lat, lng, formatted_address])
                 return row_id["id"]
 
         return None

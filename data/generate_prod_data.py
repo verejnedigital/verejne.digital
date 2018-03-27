@@ -2,6 +2,7 @@
 import os
 import sys
 import yaml
+import re
 
 from psycopg2.extensions import AsIs
 
@@ -17,7 +18,7 @@ from db import DatabaseConnection
 test_mode = True
 
 def CreateAndSetProdSchema(db, prod_schema_name):
-    """ Initialized schema with core prod tables: Entities and Addresses.
+    """ Initialized schema with core prod tables: Entities and Address.
     
     Creates tabales under given scheman (which is created) in the given db
     connection.
@@ -30,19 +31,22 @@ def CreateAndSetProdSchema(db, prod_schema_name):
         # TODO: read this from a config
         # TODO: index on lat, lng
         cur.execute("""
-            CREATE TABLE Addresses (
+            CREATE TABLE Address (
                 id SERIAL PRIMARY KEY,
                 lat DOUBLE PRECISION,
                 lng DOUBLE PRECISION,
                 address TEXT
-            )
+            );
+            CREATE INDEX ON Address (lat);
+            CREATE INDEX ON Address (lng);
+            CREATE UNIQUE INDEX ON Address (lat, lng)
         """)
 
         cur.execute("""
             CREATE TABLE Entities (
                 id SERIAL PRIMARY KEY,
                 name TEXT,
-                address_id INTEGER REFERENCES Addresses(id)
+                address_id INTEGER REFERENCES Address(id)
             )
         """)
         
@@ -88,7 +92,8 @@ def ProcessSource(db_prod, geocoder, entities, config):
         values_params = ",".join(["%s"] * (1 + len(columns)))
         command = (
                 "INSERT INTO %s (" + column_names + ") " +
-                "VALUES (" + values_params + ")"
+                "VALUES (" + values_params + ") " +
+                "ON CONFLICT DO NOTHING"
         )
         with db_prod.dict_cursor() as cur:
             cur.execute(command,
@@ -115,7 +120,10 @@ def ProcessSource(db_prod, geocoder, entities, config):
             if address is None: continue
             name = row["name"]
             if name is None: continue
-
+            # Sometimes FirstName and Surname are joined. Lets try the simplest splitting on Capital
+            # letters.
+            if (len(name.split()) == 1):
+              name = ' '.join(re.findall('[A-Z][^A-Z]*', name))
             addressId = geocoder.GetAddressId(address.encode("utf8"))
             if addressId is None:
                 missed += 1

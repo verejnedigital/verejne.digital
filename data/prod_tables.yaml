@@ -12,7 +12,9 @@ rpo:
                                 ico INT4,
                                 established_on DATE,
                                 terminated_on DATE
-                       )
+                       );
+                       CREATE UNIQUE INDEX ON CompanyInfo(eid);
+                       CREATE UNIQUE INDEX ON CompanyInfo(ico);
                     "
 related:
     source_schema: "ekosystem_rpo"
@@ -27,5 +29,8 @@ related:
                                 eid INTEGER REFERENCES Entities(id),
                                 stakeholder_type_id INT4,
                                 eid_relation INTEGER REFERENCES Entities(id)
-                       )
+                       );
+                       CREATE INDEX ON Related(eid);
+                       CREATE INDEX ON Related(eid_relation);
+                       CREATE UNIQUE INDEX ON Related(eid,stakeholder_type_id,eid_relation)
                     "
