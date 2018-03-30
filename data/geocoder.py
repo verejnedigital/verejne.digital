@@ -4,18 +4,13 @@ import re
 # Class to transform address -> address_id. The class takes care of caching and
 # address normalization (e.g lowercase, remove 'Slovensko',...)
 class Geocoder:
-    cache_table = None
-
     cache = {}
     cache_miss = 0
     cache_hit = 0
     test_mode = False
 
     def __init__(self, db, db_address_id, cache_table, test_mode):
-        self.cache_table = cache_table
-        self.db = db
         self.db_address_id = db_address_id
-        self.cache_table = cache_table
         self.test_mode = test_mode
         # matches NUM/NUMx where x is either space (' ') or command followed by
         # space (', ')
@@ -25,7 +20,7 @@ class Geocoder:
         # Match Bratislava/Kosice - xxx
         self.city_part = re.compile("(bratislava|košice) ?-(.*)")
 
-        with self.db.dict_cursor() as cur:
+        with db.dict_cursor() as cur:
             print "Reading cache of geocoded addresses"
             suffix_for_testing = ""
             if self.test_mode:
