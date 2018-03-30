@@ -22,6 +22,8 @@ class Geocoder:
         self.prog = re.compile(" ([0-9]+)\/([0-9]+)( |(, ))")
         # Match psc, either XXXXX or XXX XX.
         self.psc = re.compile("[0-9][0-9][0-9](([0-9][0-9])|( [0-9][0-9]))")
+        # Match Bratislava/Kosice - xxx
+        self.city_part = re.compile("(bratislava|košice) ?-(.*)")
 
         with self.db.dict_cursor() as cur:
             print "Reading cache of geocoded addresses"
@@ -48,6 +50,7 @@ class Geocoder:
                     print row["original_address"].encode("utf8")
                     print row["address"].encode("utf8")
                     print self.cache.keys()
+            print "Finished pre-processing geocoder input cache"
 
 
     def NormalizeAddress(self, address):
@@ -79,7 +82,7 @@ class Geocoder:
                 obj = re.search(self.psc, k)
                 if obj:
                     new_k = k.replace(obj.group(0), "")
-                    if (len(new_k) > 5): normalized.append(new_k)
+                    if (len(new_k) > 5): result.append(new_k)
             return result
 
         # Remove common suffixes not adding any value
@@ -101,12 +104,24 @@ class Geocoder:
                         if (len(without) > 5): result.append(without)
             return result
 
+        # Drop xxx in Bratislava - xxx
+        def ExpandKeysRemoveCityPart(keys):
+            result = []
+            for k in keys:
+                obj = re.search(self.city_part, k)
+                if obj:
+                    new_k = k.replace(obj.group(2), "")
+                    if (len(new_k) > 5): result.append(new_k)
+            return result
+
         normalized = [self.NormalizeAddress(address)]
         normalized += ExpandKeysRemoveSlash(normalized)
         normalized += ExpandKeysRemovePSC(normalized)
         normalized += ExpandKeysRemoveSuffixes(normalized)
-        return [self.NormalizeAddress(res.replace(" ", "").replace(",", ""))
-                for res in set(normalized)]
+        normalized += ExpandKeysRemoveCityPart(normalized)
+        return [self.NormalizeAddress(
+                    res.replace(" ", "").replace(",", "").replace("-", "")
+                ) for res in set(normalized)]
 
 
     def GetAddressId(self, address):

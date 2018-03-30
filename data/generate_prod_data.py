@@ -112,6 +112,8 @@ def ProcessSource(db_prod, geocoder, entities, config):
 
         missed_eid = 0
         found_eid = 0
+
+        missed_addresses = set([])
         for row in cur:
             # Read entries one by one and try to geocode them. If the address
             # lookup succeeds, try to normalize the entities. If it succeeds,
@@ -126,6 +128,9 @@ def ProcessSource(db_prod, geocoder, entities, config):
               name = ' '.join(re.findall('[A-Z][^A-Z]*', name))
             addressId = geocoder.GetAddressId(address.encode("utf8"))
             if addressId is None:
+                if test_mode and missed < 100:
+                    print "MISSING ADDRESS", address.encode("utf8")
+                missed_addresses.add(address)
                 missed += 1
                 continue
             found += 1;
@@ -150,6 +155,7 @@ def ProcessSource(db_prod, geocoder, entities, config):
 
     print "FOUND", found
     print "MISSED", missed
+    print "MISSED UNIQUE", len(missed_addresses)
     print "FOUND EID", found_eid
     print "MISSED EID", missed_eid
     db_source.commit()
@@ -183,6 +189,7 @@ def main():
         print "Working on source:", key
         config_per_source = config[key]
         ProcessSource(db_prod, geocoder, entities_lookup, config_per_source)
+        break
 
 
     db_old.commit()
