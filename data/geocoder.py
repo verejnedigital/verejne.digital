@@ -143,13 +143,16 @@ class Geocoder:
         self.api_lookups += 1
         # TODO: remove this once we are caching responses, otherwise it will ruin
         # our credit card...
-        if (self.api_lookups > 10): return None
+        if self.test_mode and (self.api_lookups > 10): return None
         params = {
             'address': address,
             'region': 'sk',
             'key': self.geocode_key
         }
-        url = "https://maps.googleapis.com/maps/api/geocode/json?" + urllib.urlencode(params)
+        url = (
+            "https://maps.googleapis.com/maps/api/geocode/json?" +
+            urllib.urlencode(params)
+        )
         try:
             response = urllib.urlopen(url)
             return json.loads(response.read())
@@ -161,20 +164,25 @@ class Geocoder:
         """ Lookup address in the geocoding api and update cache with the result.
         """
         api_response = self.GeocodingAPILookup(address)
-        if api_response is None:
-            self.api_lookup_fails += 1
-            return
-        if not api_response["status"] == "OK":
+        if (api_response is None) or (api_response["status"] != "OK"):
             # API did not succeed
-            # TODO: add this into the table for future processing?
             self.api_lookup_fails += 1
-            return None
+            if not self.test_mode:
+                # Store into the list for later processing.
+                self.db_address_cache.add_values("ToProcess", [address])
+                self.db_address_cache.commit()
+            return
         result = api_response["results"][0]
         lat = result["geometry"]["location"]["lat"]
         lng = result["geometry"]["location"]["lng"]
         formatted_address = result["formatted_address"].encode("utf8")
+        # Add to cache and add to the database
         self.AddToCache(address, formatted_address, lat, lng)
-        # TODO: add this into a table to be stored for later
+        self.db_address_cache.add_values(
+            "Cache",
+            [address, formatted_address, lat, lng, json.dumps(api_response["results"])]
+        )
+        self.db_address_cache.commit()
 
 
     def GetAddressId(self, address):
