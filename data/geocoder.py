@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
+import json
 import re
+import urllib
+import yaml
 
 # Class to transform address -> address_id. The class takes care of caching and
 # address normalization (e.g lowercase, remove 'Slovensko',...)
@@ -7,11 +10,18 @@ class Geocoder:
     cache = {}
     cache_miss = 0
     cache_hit = 0
+    api_lookups = 0
+    api_lookup_fails = 0
+    geocode_key = None
     test_mode = False
 
     def __init__(self, db, db_address_id, cache_table, test_mode):
         self.db_address_id = db_address_id
         self.test_mode = test_mode
+        # Read API key for geocoding lookups.
+        with open("/tmp/geocode_key.txt", 'r') as f:
+            self.geocode_key = yaml.load(f)['key']
+
         # matches NUM/NUMx where x is either space (' ') or command followed by
         # space (', ')
         self.prog = re.compile(" ([0-9]+)\/([0-9]+)( |(, ))")
@@ -31,21 +41,27 @@ class Geocoder:
             )
             print "Geocoder cache ready"
             for row in cur:
-                # Create cache of all normalizations -> lat, lng. We notmalize both the
-                # given and the geocoded address
-                keys = set(
-                        self.GetKeysForAddress(row["address"].encode("utf8")) +
-                        self.GetKeysForAddress(row["original_address"].encode("utf8"))
+                self.AddToCache(
+                        row["original_address"].encode("utf8"),
+                        row["address"].encode("utf8"), 
+                        row["lat"], row["lng"]
                 )
-                # TODO: save memory by storing lat, lng, address only once and reusing
-                # it between instances
-                for key in keys:
-                    self.cache[key] = row["lat"], row["lng"], row["address"]
-                if (len(self.cache) < 10):
-                    print row["original_address"].encode("utf8")
-                    print row["address"].encode("utf8")
-                    print self.cache.keys()
             print "Finished pre-processing geocoder input cache"
+
+
+    def AddToCache(self, address, formatted_address, lat, lng):
+        " Add one entry to the cache. The function takes care of generating proper keys"
+        keys = set(
+                self.GetKeysForAddress(address) +
+                self.GetKeysForAddress(formatted_address)
+        )
+        # TODO: save memory by storing lat, lng, address only once and reusing
+        # it between instances
+        for key in keys:
+            self.cache[key] = (lat, lng, formatted_address)
+        if (len(self.cache) < 10):
+            print address, formatted_address, lat, lng
+            print self.cache.keys()
 
 
     def NormalizeAddress(self, address):
@@ -119,28 +135,84 @@ class Geocoder:
                 ) for res in set(normalized)]
 
 
+    def GeocodingAPILookup(self, address):
+        " Performs and returns the response from Google geocoding api."
+        self.api_lookups += 1
+        # TODO: remove this once we are caching responses, otherwise it will ruin
+        # our credit card...
+        if (self.api_lookups > 10): return None
+        params = {
+            'address': address,
+            'region': 'sk',
+            'key': self.geocode_key
+        }
+        url = "https://maps.googleapis.com/maps/api/geocode/json?" + urllib.urlencode(params)
+        try:
+            response = urllib.urlopen(url)
+            return json.loads(response.read())
+        except:
+            return None
+
+
+    def UpdateGeocodingAPILookup(self, address):
+        """ Lookup address in the geocoding api and update cache with the result.
+        """
+        api_response = self.GeocodingAPILookup(address)
+        if api_response is None:
+            self.api_lookup_fails += 1
+            return
+        if not api_response["status"] == "OK":
+            # API did not succeed
+            # TODO: add this into the table for future processing?
+            self.api_lookup_fails += 1
+            return None
+        result = api_response["results"][0]
+        lat = result["geometry"]["location"]["lat"]
+        lng = result["geometry"]["location"]["lng"]
+        formatted_address = result["formatted_address"].encode("utf8")
+        self.AddToCache(address, formatted_address, lat, lng)
+        # TODO: add this into a table to be stored for later
+
+
     def GetAddressId(self, address):
         """ Get AddressId for a given string. If the address is not in the cache
         returns None and writes address into the list of address to be processed.
         """
         #print "Geocoding", address
-        for key in self.GetKeysForAddress(address):
-            if not key in self.cache:
-                #TODO: insert into table to process later
-                self.cache_miss += 1
-                continue
-            self.cache_hit += 1
-            lat, lng, formatted_address = self.cache[key]
-            # print address, " -> ", lat, lng, formatted_address
-            with self.db_address_id.dict_cursor() as cur_id:
-                cur_id.execute(
-                        "SELECT id FROM Address WHERE lat=%s and lng=%s",
-                        [lat, lng]
-                )
-                row_id = cur_id.fetchone()
-                if (row_id is None):
-                    return self.db_address_id.add_values(
-                            "Address", [lat, lng, formatted_address])
-                return row_id["id"]
+        def LookupKeysInCache(keys):
+            """ Check whether some key in in the cache. If so, return the
+            Address.id for the matching lat, lng. If no entry in Address
+            exists with the matching lat, lng, create one.
+            """
+            for key in keys:
+                if not key in self.cache:
+                    self.cache_miss += 1
+                    continue
+                self.cache_hit += 1
+                lat, lng, formatted_address = self.cache[key]
+                # print address, " -> ", lat, lng, formatted_address
+                with self.db_address_id.dict_cursor() as cur_id:
+                    cur_id.execute(
+                            "SELECT id FROM Address WHERE lat=%s and lng=%s",
+                            [lat, lng]
+                    )
+                    row_id = cur_id.fetchone()
+                    if (row_id is None):
+                        return self.db_address_id.add_values(
+                                "Address", [lat, lng, formatted_address])
+                    return row_id["id"]
+            return None
 
-        return None
+        keys = self.GetKeysForAddress(address)
+        address_id = LookupKeysInCache(keys)
+        if address_id is not None: return address_id
+        # Did not find address id, do geocoding lookup, which add data into cache.
+        self.UpdateGeocodingAPILookup(address)
+        return LookupKeysInCache(keys)
+
+    
+    def PrintStats(self):
+        print "CACHE_HITS", self.cache_hit
+        print "CACHE_MISS", self.cache_miss
+        print "API_LOOKUPS", self.api_lookups
+        print "API_LOOKUP_FAILS", self.api_lookup_fails

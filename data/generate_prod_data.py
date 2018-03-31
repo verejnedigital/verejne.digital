@@ -158,7 +158,6 @@ def ProcessSource(db_prod, geocoder, entities, config):
     print "MISSED UNIQUE", len(missed_addresses)
     print "FOUND EID", found_eid
     print "MISSED EID", missed_eid
-    db_source.commit()
     db_source.close()
 
 def main():
@@ -189,7 +188,7 @@ def main():
         print "Working on source:", key
         config_per_source = config[key]
         ProcessSource(db_prod, geocoder, entities_lookup, config_per_source)
-        break
+        if test_mode: break
 
 
     db_old.commit()
@@ -201,9 +200,7 @@ def main():
         db_prod.close()
 
     print "STATS"
-    print "CACHE HITS", geocoder.cache_hit
-    print "CACHE MISS", geocoder.cache_miss
-    pass
+    geocoder.PrintStats()
 
 if __name__ == '__main__':
     main()
