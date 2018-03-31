@@ -161,20 +161,26 @@ def ProcessSource(db_prod, geocoder, entities, config):
     db_source.close()
 
 def main():
+    if test_mode:
+        print "======================="
+        print "=======TEST MODE======="
+        print "======================="
+
     timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
     # Write output into prod_schema_name
     prod_schema_name = "prod_" + timestamp
     print "prod_schema_name", prod_schema_name
 
     # Create database connections:
-    # Read geocoder cache from this one
-    db_old = DatabaseConnection(path_config='db_config_cache_table')
+    # Read / write address cache from this one
+    db_address_cache = DatabaseConnection(
+        path_config='db_config_update_source.yaml', search_path='address_cache')
     # Write prod tables into this one
     db_prod = DatabaseConnection(path_config='db_config_update_source.yaml')
     CreateAndSetProdSchema(db_prod, prod_schema_name)
 
     # Initialize geocoder
-    geocoder = geocoder_lib.Geocoder(db_old, db_prod, "mysql.Entities", test_mode)
+    geocoder = geocoder_lib.Geocoder(db_address_cache, db_prod, test_mode)
     # Initialize entity lookup
     entities_lookup = entities.Entities(db_prod)
     # Table prod_tables.yaml defines a specifications of SQL selects to read
@@ -191,8 +197,8 @@ def main():
         if test_mode: break
 
 
-    db_old.commit()
-    db_old.close()
+    db_address_cache.commit()
+    db_address_cache.close()
     if test_mode:
         db_prod.conn.rollback()
     else:

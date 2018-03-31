@@ -7,6 +7,8 @@ import yaml
 # Class to transform address -> address_id. The class takes care of caching and
 # address normalization (e.g lowercase, remove 'Slovensko',...)
 class Geocoder:
+    db_address_cache = None
+    db_address_id = None
     cache = {}
     cache_miss = 0
     cache_hit = 0
@@ -15,7 +17,8 @@ class Geocoder:
     geocode_key = None
     test_mode = False
 
-    def __init__(self, db, db_address_id, cache_table, test_mode):
+    def __init__(self, db_address_cache, db_address_id, test_mode):
+        self.db_address_cache = db_address_cache
         self.db_address_id = db_address_id
         self.test_mode = test_mode
         # Read API key for geocoding lookups.
@@ -30,20 +33,20 @@ class Geocoder:
         # Match Bratislava/Kosice - xxx
         self.city_part = re.compile("(bratislava|košice) ?-(.*)")
 
-        with db.dict_cursor() as cur:
+        with db_address_cache.dict_cursor() as cur:
             print "Reading cache of geocoded addresses"
             suffix_for_testing = ""
             if self.test_mode:
                 suffix_for_testing = " LIMIT 200000"
             cur.execute(
-                    "SELECT address, original_address, lat, lng FROM " + cache_table +
+                    "SELECT address, formatted_address, lat, lng FROM Cache " +
                     suffix_for_testing,
             )
             print "Geocoder cache ready"
             for row in cur:
                 self.AddToCache(
-                        row["original_address"].encode("utf8"),
-                        row["address"].encode("utf8"), 
+                        row["address"].encode("utf8"),
+                        row["formatted_address"].encode("utf8"), 
                         row["lat"], row["lng"]
                 )
             print "Finished pre-processing geocoder input cache"
