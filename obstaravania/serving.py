@@ -91,6 +91,7 @@ class ServeObstaravanie(MyServer):
     def get(self):
         try:
             oid = int(self.request.GET["id"])
+            return_json = int(self.request.GET["json"])
         except:
             self.returnError(400, "Malformed id")
             return
@@ -101,6 +102,8 @@ class ServeObstaravanie(MyServer):
                 self.returnError(404, "No matching id")
                 return
             j = obstaravanieToJson(obstaravanie, 20, 20)
+            if return_json:
+                self.returnJSON(j)
             # TODO: before launching this, move this to load only once
             with open("obstaravanie.tmpl") as f:
                 singleTemplate = Template(f.read().decode("utf8"))
@@ -111,6 +114,7 @@ class ServeCompany(MyServer):
     def get(self):
         try:
             company_id = int(self.request.GET["id"])
+            return_json = int(self.request.GET["json"])
         except:
             self.returnError(400, "Malformed id")
             return
