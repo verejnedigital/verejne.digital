@@ -123,6 +123,17 @@ class InfoObstaravanie(MyServer):
             j = obstaravanieToJson(obstaravanie, 20, 20)
             self.returnJSON(j)
 
+
+class ListObstaravania(MyServer):
+    def get(self):
+        try:
+            with open('/tmp/prod.json', 'r') as json_file:
+                json=json_file.read()
+                self.returnJSON(json)
+        except:
+            self.returnError(400, "List json file is not present in /tmp/prod.json")            
+
+
 class ServeCompany(MyServer):
     def get(self):
         try:
@@ -160,6 +171,7 @@ def main():
           [
            ('/obstaravanie', ServeObstaravanie),
            ('/info_obstaravanie', InfoObstaravanie),
+           ('/list_obstaravania', ListObstaravania),
            ('/obstaravanieFirma', ServeCompany),
            ('/notifications', ServeNotifications),
            ('/updateNotifications', UpdateNotifications),
