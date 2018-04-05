@@ -91,7 +91,7 @@ class ServeObstaravanie(MyServer):
     def get(self):
         try:
             oid = int(self.request.GET["id"])
-            return_json = int(self.request.GET["json"])
+            return_json = bool(self.request.GET.get("json", False))
         except:
             self.returnError(400, "Malformed id")
             return
@@ -115,7 +115,6 @@ class ServeCompany(MyServer):
     def get(self):
         try:
             company_id = int(self.request.GET["id"])
-            return_json = int(self.request.GET["json"])
         except:
             self.returnError(400, "Malformed id")
             return
