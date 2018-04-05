@@ -127,11 +127,11 @@ class InfoObstaravanie(MyServer):
 class ListObstaravania(MyServer):
     def get(self):
         try:
-            with open('/tmp/prod.json', 'r') as json_file:
+            with open('/tmp/sample_list.json', 'r') as json_file:
                 json=json_file.read()
                 self.returnJSON(json)
         except:
-            self.returnError(400, "List json file is not present in /tmp/prod.json")            
+            self.returnError(400, "List json file is not present in /tmp/sample_list.json")            
 
 
 class ServeCompany(MyServer):
