@@ -104,6 +104,7 @@ class ServeObstaravanie(MyServer):
             j = obstaravanieToJson(obstaravanie, 20, 20)
             if return_json:
                 self.returnJSON(j)
+                return
             # TODO: before launching this, move this to load only once
             with open("obstaravanie.tmpl") as f:
                 singleTemplate = Template(f.read().decode("utf8"))
