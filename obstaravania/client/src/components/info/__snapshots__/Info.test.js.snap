@@ -1,0 +1,77 @@
+exports[`test renders dummy as before 1`] = `
+<div
+  className="result">
+  <span
+    className="entityName">
+    <i
+      aria-hidden="true"
+      className="fa fa-circle" />
+     
+    Dummy
+     
+    <a
+      href="?zobraz&123&123&undefined&"
+      rel="noopener noreferrer"
+      target="_blank"
+      title="Zobraz na mape">
+      <i
+        aria-hidden="true"
+        className="fa fa-map-marker" />
+    </a>
+  </span>
+  <hr />
+  <table
+    className="dataTable table table-condensed">
+    <tbody>
+      <tr>
+        <td
+          colSpan="2">
+          Dummy Street 123, 851 04 Petržalka, Slovakia
+        </td>
+      </tr>
+      <tr>
+        <td
+          colSpan="2">
+          <strong>
+            Stranícke príspevky:
+          </strong>
+          <ul>
+            <li>
+              <a
+                className={false}
+                href="http://datanest.fair-play.sk/searches/quick?query_string=Dummy"
+                rel="noopener noreferrer"
+                target="_blank">
+                Dummy, 123 EUR (rok 2010)
+                 
+                <i
+                  aria-hidden="true"
+                  className="fa fa-external-link" />
+              </a>
+            </li>
+          </ul>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <button
+            className="showHideBtn btn btn-link"
+            onClick={[Function]}>
+            Vzťahy
+          </button>
+        </td>
+        <td
+          className="sizeCell">
+          <strong>
+            1
+          </strong>
+          <i
+            aria-hidden="true"
+            className="fa fa-chevron-down sizeCellArrow"
+            onClick={[Function]} />
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+`;

@@ -1,0 +1,30 @@
+.similar-count {
+  background-color: darkgrey;
+  color: white;
+  border-radius: 8px;
+  padding-left: 3px;
+  padding-right: 3px;
+  display: inline-block;
+  min-width: 20px;
+  text-align: center;
+}
+
+.similarity {
+  color: green;
+  font-weight: bold;
+}
+
+.warning-1 {
+  color: gold;
+  font-size: 130%;
+}
+
+.warning-2 {
+  color: orange;
+  font-size: 130%;
+}
+
+.warning-3 {
+  color: red;
+  font-size: 130%;
+}

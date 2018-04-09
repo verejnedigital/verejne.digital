@@ -1,0 +1,21 @@
+.resultLoading {
+  background-color: #ffffff;
+  width: 400px;
+  display: block;
+  margin: 30px auto;
+  line-height: 50px;
+
+  text-align: center;
+
+  border-radius: 4px;
+  border-width: 2px;
+  border-color:  #cddae3;
+  border-style: solid;
+  box-shadow: 0 4px 12px 0 rgba(187, 198, 206, 0.5);
+}
+
+.content {
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
