@@ -33,7 +33,7 @@ export default class Legend extends Component {
         </div>
         <div className="row">
           <div className="col-sm-2 col-xs-2">
-            {getSimilarPercent('80%')}
+            {getSimilarPercent(80)}
           </div>
           <div className="col-sm-10 col-xs-10">podobnosť s predchádzajúcim obstarávaním</div>
         </div>
