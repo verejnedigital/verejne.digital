@@ -15,39 +15,45 @@ export default class ClickLoader extends Component {
     super(props);
     this.state = {
       data: null,
-      loading: false
+      showData: false
     };
     this.loadData = this.loadData.bind(this);
+    this.closeHandler = this.closeHandler.bind(this);
   }
 
   loadData() {
+      this.setState({
+          showData: true,
+      });
       if (this.state.data === null) {
-          this.setState({
-              loading: true,
-          });
           serverAPI.getEntityInfo(this.props.eid, (data) => {
               this.setState({
-                  data,
-                  loading: false,
+                  data
               });
           });
       }
   }
 
+  closeHandler() {
+      this.setState({
+          showData: false,
+      });
+  }
+
   render() {
-    if (this.state.data !== null) {
-      return (
-        <div className={this.props.recursive ? 'infoWrapper' : 'infoWrapper col-md-offset-2 col-md-8 col-lg-offset-3 col-lg-6'}>
-          <Info data={this.state.data} eid={this.props.eid} />
-          {this.props.hasConnectLine && <div className="connectLine" />}
-        </div>
-      );
+    if (this.state.showData && this.state.data === null) {
+        return (
+            <div>{this.props.children}
+                <LoadingBanner />
+            </div>
+        );
     }
 
-    if (this.state.loading) {
+    if (this.state.showData && this.state.data !== null) {
       return (
-        <div>{this.props.children}
-          <LoadingBanner/>
+        <div className={this.props.recursive ? 'infoWrapper' : 'infoWrapper col-md-offset-2 col-md-8 col-lg-offset-3 col-lg-6'}>
+          <Info data={this.state.data} eid={this.props.eid} onClose={this.closeHandler}/>
+          {this.props.hasConnectLine && <div className="connectLine" />}
         </div>
       );
     }

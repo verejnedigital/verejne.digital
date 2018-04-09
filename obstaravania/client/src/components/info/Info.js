@@ -40,6 +40,7 @@ class Info extends Component {
     const trzby = findata.hasOwnProperty('trzby16') ? findata.trzby16 : findata.trzby15;
     return (
       <div className="result">
+        {this.props.onClose && <i className="fa fa-close infoCloseButton" aria-hidden="true" onClick={this.props.onClose} />}
         <span className="entityName">
           <i className={`fa fa-circle${isPolitician(data) ? ' politician' : ''}`} aria-hidden="true" />&nbsp;
           {entity.entity_name}&nbsp;

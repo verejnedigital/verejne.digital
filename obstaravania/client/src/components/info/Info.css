@@ -86,3 +86,10 @@ td.sizeCell > strong {
 .politician {
   color: #e55600;
 }
+
+.infoCloseButton {
+  float: right;
+  color: lightgray;
+  display: inline-block;
+  margin: 10px 5px;
+}
