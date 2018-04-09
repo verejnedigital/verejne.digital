@@ -6,16 +6,20 @@
 
 .main {
   overflow: auto;
-}
-
-.results {
-  padding-top: 50px;
+  margin-left: 300px;
+  padding: 0 15px;
 }
 
 .sidebar {
   height: 100%;
   padding-right: 0;
   padding-left: 0;
+  width: 300px;
+  float: left;
+}
+
+.results {
+  padding-top: 50px;
 }
 
 .fbfooter {
@@ -46,11 +50,17 @@
 }
 
 @media(max-width: 768px){
-  #myAffix{
+    #myAffix{
       position: relative !important;
+    }
+
+  .sidebar {
+    width: 100%;
+    float: none;
   }
 
   .main {
     overflow: visible;
+    margin-left: 0;
   }
 }

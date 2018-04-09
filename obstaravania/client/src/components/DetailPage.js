@@ -6,6 +6,7 @@ import DetailList from './DetailList';
 import './DetailPage.css';
 import TabLink from './info/ExternalLink';
 import SimpleDataTable from './SimpleDataTable/SimpleDataTable';
+import {Link} from "react-router";
 
 export default class DetailPage extends Component {
 
@@ -47,39 +48,39 @@ export default class DetailPage extends Component {
       return <InfoLoader />;
     }
 
-      const headerData = [
-          {
-              label: <span className="my-label">Popis:</span>,
-              body: this.state.item.text,
-          },
-          {
-              label: <span className="my-label">Objednávateľ:</span>,
-              body: this.state.item.customer,
-          },
-      ];
+    const headerData = [
+      {
+        label: <span className="my-label">Popis:</span>,
+        body: this.state.item.text,
+      },
+      {
+        label: <span className="my-label">Objednávateľ:</span>,
+        body: this.state.item.customer,
+      },
+    ];
 
     if (this.state.item.bulletin_date) {
-        const vestnik = (<span>
-              <TabLink
-                  url={`https://www.uvo.gov.sk/evestnik?poradie=${this.state.item.bulletin_number}&year=${this.state.item.bulletin_year}`}
-                  text={`${this.state.item.bulletin_number}/${this.state.item.bulletin_year}`}
-              /> <span className="note">({this.state.item.bulletin_date})</span>
-            </span>
+      const vestnik = (<span>
+        <TabLink
+          url={`https://www.uvo.gov.sk/evestnik?poradie=${this.state.item.bulletin_number}&year=${this.state.item.bulletin_year}`}
+          text={`${this.state.item.bulletin_number}/${this.state.item.bulletin_year}`}
+        /> <span className="note">({this.state.item.bulletin_date})</span>
+      </span>
         );
 
-        headerData.push(
-            {
-                label: <span className="my-label">Vestník:</span>,
-                body: vestnik,
-            },
+      headerData.push(
+        {
+          label: <span className="my-label">Vestník:</span>,
+          body: vestnik,
+        },
         );
     }
 
     headerData.push(
-        {
-            label: <span className="my-label">Vyhlásená cena:</span>,
-            body: showNumberCurrency(this.state.item.price),
-        },
+      {
+        label: <span className="my-label">Vyhlásená cena:</span>,
+        body: showNumberCurrency(this.state.item.price),
+      },
     );
 
     if (this.state.item.price_num >= 5) {
@@ -97,7 +98,7 @@ export default class DetailPage extends Component {
       <div>
         <div className="row">
           <div className="col-sm-12 col-xs-12">
-            <h3 className="title">{this.state.item.title}</h3>
+            <h3 className="title"><Link to="/"><i className="fa fa-home" /></Link> {this.state.item.title}</h3>
           </div>
         </div>
         <div className="row">

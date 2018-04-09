@@ -4,8 +4,8 @@ import './LoadingBanner.css';
 export default class LoadingBanner extends Component {
   render() {
     return (
-      <div className="content">
-        <div className="resultLoading">Načítavam dáta...</div>
+      <div className="loadingBanner">
+        <div className="loadingBannerContent">Načítavam dáta...</div>
       </div>
     );
   }

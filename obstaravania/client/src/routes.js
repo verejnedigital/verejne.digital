@@ -1,14 +1,14 @@
 import React from 'react';
 import { Router, Route, IndexRoute } from 'react-router';
-import ObstaravaniaPage from './components/MainPage';
-import ObstaravaniaList from './components/MainList';
-import Detail from './components/DetailPage';
+import Main from './components/Main';
+import MainPage from './components/MainPage';
+import DetailPage from './components/DetailPage';
 
 const Routes = props => (
   <Router {...props}>
-    <Route path="/" component={ObstaravaniaPage}>
-      <IndexRoute component={ObstaravaniaList} />
-      <Route path="/detail/:id" component={Detail} />
+    <Route path="/" component={Main}>
+      <IndexRoute component={MainPage} />
+      <Route path="/detail/:id" component={DetailPage} />
     </Route>
   </Router>
 );

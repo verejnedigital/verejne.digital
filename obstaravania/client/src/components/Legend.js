@@ -13,8 +13,7 @@ export default class Legend extends Component {
           <div className="col-sm-offset-2 col-sm-10 col-xs-offset-2 col-xs-10 about">
             <h2 className="mainTitle">Aktuálne obstarávania</h2>
               Našim cieľom je identifikovať a osloviť najvhodnejších uchádzačov,
-              ktorí by sa mali zapojiť do verejných obstarávaní.
-              <a href="#">Viac info</a>
+              ktorí by sa mali zapojiť do verejných obstarávaní. <a href="#">Viac info</a>
           </div>
         </div>
         <div className="row">

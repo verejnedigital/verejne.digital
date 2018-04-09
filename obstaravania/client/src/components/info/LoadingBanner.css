@@ -1,4 +1,4 @@
-.resultLoading {
+.loadingBannerContent {
   background-color: #ffffff;
   width: 400px;
   display: block;
@@ -14,7 +14,7 @@
   box-shadow: 0 4px 12px 0 rgba(187, 198, 206, 0.5);
 }
 
-.content {
+.loadingBanner {
   height: 100%;
   display: flex;
   align-items: center;
