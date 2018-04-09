@@ -4,6 +4,7 @@ import './MainItem.css';
 import './Legend-symbols.css';
 import {expC, getSuspectLevel} from '../utility/utilities';
 import {getSimilarCount, getSimilarPercent, getWarningSymbol} from "../utility/LegendSymbols";
+import ClickLoader from "./info/ClickLoader";
 
 export default class ObstaravanieItem extends Component {
 
@@ -28,7 +29,7 @@ export default class ObstaravanieItem extends Component {
   render() {
     let candidate = '?';
     if (this.props.item.kandidati.length > 0) {
-        candidate = this.props.item.kandidati[0].name;
+        candidate = <ClickLoader recursive eid={this.props.item.kandidati[0].eid}>{this.props.item.kandidati[0].name}</ClickLoader>;
     }
 
     let similarCount = '?';
