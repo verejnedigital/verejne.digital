@@ -47,32 +47,40 @@ export default class DetailPage extends Component {
       return <InfoLoader />;
     }
 
-    const vestnik = (<span>
-      <TabLink
-        url={`https://www.uvo.gov.sk/evestnik?poradie=${this.state.item.bulletin_number}&year=${this.state.item.bulletin_year}`}
-        text={`${this.state.item.bulletin_number}/${this.state.item.bulletin_year}`}
-      /> <span className="note">({this.state.item.bulletin_date})</span>
-    </span>
-    );
+      const headerData = [
+          {
+              label: <span className="my-label">Popis:</span>,
+              body: this.state.item.text,
+          },
+          {
+              label: <span className="my-label">Objednávateľ:</span>,
+              body: this.state.item.customer,
+          },
+      ];
 
-    const headerData = [
-      {
-        label: <span className="my-label">Popis:</span>,
-        body: this.state.item.text,
-      },
-      {
-        label: <span className="my-label">Objednávateľ:</span>,
-        body: this.state.item.customer,
-      },
-      {
-        label: <span className="my-label">Vestník:</span>,
-        body: vestnik,
-      },
-      {
-        label: <span className="my-label">Vyhlásená cena:</span>,
-        body: showNumberCurrency(this.state.item.price),
-      },
-    ];
+    if (this.state.item.bulletin_date) {
+        const vestnik = (<span>
+              <TabLink
+                  url={`https://www.uvo.gov.sk/evestnik?poradie=${this.state.item.bulletin_number}&year=${this.state.item.bulletin_year}`}
+                  text={`${this.state.item.bulletin_number}/${this.state.item.bulletin_year}`}
+              /> <span className="note">({this.state.item.bulletin_date})</span>
+            </span>
+        );
+
+        headerData.push(
+            {
+                label: <span className="my-label">Vestník:</span>,
+                body: vestnik,
+            },
+        );
+    }
+
+    headerData.push(
+        {
+            label: <span className="my-label">Vyhlásená cena:</span>,
+            body: showNumberCurrency(this.state.item.price),
+        },
+    );
 
     if (this.state.item.price_num >= 5) {
       const upper = showNumberCurrency(getSuspectLevelLimit(this.state.item, 1));
@@ -82,9 +90,8 @@ export default class DetailPage extends Component {
           label: <span className="my-label">Náš odhad:</span>,
           body: [lower, ' - ', upper],
         },
-          );
+      );
     }
-
 
     return (
       <div>

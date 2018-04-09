@@ -41,11 +41,11 @@ table.dataTable > tbody > tr > td, table.dataTable > thead > tr > td {
   font-weight: bold;
 }
 
-table.dataTable > tbody > tr > td:first-child {
+table.dataTable > tbody > tr > td:first-child, table.dataTable > thead > tr > td:first-child {
   padding-left: 20px;
 }
 
-table.dataTable > tbody > tr > td:last-child {
+table.dataTable > tbody > tr > td:last-child, table.dataTable > thead > tr > td:first-child {
   padding-right: 20px;
 }
 
