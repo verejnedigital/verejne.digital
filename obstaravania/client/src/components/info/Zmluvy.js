@@ -11,7 +11,7 @@ const Zmluvy = ({ data, isMapView }) =>
         <ExternalLink
           isMapView={isMapView}
           url={contract.source}
-          text={`${contract.customer}, ${showNumberCurrency(contract.total)}`}
+          text={[contract.customer, ', ', showNumberCurrency(contract.total)]}
         />
       </li>
     ))
