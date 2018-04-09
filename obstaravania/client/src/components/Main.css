@@ -6,7 +6,7 @@
 
 .main {
   overflow: auto;
-  margin-left: 300px;
+  margin-left: 350px;
   padding: 0 15px;
 }
 
@@ -14,7 +14,7 @@
   height: 100%;
   padding-right: 0;
   padding-left: 0;
-  width: 300px;
+  width: 350px;
   float: left;
 }
 
