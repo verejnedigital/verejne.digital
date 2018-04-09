@@ -27,7 +27,7 @@ export default class DetailItem extends Component {
   }
 
   render() {
-    const similarity = Math.round(this.props.item.score * 100) + '%';
+    const similarity = Math.round(this.props.item.score * 100);
     const link = '/detail/' + this.props.item.id;
 
     return (

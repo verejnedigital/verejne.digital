@@ -39,7 +39,7 @@ export default class ObstaravanieItem extends Component {
     }
     let similarity = '?';
     if (this.props.item.kandidati.length > 0) {
-      similarity = Math.round(this.props.item.kandidati[0].score * 100) + '%';
+      similarity = Math.round(this.props.item.kandidati[0].score * 100);
     }
 
     const link = '/detail/' + this.props.item.id;

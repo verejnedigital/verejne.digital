@@ -7,11 +7,24 @@
   display: inline-block;
   min-width: 20px;
   text-align: center;
+  font-weight: bold;
 }
 
 .similarity {
   color: green;
+  font-weight: lighter;
+}
+
+.similarity-high {
   font-weight: bold;
+}
+
+.similarity-medium {
+  font-weight: bolder;
+}
+
+.similarity-low {
+  font-weight: normal;
 }
 
 .warning-1 {

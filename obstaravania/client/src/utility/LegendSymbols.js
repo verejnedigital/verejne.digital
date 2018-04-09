@@ -20,7 +20,18 @@ export function getWarningSymbol(level) {
 }
 
 export function getSimilarPercent(value) {
-  return <span className="similarity">{value}</span>;
+  if (value > 75) {
+    return <span className="similarity similarity-high">{value}%</span>;
+  }
+
+  if (value > 50) {
+    return <span className="similarity similarity-medium">{value}%</span>;
+  }
+
+  if (value > 25) {
+    return <span className="similarity similarity-low">{value}%</span>;
+  }
+  return <span className="similarity">{value}%</span>;
 }
 
 export function getSimilarCount(value) {
