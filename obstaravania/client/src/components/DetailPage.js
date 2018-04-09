@@ -79,7 +79,7 @@ export default class DetailPage extends Component {
       const lower = showNumberCurrency(getSuspectLevelLimit(this.state.item, -1));
       headerData.push(
         {
-          label: 'Náš odhad:',
+          label: <span className="my-label">Náš odhad:</span>,
           body: [lower, ' - ', upper],
         },
           );

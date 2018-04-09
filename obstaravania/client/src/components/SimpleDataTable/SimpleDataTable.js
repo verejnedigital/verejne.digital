@@ -31,7 +31,7 @@ export default class SimpleDataTable extends Component {
         <td>
           <div className="media">
             <div className="media-left">
-              <span className="my-label">{item.label}</span>
+              {item.label}
             </div>
             <div className="media-body">
               {item.body}
