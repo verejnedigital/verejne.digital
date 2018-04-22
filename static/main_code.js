@@ -694,17 +694,10 @@ function initMap() {
     var places = searchBox.getPlaces();
     if (places.length == 0) return;
     var place = places[0];
-    var bounds = new google.maps.LatLngBounds();
-    if (place.geometry.viewport)  bounds.union(place.geometry.viewport);
-    else bounds.extend(place.geometry.location);
-    // TODO: function for this
-    var bounds2 = new google.maps.LatLngBounds();
-    bounds2.extend(bounds.getCenter());
-    server_calls_enabled = false; 
-    map.setOptions({ maxZoom: kZoomForEntity + 2, minZoom:17 });
-    map.fitBounds(bounds2)
-    map.setOptions({ maxZoom: null, minZoom: null });
-    server_calls_enabled = true; 
+    server_calls_enabled = false;
+    if (place.geometry.viewport) map.fitBounds(place.geometry.viewport);
+    else map.setCenter(place.geometry.location);
+    server_calls_enabled = true;
     getEntities(map);
   });
 

@@ -107,6 +107,33 @@ class ServeObstaravanie(MyServer):
             html = singleTemplate.render(obstaravanie=j)
             self.response.write(html.encode("utf8"))
 
+class InfoObstaravanie(MyServer):
+    def get(self):
+        try:
+            oid = int(self.request.GET["id"])
+        except:
+            self.returnError(400, "Malformed id")
+            return
+
+        with Session() as session:
+            obstaravanie = session.query(Obstaravanie).filter_by(id=oid).first()
+            if obstaravanie is None:
+                self.returnError(404, "No matching id")
+                return
+            j = obstaravanieToJson(obstaravanie, 20, 20)
+            self.returnJSON(j)
+
+
+class ListObstaravania(MyServer):
+    def get(self):
+        try:
+            with open('/tmp/sample_list.json', 'r') as json_file:
+                j=json.load(json_file)
+                self.returnJSON(j)
+        except:
+            self.returnError(400, "List json file is not present in /tmp/sample_list.json")            
+
+
 class ServeCompany(MyServer):
     def get(self):
         try:
@@ -143,6 +170,8 @@ def main():
   app = webapp2.WSGIApplication(
           [
            ('/obstaravanie', ServeObstaravanie),
+           ('/info_obstaravanie', InfoObstaravanie),
+           ('/list_obstaravania', ListObstaravania),
            ('/obstaravanieFirma', ServeCompany),
            ('/notifications', ServeNotifications),
            ('/updateNotifications', UpdateNotifications),

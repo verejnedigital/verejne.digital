@@ -1,5 +1,8 @@
 # Development
 ## Dependencies
+### runtime
+* php 7+
+
 ### libraries
 * TCPDF (https://tcpdf.org)
 * Smarty (smarty.net)

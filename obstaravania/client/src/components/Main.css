@@ -1,0 +1,66 @@
+.main,
+.container-fluid,
+.container-fluid > .row {
+  height: 100%;
+}
+
+.main {
+  overflow: auto;
+  margin-left: 350px;
+  padding: 0 15px;
+}
+
+.sidebar {
+  height: 100%;
+  padding-right: 0;
+  padding-left: 0;
+  width: 350px;
+  float: left;
+}
+
+.results {
+  padding-top: 50px;
+}
+
+.fbfooter {
+  width: 100%;
+  margin-top: auto;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  align-self: flex-end;
+}
+
+.fbfooter .col-sm-10 {
+  padding-left: 0;
+}
+
+.fbIframe {
+  border: none;
+  overflow: hidden;
+}
+
+#myAffix {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #ffffff;
+  padding-right: 15px;
+  padding-left: 15px;
+}
+
+@media(max-width: 768px){
+    #myAffix{
+      position: relative !important;
+    }
+
+  .sidebar {
+    width: 100%;
+    float: none;
+  }
+
+  .main {
+    overflow: visible;
+    margin-left: 0;
+  }
+}

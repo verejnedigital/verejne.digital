@@ -19,15 +19,36 @@ class DetailAssetDeclaration extends Component {
     if (imageSrc && !this.state.seachedForImageOnServer) {
       this.setState({
         seachedForImageOnServer: true
-      })
-      var img = new Image();
+      });
+      let img = new Image();
       img.onload = () => {
         this.setState({
           isImageOnServer: true
         });
-      }
+      };
       img.src = imageSrc;
     }
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    if (this.state.isImageOnServer !== nextState.isImageOnServer) {
+      return true;
+    }
+
+    if (this.props.assets !== nextProps.assets) {
+        return true;
+    }
+    if (this.props.year !== nextProps.year) {
+        return true;
+    }
+    if (this.props.title !== nextProps.title) {
+        return true;
+    }
+    if (this.props.source !== nextProps.source) {
+        return true;
+    }
+
+    return false;
   }
 
   render() {
@@ -36,7 +57,7 @@ class DetailAssetDeclaration extends Component {
       <table className="assets-declaration table">
         <thead>
           <tr>
-            <th></th>
+            <th/>
             <th>
               {title} ({assets.length}) <br/>
               <span className="assets-declaration source">zdroj </span>

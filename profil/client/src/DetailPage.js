@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
 import './DetailPage.css';
 
 import * as serverAPI from './actions/serverAPI';
@@ -17,9 +18,12 @@ class DetailPage extends Component {
       katasterAssetsFromDeclaration: [],
       hnutelnyAssetsFromDeclaration: [],
       prijmyAssetsFromDeclaration: [],
-      report: [],
-      index: 0,      
+      years: [],
+      currentYear: null,
+      reportData: {},
+      mapCenter: {lat: 48.6, lng: 19.5}
     };
+    this.goMap.bind(this);
   }
 
   componentWillMount() {
@@ -48,7 +52,18 @@ class DetailPage extends Component {
       });
   }
 
-  split_assets(obj, split_str) {
+  goMap(parcel) {
+    this.setState({
+      mapCenter: {lat: parcel.lat, lng: parcel.lon}
+    });
+
+    const node = ReactDOM.findDOMNode(this.refs.map);
+    if (node){
+      window.scrollTo(0, node.offsetTop);
+    }
+  }
+
+  static split_assets(obj, split_str) {
     if (obj !== undefined && obj[split_str] !== undefined) {
       return obj[split_str].split('\n');
     } else {
@@ -56,38 +71,85 @@ class DetailPage extends Component {
     }
   }
 
+  static parseReport(reportYear) {
+    // Report contains asset declarations for several years.
+    const katasterAssetsFromDeclaration = DetailPage.split_assets(reportYear, "unmovable_assets");
+    const hnutelnyAssetsFromDeclaration = DetailPage.split_assets(reportYear, "movable_assets");
+    let prijmyAssetsFromDeclaration = [];
+    if (reportYear !== undefined) {
+        let keys = ["income", "compensations", "other_income", "offices_other"];
+        let descriptions = ["príjmy ", "paušálne náhrady", "ostatné príjmy", "počas výkonu verejnej funkcie má tieto funkcie (čl. 7 ods. 1 písm. c) u. z. 357/2004)"];
+        for (let i = 0; i < keys.length; i++) {
+            let key = keys[i];
+            prijmyAssetsFromDeclaration.push(descriptions[i]+': ' + reportYear[key]);
+        }
+    }
+
+    return {
+      katasterAssetsFromDeclaration: katasterAssetsFromDeclaration,
+      hnutelnyAssetsFromDeclaration: hnutelnyAssetsFromDeclaration,
+      prijmyAssetsFromDeclaration: prijmyAssetsFromDeclaration,
+    }
+  }
+
   loadAssetDeclaration(id) {
     serverAPI.loadAssetDeclaration(id,
       (report) => {
-        // Report contains asset declarations for several years.
-        // TODO: Make sure it is sorted by year from the most recent to the oldest
-        const katasterAssetsFromDeclaration = this.split_assets(report[0], "unmovable_assets");
-        const hnutelnyAssetsFromDeclaration = this.split_assets(report[0], "movable_assets");
-        var prijmyAssetsFromDeclaration = [];        
-        if (report[0] !== undefined) {
-          var keys = ["income", "compensations", "other_income", "offices_other"]
-          var descriptions = ["príjmy ", "paušálne náhrady", "ostatné príjmy", "počas výkonu verejnej funkcie má tieto funkcie (čl. 7 ods. 1 písm. c) u. z. 357/2004)"];
-          for (var i = 0; i < keys.length; i++) {
-            var key = keys[i];
-            prijmyAssetsFromDeclaration.push(descriptions[i]+': ' + report[0][key]);
-          }            
-        }        
+        let reportByYear = {};
+        let latestYear = null;
+        let availableYears = [];
+        for (let i = 0; i < report.length; i++) {
+          availableYears.push(report[i].year);
+          reportByYear[report[i].year] = DetailPage.parseReport(report[i]);
+        }
+
+        availableYears.sort().reverse();
+        if (availableYears.length > 0) {
+            latestYear = availableYears[0];
+        }
+
         this.setState({
-          katasterAssetsFromDeclaration : katasterAssetsFromDeclaration,
-          hnutelnyAssetsFromDeclaration : hnutelnyAssetsFromDeclaration,
-          prijmyAssetsFromDeclaration : prijmyAssetsFromDeclaration,
-          report : report,
-          index : 0,
+          katasterAssetsFromDeclaration : reportByYear[latestYear].katasterAssetsFromDeclaration,
+          hnutelnyAssetsFromDeclaration : reportByYear[latestYear].hnutelnyAssetsFromDeclaration,
+          prijmyAssetsFromDeclaration : reportByYear[latestYear].prijmyAssetsFromDeclaration,
+          reportData: reportByYear,
+          years: availableYears,
+          currentYear: latestYear,
         });
       });
   }
 
-  render() {    
+  selectYear(year) {
+    this.setState({
+        currentYear: year,
+        katasterAssetsFromDeclaration : this.state.reportData[year].katasterAssetsFromDeclaration,
+        hnutelnyAssetsFromDeclaration : this.state.reportData[year].hnutelnyAssetsFromDeclaration,
+        prijmyAssetsFromDeclaration : this.state.reportData[year].prijmyAssetsFromDeclaration,
+    });
+  }
+
+  render() {
+    let yearTabs = [];
+    for (let i = 0; i < this.state.years.length; i++) {
+      let className = "tab";
+      if (this.state.currentYear === this.state.years[i]) {
+          className = "tab active";
+      }
+      yearTabs.push(
+          <span className={className} key={this.state.years[i]} onClick={this.selectYear.bind(this, this.state.years[i])}>{this.state.years[i]}</span>
+      );
+    }
+
+    let source = "http://www.nrsr.sk";
+    if (this.state.currentYear !== null && this.state.reportData[this.state.currentYear]["source"]) {
+        source = this.state.reportData[this.state.currentYear]["source"];
+    }
+
     return (      
       <div className="detail-page">
         <div className="detail-header">
           <div className="detail-navigation">
-            <a href="./" className="brand"><b>profil</b>.verejne.digital <i className="fa fa-home"></i></a>
+            <a href="./" className="brand"><b>profil</b>.verejne.digital <i className="fa fa-home"/></a>
           </div>
         </div>
         {this.state.politician.surname &&
@@ -95,24 +157,27 @@ class DetailPage extends Component {
           <DetailVizitka politician={this.state.politician} />
           <div className="data-tables">
             <div className="assets-tables">
-              <DetailAssetDeclaration assets={this.state.katasterAssetsFromDeclaration}              
-                year={(this.state.report[this.state.index] !== undefined ? this.state.report[this.state.index].year : 0)}
+              <div className="tabs">
+                  {yearTabs}
+              </div>
+              <DetailAssetDeclaration assets={this.state.katasterAssetsFromDeclaration}
+                year={this.state.currentYear}
                 title="Majetkové priznanie: Nehnuteľnosti"
                 image={`https://verejne.digital/img/majetok/${this.state.politician.surname}_${this.state.politician.firstname}.png`}
-                source={(this.state.report[this.state.index] !== undefined ? this.state.report[this.state.index]["source"] : "http://www.nrsr.sk")}/>
+                source={source}/>
               <DetailAssetDeclaration assets={this.state.hnutelnyAssetsFromDeclaration}              
-                year={(this.state.report[this.state.index] !== undefined ? this.state.report[this.state.index].year : 0)}
+                year={this.state.currentYear}
                 title="Majetkové priznanie: Hnuteľný majetok"
-                source={(this.state.report[this.state.index] !== undefined ? this.state.report[this.state.index]["source"] : "http://www.nrsr.sk")}/>  
+                source={source}/>
               <DetailAssetDeclaration assets={this.state.prijmyAssetsFromDeclaration}              
-                year={(this.state.report[this.state.index] !== undefined ? this.state.report[this.state.index].year : 0)}
+                year={this.state.currentYear}
                 title="Majetkové priznanie: ostatné"
-                source={(this.state.report[this.state.index] !== undefined ? this.state.report[this.state.index]["source"] : "http://www.nrsr.sk")}/>  
+                source={source}/>
             </div>
-            <DetailKatasterTable kataster={this.state.kataster} />
+            <DetailKatasterTable kataster={this.state.kataster} onParcelShow={this.goMap.bind(this)} />
           </div>
           <div className="mapa">
-            <MapContainer assets={this.state.kataster} />
+            <MapContainer assets={this.state.kataster} center={this.state.mapCenter} ref="map"/>
           </div>          
         </div>                
         }

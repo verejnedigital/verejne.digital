@@ -32,19 +32,23 @@ class App extends Component {
           original_politicians : list,
         });
       });
-  }  
+  }
+
+  static normalizeName(name) {
+      return name.normalize('NFD').replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  }
 
   filterNames(query) {
-    query = query.toLowerCase();    
+    query = App.normalizeName(query);
     const politicians = this.state.original_politicians.filter(p => 
-      (p.firstname.toLowerCase().startsWith(query) || p.surname.toLowerCase().startsWith(query) || p.party_abbreviation.toLowerCase() === query));    
+      (App.normalizeName(p.firstname).startsWith(query) || App.normalizeName(p.surname).startsWith(query) || App.normalizeName(p.party_abbreviation).indexOf(query) !== -1));
     this.setState({
       politicians : politicians, 
     })
   }
 
   render() {
-    var detail_id = window.location.href.replace(/.*\?/,"");    
+    let detail_id = window.location.href.replace(/.*\?/,"");
     return (window.location.href.indexOf("?") !== -1) ?
      (<DetailPage id={detail_id} />) :
      (
@@ -55,9 +59,7 @@ class App extends Component {
           </div>
         </div>         
         <div className="App-search">
-          <Search filterNames={this.filterNames} names={this.state.politicians.map(politician => { return {
-            firstname: politician.firstname, 
-            surname: politician.surname}})}/>
+          <Search filterNames={this.filterNames} />
         </div>
         <div className="fbframe">
             <iframe title="fb_like" src="https://www.facebook.com/plugins/like.php?href=https%3A%2F%2Fwww.facebook.com%2Fverejne.digital&width=111&layout=button_count&action=like&size=small&show_faces=true&share=true&height=46&appId=" width="201" height="23" className="fbIframe" scrolling="no" frameBorder="0" allowtransparency="true" />

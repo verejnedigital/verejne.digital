@@ -3,6 +3,7 @@
     "description": "tool to create PDF files with suggested offers from json",
     "type": "project",
     "require": {
+        "php": ">=7",
         "tecnickcom/tcpdf": "^6.2",
         "smarty/smarty": "^3.1"
     },
