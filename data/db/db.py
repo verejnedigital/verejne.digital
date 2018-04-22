@@ -67,4 +67,4 @@ class DatabaseConnection():
             psycopg2.extensions.quote_ident(schema_new, self.conn))
         self.execute(q)
         if verbose:
-            print('Renamed schema "%s" to "%s"' % (schema_old, schema_new))
+            print('[OK] Renamed schema "%s" to "%s"' % (schema_old, schema_new))
