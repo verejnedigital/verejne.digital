@@ -12,6 +12,12 @@ from utils import download_cadastral_json, download_cadastral_pages, search_stri
 
 CADASTRAL_API_ODATA = 'https://kataster.skgeodesy.sk/PortalOData/'
 
+# TEMP
+import os
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../data')))
+from status import get_source_data_info
+
 
 def get_cadastral_data_for_coordinates(lat, lon, tolerance, circumvent_geoblocking, verbose):
     """ Identifies the parcel(s) at given (longitude, latitude) coordinates
@@ -258,6 +264,12 @@ class ListPoliticians(MyServer):
 
         # Return politicians augmented with property counts as JSON
         return self.returnJSON(politicians)
+
+# TEMP
+class SourceDataStatus(MyServer):
+    def get(self):
+        result = get_source_data_info()
+        return self.returnJSON(result)
 
 def main():
   parser = argparse.ArgumentParser()

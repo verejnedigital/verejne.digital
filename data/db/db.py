@@ -52,7 +52,7 @@ class DatabaseConnection():
 
     def add_values(self, table, values):
         with self.conn.cursor() as cur:
-            command = ( 
+            command = (
                     "INSERT INTO %s VALUES (DEFAULT," +
                     (",".join(["%s"] * len(values))) +
                     ") RETURNING id"
