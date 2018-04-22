@@ -5,7 +5,7 @@ import webapp2
 
 from datetime import datetime
 
-from status import get_source_data_info
+from status import get_source_data_info, get_prod_data_info
 from utils import json_load
 
 
@@ -19,6 +19,11 @@ class SourceDataInfo(MyServer):
         result = get_source_data_info()
         return self.returnJSON(result)
 
+class ProdDataInfo(MyServer):
+    def get(self):
+        result = get_prod_data_info()
+        return self.returnJSON(result)
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--listen',
@@ -29,6 +34,7 @@ def main():
 
     app = webapp2.WSGIApplication([
         ('/source_data_info', SourceDataInfo),
+        ('/prod_data_info', ProdDataInfo),
         ], debug=False)
 
     httpserver.serve(
