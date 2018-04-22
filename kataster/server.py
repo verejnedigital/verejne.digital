@@ -287,6 +287,8 @@ def main():
       ('/list_politicians', ListPoliticians),
       ('/info_politician', InfoPolitician),
       ('/asset_declarations', AssetDeclarations),
+      # TEMP
+      ('/source_data_info', SourceDataInfo),
       ], debug=False)
 
   httpserver.serve(
