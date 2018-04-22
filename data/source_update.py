@@ -15,28 +15,33 @@ from utils import json_load
 """ Script for updating data sources. Specify the data sources to be updated
     as command line parameters, using the data source names from sources.json.
     Example:
-        python source_update.py internal_profil
+        python source_update.py ekosystem_ITMS --verbose
 """
 
 def update_SQL_source(source, timestamp, dry_run, verbose):
     # Check that the (temporary) schema names created by this data source
     # do not conflict with existing schemas in the database
     db = DatabaseConnection(path_config='db_config_update_source.yaml')
-    q = """SELECT EXISTS(SELECT 1 FROM information_schema.schemata WHERE schema_name IN %s);"""
+    q = """SELECT schema_name FROM information_schema.schemata WHERE schema_name IN %s LIMIT 1;"""
     q_data = (tuple(source['schemas']),)
     res = db.query(q, q_data, return_dicts=False)
     db.close()
-    if res[0][0]:
-        raise Exception('Schema that a source reads into already exists')
+    if len(res) >= 1:
+        raise Exception('Schema "%s" that source "%s" reads into already exists' % (res[0][0], source['name']))
     if verbose:
-        print('No conflicting schema names found')
+        print('[OK] No conflicting schema names found')
 
     # Download online resource if a URL is specified, storing it at the
     # location specified in source['path']
     if ('url' in source):
         urllib.urlretrieve(source['url'], source['path'])
         if verbose:
-            print('Downloaded from %s to %s' % (source['url'], source['path']))
+            print('[OK] Downloaded from %s to %s' % (source['url'], source['path']))
+
+    if dry_run:
+        print('[WARNING] --dry_run option not implemented for entire pipeline of updating an SQL source')
+        db.close()
+        return
 
     # Load into postgres, unzipping along the way
     if source['path'].endswith('.sql.gz'):
@@ -61,8 +66,7 @@ def update_SQL_source(source, timestamp, dry_run, verbose):
             db.rename_schema(schema_old, schema_new, verbose)
 
     # Commit and close database connection
-    if not dry_run:
-        db.commit()
+    db.commit()
     db.close()
 
 

@@ -1,5 +1,25 @@
 [
     {
+        "name": "ekosystem_CRZ",
+        "path": "/tmp/source_ekosystem_CRZ.sql.gz",
+        "schemas":
+        [
+            "crz"
+        ],
+        "type": "SQL",
+        "url": "https://s3.eu-central-1.amazonaws.com/ekosystem-slovensko-digital-dumps/crz.sql.gz"
+    },
+    {
+        "name": "ekosystem_ITMS",
+        "path": "/tmp/source_ekosystem_ITMS.sql.gz",
+        "schemas":
+        [
+            "itms"
+        ],
+        "type": "SQL",
+        "url": "https://s3.eu-central-1.amazonaws.com/ekosystem-slovensko-digital-dumps/itms.sql.gz"
+    },
+    {
         "name": "ekosystem_RPO",
         "path": "/tmp/source_ekosystem_RPO.sql.gz",
         "schemas":
@@ -18,16 +38,6 @@
         ],
         "type": "SQL",
         "url": "https://s3.eu-central-1.amazonaws.com/ekosystem-slovensko-digital-dumps/vvo.sql.gz"
-    },
-    {
-        "name": "ekosystem_CRZ",
-        "path": "/tmp/source_ekosystem_CRZ.sql.gz",
-        "schemas":
-        [
-            "crz"
-        ],
-        "type": "SQL",
-        "url": "https://s3.eu-central-1.amazonaws.com/ekosystem-slovensko-digital-dumps/crz.sql.gz"
     },
     {
         "delimiter": ";",
