@@ -124,24 +124,6 @@ def update_CSV_source(source, timestamp, dry_run, verbose):
     db.close()
 
 
-def get_latest_schema(source_name):
-    """ Returns the name of the most recent source schema for the data source
-        with the given name"""
-    db = DatabaseConnection(path_config='db_config_update_source.yaml')
-    q = """
-        SELECT schema_name
-        FROM information_schema.schemata
-        WHERE schema_name ILIKE 'source_""" + source_name + """_%%'
-        ORDER BY schema_name DESC
-        LIMIT 1;
-        """
-    rows = db.query(q)
-    db.close()
-    if len(rows) == 0:
-        raise Exception('No schema found for source name "%s"' % (source_name))
-    return rows[0]['schema_name']
-
-
 def main(args_dict):
     timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
     sources = json_load('sources.json')
