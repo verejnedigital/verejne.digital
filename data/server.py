@@ -14,7 +14,7 @@ class MyServer(webapp2.RequestHandler):
         self.response.headers['Content-Type'] = 'application/json'
         self.response.write(json.dumps(j, separators=(',',':')))
 
-class SourceDataStatus(MyServer):
+class SourceDataInfo(MyServer):
     def get(self):
         result = get_source_data_info()
         return self.returnJSON(result)
@@ -28,7 +28,7 @@ def main():
     host, port = args.listen.split(':')
 
     app = webapp2.WSGIApplication([
-        ('/source_data_status', SourceDataStatus),
+        ('/source_data_info', SourceDataInfo),
         ], debug=False)
 
     httpserver.serve(
