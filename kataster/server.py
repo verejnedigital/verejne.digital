@@ -266,7 +266,7 @@ class ListPoliticians(MyServer):
         return self.returnJSON(politicians)
 
 # TEMP
-class SourceDataStatus(MyServer):
+class SourceDataInfo(MyServer):
     def get(self):
         result = get_source_data_info()
         return self.returnJSON(result)
