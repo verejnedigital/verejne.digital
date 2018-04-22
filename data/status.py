@@ -20,14 +20,18 @@ def get_source_data_info():
         the latest update (timestamp, list of table names and columns) """
 
     # Establish connection to the database
-    db = DatabaseConnection(path_config='../data/db_config_update_source.yaml')
+    db = DatabaseConnection(path_config='db_config_status.yaml')
 
     # Iterate through sources listed in sources.json
     sources = json_load('../data/sources.json')
     result = []
     for source in sources:
         # Obtain schema with the last update
-        schema = get_latest_schema(db, source['name'])
+        try:
+            schema = get_latest_schema(db, source['name'])
+        except Exception as exception:
+            print('[WARNING] %s' % (exception))
+            continue
         update = schema[schema.rfind('_')+1:]
         update = datetime.strptime(update, '%Y%m%d%H%M%S').strftime('%Y-%m-%d %H:%M:%S')
 
