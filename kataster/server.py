@@ -16,7 +16,7 @@ CADASTRAL_API_ODATA = 'https://kataster.skgeodesy.sk/PortalOData/'
 import os
 import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../data')))
-from status import get_source_data_info
+from status import get_source_data_info, get_prod_data_info
 
 
 def get_cadastral_data_for_coordinates(lat, lon, tolerance, circumvent_geoblocking, verbose):
@@ -268,6 +268,10 @@ class SourceDataInfo(MyServer):
     def get(self):
         result = get_source_data_info()
         return self.returnJSON(result)
+class ProdDataInfo(MyServer):
+    def get(self):
+        result = get_prod_data_info()
+        return self.returnJSON(result)
 
 def main():
   parser = argparse.ArgumentParser()
@@ -287,6 +291,7 @@ def main():
       ('/asset_declarations', AssetDeclarations),
       # TEMP
       ('/source_data_info', SourceDataInfo),
+      ('/prod_data_info', ProdDataInfo),
       ], debug=False)
 
   httpserver.serve(

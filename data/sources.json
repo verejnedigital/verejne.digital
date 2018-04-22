@@ -45,7 +45,7 @@
     },
     {
         "delimiter": ";",
-        "description": "Finstat.sk",
+        "description": "FinStat.sk",
         "name": "finstat",
         "path": "/tmp/source_finstat.csv",
         "schemas": [],
