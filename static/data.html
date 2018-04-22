@@ -1,0 +1,167 @@
+<html>
+<head>
+<title>verejne.digital data</title>
+<link href="lib/prism.css" rel="stylesheet" />
+<script src="lib/prism.js"></script>
+<style>
+    html, body {
+        background-color: #f1f4f5;
+        height: 100%;
+        font-family: 'Roboto', sans-serif;
+    }
+    a {
+        color: #337ab7;
+    }
+    table {
+        background-color: white;
+        border-radius: 4px;
+        border: 2px;
+        border-collapse: collapse;
+        border-color:  #cddae3;
+        border-style: solid;
+        box-shadow: 0 4px 12px 0 rgba(187, 198, 206, 0.5);
+        width: 100%;
+    }
+    h1 a {
+        text-decoration: none;
+    }
+    h1 a:hover {
+        text-decoration: underline;
+    }
+    table, th, td {
+        vertical-align: top;
+    }
+    td, th {
+        border-bottom: 1px solid #cddae3;
+        max-width: 250px;
+        padding: 5px;
+        word-wrap: break-word;
+    }
+    td a:hover {
+        text-decoration: none;
+    }
+    td ul li {
+        font-family: monospace;
+    }
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script>
+    function toggle(id) {
+        if (document.getElementById(id).style.display == 'block')
+            document.getElementById(id).style = 'display:none';
+        else
+            document.getElementById(id).style = 'display:block';
+    }
+    function print_data_sources() {
+        var url = "https://verejne.digital/api/k/source_data_info?a=6";
+        $.get(url, function(response) {
+            for (var i = 0; i < response.length; i++) {
+                var source = response[i];
+                var row_html = "";
+
+                // Source name
+                row_html += "<td><p>"
+                row_html += '<a href="javascript:;" onclick="toggle(\'tables_list_' + i +'\')">';
+                row_html += "[+] " + source.description + "</a></p>"
+
+                // List of table names
+                row_html += "<ul id='tables_list_" + i + "' style='display: none;'>";
+                for (var j = 0; j < source.tables.length; j++) {
+                    var table = source.tables[j];
+                    row_html += '<li><a href="javascript:;" onclick="toggle(\'cols_list_' + i + '_' + j +'\')">';
+                    row_html += "[+]" + table.name + "</a>"
+                    row_html += "<ul id='cols_list_" + i + "_" + j + "' style='display: none;'>";
+                    for (var k = 0; k < table.columns.length; k++)
+                        row_html += "<li>" + table.columns[k] + "</li>";
+                    row_html += "</ul></li>";
+                }
+                row_html += "</ul></td>";
+
+                // Time of last update
+                row_html += "<td>" + source.update + "</td>";
+
+                // Add row to table
+                document.getElementById("table_sources").innerHTML += "<tr>" + row_html + "</tr>";
+            }
+        }).error(function() {
+            document.getElementById("table_sources").innerHTML = '<tr><td style="color:red">Error retrieving source data information</td></tr>';
+        });
+    }
+    function print_production_data_status() {
+        var url = "https://verejne.digital/api/k/prod_data_info?a=0";
+        $.get(url, function(response) {
+            document.getElementById("prod_update_time").innerHTML = response.update;
+            for (var i = 0; i < response.tables.length; i++) {
+                var table = response.tables[i];
+                var row_html = "";
+
+                // Table name
+                row_html += "<td><p>"
+                row_html += '<a href="javascript:;" onclick="toggle(\'prod_cols_list_' + i +'\')">';
+                row_html += "[+] " + table.name + "</a></p>"
+
+                // List of table names
+                row_html += "<ul id='prod_cols_list_" + i + "' style='display: none;'>";
+                for (var j = 0; j < table.columns.length; j++) {
+                    row_html += "<li>" + table.columns[j] + "</li>";
+                }
+                row_html += "</ul></td>";
+
+                // Add row to table
+                document.getElementById("table_prod").innerHTML += "<tr>" + row_html + "</tr>";
+            }
+        }).error(function() {
+            document.getElementById("prod_update_time").innerHTML = "Error retrieving prod data information";
+            document.getElementById("table_prod").innerHTML = '<tr><td style="color:red">Error retrieving prod data information</td></tr>';
+        });
+    }
+</script>
+</head>
+<body>
+    <h1><a href="https://verejne.digital">verejne.digital</a> data</h1>
+    
+    <!-- Section 1: List raw data sources -->
+    <h2>Data sources</h2>
+    <table id="table_sources">
+    <tr>
+        <th>Source name</th>
+        <th>Last update</th>
+    </tr>
+    <script> print_data_sources(); </script>
+    </table>
+
+    <div id="test"></div>
+
+    <!-- Section 2: Show production data content and status -->
+    <h2>Production data</h2>
+    <p>Last generated: <span id='prod_update_time' style='font-weight: bold;'></span></p>
+    <table id="table_prod">
+        <tr>
+            <th>Table name</th>
+        </tr>
+        <script> print_production_data_status(); </script>
+    </table>
+
+    <!-- Section 3: Example Python code -->
+    <h2>Example code</h2>
+<pre><code class="language-python">import os
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../data/db')))
+from db import DatabaseConnection
+from status import get_latest_schema
+
+# Connect to database and switch to most recent production data
+db = DatabaseConnection(path_config='db_config.yaml')
+schema = db.get_latest_schema(db, 'prod_')
+db.execute('SET search_path=" + schema + ";')
+
+# Query the database
+q = """SELECT * FROM entities LIMIT 50;"""
+rows = db.query(q)
+for row in rows:
+    print(row['name'])
+db.close()
+</code></pre>
+
+</body>
+</html>
