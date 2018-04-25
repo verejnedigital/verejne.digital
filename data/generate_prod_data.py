@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import argparse
 import os
 import sys
 import yaml
@@ -9,13 +10,11 @@ from psycopg2.extensions import AsIs
 import geocoder as geocoder_lib
 import entities
 from datetime import datetime
-import source_update
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../data/db')))
 from db import DatabaseConnection
+from status import get_latest_schema
 
-# TODO: Make this command-line option.
-test_mode = True
 
 def CreateAndSetProdSchema(db, prod_schema_name):
     """ Initialized schema with core prod tables: Entities and Address.
@@ -49,10 +48,14 @@ def CreateAndSetProdSchema(db, prod_schema_name):
                 address_id INTEGER REFERENCES Address(id)
             )
         """)
+
+    # TEMP
+    # For ProdDataInfo under kataster to work properly, user kataster
+    # needs to be able to see the newly created schema and tables within
+    db.grant_usage_and_select_on_schema(prod_schema_name, 'kataster')
         
 
-
-def ProcessSource(db_prod, geocoder, entities, config):
+def ProcessSource(db_prod, geocoder, entities, config, test_mode):
     """ Process one source table (read from db_source) using the config and
     performing normalization using the given geocoder and entities lookup.
 
@@ -60,12 +63,13 @@ def ProcessSource(db_prod, geocoder, entities, config):
     new entities and addresses in to the Entities and Address tables. It also
     creates and populates supplementary tables as specified by a config.
     """
-    source_schema_name = source_update.get_latest_schema(config["source_schema"])
+
+    # Connect to the most recent schema from the current source
+    db_source = DatabaseConnection(path_config='db_config_update_source.yaml')
+    source_schema_name = get_latest_schema(db_source, 'source_' + config["source_schema"])
     print "Processing source_schema_name", source_schema_name
-    # Read source tables from this one
-    db_source = DatabaseConnection(path_config='db_config_update_source.yaml',
-                                   search_path=source_schema_name)
-    
+    db_source.execute('SET search_path="' + source_schema_name + '";')
+
     columns_for_table = {}
     with db_prod.dict_cursor() as cur:
         # Create supplementaty tables using the provided command.
@@ -161,7 +165,9 @@ def ProcessSource(db_prod, geocoder, entities, config):
     print "MISSED EID", missed_eid
     db_source.close()
 
-def main():
+
+def main(args_dict):
+    test_mode = not args_dict['disable_test_mode']
     if test_mode:
         print "======================="
         print "=======TEST MODE======="
@@ -194,7 +200,7 @@ def main():
     for key in config.keys():
         print "Working on source:", key
         config_per_source = config[key]
-        ProcessSource(db_prod, geocoder, entities_lookup, config_per_source)
+        ProcessSource(db_prod, geocoder, entities_lookup, config_per_source, test_mode)
         if test_mode: break
 
 
@@ -209,5 +215,9 @@ def main():
     print "STATS"
     geocoder.PrintStats()
 
+
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--disable_test_mode', default=False, action='store_true', help='Disable test mode')
+    args_dict = vars(parser.parse_args())
+    main(args_dict)

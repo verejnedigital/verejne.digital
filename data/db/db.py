@@ -68,3 +68,9 @@ class DatabaseConnection():
         self.execute(q)
         if verbose:
             print('[OK] Renamed schema "%s" to "%s"' % (schema_old, schema_new))
+
+    def grant_usage_and_select_on_schema(self, schema, user):
+        q = 'GRANT USAGE ON SCHEMA "' + schema + '" TO ' + user + ';'
+        q += 'GRANT SELECT ON ALL TABLES IN SCHEMA "' + schema + '" TO ' + user + ';'
+        self.execute(q, (schema,))
+        print('[OK] Granted USAGE and SELECT on schema %s to %s' % (schema, user))

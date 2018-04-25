@@ -24,7 +24,15 @@ def _get_tables_and_columns_in_schema(db, schema):
         """
     rows_tables = db.query(q)
 
-    # Obtain column names in the obtained tables
+    # Obtain row counts (warning: could be inaccurate under heavy load)
+    q = """
+        SELECT relname, n_live_tup
+        FROM pg_stat_user_tables
+        WHERE schemaname = '""" + schema + """';
+        """
+    num_rows = {row['relname']: row['n_live_tup'] for row in db.query(q)}
+
+    # Obtain column names of each obtained table
     tables = []
     for row_table in rows_tables:
         table_name = row_table['table_name']
@@ -37,6 +45,7 @@ def _get_tables_and_columns_in_schema(db, schema):
         columns = [row['column_name'] for row in rows_columns]
         tables.append({
             'name': table_name,
+            'num_rows': num_rows[table_name],
             'columns': columns,
             })
     return tables
