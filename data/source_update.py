@@ -18,14 +18,6 @@ from utils import json_load
         python source_update.py ekosystem_ITMS --verbose
 """
 
-def _grant_usage_on_schema(db, schema):
-    # TEMP
-    # For SourceDataInfo under kataster to work properly, user kataster
-    # needs to be able to see the newly created schema
-    q = 'GRANT USAGE ON SCHEMA "' + schema + '" TO kataster;'
-    db.execute(q, (schema,))
-    print('[OK] Granted USAGE on schema %s to kataster' % (schema))
-
 def update_SQL_source(source, timestamp, dry_run, verbose):
     # Check that the (temporary) schema names created by this data source
     # do not conflict with existing schemas in the database
@@ -68,12 +60,18 @@ def update_SQL_source(source, timestamp, dry_run, verbose):
         schema_old = source['schemas'][0]
         schema_new = 'source_' + source['name'] + '_' + timestamp
         db.rename_schema(schema_old, schema_new, verbose)
-        _grant_usage_on_schema(db, schema_new)
+        # TEMP
+        # For SourceDataInfo under kataster to work properly, user kataster
+        # needs to be able to see the newly created schema and tables within
+        db.grant_usage_and_select_on_schema(schema_new, 'kataster')
     else:
         for schema_old in source['schemas']:
             schema_new = 'source_' + source['name'] + '_' + schema_old + '_' + timestamp
             db.rename_schema(schema_old, schema_new, verbose)
-            _grant_usage_on_schema(db, schema_new)
+            # TEMP
+            # For SourceDataInfo under kataster to work properly, user kataster
+            # needs to be able to see the newly created schema and tables within
+            db.grant_usage_and_select_on_schema(schema_new, 'kataster')
 
     # Commit and close database connection
     db.commit()
