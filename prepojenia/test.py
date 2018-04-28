@@ -25,7 +25,6 @@ class TestHandlers(unittest.TestCase):
 
     def test_connection(self):
         content = _request_json('/connection?eid1=39541,78864,94764,229752&eid2=136671,229753', self)
-        self.assertTrue(content)
 
     def test_subgraph(self):
         content = _request_json('/subgraph?eid1=39541,78864,94764,229752&eid2=136671,229753', self)
