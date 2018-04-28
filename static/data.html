@@ -29,6 +29,7 @@
         text-decoration: underline;
     }
     table, th, td {
+        text-align: left;
         vertical-align: top;
     }
     td, th {
@@ -40,6 +41,9 @@
     td a:hover {
         text-decoration: none;
     }
+    td ul {
+        list-style-type: none;
+    }
     td ul li {
         font-family: monospace;
     }
@@ -47,13 +51,18 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script>
     function toggle(id) {
-        if (document.getElementById(id).style.display == 'block')
-            document.getElementById(id).style = 'display:none';
-        else
-            document.getElementById(id).style = 'display:block';
+        var e = document.getElementById(id);
+        if (e.style.display == 'block') {
+            e.style = 'display:none';
+            e.parentNode.innerHTML = e.parentNode.innerHTML.replace("[-] ", "[+] ");
+        }
+        else {
+            e.style = 'display:block';
+            e.parentNode.innerHTML = e.parentNode.innerHTML.replace("[+] ", "[-] ");
+        }
     }
     function print_data_sources() {
-        var url = "https://verejne.digital/api/k/source_data_info?a=6";
+        var url = "https://verejne.digital/api/k/source_data_info?a=8";
         $.get(url, function(response) {
             for (var i = 0; i < response.length; i++) {
                 var source = response[i];
@@ -69,7 +78,7 @@
                 for (var j = 0; j < source.tables.length; j++) {
                     var table = source.tables[j];
                     row_html += '<li><a href="javascript:;" onclick="toggle(\'cols_list_' + i + '_' + j +'\')">';
-                    row_html += "[+]" + table.name + "</a>"
+                    row_html += "[+] " + table.name + "</a> (" + table.num_rows + " rows)"
                     row_html += "<ul id='cols_list_" + i + "_" + j + "' style='display: none;'>";
                     for (var k = 0; k < table.columns.length; k++)
                         row_html += "<li>" + table.columns[k] + "</li>";
@@ -88,7 +97,7 @@
         });
     }
     function print_production_data_status() {
-        var url = "https://verejne.digital/api/k/prod_data_info?a=0";
+        var url = "https://verejne.digital/api/k/prod_data_info?a=1";
         $.get(url, function(response) {
             document.getElementById("prod_update_time").innerHTML = response.update;
             for (var i = 0; i < response.tables.length; i++) {
@@ -98,7 +107,7 @@
                 // Table name
                 row_html += "<td><p>"
                 row_html += '<a href="javascript:;" onclick="toggle(\'prod_cols_list_' + i +'\')">';
-                row_html += "[+] " + table.name + "</a></p>"
+                row_html += "[+] " + table.name + "</a> (" + table.num_rows + " rows)</p>"
 
                 // List of table names
                 row_html += "<ul id='prod_cols_list_" + i + "' style='display: none;'>";
