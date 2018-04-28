@@ -122,10 +122,14 @@ def ProcessSource(db_prod, geocoder, entities, config, test_mode):
             # Read entries one by one and try to geocode them. If the address
             # lookup succeeds, try to normalize the entities. If it succeeds,
             # insert into Entities and supplementary tables.
-            address = row["address"]
-            if address is None: continue
-            name = row["name"]
-            if name is None: continue
+            address = ""
+            if "address" in row:
+                address = row["address"]
+                if address is None: continue
+            name = ""
+            if "name" in row:
+                name = row["name"]
+                if name is None: continue
             # Sometimes FirstName and Surname are joined. Lets try the simplest splitting on Capital
             # letters.
             if (len(name.split()) == 1):
@@ -201,8 +205,6 @@ def main(args_dict):
         print "Working on source:", key
         config_per_source = config[key]
         ProcessSource(db_prod, geocoder, entities_lookup, config_per_source, test_mode)
-        if test_mode: break
-
 
     db_address_cache.commit()
     db_address_cache.close()

@@ -16,6 +16,7 @@ rpo:
                        CREATE UNIQUE INDEX ON CompanyInfo(eid);
                        CREATE UNIQUE INDEX ON CompanyInfo(ico);
                     "
+
 related:
     source_schema: "ekosystem_rpo"
     command:   "select organization_id as eid_relation,stakeholder_type_id,ico,concat_ws(' ',full_name,person_given_name,person_family_name) as name,concat_ws(' ',address_formatted,address_street,address_building_number,address_postal_code,address_municipality,address_country) as address,effective_from,effective_to from organization_stakeholder_entries UNION select organization_id as org_id,stakeholder_type_id,ico,concat_ws('',full_name,person_given_name,person_family_name) as name,concat_ws('',address_formatted,address_street,address_building_number,address_postal_code,address_municipality,address_country) as address,effective_from,effective_to from organization_statutory_entries"
@@ -34,3 +35,66 @@ related:
                        CREATE INDEX ON Related(eid_relation);
                        CREATE UNIQUE INDEX ON Related(eid,stakeholder_type_id,eid_relation)
                     "
+
+notices:
+    source_schema: "ekosystem_VVO"
+    command:   "select notices.id as notice_id,notices.title,notices.contracting_authority_name as name,notices.contracting_authority_cin as ico,notices.estimated_value_amount,notices.estimated_value_currency,notices.bulletin_issue_id,notices.notice_type_id,result_notices.short_description,result_notices.total_final_value_amount,result_notices.total_final_value_currency,raw_notices.body from notices FULL OUTER JOIN result_notices ON result_notices.raw_notice_id = notices.raw_notice_id FULL OUTER JOIN raw_notices ON raw_notices.id=notices.raw_notice_id"
+    tables:
+            Notices:
+                    columns: ["notice_id", "title", "estimated_value_amount",
+                    "estimated_value_currency", "bulletin_issue_id", "notice_type_id",
+                    "short_description", "total_final_value_amount",
+                    "total_final_value_currency", "body"]
+                    create_command: "
+                       CREATE TABLE Notices (
+                                id SERIAL PRIMARY KEY,
+                                eid INTEGER REFERENCES Entities(id),
+                                notice_id INT4,
+                                title text,
+                                estimated_value_amount INT4,
+                                estimated_value_currency text,
+                                bulletin_issue_id INT4,
+                                notice_type_id INT4,
+                                short_description text,
+                                total_final_value_amount INT4,
+                                total_final_value_currency text,
+                                body text
+                       );
+                       CREATE INDEX ON Notices(eid);
+                       CREATE INDEX ON Notices(notice_id);
+                       CREATE INDEX ON Notices(bulletin_issue_id)
+                    "
+notice_suppliers:
+    source_schema: "ekosystem_VVO"
+    command:   "select notice_id,name,cin as ico from notice_suppliers"
+    tables:
+            NoticeSuppliers:
+                    columns: ["notice_id"]
+                    create_command: "
+                       CREATE TABLE NoticeSuppliers (
+                                id SERIAL PRIMARY KEY,
+                                eid INTEGER REFERENCES Entities(id),
+                                notice_id INT4
+                       );
+                       CREATE INDEX ON NoticeSuppliers(eid);
+                       CREATE INDEX ON NoticeSuppliers(notice_id)
+                    "
+
+notice_bulletins:
+    source_schema: "ekosystem_VVO"
+    command:   "select id as bulletin_id,year,number,published_on,source_url from bulletin_issues"
+    tables:
+            NoticeBulletins:
+                    columns: ["bulletin_id", "year", "number", "published_on", "source_url"]
+                    create_command: "
+                       CREATE TABLE NoticeBulletins (
+                                id SERIAL PRIMARY KEY,
+                                bulletin_id INT4,
+                                year INT4,
+                                number INT4,
+                                published_on DATE,
+                                source_url text
+                       );
+                       CREATE INDEX ON NoticeBulletins(bulletin_id)
+                    "
+
