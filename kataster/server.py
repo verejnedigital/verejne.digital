@@ -11,6 +11,7 @@ from db_search import get_politician_by_PersonId, get_Parcels_owned_by_Person, g
 from utils import download_cadastral_json, download_cadastral_pages, search_string, is_contained_ci, WGS84_to_Mercator, json_load, json_dump_utf8
 
 CADASTRAL_API_ODATA = 'https://kataster.skgeodesy.sk/PortalOData/'
+DIR_OUTPUT = '/tmp/skgeodesy/'
 
 # TEMP
 import os
@@ -116,7 +117,7 @@ def get_cadastral_data_for_coordinates(lat, lon, tolerance, circumvent_geoblocki
             print('LandUse:\n  %s' % (Parcel['LandUse']['Name']))
             print('Utilisation:\n  %s' % (Parcel['Utilisation']['Name']))
             print('Area:\n  %s' % (Parcel['Area']))
-        path_output = 'Parcel%s(%s).json' % (parcel_type, ParcelId)
+        path_output = '%sParcel%s(%s).json' % (DIR_OUTPUT, parcel_type, ParcelId)
         json_dump_utf8(Parcel, path_output)
 
         # Accumulate owners from all pages
@@ -144,7 +145,7 @@ def get_cadastral_data_for_coordinates(lat, lon, tolerance, circumvent_geoblocki
     }
 
     # Dump final response to JSON
-    path_output = 'response.json'
+    path_output = '%sresponse.json' % (DIR_OUTPUT)
     json_dump_utf8(response, path_output)
     print('JSON with %d Folios dumped to %s' % (len(response['Folios']), path_output))
     return response
@@ -275,6 +276,21 @@ class ProdDataInfo(MyServer):
         result = get_prod_data_info()
         return self.returnJSON(result)
 
+
+app = webapp2.WSGIApplication([
+    ('/kataster_info_location', KatasterInfoLocation),
+    ('/kataster_info_company', KatasterInfoCompany),
+    ('/kataster_info_person', KatasterInfoPerson),
+    ('/kataster_info_politician', KatasterInfoPolitician),
+    ('/list_politicians', ListPoliticians),
+    ('/info_politician', InfoPolitician),
+    ('/asset_declarations', AssetDeclarations),
+    # TEMP
+    ('/source_data_info', SourceDataInfo),
+    ('/prod_data_info', ProdDataInfo),
+], debug=False)
+
+
 def main():
   parser = argparse.ArgumentParser()
   parser.add_argument('--listen',
@@ -282,19 +298,6 @@ def main():
                     default='127.0.0.1:8083')
   args = parser.parse_args()
   host, port = args.listen.split(':')
-
-  app = webapp2.WSGIApplication([
-      ('/kataster_info_location', KatasterInfoLocation),
-      ('/kataster_info_company', KatasterInfoCompany),
-      ('/kataster_info_person', KatasterInfoPerson),
-      ('/kataster_info_politician', KatasterInfoPolitician),
-      ('/list_politicians', ListPoliticians),
-      ('/info_politician', InfoPolitician),
-      ('/asset_declarations', AssetDeclarations),
-      # TEMP
-      ('/source_data_info', SourceDataInfo),
-      ('/prod_data_info', ProdDataInfo),
-      ], debug=False)
 
   httpserver.serve(
       app,
