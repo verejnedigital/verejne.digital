@@ -237,14 +237,15 @@ class Subgraph(MyServer):
         start, end = data
         return self.returnJSON(relations.subgraph(start, end))
 
-def main():
-  app = webapp2.WSGIApplication([
-      ('/connection', Connection),
-      ('/shortest', ShortestPath),
-      ('/neighbourhood', Neighbourhood),
-      ('/subgraph', Subgraph),
-      ], debug=False)
 
+app = webapp2.WSGIApplication([
+    ('/connection', Connection),
+    ('/shortest', ShortestPath),
+    ('/neighbourhood', Neighbourhood),
+    ('/subgraph', Subgraph),
+], debug=False)
+
+def main():
   parser = argparse.ArgumentParser()
   parser.add_argument('--listen',
                     help='host:port to listen on',
