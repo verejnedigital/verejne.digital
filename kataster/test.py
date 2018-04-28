@@ -5,8 +5,10 @@ import webapp2
 import server
 
 
-""" Unit testing of kataster server. Run from command line as:
-    python test.py
+""" Unit testing of kataster server. Run all unit tests from command line as:
+        python test.py
+    To run an individual unit test only, run (for example):
+        python test.py TestHandlers.test_kataster_info_politician
 """
 
 def _request_json(url, test_handler):
@@ -21,9 +23,6 @@ def _request_json(url, test_handler):
 
 class TestHandlers(unittest.TestCase):
 
-    def test_kataster_info_person(self):
-        content = _request_json('/kataster_info_person', self)
-
     def test_kataster_info_location(self):
         content = _request_json('/kataster_info_location?lat=48.1451953&lon=17.0910016', self)
         self.assertTrue(content)
@@ -31,6 +30,12 @@ class TestHandlers(unittest.TestCase):
     def test_kataster_info_company(self):
         content = _request_json('/kataster_info_company?name="KOLIBA REAL a.s."', self)
         self.assertTrue(content)
+
+    def test_kataster_info_person(self):
+        content = _request_json('/kataster_info_person', self)
+
+    def test_kataster_info_politician(self):
+        content = _request_json('/kataster_info_politician?id=40', self)
 
     def test_list_politicians(self):
         content = _request_json('/list_politicians', self)
