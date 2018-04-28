@@ -2,6 +2,7 @@ rpo:
     source_schema: "ekosystem_rpo"
     command:   "select distinct on(organizations.id) organizations.id as org_id,organization_identifier_entries.ipo as ico,organization_name_entries.name, organizations.established_on,organizations.terminated_on,concat_ws(' ',organization_address_entries.formatted_address,organization_address_entries.street,organization_address_entries.building_number,organization_address_entries.postal_code,organization_address_entries.municipality,organization_address_entries.country) as address from organizations,organization_identifier_entries,organization_name_entries,organization_address_entries where organizations.id=organization_identifier_entries.organization_id and organizations.id=organization_name_entries.organization_id and organizations.id=organization_address_entries.organization_id"
     save_org_id: true
+    is_primary: true
     tables:
             CompanyInfo:
                     columns: ["ico", "established_on", "terminated_on"]
@@ -83,6 +84,7 @@ notice_suppliers:
 notice_bulletins:
     source_schema: "ekosystem_VVO"
     command:   "select id as bulletin_id,year,number,published_on,source_url from bulletin_issues"
+    no_entity_id: true
     tables:
             NoticeBulletins:
                     columns: ["bulletin_id", "year", "number", "published_on", "source_url"]

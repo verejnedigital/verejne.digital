@@ -85,15 +85,18 @@ def ProcessSource(db_prod, geocoder, entities, config, test_mode):
         It reads the corresponding values from the row and adds them into the
         table with the corresponding eid.
         """
-        columns = columns_for_table[table]
+        columns = list(columns_for_table[table])
         values = [row[column] for column in columns]
+        if eid is not None:
+            columns += ["eid"]
+            values += [eid]
         if all(v is None for v in values):
             # Ignore this entry, all meaningful values are None
             return
 
         # TODO: find out how to build SQL statement properly
-        column_names = ",".join(["eid"] + columns)
-        values_params = ",".join(["%s"] * (1 + len(columns)))
+        column_names = ",".join(columns)
+        values_params = ",".join(["%s"] * (len(columns)))
         command = (
                 "INSERT INTO %s (" + column_names + ") " +
                 "VALUES (" + values_params + ") " +
@@ -101,7 +104,7 @@ def ProcessSource(db_prod, geocoder, entities, config, test_mode):
         )
         with db_prod.dict_cursor() as cur:
             cur.execute(command,
-                        [AsIs(table), eid] + [row[column] for column in columns])
+                        [AsIs(table)] + values)
 
     with db_source.dict_cursor() as cur:
         # Read data using the given command.
@@ -112,7 +115,8 @@ def ProcessSource(db_prod, geocoder, entities, config, test_mode):
         cur.execute(config["command"] + suffix_for_testing)
         print "Done."
         missed = 0
-        found = 0;
+        found = 0
+        empty = 0
 
         missed_eid = 0
         found_eid = 0
@@ -136,14 +140,21 @@ def ProcessSource(db_prod, geocoder, entities, config, test_mode):
               name = ' '.join(re.findall('[A-Z][^A-Z]*', name))
             addressId = geocoder.GetAddressId(address.encode("utf8"))
             if addressId is None:
-                if test_mode and missed < 100:
+                if test_mode and missed < 10:
                     print "MISSING ADDRESS", address.encode("utf8")
-                missed_addresses.add(address)
-                missed += 1
-                continue
+                if address == "":
+                    empty += 1
+                else:
+                    missed_addresses.add(address)
+                    missed += 1
+                    continue
             found += 1;
-
-            eid = entities.GetEntity(row["ico"], name, addressId)
+            
+            eid = None
+            if config.get("no_entity_id"):
+                eid = None
+            else:
+                eid = entities.GetEntity(row["ico"], name, addressId)
             # print name, "-> eid:", eid
             if found%20000==0:
                 print "Progress:", found
@@ -164,6 +175,7 @@ def ProcessSource(db_prod, geocoder, entities, config, test_mode):
 
     print "FOUND", found
     print "MISSED", missed
+    print "EMPTY", empty
     print "MISSED UNIQUE", len(missed_addresses)
     print "FOUND EID", found_eid
     print "MISSED EID", missed_eid
@@ -201,10 +213,17 @@ def main(args_dict):
     # This is where all the population happens!!!
     # Go through all the specified data sources and process them, adding data
     # as needed.
+    # We have two loops to process first the primary source of entities.
     for key in config.keys():
-        print "Working on source:", key
         config_per_source = config[key]
-        ProcessSource(db_prod, geocoder, entities_lookup, config_per_source, test_mode)
+        if config_per_source.get("is_primary"):
+            print "Working on source:", key
+            ProcessSource(db_prod, geocoder, entities_lookup, config_per_source, test_mode)
+    for key in config.keys():
+        config_per_source = config[key]
+        if not config_per_source.get("is_primary"):
+            print "Working on source:", key
+            ProcessSource(db_prod, geocoder, entities_lookup, config_per_source, test_mode)
 
     db_address_cache.commit()
     db_address_cache.close()
