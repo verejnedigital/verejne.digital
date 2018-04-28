@@ -3,47 +3,42 @@
 import argparse
 import heapq
 import json
+import os
 from paste import httpserver
-import psycopg2
-import psycopg2.extras
 import Queue
 import random
+import sys
 import webapp2
 import yaml
 
-from db import db_connect, db_query
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../data/db')))
+from db import DatabaseConnection
 
 
 def log(s):
-  print "LOG: " + s
-
+    print('LOG: %s' % (s))
 
 class Relations:
     edges = []
     start_index = {}
 
     def __init__(self):
-        # Connect to database
-        log("Connecting to the database")
+        log('Connecting to the database...')
+        db = DatabaseConnection(path_config='db_config.yaml', search_path='mysql')
         with open("db_config.yaml", "r") as stream:
             config = yaml.load(stream)
 
-        db = psycopg2.connect(user=config["user"], dbname=config["db"])
-        cur = db.cursor(cursor_factory=psycopg2.extras.DictCursor)
-        cur.execute("SET search_path = 'mysql'")
-
-        log("relations constructor")
-        sql = "SELECT eid1, eid2, length FROM related LIMIT %s"
-        cur.execute(sql, [int(config["relations_to_load"])])
-        for row in cur:
+        log('Relations constructor...')
+        q = """SELECT eid1, eid2, length FROM related LIMIT %s"""
+        q_data = [int(config["relations_to_load"])]
+        for row in db.query(q, q_data):
             self.edges.append((row["eid1"], row["eid2"], float(row["length"])))
             self.edges.append((row["eid2"], row["eid1"], float(row["length"])))
-        cur.close()
         db.close()
 
-        log("sorting edges")
+        log('Sorting edges...')
         self.edges.sort()
-        log("creating start indices")
+        log('Creating start indices...')
         for i in xrange(len(self.edges)):
             cur = self.edges[i][0]
             if cur in self.start_index: continue
@@ -146,6 +141,9 @@ class Relations:
         # Compute distance of each vertex from A and from B
         dists_A = self.dijkstra(set_A, set_B, return_all=True)
         dists_B = self.dijkstra(set_B, set_A, return_all=True)
+        dists_AB = [dists_A[v] for v in set_B if v in dists_A]
+        if len(dists_AB) == 0:
+            return {'vertices': [], 'edges': []}
         dist_AB = min([dists_A[v] for v in set_B if v in dists_A])
 
         # Determine subgraph's vertices (eIDs)
@@ -158,14 +156,13 @@ class Relations:
                 vertices_eids.add(v)
 
         # Obtain entity name for chosen vertices
-        db = db_connect()
+        db = DatabaseConnection(search_path='mysql')
         q = """
-            SET search_path = 'mysql';
             SELECT eid, entity_name FROM entities
             WHERE entities.eid IN %s;
             """
         q_data = (tuple(vertices_eids),)
-        rows = db_query(db, q, q_data)
+        rows = db.query(q, q_data)
         db.close()
         eid_to_name = {row['eid']: row['entity_name'] for row in rows}
 
@@ -190,73 +187,75 @@ class Relations:
 relations = Relations()
 
 
-# All individual hooks inherit from this class outputting jsons
-# Actual work of subclasses is done in method process
+# All individual hooks inherit from this class
+# Actual work of subclasses is done in method get
 class MyServer(webapp2.RequestHandler):
     def returnJSON(self,j):
         self.response.headers['Content-Type'] = 'application/json'
         self.response.write(json.dumps(j, separators=(',',':')))
 
-
-def parseStartEnd(request):
-    try:
-        start = [int(x) for x in (request.GET["eid1"].split(","))[:50]]
-        end = [int(x) for x in (request.GET["eid2"].split(","))[:50]]
-        return start, end
-    except:
-        return None
+    def parse_start_end(self):
+        """ Utility method to parse parameters in the form
+            of two comma-separated lists of integers """
+        try:
+            start = [int(x) for x in (self.request.GET["eid1"].split(","))[:50]]
+            end = [int(x) for x in (self.request.GET["eid2"].split(","))[:50]]
+            return start, end
+        except:
+            self.abort(400, detail='Could not parse start and/or end eIDs')
 
 class Connection(MyServer):
     def get(self):
-        data = parseStartEnd(self.request)
-        if data is None:
-          self.abort(400, detail="Incorrect input text")
-        self.returnJSON(relations.bfs(data[0], data[1]))
+        start, end = self.parse_start_end()
+        response = relations.bfs(start, end)
+        self.returnJSON(response)
 
 class ShortestPath(MyServer):
     def get(self):
-        data = parseStartEnd(self.request)
-        if data is None:
-          self.abort(400, detail="Incorrect input text")
-        else: self.returnJSON(relations.dijkstra(data[0], data[1]))
+        start, end = self.parse_start_end()
+        response = relations.dijkstra(start, end)
+        self.returnJSON(response)
 
 class Neighbourhood(MyServer):
     def get(self):
-        start = [int(x) for x in (self.request.GET["eid"].split(","))[:50]]
-        cap = int(self.request.GET["cap"])
-        self.returnJSON(relations.dijkstra(start, [], cap=cap, return_all=True))
+        try:
+            start = [int(x) for x in (self.request.GET["eid"].split(","))[:50]]
+            cap = int(self.request.GET["cap"])
+        except:
+            self.abort(400, detail='Could not parse parameters')
+        response = relations.dijkstra(start, [], cap=cap, return_all=True)
+        self.returnJSON(response)
 
 class Subgraph(MyServer):
     def get(self):
-        data = parseStartEnd(self.request)
-        if data is None:
-            self.abort(400, detail="Could not parse start and/or end eIDs")
-        start, end = data
-        self.returnJSON(relations.subgraph(start, end))
+        start, end = self.parse_start_end()
+        response = relations.subgraph(start, end)
+        self.returnJSON(response)
+
+
+app = webapp2.WSGIApplication([
+    ('/connection', Connection),
+    ('/shortest', ShortestPath),
+    ('/neighbourhood', Neighbourhood),
+    ('/subgraph', Subgraph),
+], debug=False)
 
 def main():
-  app = webapp2.WSGIApplication([
-      ('/connection', Connection),
-      ('/shortest', ShortestPath),
-      ('/neighbourhood', Neighbourhood),
-      ('/subgraph', Subgraph),
-      ], debug=False)
-
-  parser = argparse.ArgumentParser()
-  parser.add_argument('--listen',
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--listen',
                     help='host:port to listen on',
                     default='127.0.0.1:8081')
-  args = parser.parse_args()
-  host, port = args.listen.split(':')
+    args = parser.parse_args()
+    host, port = args.listen.split(':')
 
-  httpserver.serve(
-      app,
-      host=host,
-      port=port,
-      request_queue_size=128,
-      use_threadpool=True,
-      threadpool_workers=32,
-  )
+    httpserver.serve(
+        app,
+        host=host,
+        port=port,
+        request_queue_size=128,
+        use_threadpool=True,
+        threadpool_workers=32,
+    )
   
 if __name__ == '__main__':
-  main()
+    main()
