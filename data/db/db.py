@@ -74,3 +74,10 @@ class DatabaseConnection():
         q += 'GRANT SELECT ON ALL TABLES IN SCHEMA "' + schema + '" TO ' + user + ';'
         self.execute(q, (schema,))
         print('[OK] Granted USAGE and SELECT on schema %s to %s' % (schema, user))
+
+    def dump_to_CSV(self, query, path_output):
+        with self.conn.cursor() as cur:
+            q = query.rstrip().rstrip(';') # possibly remove ; from the end of the query
+            q = 'COPY ({0}) TO STDOUT WITH CSV HEADER'.format(q)
+            with open(path_output, 'w') as f:
+                cur.copy_expert(q, f)

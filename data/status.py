@@ -9,7 +9,7 @@ from datetime import datetime
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../data/db')))
 from db import DatabaseConnection
-from utils import json_load
+from utils import json_load, yaml_load
 
 
 """ Functions reporting current status of our data (source and production).
@@ -81,6 +81,9 @@ def get_source_data_info():
             'tables': _get_tables_and_columns_in_schema(db, schema),
             'update': _datetimestr_from_schema(schema),
         })
+
+    # Close database connection and return the result
+    db.close()
     return result
 
 
@@ -89,10 +92,38 @@ def get_prod_data_info():
         and the time when these were generated. """
     db = DatabaseConnection(path_config='db_config_status.yaml')
     schema = get_latest_schema(db, 'prod_')
-    return {
+    response = {
         'tables': _get_tables_and_columns_in_schema(db, schema),
         'update': _datetimestr_from_schema(schema),
     }
+    db.close()
+    return response
+
+
+def get_public_dumps_info():
+    # Read public dumps YAML configuration file
+    config = yaml_load('../data/public_dumps.yaml')
+    dir_save = config['save_directory']
+    dumps = config['dumps']
+
+    # Iterate through the dumps
+    result = []
+    for dump_name in dumps:
+        # Find dump file with the latest timestamp (inherited from prod data)
+        filenames = [n for n in os.listdir(dir_save)
+                        if n.startswith(dump_name + '_') and n.endswith('.csv')]
+        if len(filenames) == 0:
+            print('[WARNING] Could not find dump file for dump "%s"' % (dump_name))
+            continue
+        filename = sorted(filenames, reverse=True)[0]
+
+        # Append dump info to results
+        result.append({
+            'name': dump_name,
+            'query': dumps[dump_name].strip(),
+            'url': 'https://verejne.digital/data/%s.csv' % (filename)
+            })
+    return result
 
 
 def get_latest_schema(db, prefix):

@@ -225,6 +225,7 @@ def main(args_dict):
             print "Working on source:", key
             ProcessSource(db_prod, geocoder, entities_lookup, config_per_source, test_mode)
 
+    # Commit database changes and close database connections
     db_address_cache.commit()
     db_address_cache.close()
     if test_mode:

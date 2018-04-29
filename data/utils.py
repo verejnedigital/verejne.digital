@@ -2,6 +2,7 @@ import io
 import json
 import sys
 import unicodedata
+import yaml
 
 
 # --- SEARCH ---
@@ -33,6 +34,11 @@ def json_dump_utf8(var, path, indent=4, flatten_level=None):
             data = data.replace(flatten_string, ' ')
             data = data.replace('\n' + ' '*(indent*(flatten_level-1)) + ']', ']')
         f.write(unicode(data))
+
+def yaml_load(path):
+    with open(path, 'r') as f:
+        data_yaml = yaml.load(f)
+    return data_yaml
 
 
 # --- REPORTING ---

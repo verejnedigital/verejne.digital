@@ -13,7 +13,7 @@ from db import DatabaseConnection
 
 # TEMP
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../data')))
-from status import get_source_data_info, get_prod_data_info
+from status import get_source_data_info, get_prod_data_info, get_public_dumps_info
 
 
 # All individual hooks inherit from this class
@@ -109,6 +109,10 @@ class ProdDataInfo(MyServer):
     def get(self):
         result = get_prod_data_info()
         self.returnJSON(result)
+class PublicDumpsInfo(MyServer):
+    def get(self):
+        result = get_public_dumps_info()
+        self.returnJSON(result)
 
 
 app = webapp2.WSGIApplication([
@@ -122,6 +126,7 @@ app = webapp2.WSGIApplication([
     # TEMP
     ('/source_data_info', SourceDataInfo),
     ('/prod_data_info', ProdDataInfo),
+    ('/public_dumps_info', PublicDumpsInfo),
 ], debug=False)
 
 
