@@ -1,5 +1,6 @@
 <html>
 <head>
+<meta charset="utf-8">
 <title>verejne.digital data</title>
 <link href="lib/prism.css" rel="stylesheet" />
 <script src="lib/prism.js"></script>
@@ -28,6 +29,17 @@
     h1 a:hover {
         text-decoration: underline;
     }
+    hr {
+        display: block;
+        height: 2px;
+        border: 0;
+        border-top: 2px solid #cddae3;
+        margin-top: -10px;
+        padding: 0;
+    }
+    h2 {
+        margin-top: 40px;
+    }
     table, th, td {
         text-align: left;
         vertical-align: top;
@@ -46,6 +58,9 @@
     }
     td ul li {
         font-family: monospace;
+    }
+    td pre {
+        font-size: 10px;
     }
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
@@ -69,25 +84,27 @@
                 var row_html = "";
 
                 // Source name
-                row_html += "<td><p>"
+                row_html += "<td><p>";
                 row_html += '<a href="javascript:;" onclick="toggle(\'tables_list_' + i +'\')">';
-                row_html += "[+] " + source.description + "</a></p>"
+                row_html += "[+] " + source.description + "</a></p>";
 
                 // List of table names
                 row_html += "<ul id='tables_list_" + i + "' style='display: none;'>";
                 for (var j = 0; j < source.tables.length; j++) {
                     var table = source.tables[j];
                     row_html += '<li><a href="javascript:;" onclick="toggle(\'cols_list_' + i + '_' + j +'\')">';
-                    row_html += "[+] " + table.name + "</a> (" + table.num_rows + " rows)"
+                    row_html += "[+] " + table.name + "</a> (" + table.num_rows + " riadkov)"
                     row_html += "<ul id='cols_list_" + i + "_" + j + "' style='display: none;'>";
-                    for (var k = 0; k < table.columns.length; k++)
-                        row_html += "<li>" + table.columns[k] + "</li>";
+                    for (var k = 0; k < table.columns.length; k++) {
+                        var column = table.columns[k];
+                        row_html += "<li>" + column.column_name + "(" + column.data_type + ")" + "</li>";
+                    }
                     row_html += "</ul></li>";
                 }
                 row_html += "</ul></td>";
 
                 // Time of last update
-                row_html += "<td>" + source.update + "</td>";
+                row_html += "<td>" + source.update.split(' ')[0] + "</td>";
 
                 // Add row to table
                 document.getElementById("table_sources").innerHTML += "<tr>" + row_html + "</tr>";
@@ -105,14 +122,15 @@
                 var row_html = "";
 
                 // Table name
-                row_html += "<td><p>"
+                row_html += "<td><p>";
                 row_html += '<a href="javascript:;" onclick="toggle(\'prod_cols_list_' + i +'\')">';
-                row_html += "[+] " + table.name + "</a> (" + table.num_rows + " rows)</p>"
+                row_html += "[+] " + table.name + "</a> (" + table.num_rows + " riadkov)</p>";
 
                 // List of table names
                 row_html += "<ul id='prod_cols_list_" + i + "' style='display: none;'>";
                 for (var j = 0; j < table.columns.length; j++) {
-                    row_html += "<li>" + table.columns[j] + "</li>";
+                    var column = table.columns[j];
+                    row_html += "<li>" + column.column_name + "(" + column.data_type + ")" + "</li>";
                 }
                 row_html += "</ul></td>";
 
@@ -124,53 +142,72 @@
             document.getElementById("table_prod").innerHTML = '<tr><td style="color:red">Error retrieving prod data information</td></tr>';
         });
     }
+    function print_public_data_dumps() {
+        var url = "https://verejne.digital/api/k/public_dumps_info?a=1";
+        $.get(url, function(response) {
+            var tableElement = document.getElementById("table_dumps");
+            for (var i = 0; i < response.length; i++) {
+                var dump = response[i];
+                var row_html = "";
+                row_html += "<td><p><i>" + dump.name + "</i></p>"
+                row_html += "<p><a href='" + dump.notebook_url + "' target='_blank'>Vyskúšať priamo v Google Colab</a></p>";
+                row_html += "<p>alebo</p>";
+                row_html += "<p><a href='" + dump.url + "'>Stiahnuť CSV súbor</a></p>";
+                row_html += "</td><td><pre>"
+                var code_id = "dump-sql-code-" + i;
+                row_html += "<code id='" + code_id + "' class='language-sql'>" + dump.query + "</code>";
+                row_html += "</pre></td>";
+                row_html += "<td></td>";
+
+                // Add row to table
+                tableElement.innerHTML += "<tr>" + row_html + "</tr>";
+                Prism.highlightElement(document.getElementById(code_id));
+            }
+            
+        }).error(function() {
+            document.getElementById("table_dumps").innerHTML = '<tr><td style="color:red">Error retrieving dump data information</td></tr>';
+        });
+    }
 </script>
 </head>
 <body>
     <h1><a href="https://verejne.digital">verejne.digital</a> data</h1>
-    
-    <!-- Section 1: List raw data sources -->
-    <h2>Data sources</h2>
-    <table id="table_sources">
-    <tr>
-        <th>Source name</th>
-        <th>Last update</th>
-    </tr>
-    <script> print_data_sources(); </script>
-    </table>
+    <hr />
 
-    <div id="test"></div>
-
-    <!-- Section 2: Show production data content and status -->
-    <h2>Production data</h2>
-    <p>Last generated: <span id='prod_update_time' style='font-weight: bold;'></span></p>
+    <!-- Section 1: Show production data content and status -->
+    <p>Naše produkčné dáta:</p>
     <table id="table_prod">
         <tr>
-            <th>Table name</th>
+            <th>Tabuľky</th>
         </tr>
         <script> print_production_data_status(); </script>
     </table>
+    <p>
+        Tieto dáta získavame normalizáciou údajov z viacerých zdrojov (<a href='#sourcedata'>pozri nižšie</a>).
+        Posledná aktualizácia: <span id='prod_update_time' style='font-weight: bold;'></span>
+    </p>
 
-    <!-- Section 3: Example Python code -->
-    <h2>Example code</h2>
-<pre><code class="language-python">import os
-import sys
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../data/db')))
-from db import DatabaseConnection
-from status import get_latest_schema
+    <!-- Section 2: List our public data views/dumps -->
+    <h2>Verejné pohľady</h2>
+    <table id="table_dumps">
+        <tr>
+            <th>Dump</th>
+            <th>Použitý SQL kód</th>
+        </tr>
+        <script> print_public_data_dumps(); </script>
+    </table>
+    <p>Už čoskoro plánujeme pridať ďalšie dáta, pohľady a príklady ich použitia.</p>
 
-# Connect to database and switch to most recent production data
-db = DatabaseConnection(path_config='db_config.yaml')
-schema = db.get_latest_schema(db, 'prod_')
-db.execute('SET search_path=" + schema + ";')
-
-# Query the database
-q = """SELECT * FROM entities LIMIT 50;"""
-rows = db.query(q)
-for row in rows:
-    print(row['name'])
-db.close()
-</code></pre>
+    <!-- Section 3: List raw data sources -->
+    <h2 id="sourcedata">Zdrojové dáta</h2>
+    
+    <table id="table_sources">
+    <tr>
+        <th>Názov zdroja</th>
+        <th>Posledná aktualizácia</th>
+    </tr>
+    <script> print_data_sources(); </script>
+    </table>
 
 </body>
 </html>

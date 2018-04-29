@@ -37,16 +37,14 @@ def _get_tables_and_columns_in_schema(db, schema):
     for row_table in rows_tables:
         table_name = row_table['table_name']
         q = """
-            SELECT column_name FROM information_schema.columns
+            SELECT column_name, data_type FROM information_schema.columns
             WHERE table_schema = '""" + schema + """'
                 AND table_name = '""" + table_name + """';
             """
-        rows_columns = db.query(q)
-        columns = [row['column_name'] for row in rows_columns]
         tables.append({
             'name': table_name,
             'num_rows': num_rows[table_name],
-            'columns': columns,
+            'columns': db.query(q),
             })
     return tables
 
