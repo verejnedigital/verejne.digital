@@ -35,7 +35,7 @@ def generate_public_data_dumps(limit=None, verbose=False):
     # Process all dumps
     for dump_name in dumps:
         # Construct dump query
-        q = dumps[dump_name]
+        q = dumps[dump_name]['query']
         q = q.rstrip().rstrip(';') # possibly remove ; ending
         if limit is not None:
             q += ' LIMIT %d' % (limit)
