@@ -1,0 +1,62 @@
+.sidebarnav {
+  align-self: flex-start;
+  width: 100%;
+  margin-bottom: auto;
+}
+
+.navbar-header {
+  float: none;
+  background-color: inherit;
+}
+
+.navbar-toggle {
+  display: block;
+  margin-right: 0;
+  padding-right: 0;
+}
+
+.navbar-brand {
+  padding-left: 0;
+  padding-right: 0;
+  font-family: 'Source Code Pro', monospace;
+  color:  #333333;
+  font-size: 14px;
+  font-weight: 400;
+  text-align: left;
+}
+
+.bolder {
+  font-weight: 700;
+}
+
+.navbar-brand:hover {
+  color:  #333333;
+}
+
+.navbar-collapse.collapse {
+  display: none!important;
+}
+
+.navbar-collapse {
+  background-color: rgba(255, 255, 255, 0.95);
+  z-index: 2;
+  position: relative;
+}
+
+.navbar-nav {
+  float: none!important;
+}
+
+.navbar-nav > li {
+  float: none;
+}
+
+.navbar-collapse.collapse.in{
+  display: block !important;
+}
+
+.icon-bar {
+  background-color: #cddae3;
+  width: 24px;
+  height: 4px;
+}

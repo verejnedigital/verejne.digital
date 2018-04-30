@@ -52,7 +52,7 @@ class DatabaseConnection():
 
     def add_values(self, table, values):
         with self.conn.cursor() as cur:
-            command = ( 
+            command = (
                     "INSERT INTO %s VALUES (DEFAULT," +
                     (",".join(["%s"] * len(values))) +
                     ") RETURNING id"
@@ -67,4 +67,17 @@ class DatabaseConnection():
             psycopg2.extensions.quote_ident(schema_new, self.conn))
         self.execute(q)
         if verbose:
-            print('Renamed schema "%s" to "%s"' % (schema_old, schema_new))
+            print('[OK] Renamed schema "%s" to "%s"' % (schema_old, schema_new))
+
+    def grant_usage_and_select_on_schema(self, schema, user):
+        q = 'GRANT USAGE ON SCHEMA "' + schema + '" TO ' + user + ';'
+        q += 'GRANT SELECT ON ALL TABLES IN SCHEMA "' + schema + '" TO ' + user + ';'
+        self.execute(q, (schema,))
+        print('[OK] Granted USAGE and SELECT on schema %s to %s' % (schema, user))
+
+    def dump_to_CSV(self, query, path_output):
+        with self.conn.cursor() as cur:
+            q = query.rstrip().rstrip(';') # possibly remove ; from the end of the query
+            q = 'COPY ({0}) TO STDOUT WITH CSV HEADER'.format(q)
+            with open(path_output, 'w') as f:
+                cur.copy_expert(q, f)

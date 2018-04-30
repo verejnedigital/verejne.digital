@@ -1,12 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from db import db_query
 from utils import Mercator_to_WGS84
 
 
 def get_politician_by_PersonId(db, PersonId):
-    q = """SET search_path TO kataster;"""
-    q += """
+    q = """
         SELECT DISTINCT ON (Persons.Id)
             Persons.surname AS surname,
             Persons.firstname AS firstname,
@@ -34,7 +32,7 @@ def get_politician_by_PersonId(db, PersonId):
             Persons.Id, Terms.finish DESC
         ;"""
     q_data = (PersonId,)
-    politicians = db_query(db, q, q_data)
+    politicians = db.query(q, q_data)
     assert len(politicians) <= 1
     if len(politicians) == 0:
         return None
@@ -42,8 +40,7 @@ def get_politician_by_PersonId(db, PersonId):
         return politicians[0]
 
 def get_Parcels_owned_by_Person(db, PersonId):
-    q = """SET search_path TO kataster;"""
-    q += """
+    q = """
         SELECT DISTINCT ON (CadastralUnitCode, FolioNo, ParcelNo)
             Parcels.No AS ParcelNo,
             0.5 * (Parcels.minX + Parcels.maxX) AS MercatorX,
@@ -68,7 +65,7 @@ def get_Parcels_owned_by_Person(db, PersonId):
             CadastralUnitCode, FolioNo, ParcelNo, Parcels.ValidTo DESC
         ;"""
     q_data = (PersonId,)
-    rows = db_query(db, q, q_data)
+    rows = db.query(q, q_data)
 
     # Convert the coordinates to WGS84
     for row in rows:
@@ -79,8 +76,7 @@ def get_Parcels_owned_by_Person(db, PersonId):
     return rows
 
 def get_politicians_with_Folio_counts(db):
-    q = """SET search_path TO kataster;"""
-    q += """
+    q = """
         WITH
         PersonCounts AS (
             SELECT
@@ -141,12 +137,11 @@ def get_politicians_with_Folio_counts(db):
         ORDER BY
             Persons.Id, Terms.finish DESC
         ;"""
-    rows = db_query(db, q)
+    rows = db.query(q)
     return rows
 
 def get_asset_declarations(db, PersonId):
-    q = """SET search_path TO kataster;"""
-    q += """
+    q = """
         SELECT
             unmovable_assets,
             movable_assets,
@@ -164,5 +159,5 @@ def get_asset_declarations(db, PersonId):
             year DESC
         ;"""
     q_data = (PersonId,)
-    declarations = db_query(db, q, q_data)
+    declarations = db.query(q, q_data)
     return declarations

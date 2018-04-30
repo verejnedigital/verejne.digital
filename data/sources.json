@@ -1,25 +1,6 @@
 [
     {
-        "name": "ekosystem_RPO",
-        "path": "/tmp/source_ekosystem_RPO.sql.gz",
-        "schemas":
-        [
-            "rpo"
-        ],
-        "type": "SQL",
-        "url": "https://s3.eu-central-1.amazonaws.com/ekosystem-slovensko-digital-dumps/rpo.sql.gz"
-    },
-    {
-        "name": "ekosystem_VVO",
-        "path": "/tmp/source_ekosystem_VVO.sql.gz",
-        "schemas":
-        [
-            "vvo"
-        ],
-        "type": "SQL",
-        "url": "https://s3.eu-central-1.amazonaws.com/ekosystem-slovensko-digital-dumps/vvo.sql.gz"
-    },
-    {
+        "description": "Centrálny register zmlúv (CRZ)",
         "name": "ekosystem_CRZ",
         "path": "/tmp/source_ekosystem_CRZ.sql.gz",
         "schemas":
@@ -30,7 +11,41 @@
         "url": "https://s3.eu-central-1.amazonaws.com/ekosystem-slovensko-digital-dumps/crz.sql.gz"
     },
     {
+        "description": "ITMS2014+",
+        "name": "ekosystem_ITMS",
+        "path": "/tmp/source_ekosystem_ITMS.sql.gz",
+        "schemas":
+        [
+            "itms"
+        ],
+        "type": "SQL",
+        "url": "https://s3.eu-central-1.amazonaws.com/ekosystem-slovensko-digital-dumps/itms.sql.gz"
+    },
+    {
+        "description": "Register právnických osôb (RPO)",
+        "name": "ekosystem_RPO",
+        "path": "/tmp/source_ekosystem_RPO.sql.gz",
+        "schemas":
+        [
+            "rpo"
+        ],
+        "type": "SQL",
+        "url": "https://s3.eu-central-1.amazonaws.com/ekosystem-slovensko-digital-dumps/rpo.sql.gz"
+    },
+    {
+        "description": "Vestník verejného obstarávania (VVO)",
+        "name": "ekosystem_VVO",
+        "path": "/tmp/source_ekosystem_VVO.sql.gz",
+        "schemas":
+        [
+            "vvo"
+        ],
+        "type": "SQL",
+        "url": "https://s3.eu-central-1.amazonaws.com/ekosystem-slovensko-digital-dumps/vvo.sql.gz"
+    },
+    {
         "delimiter": ";",
+        "description": "FinStat.sk",
         "name": "finstat",
         "path": "/tmp/source_finstat.csv",
         "schemas": [],
@@ -38,22 +53,13 @@
         "type": "CSV"
     },
     {
+        "description": "profil.verejne.digital",
         "name": "internal_profil",
-        "path": "/home/matej_balog/data/source_internal_profil.sql.gz",
+        "path": "/tmp/source_internal_profil.sql.gz",
         "schemas":
         [
             "kataster"
         ],
         "type": "SQL"
-    },
-    {
-        "name": "vd_profil",
-        "path": "/tmp/source_vd_profil.sql.gz",
-        "schemas":
-        [
-            "kataster"
-        ],
-        "type": "SQL",
-        "url": "https://verejne.digital/source_internal_profil.sql.gz"
     }
 ]

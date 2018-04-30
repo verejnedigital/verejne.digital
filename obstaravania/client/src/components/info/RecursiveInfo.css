@@ -1,0 +1,12 @@
+.recursiveInfoBtn {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.recursiveInfo {
+  padding-left: 15px;
+}
+
+.recursiveInfo infoWrapper {
+  width: 400px;
+}

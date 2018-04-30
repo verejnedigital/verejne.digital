@@ -1,0 +1,17 @@
+# WARNING: You have to make sure that you have permission to publish all the data
+# in any public dump that you add or modify here.
+save_directory:
+    /data/www/beta.verejne.digital/root/data/
+dumps:
+    companies:
+        query: |
+            SELECT
+                name, companyinfo.ico, address.address, companyinfo.established_on, companyinfo.terminated_on
+            FROM
+                entities
+            INNER JOIN
+                companyinfo ON companyinfo.eid=entities.id
+            INNER JOIN
+                address ON address.id=entities.address_id;
+        notebook_url:
+            https://colab.research.google.com/drive/1AGgWhh4ZxLDJoLd34rD7Aw3wzpaLRXXB

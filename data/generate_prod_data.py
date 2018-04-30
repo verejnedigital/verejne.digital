@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import argparse
 import os
 import sys
 import yaml
@@ -9,13 +10,11 @@ from psycopg2.extensions import AsIs
 import geocoder as geocoder_lib
 import entities
 from datetime import datetime
-import source_update
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../data/db')))
 from db import DatabaseConnection
+from status import get_latest_schema
 
-# TODO: Make this command-line option.
-test_mode = True
 
 def CreateAndSetProdSchema(db, prod_schema_name):
     """ Initialized schema with core prod tables: Entities and Address.
@@ -51,8 +50,7 @@ def CreateAndSetProdSchema(db, prod_schema_name):
         """)
         
 
-
-def ProcessSource(db_prod, geocoder, entities, config):
+def ProcessSource(db_prod, geocoder, entities, config, test_mode):
     """ Process one source table (read from db_source) using the config and
     performing normalization using the given geocoder and entities lookup.
 
@@ -60,12 +58,13 @@ def ProcessSource(db_prod, geocoder, entities, config):
     new entities and addresses in to the Entities and Address tables. It also
     creates and populates supplementary tables as specified by a config.
     """
-    source_schema_name = source_update.get_latest_schema(config["source_schema"])
+
+    # Connect to the most recent schema from the current source
+    db_source = DatabaseConnection(path_config='db_config_update_source.yaml')
+    source_schema_name = get_latest_schema(db_source, 'source_' + config["source_schema"])
     print "Processing source_schema_name", source_schema_name
-    # Read source tables from this one
-    db_source = DatabaseConnection(path_config='db_config_update_source.yaml',
-                                   search_path=source_schema_name)
-    
+    db_source.execute('SET search_path="' + source_schema_name + '";')
+
     columns_for_table = {}
     with db_prod.dict_cursor() as cur:
         # Create supplementaty tables using the provided command.
@@ -81,15 +80,18 @@ def ProcessSource(db_prod, geocoder, entities, config):
         It reads the corresponding values from the row and adds them into the
         table with the corresponding eid.
         """
-        columns = columns_for_table[table]
+        columns = list(columns_for_table[table])
         values = [row[column] for column in columns]
+        if eid is not None:
+            columns += ["eid"]
+            values += [eid]
         if all(v is None for v in values):
             # Ignore this entry, all meaningful values are None
             return
 
         # TODO: find out how to build SQL statement properly
-        column_names = ",".join(["eid"] + columns)
-        values_params = ",".join(["%s"] * (1 + len(columns)))
+        column_names = ",".join(columns)
+        values_params = ",".join(["%s"] * (len(columns)))
         command = (
                 "INSERT INTO %s (" + column_names + ") " +
                 "VALUES (" + values_params + ") " +
@@ -97,7 +99,7 @@ def ProcessSource(db_prod, geocoder, entities, config):
         )
         with db_prod.dict_cursor() as cur:
             cur.execute(command,
-                        [AsIs(table), eid] + [row[column] for column in columns])
+                        [AsIs(table)] + values)
 
     with db_source.dict_cursor() as cur:
         # Read data using the given command.
@@ -108,7 +110,8 @@ def ProcessSource(db_prod, geocoder, entities, config):
         cur.execute(config["command"] + suffix_for_testing)
         print "Done."
         missed = 0
-        found = 0;
+        found = 0
+        empty = 0
 
         missed_eid = 0
         found_eid = 0
@@ -118,24 +121,35 @@ def ProcessSource(db_prod, geocoder, entities, config):
             # Read entries one by one and try to geocode them. If the address
             # lookup succeeds, try to normalize the entities. If it succeeds,
             # insert into Entities and supplementary tables.
-            address = row["address"]
-            if address is None: continue
-            name = row["name"]
-            if name is None: continue
+            address = ""
+            if "address" in row:
+                address = row["address"]
+                if address is None: continue
+            name = ""
+            if "name" in row:
+                name = row["name"]
+                if name is None: continue
             # Sometimes FirstName and Surname are joined. Lets try the simplest splitting on Capital
             # letters.
             if (len(name.split()) == 1):
               name = ' '.join(re.findall('[A-Z][^A-Z]*', name))
             addressId = geocoder.GetAddressId(address.encode("utf8"))
             if addressId is None:
-                if test_mode and missed < 100:
+                if test_mode and missed < 10:
                     print "MISSING ADDRESS", address.encode("utf8")
-                missed_addresses.add(address)
-                missed += 1
-                continue
+                if address == "":
+                    empty += 1
+                else:
+                    missed_addresses.add(address)
+                    missed += 1
+                    continue
             found += 1;
-
-            eid = entities.GetEntity(row["ico"], name, addressId)
+            
+            eid = None
+            if config.get("no_entity_id"):
+                eid = None
+            else:
+                eid = entities.GetEntity(row["ico"], name, addressId)
             # print name, "-> eid:", eid
             if found%20000==0:
                 print "Progress:", found
@@ -156,12 +170,15 @@ def ProcessSource(db_prod, geocoder, entities, config):
 
     print "FOUND", found
     print "MISSED", missed
+    print "EMPTY", empty
     print "MISSED UNIQUE", len(missed_addresses)
     print "FOUND EID", found_eid
     print "MISSED EID", missed_eid
     db_source.close()
 
-def main():
+
+def main(args_dict):
+    test_mode = not args_dict['disable_test_mode']
     if test_mode:
         print "======================="
         print "=======TEST MODE======="
@@ -191,13 +208,24 @@ def main():
     # This is where all the population happens!!!
     # Go through all the specified data sources and process them, adding data
     # as needed.
+    # We have two loops to process first the primary source of entities.
     for key in config.keys():
-        print "Working on source:", key
         config_per_source = config[key]
-        ProcessSource(db_prod, geocoder, entities_lookup, config_per_source)
-        if test_mode: break
+        if config_per_source.get("is_primary"):
+            print "Working on source:", key
+            ProcessSource(db_prod, geocoder, entities_lookup, config_per_source, test_mode)
+    for key in config.keys():
+        config_per_source = config[key]
+        if not config_per_source.get("is_primary"):
+            print "Working on source:", key
+            ProcessSource(db_prod, geocoder, entities_lookup, config_per_source, test_mode)
 
+    # TEMP
+    # For ProdDataInfo under kataster to work properly, user kataster
+    # needs to be able to see the newly created schema and tables within
+    db_prod.grant_usage_and_select_on_schema(prod_schema_name, 'kataster')
 
+    # Commit database changes and close database connections
     db_address_cache.commit()
     db_address_cache.close()
     if test_mode:
@@ -209,5 +237,9 @@ def main():
     print "STATS"
     geocoder.PrintStats()
 
+
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--disable_test_mode', default=False, action='store_true', help='Disable test mode')
+    args_dict = vars(parser.parse_args())
+    main(args_dict)
