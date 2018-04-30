@@ -1,13 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import argparse
 from data_model import Candidate, MakeSession, Notification, NotificationStatus, Session, Obstaravanie, LastNotificationUpdate
-from sqlalchemy.sql import func
 import db
-from db import parser
 import logging
+from sqlalchemy.sql import func
 import utils
+
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
+parser = argparse.ArgumentParser()
 parser.add_argument("--generate_notifications", action="store_true")
 parser.add_argument("--test_report", action="store_true")
 options = parser.parse_args()
