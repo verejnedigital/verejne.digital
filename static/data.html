@@ -77,7 +77,7 @@
         }
     }
     function print_data_sources() {
-        var url = "https://verejne.digital/api/k/source_data_info?a=8";
+        var url = "https://verejne.digital/api/k/source_data_info?a=9";
         $.get(url, function(response) {
             for (var i = 0; i < response.length; i++) {
                 var source = response[i];
@@ -97,7 +97,7 @@
                     row_html += "<ul id='cols_list_" + i + "_" + j + "' style='display: none;'>";
                     for (var k = 0; k < table.columns.length; k++) {
                         var column = table.columns[k];
-                        row_html += "<li>" + column.column_name + "(" + column.data_type + ")" + "</li>";
+                        row_html += "<li>" + column.column_name + " (" + column.data_type + ")" + "</li>";
                     }
                     row_html += "</ul></li>";
                 }
@@ -114,7 +114,7 @@
         });
     }
     function print_production_data_status() {
-        var url = "https://verejne.digital/api/k/prod_data_info?a=1";
+        var url = "https://verejne.digital/api/k/prod_data_info?a=3";
         $.get(url, function(response) {
             document.getElementById("prod_update_time").innerHTML = response.update;
             for (var i = 0; i < response.tables.length; i++) {
@@ -130,7 +130,7 @@
                 row_html += "<ul id='prod_cols_list_" + i + "' style='display: none;'>";
                 for (var j = 0; j < table.columns.length; j++) {
                     var column = table.columns[j];
-                    row_html += "<li>" + column.column_name + "(" + column.data_type + ")" + "</li>";
+                    row_html += "<li>" + column.column_name + " (" + column.data_type + ")" + "</li>";
                 }
                 row_html += "</ul></td>";
 
