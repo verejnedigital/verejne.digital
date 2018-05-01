@@ -4,7 +4,7 @@
 
 JSON_DIR=/tmp/ 
 STATIC_DIR=/tmp/
-OUTPUT_DIR=../../generated/obstaravania/
+OUTPUT_DIR=/data/www/verejne.digital/generated/obstaravania/
 
 . venv/bin/activate
 
