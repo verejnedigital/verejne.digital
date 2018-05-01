@@ -235,5 +235,5 @@ if __name__ == '__main__':
     parser.add_argument('--serving_directory',
                         default='/data/www/verejne.digital/serving/prod/',
                         help='Directory with serving data')
-    args_dict = parser.parse_args()
+    args_dict = vars(parser.parse_args())
     main(args_dict)
