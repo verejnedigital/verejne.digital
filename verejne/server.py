@@ -215,9 +215,9 @@ def initialise_app(serving_directory):
     app.registry['entities'] = entities
 
 def main(args_dict):
-    initialise_app(args['serving_directory'])
+    initialise_app(args_dict['serving_directory'])
 
-    host, port = args['listen'].split(':')
+    host, port = args_dict['listen'].split(':')
     httpserver.serve(
         app,
         host=host,
