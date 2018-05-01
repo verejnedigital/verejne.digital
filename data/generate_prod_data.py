@@ -48,11 +48,6 @@ def CreateAndSetProdSchema(db, prod_schema_name):
                 address_id INTEGER REFERENCES Address(id)
             )
         """)
-
-    # TEMP
-    # For ProdDataInfo under kataster to work properly, user kataster
-    # needs to be able to see the newly created schema and tables within
-    db.grant_usage_and_select_on_schema(prod_schema_name, 'kataster')
         
 
 def ProcessSource(db_prod, geocoder, entities, config, test_mode):
@@ -224,6 +219,11 @@ def main(args_dict):
         if not config_per_source.get("is_primary"):
             print "Working on source:", key
             ProcessSource(db_prod, geocoder, entities_lookup, config_per_source, test_mode)
+
+    # TEMP
+    # For ProdDataInfo under kataster to work properly, user kataster
+    # needs to be able to see the newly created schema and tables within
+    db_prod.grant_usage_and_select_on_schema(prod_schema_name, 'kataster')
 
     # Commit database changes and close database connections
     db_address_cache.commit()

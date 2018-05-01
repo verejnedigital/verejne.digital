@@ -52,12 +52,12 @@ notices:
                                 eid INTEGER REFERENCES Entities(id),
                                 notice_id INT4,
                                 title text,
-                                estimated_value_amount INT4,
+                                estimated_value_amount INT8,
                                 estimated_value_currency text,
                                 bulletin_issue_id INT4,
                                 notice_type_id INT4,
                                 short_description text,
-                                total_final_value_amount INT4,
+                                total_final_value_amount INT8,
                                 total_final_value_currency text,
                                 body text
                        );

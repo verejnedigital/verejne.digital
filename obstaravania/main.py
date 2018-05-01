@@ -28,7 +28,6 @@ parser.add_argument("--data_url", default="http://datanest.fair-play.sk/api/data
 parser.add_argument("--create_data_files", action="store_true")
 parser.add_argument("--update_platforma", action="store_true")
 parser.add_argument("--update_platforma_all", action="store_true")
-parser.add_argument("--create_model", action="store_true")
 parser.add_argument("--use_lsi", action="store_true")
 parser.add_argument("--max_document_frequency", default=0.037)
 parser.add_argument("--min_document_occurence", default=15)
@@ -315,7 +314,7 @@ def processObstaravanie(obstaravanie):
                            removePunctuation(obstaravanie.description),
                            customer_words)
 
-if options.create_model:
+if options.compute_predictions:
     # TODO: stemming / lemmatization?!?
     print "Loading texts"
     texts = [processObstaravanie(obstaravanie)
@@ -327,8 +326,6 @@ if options.create_model:
     dictionary.filter_extremes(
             no_below=int(options.min_document_occurence),
             no_above=float(options.max_document_frequency), keep_n=99999999)
-# TODO: rename lines.dict to dictionary.dict
-    dictionary.save('lines.dict')
     print(dictionary)
     corpus = [dictionary.doc2bow(line) for line in texts]
     if options.use_lsi:
@@ -336,14 +333,11 @@ if options.create_model:
         lsi.print_topics(options.model_size)
     else:
         lsi = models.TfidfModel(corpus)
-    lsi.save('model.lsi')
 
-if options.compute_predictions:
     suppliers = []
     ids = []
     corpus = []
 
-    dictionary = corpora.Dictionary.load('lines.dict')
     print "Loading data"
     for obstaravanie in session.query(Obstaravanie).order_by(-Obstaravanie.id):
         if (obstaravanie.winner is None): continue
@@ -352,10 +346,6 @@ if options.compute_predictions:
         suppliers.append(obstaravanie.winner_id)
         ids.append(obstaravanie.id)
    
-    if options.use_lsi:
-        lsi = models.LsiModel.load('model.lsi') 
-    else:
-        lsi = models.TfidfModel.load('model.lsi')
     index = similarities.Similarity('shards/', lsi[corpus], num_features=len(dictionary.values()))
     processed = 0
     # process last num_lines entries

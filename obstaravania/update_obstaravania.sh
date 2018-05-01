@@ -4,7 +4,7 @@
 
 JSON_DIR=/tmp/ 
 STATIC_DIR=/tmp/
-OUTPUT_DIR=../../generated/obstaravania/
+OUTPUT_DIR=/data/www/verejne.digital/generated/obstaravania/
 
 . venv/bin/activate
 
@@ -12,7 +12,6 @@ export LD_PRELOAD=/usr/local/lib/gcc5/libgcc_s.so.1
 
 python main.py \
 	--update_platforma --update_platforma_all \
-	--create_model \
 	--compute_predictions \
         --compute_estimates \
 	--generate_companies --companies_json_name="${JSON_DIR}/prod_companies.json" \
