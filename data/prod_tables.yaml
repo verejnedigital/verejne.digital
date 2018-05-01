@@ -1,6 +1,6 @@
 rpo:
     source_schema: "ekosystem_rpo"
-    command:   "select distinct on(organizations.id) organizations.id as org_id,organization_identifier_entries.ipo as ico,organization_name_entries.name, organizations.established_on,organizations.terminated_on,concat_ws(' ',organization_address_entries.formatted_address,organization_address_entries.street,organization_address_entries.building_number,organization_address_entries.postal_code,organization_address_entries.municipality,organization_address_entries.country) as address from organizations,organization_identifier_entries,organization_name_entries,organization_address_entries where organizations.id=organization_identifier_entries.organization_id and organizations.id=organization_name_entries.organization_id and organizations.id=organization_address_entries.organization_id"
+    command:   "select distinct on(organizations.id) organizations.id as org_id,organization_identifier_entries.ipo as ico,organization_name_entries.name, organizations.established_on,organizations.terminated_on,concat_ws(' ',organization_address_entries.formatted_address,organization_address_entries.street,COALESCE(organization_address_entries.building_number,cast(organization_address_entries.reg_number as text)),organization_address_entries.postal_code,organization_address_entries.municipality,organization_address_entries.country) as address from organizations,organization_identifier_entries,organization_name_entries,organization_address_entries where organizations.id=organization_identifier_entries.organization_id and organizations.id=organization_name_entries.organization_id and organizations.id=organization_address_entries.organization_id"
     save_org_id: true
     is_primary: true
     tables:
@@ -20,7 +20,7 @@ rpo:
 
 related:
     source_schema: "ekosystem_rpo"
-    command:   "select organization_id as eid_relation,stakeholder_type_id,ico,concat_ws(' ',full_name,person_given_name,person_family_name) as name,concat_ws(' ',address_formatted,address_street,address_building_number,address_postal_code,address_municipality,address_country) as address,effective_from,effective_to from organization_stakeholder_entries UNION select organization_id as org_id,stakeholder_type_id,ico,concat_ws('',full_name,person_given_name,person_family_name) as name,concat_ws('',address_formatted,address_street,address_building_number,address_postal_code,address_municipality,address_country) as address,effective_from,effective_to from organization_statutory_entries"
+    command:   "select organization_id as eid_relation,stakeholder_type_id,ico,concat_ws(' ',full_name,person_given_name,person_family_name) as name,concat_ws(' ',address_formatted,address_street,COALESCE(address_building_number,cast(address_reg_number as text)),address_postal_code,address_municipality,address_country) as address,effective_from,effective_to from organization_stakeholder_entries UNION select organization_id as org_id,stakeholder_type_id,ico,concat_ws(' ',full_name,person_given_name,person_family_name) as name,concat_ws(' ',address_formatted,address_street,COALESCE(address_building_number,cast(address_reg_number as text)),address_postal_code,address_municipality,address_country) as address,effective_from,effective_to from organization_statutory_entries"
     use_org_id_as_eid_relation: true
     tables:
             Related:
@@ -39,10 +39,10 @@ related:
 
 notices:
     source_schema: "ekosystem_VVO"
-    command:   "select notices.id as notice_id,notices.title,notices.contracting_authority_name as name,notices.contracting_authority_cin as ico,notices.estimated_value_amount,notices.estimated_value_currency,notices.bulletin_issue_id,notices.notice_type_id,result_notices.short_description,result_notices.total_final_value_amount,result_notices.total_final_value_currency,raw_notices.body from notices FULL OUTER JOIN result_notices ON result_notices.raw_notice_id = notices.raw_notice_id FULL OUTER JOIN raw_notices ON raw_notices.id=notices.raw_notice_id"
+    command:   "select notices.id as notice_id,notices.contract_id,notices.title,notices.contracting_authority_name as name,notices.contracting_authority_cin as ico,notices.estimated_value_amount,notices.estimated_value_currency,notices.bulletin_issue_id,notices.notice_type_id,result_notices.short_description,result_notices.total_final_value_amount,result_notices.total_final_value_currency,raw_notices.body from notices FULL OUTER JOIN result_notices ON result_notices.raw_notice_id = notices.raw_notice_id FULL OUTER JOIN raw_notices ON raw_notices.id=notices.raw_notice_id"
     tables:
             Notices:
-                    columns: ["notice_id", "title", "estimated_value_amount",
+                    columns: ["notice_id", "contract_id", "title", "estimated_value_amount",
                     "estimated_value_currency", "bulletin_issue_id", "notice_type_id",
                     "short_description", "total_final_value_amount",
                     "total_final_value_currency", "body"]
@@ -51,6 +51,7 @@ notices:
                                 id SERIAL PRIMARY KEY,
                                 eid INTEGER REFERENCES Entities(id),
                                 notice_id INT4,
+                                contract_id INT4,
                                 title text,
                                 estimated_value_amount INT8,
                                 estimated_value_currency text,
@@ -63,6 +64,7 @@ notices:
                        );
                        CREATE INDEX ON Notices(eid);
                        CREATE INDEX ON Notices(notice_id);
+                       CREATE INDEX ON Notices(contract_id);
                        CREATE INDEX ON Notices(bulletin_issue_id)
                     "
 notice_suppliers:

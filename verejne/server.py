@@ -4,36 +4,16 @@ import argparse
 import db
 import simplejson as json
 from paste import httpserver
-import sys
-import state
-import traceback
 import webapp2
-import yaml
 
-############################
-# Config
-############################
-data_sources = {}
+from state import Entities
+from utils import yaml_load
 
-def loadDataSources():
-    global data_sources
-    with open("datasources.yaml", "r") as stream:
-        data_sources = yaml.load(stream)
-loadDataSources()
-
-##############################
-# Utility functions
-##############################
 
 # TODO: add proper logging
 def log(s):
-    print "LOG: " + s
+    print("LOG: %s" % (s))
 
-########################################
-# Server state is stored in this class
-########################################
-
-entities = state.Entities()
 
 ###########################################
 # Implemenatation of the server hooks
@@ -58,12 +38,12 @@ class GetEntities(MyServer):
                     self.request.GET.get("restrictToSlovakia", False))
             level = int(self.request.GET.get("level", 3))
         except:
-            self.abort(400, detail="Inputs are not floating points")
+            self.abort(400, detail="Could not parse parameters")
 
         if (level == 0) and ((lat2 - lat1) + (lng2 - lng1) > 2):
-            self.abort(400, detail=("Requested area is too large. If you want to download "
-                                    "data for your own use, please contact us on Facebook."))
+            self.abort(400, detail="Requested area is too large. If you want to download data for your own use, please contact us on Facebook.")
 
+        entities = webapp2.get_app().registry['entities']
         self.response.headers['Content-Type'] = 'application/json'
         entities.getEntities(
                 self.response, lat1, lng1, lat2, lng2, level, restrictToSlovakia)
@@ -71,29 +51,34 @@ class GetEntities(MyServer):
 
 class GetRelated(MyServer):
     def get(self):
-       try:
-           eid = int(self.request.GET["eid"])
-       except:
-           self.abort(400, detail="Input is not an integer")
-       self.returnJSON(entities.getRelated(eid)) 
+        try:
+            eid = int(self.request.GET["eid"])
+        except:
+            self.abort(400, detail="Could not parse parameter 'eid' as an integer")
 
+        if eid < 0:
+            self.abort(400, detail="Provided 'eid' is not an entity id")
+
+        entities = webapp2.get_app().registry['entities']
+        self.returnJSON(entities.getRelated(eid))
 
 # Read info from all info tables and returns all related entities for the given eid
 class GetInfo(MyServer):
     def get(self):
-        global data_sources
         try:
             eid = int(self.request.GET["eid"])
         except:
-            self.abort(400, detail="Input is not an integer")
+            self.abort(400, detail="Could not parse parameter 'eid' as an integer")
 
         # Copy total sum of contracts if present
         result = {}
+        entities = webapp2.get_app().registry['entities']
         if eid in entities.eid_to_index:
             entity = entities.entities[entities.eid_to_index[eid]]
             result["total_contracts"] = entity.contracts
 
         # load info data from individual tables
+        data_sources = webapp2.get_app().registry['data_sources']
         for table in data_sources:
             print "Processing table", table
             columns = ",".join(data_sources[table])
@@ -119,8 +104,8 @@ class SearchEntity(MyServer):
         try:
             text = self.request.GET["text"].encode("utf8")
         except:
-            print "unable to parse"
-            self.abort(400, detail="Incorrect input text")
+            self.abort(400, detail="Unable to parse input text")
+
         with db.getCursor() as cur:
             sql = "SELECT DISTINCT eid AS eid FROM entities " + \
                   "WHERE to_tsvector('unaccent', entity_name) @@ plainto_tsquery('unaccent', %s) " + \
@@ -145,8 +130,7 @@ class SearchEntityByNameAndAddress(MyServer):
             surname = self.request.GET["surname"].encode("utf8")
             address = self.request.GET["address"].encode("utf8")
         except:
-            print("SearchEntityByNameAndAddress: Unable to parse input")
-            self.abort(400, "Incorrect input text")
+            self.abort(400, detail="Unable to parse input text")
 
         # Carry-out the logic
         q = """
@@ -195,37 +179,46 @@ class IcoRedirect(MyServer):
         try:
             ico = int(self.request.GET["ico"])
         except:
-            self.abort(400, "Incorrect input ico")
+            self.abort(400, detail="Could not parse parameter 'ico' as an integer")
+
         eid = self.getEidForIco(ico)
         log("icoredirect " + str(ico) + " " + str(eid))
+        entities = webapp2.get_app().registry['entities']
         if (eid is None) or (not eid in entities.eid_to_index):
             return self.redirect("/")
         entity = entities.entities[entities.eid_to_index[eid]]
         return self.redirect("/?zobraz&%.7f&%.7f&%d" % (entity.lat, entity.lng, eid))
 
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--listen',
-                        default='127.0.0.1:8080',
-                        help='host:port to listen on')
-    parser.add_argument('--serving_directory',
-                        default='/data/www/verejne.digital/serving/prod/',
-                        help='Directory with serving data')
-    args = parser.parse_args()
 
-    entities.loadFromDirectory(args.serving_directory)
-    host, port = args.listen.split(':')
+# Setup of the webapp2 WSGI application
+app = webapp2.WSGIApplication([
+    ('/getEntities', GetEntities),
+    ('/getInfo', GetInfo),
+    ('/getRelated', GetRelated),
+    ('/ico', IcoRedirect),
+    ('/searchEntity', SearchEntity),
+    ('/searchEntityByNameAndAddress', SearchEntityByNameAndAddress),
+], debug=False)
 
-    app = webapp2.WSGIApplication(
-            [
-                ('/getEntities', GetEntities),
-                ('/getInfo', GetInfo),
-                ('/getRelated', GetRelated),
-                ('/ico', IcoRedirect),
-                ('/searchEntity', SearchEntity),
-                ('/searchEntityByNameAndAddress', SearchEntityByNameAndAddress),
-            ], debug=False)
+def initialise_app(serving_directory):
+    """ Procedure for initialising the app with precomputed values that
+        are shared across different requests. The registry property is
+        intended for this purpose, in order to avoid global variables.
+    """
 
+    # data_sources
+    data_sources = yaml_load('datasources.yaml')
+    app.registry['data_sources'] = data_sources
+
+    # entities
+    entities = Entities()
+    entities.loadFromDirectory(serving_directory)
+    app.registry['entities'] = entities
+
+def main(args_dict):
+    initialise_app(args['serving_directory'])
+
+    host, port = args['listen'].split(':')
     httpserver.serve(
         app,
         host=host,
@@ -236,4 +229,12 @@ def main():
     )
   
 if __name__ == '__main__':
-  main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--listen',
+                        default='127.0.0.1:8080',
+                        help='host:port to listen on')
+    parser.add_argument('--serving_directory',
+                        default='/data/www/verejne.digital/serving/prod/',
+                        help='Directory with serving data')
+    args_dict = parser.parse_args()
+    main(args_dict)
