@@ -12,7 +12,6 @@ from state import Entities
 from utils import yaml_load
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../data/db')))
-print('Appended %s' % (os.path.abspath(os.path.join(os.path.dirname(__file__), '../data/db'))))
 from db import DatabaseConnection
 
 
