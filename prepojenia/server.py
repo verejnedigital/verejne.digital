@@ -12,6 +12,7 @@ import webapp2
 import yaml
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../data/db')))
+print('Appended %s' % (os.path.abspath(os.path.join(os.path.dirname(__file__), '../data/db'))))
 from db import DatabaseConnection
 
 

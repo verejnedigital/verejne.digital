@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import cPickle as pickle
-import db
+import db_old as db
 import os
 import simplejson as json
 import unicodedata
