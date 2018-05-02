@@ -10,6 +10,7 @@ export default () => {
   }
   const loggerMiddleware = createLogger({
     collapsed: true,
+    predicate: (getState, action) => !action.doNotLog,
   })
 
   const middlewares = [thunk.withExtraArgument({logger})]

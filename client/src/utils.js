@@ -10,7 +10,7 @@ export const compose = (f, ...fs) => (fs.length > 0 ? (x) => f(compose(...fs)(x)
  *
  * Does not create new state if the value did not change
  */
-export const forwardReducerTo = (reducer, path) => (state, payload) => {
+export const forwardReducerTo = (reducer, path = []) => (state, payload) => {
   const value = get(state, path)
   const newValue = reducer(value, payload)
   return newValue !== value ? set(state, path, newValue) : state
