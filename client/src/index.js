@@ -1,15 +1,20 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
+import {BrowserRouter} from 'react-router-dom'
 import App from './App'
 import registerServiceWorker from './registerServiceWorker'
 import getConfiguredStore from './configureStore'
 import {Provider} from 'react-redux'
 
+import 'bootstrap/dist/css/bootstrap.min.css'
+
 const store = getConfiguredStore()
 ReactDOM.render(
-  <Provider store={store}>
-    <App />
-  </Provider>,
+  <BrowserRouter>
+    <Provider store={store}>
+      <App />
+    </Provider>
+  </BrowserRouter>,
   document.getElementById('root')
 )
 registerServiceWorker()
