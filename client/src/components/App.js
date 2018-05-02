@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React from 'react'
 import {Route, Switch, Redirect} from 'react-router-dom'
 import Landing from './Landing'
 import Prepojenia from './Prepojenia'

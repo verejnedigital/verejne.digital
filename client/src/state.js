@@ -1,4 +1,9 @@
-// whole state structure in this file
-export default () => ({
+// @flow
+
+export type State = {
+  +test: string,
+}
+
+export default (): State => ({
   test: 'state',
 })

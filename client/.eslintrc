@@ -4,5 +4,9 @@
     "browser": true,
     "node": true,
     "jest": true
+  },
+  "rules": {
+    "no-duplicate-imports": 0,
+    "import/no-duplicates": "error"
   }
 }
