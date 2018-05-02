@@ -4,6 +4,8 @@
   "private": true,
   "dependencies": {
     "lodash": "^4.17.10",
+    "node-sass-chokidar": "^1.2.2",
+    "npm-run-all": "^4.1.2",
     "object-path-immutable": "^1.0.1",
     "react": "^16.3.2",
     "react-dom": "^16.3.2",
@@ -13,11 +15,15 @@
     "redux-thunk": "^2.2.0"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start-js": "react-scripts start",
+    "start": "npm-run-all -p watch-css start-js",
+    "build-js": "react-scripts build",
+    "build": "npm-run-all build-css build-js",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
-    "fix": "prettier-eslint --write \"src/**/*.{js,jsx,json,css}\""
+    "fix": "prettier-eslint --write \"src/**/*.{js,jsx,json,css}\"",
+    "build-css": "node-sass-chokidar src/ -o src/",
+    "watch-css": "npm run build-css && node-sass-chokidar src/ -o src/ --watch --recursive"
   },
   "devDependencies": {
     "babel-eslint": "^8.2.3",

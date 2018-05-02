@@ -19,3 +19,6 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# we're using sass, css files are built automatically
+src/**/*.css
