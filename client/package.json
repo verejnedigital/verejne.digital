@@ -3,9 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "lodash": "^4.17.10",
+    "object-path-immutable": "^1.0.1",
     "react": "^16.3.2",
     "react-dom": "^16.3.2",
-    "react-scripts": "1.1.4"
+    "react-redux": "^5.0.7",
+    "react-scripts": "1.1.4",
+    "redux": "^4.0.0",
+    "redux-thunk": "^2.2.0"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -21,6 +26,7 @@
     "eslint-plugin-import": "^2.11.0",
     "eslint-plugin-react": "^7.7.0",
     "prettier-eslint": "^8.8.1",
-    "prettier-eslint-cli": "^4.7.1"
+    "prettier-eslint-cli": "^4.7.1",
+    "redux-logger": "^3.0.6"
   }
 }
