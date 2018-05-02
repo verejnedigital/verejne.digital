@@ -13,7 +13,6 @@ from datetime import datetime
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../data/db')))
 from db import DatabaseConnection
-from status import get_latest_schema
 
 
 def CreateAndSetProdSchema(db, prod_schema_name):
@@ -38,7 +37,8 @@ def CreateAndSetProdSchema(db, prod_schema_name):
             );
             CREATE INDEX ON Address (lat);
             CREATE INDEX ON Address (lng);
-            CREATE UNIQUE INDEX ON Address (lat, lng)
+            CREATE UNIQUE INDEX ON Address (lat, lng);
+            CREATE INDEX addresses_box_spgist_idx ON address USING spgist (point(lat, lng));
         """)
 
         cur.execute("""
@@ -61,7 +61,7 @@ def ProcessSource(db_prod, geocoder, entities, config, test_mode):
 
     # Connect to the most recent schema from the current source
     db_source = DatabaseConnection(path_config='db_config_update_source.yaml')
-    source_schema_name = get_latest_schema(db_source, 'source_' + config["source_schema"])
+    source_schema_name = db_source.get_latest_schema('source_' + config["source_schema"])
     print "Processing source_schema_name", source_schema_name
     db_source.execute('SET search_path="' + source_schema_name + '";')
 
@@ -220,9 +220,8 @@ def main(args_dict):
             print "Working on source:", key
             ProcessSource(db_prod, geocoder, entities_lookup, config_per_source, test_mode)
 
-    # TEMP
-    # For ProdDataInfo under kataster to work properly, user kataster
-    # needs to be able to see the newly created schema and tables within
+    # Grant apps read-only access to the newly created schema and tables within
+    db_prod.grant_usage_and_select_on_schema(prod_schema_name, 'verejne')
     db_prod.grant_usage_and_select_on_schema(prod_schema_name, 'kataster')
 
     # Commit database changes and close database connections

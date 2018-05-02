@@ -24,6 +24,18 @@ def _request_json(url, test_handler):
 
 class TestHandlers(unittest.TestCase):
 
+    def test_getAddresses(self):
+        content = _request_json('/getAddresses?level=0&lat1=48.31306363500883&lng1=17.25013026130364&lat2=48.31751977226477&lng2=17.257496582309614', self)
+        self.assertTrue(content)
+        print('===== getAddresses response =====')
+        print(content)
+
+    def test_getEntitiesAtAddressId(self):
+        content = _request_json('/getEntitiesAtAddressId?address_id=613', self)
+        self.assertTrue(content)
+        print('===== getEntitiesAtAddressId response =====')
+        print(content)
+
     def test_getEntities(self):
         content = _request_json('/getEntities?level=0&lat1=48.31306363500883&lng1=17.25013026130364&lat2=48.31751977226477&lng2=17.257496582309614', self)
         self.assertTrue(content)

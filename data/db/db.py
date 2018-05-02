@@ -75,6 +75,21 @@ class DatabaseConnection():
         self.execute(q, (schema,))
         print('[OK] Granted USAGE and SELECT on schema %s to %s' % (schema, user))
 
+    def get_latest_schema(self, prefix):
+        """ Returns the name of the most recent schema whose full name starts
+            with the given prefix. """
+        q = """
+            SELECT schema_name
+            FROM information_schema.schemata
+            WHERE schema_name ILIKE '""" + prefix + """_%%'
+            ORDER BY schema_name DESC
+            LIMIT 1;
+            """
+        rows = self.query(q)
+        if len(rows) == 0:
+            raise Exception('No schema found for prefix "%s"' % (prefix))
+        return rows[0]['schema_name']
+
     def dump_to_CSV(self, query, path_output):
         with self.conn.cursor() as cur:
             q = query.rstrip().rstrip(';') # possibly remove ; from the end of the query

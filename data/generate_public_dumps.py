@@ -4,7 +4,6 @@ import sys
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../data/db')))
 from db import DatabaseConnection
-from status import get_latest_schema
 from utils import yaml_load
 
 
@@ -19,7 +18,7 @@ def generate_public_data_dumps(limit=None, verbose=False):
 
     # Connect to the latest production data schema
     db = DatabaseConnection(path_config='db_config_update_source.yaml')
-    schema = get_latest_schema(db, 'prod_')
+    schema = db.get_latest_schema('prod_')
     db.execute('SET search_path="' + schema + '";')
     timestamp = schema[schema.rfind('_')+1:]
     if verbose:

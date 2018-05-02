@@ -67,7 +67,7 @@ def get_source_data_info():
     for source in sources:
         # Obtain schema with the last update
         try:
-            schema = get_latest_schema(db, 'source_' + source['name'])
+            schema = db.get_latest_schema('source_' + source['name'])
         except Exception as exception:
             print('[WARNING] %s' % (exception))
             continue
@@ -89,7 +89,7 @@ def get_prod_data_info():
     """ Return list of tables and column names from the current production tables,
         and the time when these were generated. """
     db = DatabaseConnection(path_config='db_config_status.yaml')
-    schema = get_latest_schema(db, 'prod_')
+    schema = db.get_latest_schema('prod_')
     response = {
         'tables': _get_tables_and_columns_in_schema(db, schema),
         'update': _datetimestr_from_schema(schema),
@@ -123,19 +123,3 @@ def get_public_dumps_info():
             'url': 'https://verejne.digital/data/%s' % (filename)
             })
     return result
-
-
-def get_latest_schema(db, prefix):
-    """ Returns the name of the most recent schema whose full name starts
-        with the given prefix. """
-    q = """
-        SELECT schema_name
-        FROM information_schema.schemata
-        WHERE schema_name ILIKE '""" + prefix + """_%%'
-        ORDER BY schema_name DESC
-        LIMIT 1;
-        """
-    rows = db.query(q)
-    if len(rows) == 0:
-        raise Exception('No schema found for prefix "%s"' % (prefix))
-    return rows[0]['schema_name']
