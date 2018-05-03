@@ -1,9 +1,9 @@
 // @flow
 
-export type State = {
-  +test: string,
-}
+export type State = {|
+  +count: number,
+|}
 
 export default (): State => ({
-  test: 'state',
+  count: 0,
 })

@@ -871,7 +871,7 @@ declare module 'lodash' {
     forOwnRight(object: void | null, iteratee?: ?OIteratee<*>): null;
     functions(object?: ?Object): Array<string>;
     functionsIn(object?: ?Object): Array<string>;
-    get(object?: ?Object | ?Array<any>, path?: ?Array<string> | string, defaultValue?: any): any;
+    get(object?: ?Object | ?Array<any>, path?: ?Array<string | number> | string, defaultValue?: any): any;
     has(object: Object, path: Array<string> | string): boolean;
     has(object: Object, path: void | null): false;
     has(object: void | null, path?: ?Array<string> | ?string): false;
@@ -944,8 +944,8 @@ declare module 'lodash' {
     pickBy<A, T: {[id: string]: A}>(object: T, predicate?: ?OPredicate<A, T>): Object;
     pickBy<A, T: void | null>(object: T, predicate?: ?OPredicate<A, T>): {};
     result(object?: ?Object, path?: ?Array<string> | string, defaultValue?: any): any;
-    set(object: Object, path?: ?Array<string> | string, value: any): Object;
-    set<T: void | null>(object: T, path?: ?Array<string> | string, value?: ?any): T;
+    set(object: Object, path?: ?Array<string | number> | string, value: any): Object;
+    set<T: void | null>(object: T, path?: ?Array<string | number> | string, value?: ?any): T;
     setWith<T>(
       object: T,
       path?: ?Array<string> | string,

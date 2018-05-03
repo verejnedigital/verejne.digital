@@ -9,7 +9,6 @@
     "lodash": "^4.17.10",
     "node-sass-chokidar": "^1.2.2",
     "npm-run-all": "^4.1.2",
-    "object-path-immutable": "^1.0.1",
     "react": "^16.3.2",
     "react-dom": "^16.3.2",
     "react-redux": "^5.0.7",
