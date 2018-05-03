@@ -5,7 +5,7 @@ import App from './components/App'
 import getConfiguredStore from './configureStore'
 import {Provider} from 'react-redux'
 
-import 'bootstrap/dist/css/bootstrap.min.css'
+import './custom.css'
 
 const store = getConfiguredStore()
 ReactDOM.render(
