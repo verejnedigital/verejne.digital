@@ -166,32 +166,33 @@ class ServeCompany(MyServer):
             html = singleTemplate.render(firma=result)
             self.response.write(html.encode("utf8"))
 
+
+# Setup of the webapp2 WSGI application
+app = webapp2.WSGIApplication([
+    ('/obstaravanie', ServeObstaravanie),
+    ('/info_obstaravanie', InfoObstaravanie),
+    ('/list_obstaravania', ListObstaravania),
+    ('/obstaravanieFirma', ServeCompany),
+    ('/notifications', ServeNotifications),
+    ('/updateNotifications', UpdateNotifications),
+], debug=False)
+
 def main():
-  app = webapp2.WSGIApplication(
-          [
-           ('/obstaravanie', ServeObstaravanie),
-           ('/info_obstaravanie', InfoObstaravanie),
-           ('/list_obstaravania', ListObstaravania),
-           ('/obstaravanieFirma', ServeCompany),
-           ('/notifications', ServeNotifications),
-           ('/updateNotifications', UpdateNotifications),
-          ], debug=False)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--listen',
+                        help='host:port to listen on',
+                        default='127.0.0.1:8082')
+    args = parser.parse_args()
+    host, port = args.listen.split(':')
 
-  parser = argparse.ArgumentParser()
-  parser.add_argument('--listen',
-                    help='host:port to listen on',
-                    default='127.0.0.1:8082')
-  args = parser.parse_args()
-  host, port = args.listen.split(':')
-
-  httpserver.serve(
-      app,
-      host=host,
-      port=port,
-      request_queue_size=128,
-      use_threadpool=True,
-      threadpool_workers=32,
-  )
+    httpserver.serve(
+        app,
+        host=host,
+        port=port,
+        request_queue_size=128,
+        use_threadpool=True,
+        threadpool_workers=32,
+    )
   
 if __name__ == '__main__':
-  main()
+    main()
