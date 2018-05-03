@@ -7,9 +7,9 @@ export type GenericAction<Segment, Payload> = {
   +path?: Path,
   +payload?: Payload,
   +reducer: SegmentReducer<Segment, Payload>,
-  +doNotTrack?: boolean,
+  +doNotLog?: boolean,
 }
 
 export type SegmentReducer<Segment, Payload> = (state: Segment, payload: Payload) => Segment
 export type Dispatch = (action: GenericAction<*, *>) => null
-export type Thunk = (dispatch: Dispatch, getState: any) => Promise<void>
+export type Thunk = (dispatch: Dispatch, getState: () => any) => Promise<void>
