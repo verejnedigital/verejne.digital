@@ -5,8 +5,8 @@ import './Landing.css'
 
 class Landing extends Component {
   render = () => (
-    <div>
-      <main role="main" className="container landing">
+    [
+      <main key="main" role="main" className="container landing">
         <h1><b>verejne.</b>digital</h1>
         <p className="lead">Aplikácia umelej inteligencie na dáta slovenských verejných inštitúcii</p>
         <div className="row">
@@ -47,33 +47,35 @@ class Landing extends Component {
             </NavLink>
           </div>
         </div>
-      </main>
-      <footer className="container">
-        <div className="float-right">
-          <ul className="list-inline">
-            <li className="list-inline-item">
-              <a href="/"><img src="/tis.png" alt="Transparenty international slovakia" /></a>
-            </li>
-            <li className="list-inline-item">
-              <a href="/"><img src="/slovenko.png" alt="slovenko.digital" /></a>
-            </li>
-            <li className="list-inline-item">
-              <a href="/"><img src="/finstat.png" alt="FinStat" /></a>
-            </li>
-          </ul>
+      </main>,
+      <footer key="footer" className="footer">
+        <div className="container">
+          <p className="float-right">
+            <ul className="list-inline">
+              <li className="list-inline-item">
+                <a href="#"><img src="/tis.png" alt="Transparenty international slovakia" /></a>
+              </li>
+              <li className="list-inline-item">
+                <a href="#"><img src="/slovenko.png" alt="slovenko.digital" /></a>
+              </li>
+              <li className="list-inline-item">
+                <a href="#"><img src="/finstat.png" alt="FinStat" /></a>
+              </li>
+            </ul>
+          </p>
+          <p>
+            <ul className="list-inline">
+              <li className="list-inline-item list-inline-item-text">
+                <a href="#">O projekte</a>
+              </li>
+              <li className="list-inline-item list-inline-item-text">
+                <a href="#">Kontaktujte nás cez facebook</a>
+              </li>
+            </ul>
+          </p>
         </div>
-        <div>
-          <ul className="list-inline">
-            <li className="list-inline-item list-inline-item-text">
-              <a href="/">O projekte</a>
-            </li>
-            <li className="list-inline-item list-inline-item-text">
-              <a href="/">Kontaktujte nás cez facebook</a>
-            </li>
-          </ul>
-        </div>
-      </footer>
-    </div>
+      </footer>,
+    ]
   )
 }
 
