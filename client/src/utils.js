@@ -4,9 +4,6 @@ import produce from 'immer'
 
 import type {SegmentReducer, Path} from './types/reduxTypes'
 
-export const compose = (f: Function, ...fs: Array<Function>) =>
-  fs.length > 0 ? (x: any) => f(compose(...fs)(x)) : f
-
 export const immutableSet = (obj: Object, path: ?Path, value: any) =>
   path && path.length
     ? produce((obj): void => {
