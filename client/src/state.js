@@ -1,6 +1,6 @@
 // @flow
 
-export type Kandidat = {
+export type Candidate = {
   id: number,
   eid: number,
   customer: string,
@@ -12,7 +12,7 @@ export type Kandidat = {
   score: number,
 }
 
-export type Obstaravanie = {|
+export type Notice = {|
   id: number,
   eid: number,
   curstomer: string,
@@ -25,15 +25,15 @@ export type Obstaravanie = {|
   bulletin_month: number,
   bulletin_year: number,
   bulletin_date: string, // string representation of day/month/year
-  kandidati: Array<Kandidat | []>,
+  candidates: Array<Candidate | []>,
   price_num: number,
   price_avg: number,
 |}
 
 export type State = {|
   +count: number,
-  +obstaravania: {|
-    +data: ?{[string]: Obstaravanie},
+  +notices: {|
+    +data: ?{[string]: Notice},
   |},
   +activeProviderPromises: {
     [string]: Promise<any>,
@@ -42,7 +42,7 @@ export type State = {|
 
 export default (): State => ({
   count: 0,
-  obstaravania: {
+  notices: {
     data: undefined,
   },
   activeProviderPromises: {},
