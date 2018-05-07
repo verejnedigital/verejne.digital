@@ -7,6 +7,7 @@
   },
   "rules": {
     "no-duplicate-imports": 0,
-    "import/no-duplicates": "error"
+    "import/no-duplicates": "error",
+    "react/no-unknown-property": [2, { ignore: [allowtransparency] }]
   }
 }

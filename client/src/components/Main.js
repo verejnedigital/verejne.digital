@@ -6,6 +6,9 @@ import Verejne from './Verejne'
 import Prepojenia from './Prepojenia'
 import NoticeList from './NoticeList'
 import NoticeDetail from './NoticeDetail'
+import Profil from './applications/profil/Profil'
+import DetailPage from './applications/profil/DetailPage'
+
 import './Main.css'
 
 class Main extends Component {
@@ -18,6 +21,8 @@ class Main extends Component {
           <Route path="/prepojenia" exact component={Prepojenia} />
           <Route path="/obstaravania" exact component={NoticeList} />
           <Route path="/obstaravania/:id" component={NoticeDetail} />
+          <Route path="/profil" exact component={Profil} />
+          <Route path="/profil/:id" component={DetailPage} />
         </Switch>
       </main>,
     ]

@@ -1,0 +1,25 @@
+table.assets-declaration {
+  border-bottom-style: double;
+  width: 100%;
+  font-size: 14px;
+
+  td {
+    padding: 8px;
+  }
+}
+
+@media (min-width: 1200px) {
+  table.assets-declaration {
+    width: 350px !important;
+  }
+}
+
+.assets-declaration .source {
+	color: gray;
+	font-weight: normal;
+	padding-left: 20px;
+}
+
+.assets-declaration .plot {
+	max-width: 100%;
+}

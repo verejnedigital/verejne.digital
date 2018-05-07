@@ -46,33 +46,53 @@ class Landing extends Component {
               />
             </NavLink>
           </div>
+          <div className="col">
+            <NavLink
+              to="/profil"
+              className="card-link"
+            >
+              <Card
+                title="Profil"
+                text="Tu je profil"
+                imgSrc="search.png"
+              />
+            </NavLink>
+          </div>
         </div>
       </main>,
       <footer key="footer" className="footer">
         <div className="container">
-          <p className="float-right">
-            <ul className="list-inline">
-              <li className="list-inline-item">
-                <a href="#"><img src="/tis.png" alt="Transparenty international slovakia" /></a>
-              </li>
-              <li className="list-inline-item">
-                <a href="#"><img src="/slovenko.png" alt="slovenko.digital" /></a>
-              </li>
-              <li className="list-inline-item">
-                <a href="#"><img src="/finstat.png" alt="FinStat" /></a>
-              </li>
-            </ul>
-          </p>
-          <p>
-            <ul className="list-inline">
-              <li className="list-inline-item list-inline-item-text">
-                <a href="#">O projekte</a>
-              </li>
-              <li className="list-inline-item list-inline-item-text">
-                <a href="#">Kontaktujte nás cez facebook</a>
-              </li>
-            </ul>
-          </p>
+          <ul className="float-right list-inline">
+            <li className="list-inline-item">
+              <a href="www.dsl.sk"><img src="/tis.png" alt="Transparenty international slovakia" /></a>
+            </li>
+            <li className="list-inline-item">
+              <a href="www.dsl.sk"><img src="/slovenko.png" alt="slovenko.digital" /></a>
+            </li>
+            <li className="list-inline-item">
+              <a href="www.dsl.sk"><img src="/finstat.png" alt="FinStat" /></a>
+            </li>
+          </ul>
+          <ul className="list-inline">
+            <li className="list-inline-item list-inline-item-text">
+              <a
+                href="https://medium.com/@verejne.digital/o-%C4%8Do-ide-verejne-digital-14a1c6dcbe09"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                O projekte
+              </a>
+            </li>
+            <li className="list-inline-item list-inline-item-text">
+              <a
+                href="http://www.facebook.com/verejne.digital"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Kontaktujte nás cez facebook
+              </a>
+            </li>
+          </ul>
         </div>
       </footer>,
     ]
