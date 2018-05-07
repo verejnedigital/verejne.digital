@@ -13,20 +13,12 @@ export const receiveData = (
   type: `Received data from ${dataProviderRef}`,
   payload: data,
   reducer: (state, data) =>
-    produce(state, (draft) => {
-      // assumes all of the received data are objects at root
-      set(draft, path, Object.assign(get(draft, path) || {}, data))
+    produce(state, (draft): void => {
+      const dataObject = data.reduce((obj, current) => {
+        obj[current.id] = current
+        return obj
+      }, {})
+      set(draft, path, Object.assign(get(draft, path) || {}, dataObject))
       delete draft.activeProviderPromises[dataProviderRef]
-    }),
-})
-
-export const storeActiveProviderRef = (
-  ref: string,
-  promise: Promise<any>
-): GenericAction<State, void> => ({
-  type: `Getting data from provider ${ref}`,
-  reducer: (state) =>
-    produce(state, (draft) => {
-      draft.activeProviderPromises[ref] = promise
     }),
 })
