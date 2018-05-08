@@ -1,6 +1,7 @@
 // @flow
 import {get, set} from 'lodash'
 import produce from 'immer'
+import {parse, stringify} from 'query-string'
 
 import type {SegmentReducer, Path} from './types/reduxTypes'
 
@@ -25,6 +26,10 @@ export const forwardReducerTo = <S: Object, T>(reducer: SegmentReducer<S, T>, pa
   const newValue = reducer(value, payload)
   return newValue !== value ? immutableSet(state, path, newValue) : state
 }
+
+// adds new values to query string, replacing existing ones if needed
+export const modifyQuery = (query: string, newValues: Object) =>
+  stringify(Object.assign(parse(query), newValues))
 
 // https://github.com/facebook/flow/issues/2221#issuecomment-372112477
 // there is no nice way to handle object.values in flow currently - use this instead
