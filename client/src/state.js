@@ -25,25 +25,23 @@ export type Notice = {|
   bulletin_month: number,
   bulletin_year: number,
   bulletin_date: string, // string representation of day/month/year
-  candidates: Array<Candidate | []>,
+  kandidati: Array<Candidate | []>,
   price_num: number,
   price_avg: number,
 |}
 
+export type NoticeMap = {[string]: Notice}
+
 export type State = {|
   +count: number,
   +notices: {|
-    +data: ?{[string]: Notice},
+    +data: NoticeMap,
   |},
-  +activeProviderPromises: {
-    [string]: Promise<any>,
-  },
 |}
 
 export default (): State => ({
   count: 0,
   notices: {
-    data: undefined,
+    data: {},
   },
-  activeProviderPromises: {},
 })
