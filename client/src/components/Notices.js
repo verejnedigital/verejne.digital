@@ -6,7 +6,4 @@ import {noticesProvider} from '../dataProviders/noticesDataProviders'
 
 const Notices = ({dispatch}) => <div>Obstaravania placeholder</div>
 
-export default compose(
-  withRefetch((props) => [noticesProvider()]),
-  connect((state) => ({data: state.notices.data}))
-)(Notices)
+export default Notices

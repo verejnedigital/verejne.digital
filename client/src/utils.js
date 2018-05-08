@@ -25,3 +25,7 @@ export const forwardReducerTo = <S: Object, T>(reducer: SegmentReducer<S, T>, pa
   const newValue = reducer(value, payload)
   return newValue !== value ? immutableSet(state, path, newValue) : state
 }
+
+// https://github.com/facebook/flow/issues/2221#issuecomment-372112477
+// there is no nice way to handle object.values in flow currently - use this instead
+export const values = <T>(obj: {[string]: T}): Array<T> => Object.keys(obj).map((k) => obj[k])
