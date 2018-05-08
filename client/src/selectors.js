@@ -5,10 +5,12 @@ import queryString from 'query-string'
 import {paginationChunkSize} from './constants'
 import {values} from './utils'
 
-import type {State, Notice} from './state'
-import type {QueryRouterProps, NoticeDetailRouterProps, NoticesOrdering} from './types/routerTypes'
+import type {Location} from 'react-router-dom'
+import type {State} from './state'
+import type {NoticesOrdering} from './components/NoticeList'
+import type {NoticeDetailProps} from './components/NoticeDetail'
 
-export const noticeDetailSelector = (state: State, props: NoticeDetailRouterProps) =>
+export const noticeDetailSelector = (state: State, props: NoticeDetailProps) =>
   props.match.params.id ? state.notices.data[props.match.params.id] : undefined
 
 export const dateSortedNoticesSelector = createSelector(
@@ -21,12 +23,12 @@ export const nameSortedNoticesSelector = createSelector(
   (data) => sortBy(values(data), ['title'])
 )
 
-export const paginationSelector = (_: State, props: QueryRouterProps): number => {
+export const paginationSelector = (_: State, props: {location: Location}): number => {
   const query = queryString.parse(props.location.search)
-  return Number.parseInt(query.page, 10) || 0
+  return Number.parseInt(query.page, 10) || 1
 }
 
-export const noticesOrderingSelector = (_: State, props: QueryRouterProps): NoticesOrdering => {
+export const noticesOrderingSelector = (_: State, props: {location: Location}): NoticesOrdering => {
   const query = queryString.parse(props.location.search)
   return query.ordering || 'date'
 }
@@ -45,6 +47,10 @@ export const paginatedNoticesSelector = createSelector(
   paginationSelector,
   (dateSorted, nameSorted, orderBy, page) => {
     const notices = orderBy === 'title' ? nameSorted : dateSorted
-    return chunk(notices, paginationChunkSize)[page]
+    return chunk(notices, paginationChunkSize)[page - 1]
   }
+)
+
+export const noticesNumPagesSelector = createSelector(dateSortedNoticesSelector, (dateSorted) =>
+  Math.ceil(dateSorted.length / paginationChunkSize)
 )

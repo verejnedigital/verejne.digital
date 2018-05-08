@@ -8,7 +8,7 @@ import {noticeDetailSelector} from '../selectors'
 
 import type {Notice, State} from '../state'
 
-type NoticeDetailProps = {
+export type NoticeDetailProps = {
   notice: Notice,
   match: {
     params: {
