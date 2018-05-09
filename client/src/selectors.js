@@ -11,7 +11,7 @@ import type {NoticesOrdering} from './components/NoticeList'
 import type {NoticeDetailProps} from './components/NoticeDetail'
 
 export const noticeDetailSelector = (state: State, props: NoticeDetailProps) =>
-  props.match.params.id ? state.notices.data[props.match.params.id] : undefined
+  props.match.params.id && state.notices.data[props.match.params.id]
 
 export const dateSortedNoticesSelector = createSelector(
   (state: State) => state.notices.data,
