@@ -6,7 +6,7 @@ import {paginationChunkSize} from './constants'
 import {values} from './utils'
 
 import type {Location} from 'react-router-dom'
-import type {State} from './state'
+import type {State} from './initialState'
 import type {NoticesOrdering} from './components/NoticeList'
 import type {NoticeDetailProps} from './components/NoticeDetail'
 

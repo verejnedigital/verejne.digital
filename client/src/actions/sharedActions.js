@@ -3,7 +3,7 @@ import produce from 'immer'
 import {get, set} from 'lodash'
 
 import type {GenericAction, Path} from '../types/reduxTypes'
-import type {State} from '../state'
+import type {State} from '../initialState'
 
 // merges new data into destination Path
 // assumes a certain kind of data format - will need refinment if the API's different
