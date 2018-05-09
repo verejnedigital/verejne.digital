@@ -1,9 +1,9 @@
 // @flow
 import {forwardReducerTo} from './utils'
-import getInitialState from './state'
+import getInitialState from './initialState'
 
 import type {GenericAction} from './types/reduxTypes'
-import type {State} from './state'
+import type {State} from './initialState'
 
 const rootReducer = (state: State = getInitialState(), action: GenericAction<*, *>) => {
   const {reducer, path, payload} = action
