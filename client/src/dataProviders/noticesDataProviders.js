@@ -13,7 +13,6 @@ export const noticesProvider = () => ({
   onData: [dispatchReceivedData, ['notices', 'data']],
 })
 
-// loads only if we do not have notice with given id in state
 export const noticeDetailProvider = (id: string) => ({
   ref: 'noticeDetail',
   getData: [

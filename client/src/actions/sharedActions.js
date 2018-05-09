@@ -5,8 +5,8 @@ import {get, set} from 'lodash'
 import type {GenericAction, Path} from '../types/reduxTypes'
 import type {State} from '../state'
 
-// assumes a certain kind data format from API - will need refinmnet
-// if it's different
+// merges new data into destination Path
+// assumes a certain kind of data format - will need refinment if the API's different
 export const receiveData = (
   path: Path,
   data: Array<Object> | Object,
