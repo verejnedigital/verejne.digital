@@ -11,6 +11,7 @@ export const noticesProvider = () => ({
     },
   ],
   onData: [dispatchReceivedData, ['notices', 'data']],
+  keepAliveFor: 10 * 60 * 1000,
 })
 
 export const noticeDetailProvider = (id: string) => ({
@@ -23,4 +24,5 @@ export const noticeDetailProvider = (id: string) => ({
     },
   ],
   onData: [dispatchReceivedData, ['notices', 'data']],
+  keepAliveFor: 60 * 60 * 1000,
 })
