@@ -24,6 +24,6 @@ export const receiveData = (
         : {
           [data.id]: data,
         }
-      set(draft, path, Object.assign(get(draft, path) || {}, dataObject))
+      Object.assign(get(draft, path), dataObject)
     }),
 })

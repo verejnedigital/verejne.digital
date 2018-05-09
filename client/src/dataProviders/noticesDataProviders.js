@@ -15,7 +15,7 @@ export const noticesProvider = () => ({
 })
 
 export const noticeDetailProvider = (id: string) => ({
-  ref: 'noticeDetail',
+  ref: `noticeDetail-${id}`,
   getData: [
     fetch,
     `${process.env.REACT_APP_API_URL || ''}/api/o/info_obstaravanie?id=${id}`,
