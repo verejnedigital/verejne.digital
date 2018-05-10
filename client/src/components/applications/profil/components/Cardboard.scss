@@ -1,0 +1,43 @@
+@import "../../../../custom-colors.scss";
+
+.cardboard {
+  text-align: left;
+  width: 100%;
+  padding: 10px;
+  padding-left: 30px;
+  border: 3px;
+  border-color: $border-color;
+  border-style: solid;
+  background-color: $component-background;
+  margin-top: 30px;
+  margin-bottom: 20px;
+  position: relative;
+  height: 190px;
+  box-shadow: 0 4px 12px 0 rgba(187, 198, 206, 0.5);
+
+  dd {
+    float: left;
+  }
+
+  dt::after {
+    content: ":";
+  }
+}
+
+.picture {
+  height: 180px;
+  position: absolute;
+  top: -20px;
+  right: 50px;
+  box-shadow: 0 4px 12px 0 rgba(187,198,206,.5);
+  border: 2px solid $border-color
+}
+
+.bolder {
+  font-weight: bolder;
+}
+
+.name {
+  font-weight: bold;
+  padding-bottom: 20px;
+}

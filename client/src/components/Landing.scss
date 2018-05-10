@@ -1,3 +1,5 @@
+@import "../custom-colors.scss";
+
 .landing {
   padding: 10rem;
 }
@@ -8,7 +10,7 @@
 }
 
 .footer {
-  background: #f1f4f5;
+  background: $footer-background;
   height: 100px;
   position: absolute;
   width: 100%;

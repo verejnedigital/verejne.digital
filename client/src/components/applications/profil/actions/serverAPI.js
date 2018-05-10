@@ -41,8 +41,11 @@ function mergeParcely(res) {
   const newRes = []
   let lastIndex = -1
   for (let i = 0; i < res.length; i++) {
-    if (lastIndex >= 0 && res[i].cadastralunitcode === res[lastIndex].cadastralunitcode &&
-      res[i].foliono === res[lastIndex].foliono) {
+    if (
+      lastIndex >= 0 &&
+      res[i].cadastralunitcode === res[lastIndex].cadastralunitcode &&
+      res[i].foliono === res[lastIndex].foliono
+    ) {
       res[lastIndex].parcelno = `${res[lastIndex].parcelno}, ${res[i].parcelno}`
     } else {
       lastIndex = i
@@ -75,7 +78,8 @@ function sortListPoliticians(res) {
 export function listPoliticians(cb) {
   fetch(`${process.env.REACT_APP_API_URL || ''}/api/k/list_politicians?cachebreak`, {
     accept: 'application/json',
-  }).then(checkStatus)
+  })
+    .then(checkStatus)
     .then(parseJSON)
     .then(sortListPoliticians)
     .then(cb)
@@ -84,7 +88,8 @@ export function listPoliticians(cb) {
 export function katasterInfo(id, cb) {
   fetch(`${process.env.REACT_APP_API_URL || ''}/api/k/kataster_info_politician?id=${id}`, {
     accept: 'application/json',
-  }).then(checkStatus)
+  })
+    .then(checkStatus)
     .then(parseJSON)
     .then(sortKatasterInfo)
     .then(mergeParcely)
@@ -94,7 +99,8 @@ export function katasterInfo(id, cb) {
 export function loadPoliticiant(id, cb) {
   fetch(`${process.env.REACT_APP_API_URL || ''}/api/k/info_politician?id=${id}`, {
     accept: 'application/json',
-  }).then(checkStatus)
+  })
+    .then(checkStatus)
     .then(parseJSON)
     .then(cb)
 }
@@ -102,7 +108,8 @@ export function loadPoliticiant(id, cb) {
 export function loadAssetDeclaration(id, cb) {
   fetch(`${process.env.REACT_APP_API_URL || ''}/api/k/asset_declarations?id=${id}`, {
     accept: 'application/json',
-  }).then(checkStatus)
+  })
+    .then(checkStatus)
     .then(parseJSON)
     .then(cb)
 }

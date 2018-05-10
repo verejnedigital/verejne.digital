@@ -1,8 +1,7 @@
+@import "../custom-colors.scss";
+
 .navbar {
   box-shadow: 0 4px 12px 0 rgba(187,198,206,.5);
   font-family: Source Code Pro, monospace;
-}
-
-.nav-link:hover, .navbar-brand:hover {
-  color: #23527c !important;
+  background: $component-background
 }

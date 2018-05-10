@@ -13,8 +13,6 @@ import {Provider} from 'react-redux'
 
 import './custom.css'
 
-require('bootstrap')
-
 window.Promise = Promise
 
 // a short-term fix for data-provider, should get fixed in next release

@@ -1,11 +1,12 @@
 import React, {Component} from 'react'
-import TableLine from './TableLine'
-import './Table.css'
+import Politician from './Politician'
+import './PoliticiansList.css'
+import {Table} from 'reactstrap'
 
-class Table extends Component {
+class PoliticiansList extends Component {
   render() {
     return (
-      <table className="table">
+      <Table id="politicians-table">
         <thead>
           <tr>
             <th />
@@ -13,19 +14,21 @@ class Table extends Component {
             <th className="text-left column-title">Meno a priezvisko</th>
             <th className="text-left column-title">Obdobie</th>
             <th className="party-column column-title">Strana</th>
-            <th className="number-column column-title" title="Domy, byty a iné stavby">Stavby</th>
+            <th className="number-column column-title" title="Domy, byty a iné stavby">
+              Stavby
+            </th>
             <th className="number-column column-title">Orná pôda &amp; záhrady</th>
             <th className="number-column column-title">Ostatné</th>
           </tr>
         </thead>
         <tbody>
-          {this.props.politicians.map((politician) =>
-            <TableLine key={politician.id} politician={politician} />,
-          )}
+          {this.props.politicians.map((politician) => (
+            <Politician key={politician.id} politician={politician} />
+          ))}
         </tbody>
-      </table>
+      </Table>
     )
   }
 }
 
-export default Table
+export default PoliticiansList

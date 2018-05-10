@@ -3,14 +3,14 @@ import ReactDOM from 'react-dom'
 import './DetailPage.css'
 
 import * as serverAPI from './actions/serverAPI'
-import DetailVizitka from './components/DetailVizitka'
-import DetailKatasterTable from './components/DetailKatasterTable'
-import DetailAssetDeclaration from './components/DetailAssetDeclaration'
+import Cardboard from './components/Cardboard'
+import DetailKatasterTable from './components/DetailCadastralTable'
+import DetailAssetDeclaration from './components/DetailAssets'
 import MapContainer from './components/MapContainer'
 import {NavLink} from 'react-router-dom'
+import {Row, Col} from 'reactstrap'
 
 class DetailPage extends Component {
-
   constructor(props) {
     super(props)
     this.state = {
@@ -24,7 +24,6 @@ class DetailPage extends Component {
       reportData: {},
       mapCenter: {lat: 48.6, lng: 19.5},
     }
-    this.goMap.bind(this)
   }
 
   componentWillMount() {
@@ -35,24 +34,22 @@ class DetailPage extends Component {
   }
 
   loadPoliticiant(id) {
-    serverAPI.loadPoliticiant(id,
-      (politician) => {
-        this.setState({
-          politician,
-        })
+    serverAPI.loadPoliticiant(id, (politician) => {
+      this.setState({
+        politician,
       })
+    })
   }
 
   loadKataster(id) {
-    serverAPI.katasterInfo(id,
-      (kataster) => {
-        this.setState({
-          kataster,
-        })
+    serverAPI.katasterInfo(id, (kataster) => {
+      this.setState({
+        kataster,
       })
+    })
   }
 
-  goMap(parcel) {
+  goMap = (parcel) => {
     this.setState({
       mapCenter: {lat: parcel.lat, lng: parcel.lon},
     })
@@ -78,7 +75,12 @@ class DetailPage extends Component {
     const prijmyAssetsFromDeclaration = []
     if (reportYear !== undefined) {
       const keys = ['income', 'compensations', 'other_income', 'offices_other']
-      const descriptions = ['príjmy ', 'paušálne náhrady', 'ostatné príjmy', 'počas výkonu verejnej funkcie má tieto funkcie (čl. 7 ods. 1 písm. c) u. z. 357/2004)']
+      const descriptions = [
+        'príjmy ',
+        'paušálne náhrady',
+        'ostatné príjmy',
+        'počas výkonu verejnej funkcie má tieto funkcie (čl. 7 ods. 1 písm. c) u. z. 357/2004)',
+      ]
       for (let i = 0; i < keys.length; i++) {
         const key = keys[i]
         prijmyAssetsFromDeclaration.push(`${descriptions[i]}: ${reportYear[key]}`)
@@ -93,30 +95,29 @@ class DetailPage extends Component {
   }
 
   loadAssetDeclaration(id) {
-    serverAPI.loadAssetDeclaration(id,
-      (report) => {
-        const reportByYear = {}
-        let latestYear = null
-        const availableYears = []
-        for (let i = 0; i < report.length; i++) {
-          availableYears.push(report[i].year)
-          reportByYear[report[i].year] = DetailPage.parseReport(report[i])
-        }
+    serverAPI.loadAssetDeclaration(id, (report) => {
+      const reportByYear = {}
+      let latestYear = null
+      const availableYears = []
+      for (let i = 0; i < report.length; i++) {
+        availableYears.push(report[i].year)
+        reportByYear[report[i].year] = DetailPage.parseReport(report[i])
+      }
 
-        availableYears.sort().reverse()
-        if (availableYears.length > 0) {
-          latestYear = availableYears[0]
-        }
+      availableYears.sort().reverse()
+      if (availableYears.length > 0) {
+        latestYear = availableYears[0]
+      }
 
-        this.setState({
-          katasterAssetsFromDeclaration: reportByYear[latestYear].katasterAssetsFromDeclaration,
-          hnutelnyAssetsFromDeclaration: reportByYear[latestYear].hnutelnyAssetsFromDeclaration,
-          prijmyAssetsFromDeclaration: reportByYear[latestYear].prijmyAssetsFromDeclaration,
-          reportData: reportByYear,
-          years: availableYears,
-          currentYear: latestYear,
-        })
+      this.setState({
+        katasterAssetsFromDeclaration: reportByYear[latestYear].katasterAssetsFromDeclaration,
+        hnutelnyAssetsFromDeclaration: reportByYear[latestYear].hnutelnyAssetsFromDeclaration,
+        prijmyAssetsFromDeclaration: reportByYear[latestYear].prijmyAssetsFromDeclaration,
+        reportData: reportByYear,
+        years: availableYears,
+        currentYear: latestYear,
       })
+    })
   }
 
   selectYear(year) {
@@ -151,45 +152,65 @@ class DetailPage extends Component {
       source = this.state.reportData[this.state.currentYear].source
     }
 
-    return (
-      <div className="detail-page">
-        <NavLink to="/profil" className="brand"><b>profil</b>.verejne.digital</NavLink>
-        {this.state.politician.surname &&
-        <div className="detail-body">
-          <DetailVizitka politician={this.state.politician} />
-          <div className="row">
-            <div className="col">
-              <div className="tabs">
-                {yearTabs}
-              </div>
-              <DetailAssetDeclaration assets={this.state.katasterAssetsFromDeclaration}
-                year={this.state.currentYear}
-                title="Majetkové priznanie: Nehnuteľnosti"
-                image={`https://verejne.digital/img/majetok/${this.state.politician.surname}_${this.state.politician.firstname}.png`}
-                source={source}
-              />
-              <DetailAssetDeclaration assets={this.state.hnutelnyAssetsFromDeclaration}
-                year={this.state.currentYear}
-                title="Majetkové priznanie: Hnuteľný majetok"
-                source={source}
-              />
-              <DetailAssetDeclaration assets={this.state.prijmyAssetsFromDeclaration}
-                year={this.state.currentYear}
-                title="Majetkové priznanie: ostatné"
-                source={source}
-              />
-            </div>
-            <div className="col">
-              <DetailKatasterTable
-                kataster={this.state.kataster} onParcelShow={this.goMap.bind(this)}
-              />
-            </div>
-          </div>
+    const politician = this.state.politician.surname ? (
+      <Row tag="article" key="politician">
+        <Col tag="section">
+          <div className="tabs">{yearTabs}</div>
+          <section>
+            <DetailAssetDeclaration
+              assets={this.state.katasterAssetsFromDeclaration}
+              year={this.state.currentYear}
+              title="Majetkové priznanie: Nehnuteľnosti"
+              image={`https://verejne.digital/img/majetok/${this.state.politician.surname}_${
+                this.state.politician.firstname
+              }.png`}
+              source={source}
+            />
+          </section>
+          <section>
+            <DetailAssetDeclaration
+              assets={this.state.hnutelnyAssetsFromDeclaration}
+              year={this.state.currentYear}
+              title="Majetkové priznanie: Hnuteľný majetok"
+              source={source}
+            />
+          </section>
+          <section>
+            <DetailAssetDeclaration
+              assets={this.state.prijmyAssetsFromDeclaration}
+              year={this.state.currentYear}
+              title="Majetkové priznanie: ostatné"
+              source={source}
+            />
+          </section>
+        </Col>
+        <Col tag="section" className="col">
+          <DetailKatasterTable
+            kataster={this.state.kataster}
+            onParcelShow={this.goMap.bind(this)}
+          />
+        </Col>
+      </Row>
+    ) : null
+
+    return [
+      <Row tag="header" key="title" className="header">
+        <Col>
+          <h1 className="title">
+            <NavLink to="/profil">
+              <span className="bolder">profil</span>.verejne.digital
+            </NavLink>
+          </h1>
+        </Col>
+      </Row>,
+      <Cardboard key="cardboard" politician={this.state.politician} />,
+      politician,
+      <Row key="map" className="detail-map">
+        <Col>
           <MapContainer assets={this.state.kataster} center={this.state.mapCenter} ref="map" />
-        </div>
-        }
-      </div>
-    )
+        </Col>
+      </Row>,
+    ]
   }
 }
 

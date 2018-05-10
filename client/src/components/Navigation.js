@@ -1,39 +1,56 @@
 import React, {Component} from 'react'
 import {NavLink} from 'react-router-dom'
+import {Collapse, Navbar, NavbarToggler, NavItem} from 'reactstrap'
 
-import './Navbar.css'
+import './Navigation.css'
 
-class Navbar extends Component {
+class Navigation extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      isOpen: false,
+    }
+  }
+
+  toggle = () => {
+    this.setState({
+      isOpen: !this.state.isOpen,
+    })
+  }
+
   render = () => (
-    <nav className="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+    <Navbar className="navbar-expand-lg navbar-light bg-light fixed-top">
       <NavLink to="/" className="navbar-brand">
         verejne.digital
       </NavLink>
-      <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span className="navbar-toggler-icon" />
-      </button>
-      <div className="collapse navbar-collapse" id="navbarSupportedContent">
+      <NavbarToggler onClick={this.toggle} />
+      <Collapse
+        className="navbar-collapse"
+        id="navbarSupportedContent"
+        isOpen={this.state.isOpen}
+        navbar
+      >
         <ul className="navbar-nav mr-auto">
-          <li className="nav-item">
+          <NavItem>
             <NavLink to="/verejne" className="nav-link">
               Verejne data
             </NavLink>
-          </li>
-          <li className="nav-item">
+          </NavItem>
+          <NavItem>
             <NavLink to="/prepojenia" className="nav-link">
               Prepojenia
             </NavLink>
-          </li>
-          <li className="nav-item">
+          </NavItem>
+          <NavItem>
             <NavLink to="/obstaravania" className="nav-link">
               Obstaravania
             </NavLink>
-          </li>
-          <li className="nav-item">
+          </NavItem>
+          <NavItem>
             <NavLink to="/profil" className="nav-link">
               Profil
             </NavLink>
-          </li>
+          </NavItem>
           <li className="nav-item">
             <a
               href="http://www.facebook.com/verejne.digital"
@@ -55,9 +72,9 @@ class Navbar extends Component {
             </a>
           </li>
         </ul>
-      </div>
-    </nav>
+      </Collapse>
+    </Navbar>
   )
 }
 
-export default Navbar
+export default Navigation

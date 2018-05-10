@@ -1,26 +1,33 @@
-.detail-body{
-  text-align: left;
-}
+@import "../../../custom-colors.scss";
 
-@media (min-width: 1200px) {
-  .detail-body {
-    width: 800px;
+.header {
+  padding: 20px;
+  margin-bottom: 0px;
+
+  h1.title {
     margin: auto;
+    padding-top: 0;
+    padding-bottom: 15px;
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 0;
+    line-height: 20px;
+    height: 50px;
+
+    .bolder {
+      font-weight: bolder;
+    }
+
+    a {
+      color:  #333;
+      font-weight: 400;
+    }
+
+    a:hover {
+      text-decoration: none;
+      color:  #333;
+    }
   }
-}
-
-.brand {
-  font-family: 'Source Code Pro', monospace;
-  font-size: 24px;
-  font-weight: 400;
-  text-align: left;
-  color:  #333333;
-  line-height: 34px;
-  height: 34px;
-}
-
-a.brand:hover {
-  text-decoration: none;
 }
 
 .tabs {
@@ -35,8 +42,8 @@ a.brand:hover {
   display: inline-block;
   padding: 3px;
   box-shadow: 0 4px 12px 0 rgba(187, 198, 206, 0.5);
-  border: 2px solid #cddae3;
-  background-color: white;
+  border: 2px solid $border-color;
+  background-color: $component-background;
   cursor: pointer;
   margin: 0 5px 5px;
   min-width: 45px;
@@ -54,4 +61,12 @@ a.brand:hover {
   height: 100%;
   padding-top: 15px;
   padding-bottom: 15px;
+}
+
+.detail-map {
+  margin-top: 40px;
+}
+
+article {
+  text-align: left;
 }
