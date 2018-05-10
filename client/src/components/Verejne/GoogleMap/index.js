@@ -3,11 +3,10 @@ import GMap from 'google-map-react'
 import {map} from 'lodash'
 import Marker from './Marker'
 import classnames from 'classnames'
-import {createMapOptions, clusterOptions} from './options'
 import {connect} from 'react-redux'
 import {mapOptionsSelector, mapReferenceSelector, entitiesSelector} from '../../../state/VerejneState'
 import {initializeGoogleMap, fetchEntities, updateMapOptions} from '../../../actions/verejneActions'
-import {GOOGLE_MAP_API_KEY} from '../../../constants'
+import {GOOGLE_MAP_API_KEY, createMapOptions, clusterOptions} from '../../../constants'
 import supercluster from 'points-cluster'
 import './GoogleMap.css'
 
@@ -35,7 +34,7 @@ class GoogleMap extends React.Component {
     return (
       <div className="GoogleMapWrapper">
         <GMap
-          bootstrapURLKeys={{key: GOOGLE_MAP_API_KEY, language: 'sk', region: 'sk'}} // set if you need stats etc ...
+          bootstrapURLKeys={{key: GOOGLE_MAP_API_KEY, language: 'sk', region: 'sk'}}
           className={classnames('GoogleMap', this.props.className)}
           center={this.props.mapOptions.center}
           zoom={this.props.mapOptions.zoom}

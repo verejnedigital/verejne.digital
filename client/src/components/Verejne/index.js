@@ -1,5 +1,4 @@
 import React from 'react'
-import SKico from './SKico.png'
 import GoogleMap from './GoogleMap'
 import './App.css'
 
@@ -16,7 +15,7 @@ const Verejne = () => (
             <span className="icon-bar" />
             <span className="icon-bar" />
           </button>
-          <a className="navbar-brand"><img src={SKico} height="22" /></a> <a className="navbar-brand">verejne<span style={{fontWeight: 400}}>.digital</span></a>
+          <a className="navbar-brand"><img src="/SKico.png" height="22" /></a> <a className="navbar-brand">verejne<span style={{fontWeight: 400}}>.digital</span></a>
         </div>
         <div className="navbar-collapse collapse">
           <ul className="nav navbar-nav">
