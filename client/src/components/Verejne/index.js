@@ -1,8 +1,9 @@
 import React from 'react'
 import GoogleMap from './GoogleMap'
-import './App.css'
+import './Verejne.css'
+import Legend from './Legend'
 
-const Verejne = () => (
+const Verejne = ({legendOpen, setLegendOpen}) => (
   <div id="wrapper">
     <div id="stream">
       <nav className="sidebarnav navbar">
@@ -65,16 +66,8 @@ const Verejne = () => (
 
       <div className="list-group" id="info_list" />
     </div>
-    {/*<div id="map" />*/}
     <GoogleMap />
-    <div id="legend">
-      <iframe src="https://www.facebook.com/plugins/like.php?href=https%3A%2F%2Fwww.facebook.com%2Fverejne.digital&width=111&layout=button_count&action=like&size=small&show_faces=true&share=false&height=46&appId=" width="151" height="23" style={{border: 'none', overflow: 'hidden'}} scrolling="no" frameBorder="0" />
-      <button type="button" className="close" onClick={() => console.log('close')}><span aria-hidden="true">&times;</span></button>
-      <p><span style={{color: '#0062db', fontSize: '18px'}}><i className="fa fa-circle-o" aria-hidden="true" /></span>&nbsp; Firma / Osoba</p>
-      <p style={{marginTop: '-10px'}}><span style={{color: '#0062db', fontSize: '18px'}}><i className="fa fa-circle" aria-hidden="true" /></span>& nbsp; Obchod so štátom</p >
-      <p style={{marginTop: '-10px'}}><span style={{color: '#e55600', fontSize: '18px'}}><i className="fa fa-circle-o" aria-hidden="true" /></span> & nbsp; Kontakt s politikou</p >
-      <p style={{marginTop: '-10px'}}><span style={{color: '#e55600', fontSize: '18px'}}><i className="fa fa-circle" aria-hidden="true" /></span> & nbsp; Kontakt s politikou <br /> & nbsp;& nbsp;& nbsp;& nbsp; a obchod so štátom</p >
-    </div >
+    <Legend />
   </div >
 )
 export default Verejne

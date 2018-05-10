@@ -1,0 +1,32 @@
+.Legend {
+    position: absolute;
+    background: white;
+    padding: 5px;
+    right: 10px;
+    bottom: 100px;
+    width: 170px;
+    height: 140px;
+    border: 1px solid #000;
+    opacity: 0.9;
+    &__Header {
+        display: flex;
+    }
+    p {
+        text-align: left;
+        font-size: 12px;
+        margin-bottom: 0px;
+    }
+}
+
+.Hidden {
+    visibility: hidden;
+}
+
+.Svg {
+    color: #0062db;
+    margin-right: 3px;
+}
+
+.Orange {
+    color: #e55600;
+}
