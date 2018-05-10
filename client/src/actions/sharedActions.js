@@ -1,6 +1,6 @@
 // @flow
 import produce from 'immer'
-import {get, set} from 'lodash'
+import {get} from 'lodash'
 
 import type {GenericAction, Path} from '../types/reduxTypes'
 import type {State} from '../initialState'
