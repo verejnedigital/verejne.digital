@@ -1,6 +1,6 @@
 // @flow
 import {immutableSet} from './utils'
-import {setInitialState as getVerejneInitialState} from './state/VerejneState'
+import {setInitialState as getVerejneInitialState} from './state/verejneState'
 import {compose} from 'recompose'
 
 export type Candidate = {
@@ -42,20 +42,17 @@ export type State = {|
   |},
 |}
 
-const CHANGE_ME = (state) => immutableSet(state, [], {
+// TODO change me
+const getNoticesInitialState = (state) => immutableSet(state, [], {
   count: 0,
   notices: {
     data: {},
   },
 })
 
-// TODO WTF this is in reverese order????
 const getInitialState = (): State => compose(
   getVerejneInitialState,
-  CHANGE_ME,
-  //(state) => ({kks: 'sad'}),
+  getNoticesInitialState,
 )({})
 
 export default getInitialState
-
-console.log('INI', getInitialState())
