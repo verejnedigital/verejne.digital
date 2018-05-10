@@ -6,7 +6,7 @@ import {withDataProviders} from 'data-provider'
 import {noticeDetailProvider} from '../dataProviders/noticesDataProviders'
 import {noticeDetailSelector} from '../selectors'
 
-import type {Notice, State} from '../initialState'
+import type {Notice, State} from '../state'
 
 export type NoticeDetailProps = {
   notice: Notice,

@@ -1,14 +1,14 @@
 // @flow
 import {createSelector} from 'reselect'
-import {sortBy, chunk} from 'lodash'
+import {sortBy, chunk, get} from 'lodash'
 import queryString from 'query-string'
-import {paginationChunkSize} from './constants'
-import {values} from './utils'
+import {paginationChunkSize} from '../constants'
+import {values} from '../utils'
 
 import type {Location} from 'react-router-dom'
-import type {State} from './initialState'
-import type {NoticesOrdering} from './components/NoticeList'
-import type {NoticeDetailProps} from './components/NoticeDetail'
+import type {State} from '../state'
+import type {NoticesOrdering} from '../components/NoticeList'
+import type {NoticeDetailProps} from '../components/NoticeDetail'
 
 export const noticeDetailSelector = (state: State, props: NoticeDetailProps) =>
   props.match.params.id && state.notices.data[props.match.params.id]
@@ -54,3 +54,12 @@ export const paginatedNoticesSelector = createSelector(
 export const noticesNumPagesSelector = createSelector(dateSortedNoticesSelector, (dateSorted) =>
   Math.ceil(dateSorted.length / paginationChunkSize)
 )
+
+
+export const PATH_MAP_OPTIONS = ['mapOptions']
+
+export const mapOptionsSelector = (state) => get(state, PATH_MAP_OPTIONS)
+export const centerSelector = (state) => get(state, [...PATH_MAP_OPTIONS, 'center'])
+export const zoomSelector = (state) => get(state, [...PATH_MAP_OPTIONS, 'zoom'])
+export const mapReferenceSelector = (state) => get(state, ['mapReference'])
+export const entitiesSelector = (state) => get(state, ['entities'])

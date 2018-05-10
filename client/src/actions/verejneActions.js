@@ -1,4 +1,4 @@
-import {PATH_MAP, mapReferenceSelector, PATH_MAP_OPTIONS, Entity} from '../state/verejneState'
+import {mapReferenceSelector, PATH_MAP_OPTIONS} from '../selectors'
 import {ENTITY_ZOOM, SUB_CITY_ZOOM, CITY_ZOOM} from '../constants'
 
 const customFetch = (url, options) => {
@@ -16,14 +16,14 @@ export const getZoomLevel = (mapReference) => {
 
 export const setMapReference = (mapReference) => ({
   type: 'Set map reference',
-  path: [...PATH_MAP, 'mapReference'],
+  path: ['mapReference'],
   payload: mapReference,
   reducer: (state) => mapReference,
 })
 
 export const setEntities = (entities) => ({
   type: 'Set entities',
-  path: [...PATH_MAP, 'entities'],
+  path: ['entities'],
   payload: entities,
   reducer: (state) => entities,
 })
@@ -59,7 +59,7 @@ export const fetchEntities = () => async (dispatch, getState, {api, logger}) => 
   }${restrictToSlovakia ? '&restrictToSlovakia=true' : ''}`
   const entities = await customFetch(req)
   dispatch(setEntities(
-    entities.map(({eid, lat, lng, name, size, ds}) => new Entity({
+    entities.map(({eid, lat, lng, name, size, ds}) => ({
       eid, lat, lng, name, size, ds, usedLevel,
     }))
   ))
