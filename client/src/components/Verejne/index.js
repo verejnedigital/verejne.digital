@@ -1,9 +1,10 @@
+// @flow
 import React from 'react'
 import GoogleMap from './GoogleMap'
 import './Verejne.css'
 import Legend from './Legend'
 
-const Verejne = ({legendOpen, setLegendOpen}) => (
+const Verejne = () => (
   <div id="wrapper">
     <div id="stream">
       <div style={{padding: '3px'}}>

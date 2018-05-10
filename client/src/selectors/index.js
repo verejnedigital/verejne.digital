@@ -6,9 +6,9 @@ import {paginationChunkSize} from '../constants'
 import {values} from '../utils'
 
 import type {Location} from 'react-router-dom'
-import type {State} from '../state'
 import type {NoticesOrdering} from '../components/NoticeList'
 import type {NoticeDetailProps} from '../components/NoticeDetail'
+import type {State, MapOptions, MapReference, Entity} from '../state'
 
 export const noticeDetailSelector = (state: State, props: NoticeDetailProps) =>
   props.match.params.id && state.notices.data[props.match.params.id]
@@ -58,8 +58,8 @@ export const noticesNumPagesSelector = createSelector(dateSortedNoticesSelector,
 
 export const PATH_MAP_OPTIONS = ['mapOptions']
 
-export const mapOptionsSelector = (state) => get(state, PATH_MAP_OPTIONS)
-export const centerSelector = (state) => get(state, [...PATH_MAP_OPTIONS, 'center'])
-export const zoomSelector = (state) => get(state, [...PATH_MAP_OPTIONS, 'zoom'])
-export const mapReferenceSelector = (state) => get(state, ['mapReference'])
-export const entitiesSelector = (state) => get(state, ['entities'])
+export const mapOptionsSelector = (state: State): MapOptions => get(state, PATH_MAP_OPTIONS)
+export const centerSelector = (state: State): [number, number] => get(state, [...PATH_MAP_OPTIONS, 'center'])
+export const zoomSelector = (state: State): number => get(state, [...PATH_MAP_OPTIONS, 'zoom'])
+export const mapReferenceSelector = (state: State): MapReference => get(state, ['mapReference'])
+export const entitiesSelector = (state: State): Array<Entity> => get(state, ['entities'])
