@@ -49,29 +49,29 @@ class Landing extends Component {
         </div>
       </main>
       <footer className="container">
-        <p className="float-right">
+        <div className="float-right">
           <ul className="list-inline">
             <li className="list-inline-item">
-              <a href="#"><img src="/tis.png" alt="Transparenty international slovakia" /></a>
+              <a href="/"><img src="/tis.png" alt="Transparenty international slovakia" /></a>
             </li>
             <li className="list-inline-item">
-              <a href="#"><img src="/slovenko.png" alt="slovenko.digital" /></a>
+              <a href="/"><img src="/slovenko.png" alt="slovenko.digital" /></a>
             </li>
             <li className="list-inline-item">
-              <a href="#"><img src="/finstat.png" alt="FinStat" /></a>
+              <a href="/"><img src="/finstat.png" alt="FinStat" /></a>
             </li>
           </ul>
-        </p>
-        <p>
+        </div>
+        <div>
           <ul className="list-inline">
             <li className="list-inline-item list-inline-item-text">
-              <a href="#">O projekte</a>
+              <a href="/">O projekte</a>
             </li>
             <li className="list-inline-item list-inline-item-text">
-              <a href="#">Kontaktujte nás cez facebook</a>
+              <a href="/">Kontaktujte nás cez facebook</a>
             </li>
           </ul>
-        </p>
+        </div>
       </footer>
     </div>
   )
