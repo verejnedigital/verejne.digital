@@ -1,6 +1,5 @@
 import {PATH_MAP, mapReferenceSelector, PATH_MAP_OPTIONS, Entity} from '../state/VerejneState'
 import {ENTITY_ZOOM, SUB_CITY_ZOOM, CITY_ZOOM} from '../constants'
-import {range} from 'lodash'
 
 const customFetch = (url, options) => {
   return fetch(url, options).then((response) => response.json())
@@ -33,11 +32,6 @@ export const setMapOptions = (mapOptions) => ({
   payload: mapOptions,
   reducer: (state) => mapOptions,
 })
-
-/*
-const random = (min, mul) => min + Math.random() * mul
-const entities = range(100).map((i) => ({eid: random(0, 100000), lat: random(45, 10), lng: random(15, 10)}))
-*/
 
 const serverURL = 'https://verejne.digital/api/v/'
 export const fetchEntities = () => async (dispatch, getState, {api, logger}) => {
