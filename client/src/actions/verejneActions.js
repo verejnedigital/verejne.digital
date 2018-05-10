@@ -1,4 +1,4 @@
-import {PATH_MAP, mapReferenceSelector, PATH_MAP_OPTIONS, Entity} from '../state/VerejneState'
+import {PATH_MAP, mapReferenceSelector, PATH_MAP_OPTIONS, Entity} from '../state/verejneState'
 import {ENTITY_ZOOM, SUB_CITY_ZOOM, CITY_ZOOM} from '../constants'
 
 const customFetch = (url, options) => {
@@ -8,7 +8,9 @@ const customFetch = (url, options) => {
 export const getZoomLevel = (mapReference) => {
   if (!mapReference) return []
   const zoom = mapReference.getZoom() || 0
-  return [ENTITY_ZOOM, SUB_CITY_ZOOM, CITY_ZOOM].reduce((acc, val) => acc + (val >= zoom ? 1 : 0), 0)
+  return [ENTITY_ZOOM, SUB_CITY_ZOOM, CITY_ZOOM].reduce(
+    (acc, val) => acc + (val >= zoom ? 1 : 0), 0
+  )
 }
 
 
@@ -63,13 +65,13 @@ export const fetchEntities = () => async (dispatch, getState, {api, logger}) => 
   ))
 }
 
-export const initializeGoogleMap = (mapReference) => async (dispatch, getState, {logger}) => {
+export const initializeGoogleMap = (mapReference) => (dispatch, getState, {logger}) => {
   logger.log('Initialize map')
   dispatch(setMapReference(mapReference))
   dispatch(fetchEntities())
 }
 
-export const updateMapOptions = (mapOptions) => async (dispatch, getState, {logger}) => {
+export const updateMapOptions = (mapOptions) => (dispatch, getState, {logger}) => {
   logger.log('Update map options')
   dispatch(setMapOptions(mapOptions))
   dispatch(fetchEntities())
