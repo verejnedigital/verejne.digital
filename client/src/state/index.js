@@ -31,28 +31,48 @@ export type Notice = {|
 
 export type NoticeMap = { [string]: Notice }
 
+
+export type Entity = {
+  eid: string,
+  lng: string,
+  lat: string,
+  selected: string,
+  title: string,
+  size: string,
+  level: string,
+  visible: string,
+  ds: string,
+}
+
+export type GeolocationPoint = {
+  lat: number,
+  lng: number,
+}
+
+export type MapBounds = {
+  ne: GeolocationPoint,
+  nw: GeolocationPoint,
+  se: GeolocationPoint,
+  sw: GeolocationPoint,
+}
+
+export type MapOptions = {
+  center: [number, number],
+  zoom: number,
+  bounds: ?MapBounds,
+}
+
+export type MapReference = any
+
 export type State = {|
   +count: number,
   +notices: {|
     +data: NoticeMap,
   |},
+  entities: Array<Entity>,
+  mapOptions: MapOptions,
+  mapReference: MapReference,
 |}
-
-// TODO flow
-export class Entity {
-  constructor({eid, lat, lng, title, size, ds, level}) {
-    this.eid = eid
-    this.lng = lng
-    this.lat = lat
-    this.selected = false
-    this.title = title
-    this.size = size
-    this.level = level
-    this.visible = false
-    this.ds = ds
-  }
-}
-
 
 const getInitialState = (): State => ({
   count: 0,
@@ -60,7 +80,7 @@ const getInitialState = (): State => ({
     data: {},
   },
   mapOptions: {
-    center: [48.600, 19.500], // Slovakia :)
+    center: [48.600, 19.500], // Slovakia
     zoom: 8,
     bounds: undefined,
   },

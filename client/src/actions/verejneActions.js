@@ -1,42 +1,45 @@
+// @flow
 import {mapReferenceSelector, PATH_MAP_OPTIONS} from '../selectors'
 import {ENTITY_ZOOM, SUB_CITY_ZOOM, CITY_ZOOM} from '../constants'
+
+import type {MapReference, MapOptions, Entity, State} from '../state'
+import type {Thunk} from '../types/reduxTypes'
 
 const customFetch = (url, options) => {
   return fetch(url, options).then((response) => response.json())
 }
 
-export const getZoomLevel = (mapReference) => {
-  if (!mapReference) return []
+export const getZoomLevel = (mapReference: MapReference): number => {
+  if (!mapReference) return 0
   const zoom = mapReference.getZoom() || 0
-  return [ENTITY_ZOOM, SUB_CITY_ZOOM, CITY_ZOOM].reduce(
-    (acc, val) => acc + (val >= zoom ? 1 : 0), 0
-  )
+  return [ENTITY_ZOOM, SUB_CITY_ZOOM, CITY_ZOOM].filter((val) => val >= zoom).length
 }
 
 
-export const setMapReference = (mapReference) => ({
+export const setMapReference = (mapReference: MapReference) => ({
   type: 'Set map reference',
   path: ['mapReference'],
   payload: mapReference,
-  reducer: (state) => mapReference,
+  reducer: (state: State) => mapReference,
 })
 
-export const setEntities = (entities) => ({
+export const setEntities = (entities: Array<Entity>) => ({
   type: 'Set entities',
   path: ['entities'],
   payload: entities,
-  reducer: (state) => entities,
+  reducer: (state: State) => entities,
 })
 
-export const setMapOptions = (mapOptions) => ({
+export const setMapOptions = (mapOptions: MapOptions) => ({
   type: 'Set map options',
   path: PATH_MAP_OPTIONS,
   payload: mapOptions,
-  reducer: (state) => mapOptions,
+  reducer: (state: State) => mapOptions,
 })
 
+// TODO use data provider
 const serverURL = 'https://verejne.digital/api/v/'
-export const fetchEntities = () => async (dispatch, getState, {api, logger}) => {
+export const fetchEntities = (): Thunk => async (dispatch, getState, {logger}) => {
   logger.log('Fetch map entities')
   const mapReference = mapReferenceSelector(getState())
   if (!mapReference) return
@@ -65,13 +68,17 @@ export const fetchEntities = () => async (dispatch, getState, {api, logger}) => 
   ))
 }
 
-export const initializeGoogleMap = (mapReference) => (dispatch, getState, {logger}) => {
+export const initializeGoogleMap = (
+  mapReference: MapReference
+): Thunk => (dispatch, getState, {logger}) => {
   logger.log('Initialize map')
   dispatch(setMapReference(mapReference))
   dispatch(fetchEntities())
 }
 
-export const updateMapOptions = (mapOptions) => (dispatch, getState, {logger}) => {
+export const updateMapOptions = (
+  mapOptions: MapOptions
+):Thunk => (dispatch, getState, {logger}) => {
   logger.log('Update map options')
   dispatch(setMapOptions(mapOptions))
   dispatch(fetchEntities())

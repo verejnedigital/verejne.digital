@@ -1,3 +1,4 @@
+// @flow
 import React from 'react'
 import CircleIcon from 'react-icons/lib/fa/circle-o'
 import FilledCircleIcon from 'react-icons/lib/fa/circle'
