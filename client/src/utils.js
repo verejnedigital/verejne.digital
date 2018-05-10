@@ -1,8 +1,16 @@
-import {get} from 'lodash'
-import {set} from 'object-path-immutable'
+// @flow
+import {get, set} from 'lodash'
+import produce from 'immer'
+import {parse, stringify} from 'query-string'
 
-export const compose = (f, ...fs) => (fs.length > 0 ? (x) => f(compose(...fs)(x)) : f)
+import type {SegmentReducer, Path} from './types/reduxTypes'
 
+export const immutableSet = (obj: Object, path: ?Path, value: any) =>
+  path && path.length
+    ? produce((obj): void => {
+      set(obj, path, value)
+    })(obj)
+    : value
 /*
  * Forward reducer transform to a particular state path.
  * If the last path element does not exist, reducer will get undefined
@@ -10,8 +18,19 @@ export const compose = (f, ...fs) => (fs.length > 0 ? (x) => f(compose(...fs)(x)
  *
  * Does not create new state if the value did not change
  */
-export const forwardReducerTo = (reducer, path = []) => (state, payload) => {
-  const value = get(state, path)
+export const forwardReducerTo = <S: Object, T>(reducer: SegmentReducer<S, T>, path: ?Path) => (
+  state: S,
+  payload: T
+) => {
+  const value = path ? get(state, path) : state
   const newValue = reducer(value, payload)
-  return newValue !== value ? set(state, path, newValue) : state
+  return newValue !== value ? immutableSet(state, path, newValue) : state
 }
+
+// adds new values to query string, replacing existing ones if needed
+export const modifyQuery = (query: string, newValues: Object) =>
+  stringify(Object.assign(parse(query), newValues))
+
+// https://github.com/facebook/flow/issues/2221#issuecomment-372112477
+// there is no nice way to handle object.values in flow currently - use this instead
+export const values = <T>(obj: {[string]: T}): Array<T> => Object.keys(obj).map((k) => obj[k])

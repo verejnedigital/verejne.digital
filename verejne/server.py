@@ -57,7 +57,6 @@ class GetAddresses(MyServer):
 
 class GetEntitiesAtAddressId(MyServer):
     def get(self):
-        print('here')
         # Parse address_id from URL
         try:
             address_id = int(self.request.GET['address_id'])

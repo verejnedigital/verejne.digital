@@ -4,7 +4,7 @@ import os
 import sys
 import yaml
 import re
-
+import xml.etree.ElementTree as ET
 from psycopg2.extensions import AsIs
 
 import geocoder as geocoder_lib
@@ -14,6 +14,19 @@ from datetime import datetime
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../data/db')))
 from db import DatabaseConnection
 
+def ExtractDescriptionFromBody(body):
+    """ Input is the raw body of raw_notice.
+    This method extracts description from it and returns it. 
+    """
+    if body is None: return None
+    root = ET.fromstring(body)
+    if root is None: return None
+    components = ["opisPredmetuObstaravania", "opisZakazky"]
+    for e in root.iter():
+        if (e.attrib.get("FormComponentId", None) in components) and \
+            ("Value" in e.attrib):
+            return e.attrib["Value"].replace("\n", " ")
+    return None
 
 def CreateAndSetProdSchema(db, prod_schema_name):
     """ Initialized schema with core prod tables: Entities and Address.
@@ -162,7 +175,9 @@ def ProcessSource(db_prod, geocoder, entities, config, test_mode):
                 if eid2 is None:
                   continue
                 row["eid_relation"] = eid2 
-                
+            if config.get("extract_description_from_body"):
+                row["body"] = ExtractDescriptionFromBody(row["body"])
+
             if eid is None: missed_eid += 1
             found_eid += 1
             for table in columns_for_table:
