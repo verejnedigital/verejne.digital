@@ -1,8 +1,4 @@
 // @flow
-import {immutableSet} from './utils'
-import {setInitialState as getVerejneInitialState} from './state/verejneState'
-import {compose} from 'recompose'
-
 export type Candidate = {
   id: number,
   eid: number,
@@ -42,17 +38,34 @@ export type State = {|
   |},
 |}
 
-// TODO change me
-const getNoticesInitialState = (state) => immutableSet(state, [], {
+// TODO flow
+export class Entity {
+  constructor({eid, lat, lng, title, size, ds, level}) {
+    this.eid = eid
+    this.lng = lng
+    this.lat = lat
+    this.selected = false
+    this.title = title
+    this.size = size
+    this.level = level
+    this.visible = false
+    this.ds = ds
+  }
+}
+
+
+const getInitialState = (): State => ({
   count: 0,
   notices: {
     data: {},
   },
+  mapOptions: {
+    center: [48.600, 19.500], // Slovakia :)
+    zoom: 8,
+    bounds: undefined,
+  },
+  mapReference: undefined,
+  entities: [],
 })
-
-const getInitialState = (): State => compose(
-  getVerejneInitialState,
-  getNoticesInitialState,
-)({})
 
 export default getInitialState

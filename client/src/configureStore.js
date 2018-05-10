@@ -2,7 +2,7 @@ import thunk from 'redux-thunk'
 import {createStore, applyMiddleware} from 'redux'
 import {createLogger} from 'redux-logger'
 import rootReducer from './rootReducer'
-import getInitialState from './initialState'
+import getInitialState from './state'
 
 export default () => {
   const logger = {
