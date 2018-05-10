@@ -9,7 +9,7 @@ import './Legend.css'
 const Legend = ({legendOpen, setLegendOpen}) => (
   <div className={classnames('Legend', {Hidden: !legendOpen})} >
     <div className="Legend__Header">
-      <iframe src={FACEBOOK_LIKE_SRC} width="145px" height="20px" scrolling="no" frameBorder="0" />
+      <iframe src={FACEBOOK_LIKE_SRC} width="145px" height="20px" scrolling="no" frameBorder="0" title="Facebook" />
       <button type="button" className="close" onClick={() => setLegendOpen(false)}><span>&times;</span></button>
     </div>
     <p>
