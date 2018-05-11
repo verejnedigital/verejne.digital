@@ -1,6 +1,6 @@
 // @flow
 import {createSelector} from 'reselect'
-import {sortBy, chunk, get} from 'lodash'
+import {sortBy, chunk} from 'lodash'
 import queryString from 'query-string'
 import {paginationChunkSize} from '../constants'
 import {values} from '../utils'
@@ -55,11 +55,8 @@ export const noticesNumPagesSelector = createSelector(dateSortedNoticesSelector,
   Math.ceil(dateSorted.length / paginationChunkSize)
 )
 
-
-export const PATH_MAP_OPTIONS = ['mapOptions']
-
-export const mapOptionsSelector = (state: State): MapOptions => get(state, PATH_MAP_OPTIONS)
-export const centerSelector = (state: State): [number, number] => get(state, [...PATH_MAP_OPTIONS, 'center'])
-export const zoomSelector = (state: State): number => get(state, [...PATH_MAP_OPTIONS, 'zoom'])
-export const mapReferenceSelector = (state: State): MapReference => get(state, ['mapReference'])
-export const entitiesSelector = (state: State): Array<Entity> => get(state, ['entities'])
+export const mapOptionsSelector = (state: State): MapOptions => state.mapOptions
+export const centerSelector = (state: State): [number, number] => state.mapOptions.center
+export const zoomSelector = (state: State): number => state.mapOptions.zoom
+export const mapReferenceSelector = (state: State): MapReference => state.mapReference
+export const entitiesSelector = (state: State): Array<Entity> => state.entities

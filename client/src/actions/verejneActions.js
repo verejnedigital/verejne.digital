@@ -1,5 +1,5 @@
 // @flow
-import {mapReferenceSelector, PATH_MAP_OPTIONS} from '../selectors'
+import {mapReferenceSelector} from '../selectors'
 import {ENTITY_ZOOM, SUB_CITY_ZOOM, CITY_ZOOM} from '../constants'
 
 import type {MapReference, MapOptions, Entity, State} from '../state'
@@ -32,7 +32,7 @@ export const setEntities = (entities: Array<Entity>) => ({
 
 export const setMapOptions = (mapOptions: MapOptions) => ({
   type: 'Set map options',
-  path: PATH_MAP_OPTIONS,
+  path: ['mapOptions'],
   payload: mapOptions,
   reducer: (state: State) => mapOptions,
 })
