@@ -1,11 +1,13 @@
+@import '../../variables.scss';
+
 .Legend {
     position: absolute;
     background: white;
-    padding: 5px;
-    right: 20px;
-    bottom: 30px;
-    width: 170px;
-    height: 140px;
+    padding: 0.3rem;
+    right: 1.3rem;
+    bottom: 2rem;
+    width: 11.3rem;
+    height: 9.3rem;
     border: 1px solid #000;
     opacity: 0.9;
     &__Header {
@@ -13,8 +15,8 @@
     }
     p {
         text-align: left;
-        font-size: 12px;
-        margin-bottom: 0px;
+        font-size: 0.8rem;
+        margin-bottom: 0;
     }
 }
 
@@ -23,10 +25,10 @@
 }
 
 .Svg {
-    color: #0062db;
-    margin-right: 3px;
+    color: $blue-color;
+    margin-right: 0.2rem;
 }
 
 .Orange {
-    color: #e55600;
+    color: $orange-color;
 }

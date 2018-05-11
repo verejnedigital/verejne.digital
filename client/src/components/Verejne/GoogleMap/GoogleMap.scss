@@ -1,5 +1,5 @@
-$marker-width: 30px;
-$marker-height: 30px;
+$marker-width: 2rem;
+$marker-height: 2rem;
 $marker-color: rgba(66, 134, 244, 0.9);
 
 .GoogleMapWrapper {
@@ -18,23 +18,16 @@ $marker-color: rgba(66, 134, 244, 0.9);
         background-color: $marker-color;
         text-align: center;
         color: $marker-color !important;
-        padding: 4px;
         &__Text {
-            font-size: 10px !important;
+            font-size: 0.7rem !important;
             font-weight: bold;
             display: flex;
             justify-content: center;
             align-items: center;
-            width: $marker-width;
-            height: $marker-height;
-            padding: 8px;
-            text-align: center;
-            font-size: 14px;
+            width: 100%;
+            height: 100%;
             color: #fff !important;
             border-radius: 50%;
-            position: absolute;
-            margin-left: -5px;
-            margin-top: -5px;
         }
     }
 }
