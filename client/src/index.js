@@ -11,6 +11,8 @@ import App from './components/App'
 import getConfiguredStore from './configureStore'
 import {Provider} from 'react-redux'
 
+import './customBootstrap.css'
+
 window.Promise = Promise
 
 // a short-term fix for data-provider, should get fixed in next release

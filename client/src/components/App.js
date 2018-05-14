@@ -2,7 +2,6 @@ import React from 'react'
 import {Route, Switch, Redirect} from 'react-router-dom'
 import Landing from './Landing'
 import Main from './Main'
-import './App.css'
 
 const App = () => (
   <Switch>
@@ -10,6 +9,7 @@ const App = () => (
     <Route path="/verejne" component={Main} />
     <Route path="/prepojenia" component={Main} />
     <Route path="/obstaravania" component={Main} />
+    <Route path="/profil" component={Main} />
     <Redirect to="/" />
   </Switch>
 )

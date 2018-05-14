@@ -1,0 +1,7 @@
+@import "./variables.scss";
+
+.navbar {
+  box-shadow: 0 4px 12px 0 $shadow-color;
+  font-family: Source Code Pro, monospace;
+  background: $component-background
+}

@@ -1,3 +1,5 @@
+@import "./variables.scss";
+
 .landing {
   padding: 10rem;
 }
@@ -5,4 +7,11 @@
 .list-inline-item-text~.list-inline-item-text {
   border-left: 2px solid #cad3d9;
   padding-left: 0.5rem;
+}
+
+.footer {
+  background: $footer-background;
+  height: 100px;
+  position: absolute;
+  width: 100%;
 }

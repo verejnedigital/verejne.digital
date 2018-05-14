@@ -3364,13 +3364,18 @@ globule@^1.0.0:
     lodash "~4.17.4"
     minimatch "~3.0.2"
 
-google-map-react@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/google-map-react/-/google-map-react-1.0.0.tgz#91594ea3ecf7ee7b3e9d757f649a398f4b14f9fa"
+google-map-react@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/google-map-react/-/google-map-react-1.0.2.tgz#5e79b78014487642e0cb6c6c44498970f97a4a94"
   dependencies:
     "@mapbox/point-geometry" "^0.1.0"
     eventemitter3 "^1.1.0"
+    react-dom "^16.3.2"
     scriptjs "^2.5.7"
+
+google-maps-react@^2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/google-maps-react/-/google-maps-react-2.0.2.tgz#e03fbba032fe570fb38744bf9cd10b946c591cae"
 
 got@^6.7.1:
   version "6.7.1"
