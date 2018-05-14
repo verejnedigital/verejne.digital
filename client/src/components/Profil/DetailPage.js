@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {keys, descriptions} from '../../../constants'
+import {keys, descriptions} from '../../constants'
 import './DetailPage.css'
 
 import * as serverAPI from './actions/serverAPI'
@@ -141,9 +141,9 @@ class DetailPage extends Component {
     }
 
     const politician = this.state.politician.surname ? (
-      <Row tag="article" key="politician">
+      <Row tag="article" key="politician" className="profile">
         <Col tag="section">
-          <div className="tabs">{yearTabs}</div>
+          <div className="profile-tabs">{yearTabs}</div>
           <section>
             <DetailAsset
               assets={this.state.cadastralAssetsFromDeclaration}
@@ -172,7 +172,7 @@ class DetailPage extends Component {
             />
           </section>
         </Col>
-        <Col tag="section" className="col">
+        <Col tag="section">
           <DetailCadastralTable
             cadastral={this.state.cadastral}
             onParcelShow={this.goMap}
@@ -182,7 +182,7 @@ class DetailPage extends Component {
     ) : null
 
     return [
-      <Row tag="header" key="title" className="header">
+      <Row tag="header" key="title" className="header profile-header">
         <Col>
           <h1 className="title">
             <NavLink to="/profil">
@@ -193,7 +193,7 @@ class DetailPage extends Component {
       </Row>,
       <Cardboard key="cardboard" politician={this.state.politician} />,
       politician,
-      <Row key="map" className="detail-map">
+      <Row key="map" className="profile-map">
         <Col>
           <MapContainer assets={this.state.cadastral} center={this.state.mapCenter} ref="map" />
         </Col>

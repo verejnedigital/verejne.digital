@@ -1,0 +1,47 @@
+@import "../variables.scss";
+
+.profile-header {
+  h1.title {
+    a {
+      color: $link-color;
+      font-weight: 400;
+    }
+
+    a:hover {
+      text-decoration: none;
+      color: $link-color;
+    }
+  }
+}
+
+.profile-tabs {
+  margin-bottom: 15px;
+  width: 100%;
+  text-align: center;
+  font-size: 14px;
+  line-height: 20px;
+
+  .tab {
+    display: inline-block;
+    padding: 3px;
+    box-shadow: 0 4px 12px 0 $shadow-color;
+    border: 2px solid $border-color;
+    background-color: $component-background;
+    cursor: pointer;
+    margin: 0 5px 5px;
+    min-width: 45px;
+  }
+
+  .tab.active {
+    color: $active-tab-color;
+    font-weight: bold;
+  }
+}
+
+.profile-map {
+  margin-top: 40px;
+}
+
+article.profile {
+  text-align: left;
+}

@@ -6,8 +6,8 @@ import Verejne from './Verejne'
 import Prepojenia from './Prepojenia'
 import NoticeList from './NoticeList'
 import NoticeDetail from './NoticeDetail'
-import Profil from './applications/profil/Profil'
-import DetailPage from './applications/profil/DetailPage'
+import Profil from './Profil/Profil'
+import DetailPage from './Profil/DetailPage'
 
 import './Main.css'
 

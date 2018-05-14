@@ -3,8 +3,8 @@ import './Profil.css'
 import * as serverAPI from './actions/serverAPI'
 import PoliticiansList from './components/PoliticiansList'
 import Search from './components/Search'
-import {normalizeName} from '../../../utils'
-import {FACEBOOK_LIKE_SRC} from '../../../constants'
+import {normalizeName} from '../../utils'
+import {FACEBOOK_LIKE_SRC} from '../../constants'
 import {Row, Col} from 'reactstrap'
 
 class Profil extends Component {
@@ -46,7 +46,7 @@ class Profil extends Component {
 
   render() {
     return [
-      <Row tag="header" key="header" className="header">
+      <Row tag="header" key="header" className="header profile-header">
         <Col>
           <h1 className="title">
             <span className="bolder">profil</span>.verejne.digital
@@ -54,12 +54,12 @@ class Profil extends Component {
           <h3 className="sub-title">Majetok poslancov podľa priznaní a katastra</h3>
         </Col>
       </Row>,
-      <Row key="search" className="search">
+      <Row key="search" className="profile-search">
         <Col className="search-form">
           <Search filterNames={this.filterNames} />
         </Col>
       </Row>,
-      <Row key="fb" className="fbframe">
+      <Row key="fb" className="profile-fbframe">
         <Col>
           <iframe
             title="fb_like"
@@ -72,7 +72,7 @@ class Profil extends Component {
           />
         </Col>
       </Row>,
-      <Row tag="article" key="politicians">
+      <Row tag="article" key="politicians" className="profile">
         <Col>
           <PoliticiansList politicians={this.state.politicians} />
         </Col>

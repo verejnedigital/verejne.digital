@@ -1,0 +1,17 @@
+@import "../../variables.scss";
+
+article.profile {
+  .key {
+    color: grey;
+  }
+
+  .podiel {
+    color: grey;
+    padding-left: 10px;
+  }
+
+  .parcel:hover {
+    background-color: $asset-hover-color;
+    cursor: pointer;
+  }
+}

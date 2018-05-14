@@ -2,7 +2,7 @@ import React from 'react'
 import './Cardboard.css'
 
 const Cardboard = ({politician}) => (
-  <div className="cardboard">
+  <div className="profile-cardboard">
     <div>
       <h3 className="name">
         {politician.firstname} {politician.surname}, {politician.title}
