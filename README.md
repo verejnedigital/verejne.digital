@@ -1,40 +1,31 @@
 # verejne.digital
 Projekt [verejne.digital](https://verejne.digital?about) má za cieľ aplikovať umelú inteligenciu na dáta zverejňované slovenskými verejnými inštitúciami.
 
-## Developovanie
+## Hranie sa s dátami
+
+Prehľad našich dát: [https://verejne.digital/data.html](https://verejne.digital/data.html)
+
+Stránka odkazuje na **Google Colaboratory notebooky**, v ktorých je možné priamo experimentovať s našimi normalizovanými dátami, bez nutnosti čokoľvek sťahovať alebo inštalovať.
+
+Alternatívne je možné niekoľko užitočných datasetov stiahnuť ako CSV dumpy a prototypovať nové funkcie lokálne.
 
 
-### Prototypovanie nových funkcií a hranie sa s dátami
+## Frontend
 
-Prehľad našich produkčných dát: [https://verejne.digital/data.html](https://verejne.digital/data.html)
+**Nový frontend** (v príprave) aj s popisom: [/client](https://github.com/verejnedigital/verejne.digital/tree/master/client)
 
-Stránka sprístupňuje niekoľko užitočných datasetov (pohľadov do našej produkčnej databázy s normalizovanými dátami) a odkazuje na Google Colaboratory notebooky, v ktorých je možné priamo experimentovať s týmito dátami bez nutnosti čokoľvek sťahovať.
+**Aktuálny frontend**: Kód sa nachádza vo viacerých priečinkoch:
+- `static`: Kód [https://verejne.digital/](https://verejne.digital/), naprogramovaný v obyčajnom JS.
+- `obstaravania`: Kód [https://verejne.digital/obstaravania/index.html](https://verejne.digital/obstaravania/index.html), automaticky generovaný python skriptom [main.py](https://github.com/verejnedigital/verejne.digital/blob/master/obstaravania/main.py).
+- `prepojenia`: Kód [https://verejne.digital/prepojenia/index.html](https://verejne.digital/prepojenia/index.html). V priečinku `client` sa nachádza kód frontendu. Zvyšok priečinka tvorí backend.
+- `profil`: Kód [https://verejne.digital/profil/](https://verejne.digital/profil/). V priečinku `client` sa nachádza kód frontendu.
 
-Alternatívne je možné stiahnuť CSV dumpy a prototypovať nové funkcie lokálne.
-
-
-### Frontend
-
-Kód je momentálne roztrúsený vo viacerých priečinkoch (static, obstaravania, prepojenia, profil...). 
-
-#### static
-Kód [https://verejne.digital/](https://verejne.digital/), naprogramovaný v obyčajnom JS.
-
-#### obstaravania
-Kód [https://verejne.digital/obstaravania/index.html](https://verejne.digital/obstaravania/index.html), automaticky generovaný python skriptom [main.py](https://github.com/verejnedigital/verejne.digital/blob/master/obstaravania/main.py)
-
-#### prepojenia
-Kód [https://verejne.digital/prepojenia/index.html](https://verejne.digital/prepojenia/index.html).
-V priečinku `client` sa nachádza kód frontendu. Zvyšok priečinka tvorí backend.
-
-#### profil
-Kód [https://verejne.digital/profil/](https://verejne.digital/profil/).
-V priečinku `client` sa nachádza kód frontendu.
-
-Na developovanie react-u treba mať nainštalovaný `Node.js` a `npm`. Pred spustením, treba nainštalovať potrebné balíčky: `npm i`. Frontend spustíte pomocou `npm run start`.
+Na developovanie react-u je potrebné mať nainštalované `Node.js` a `npm`. Pred spustením je potrebné nainštalovať potrebné balíčky: `npm i`. Frontend sa potom spúšťa pomocou `npm run start`.
 
 
-### Backend
+## Backend
+
+Prehľad našich API funkcií: [https://verejne.digital/test.html](https://verejne.digital/test.html)
 
 Backend je momentálne možné vyvíjať len na serveri, pretože pri testovaní je potrebné pripojenie k databáze.
 
@@ -75,3 +66,12 @@ git push
 git checkout master
 sudo svc -t /service/prepojenia_prod
 ```
+*Poznámka*: Web server cacheuje odpovede, takže po reštartovaní zmenenej aplikácie sa pre rovnaký request nemusí ihneď  zmeniť odpoveď! Cache je možné obísť pridaním dummy parametra za request; napríklad: [https://verejne.digital/api/k/public_dumps_info?x=47](https://verejne.digital/api/k/public_dumps_info?x=47).
+
+Vytvorenie nového server hooku (API funkcie) v už existujúcej aplikácii (napríklad `prepojenia`):
+1. Vytvor novú podtriedu `MyServer` v `prepojenia/server.py` a naimplementuj funkcionalitu v metóde `get()`.
+2. Zaregistruj nový hook vo `WSGIApplication` (globálna premenná `app`).
+3. Ulož zmeny a reštartuj aplikáciu postupom uvedeným vyššie.
+
+Vytvorenie novej aplikácie:
+*TODO*
