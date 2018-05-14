@@ -139,7 +139,9 @@ export class MapContainer extends Component {
         google={this.props.google}
         zoom={this.zoom}
         style={{height: '360px', position: 'relative'}}
-        center={{lat: this.props.center.lat, lng: this.props.center.lng}} //Do not use direct reference (!)
+        center={
+          {lat: this.props.center.lat, lng: this.props.center.lng}
+        } //Do not use direct reference (!)
         styles={this.mapStyles}
       >
         {this.markers}

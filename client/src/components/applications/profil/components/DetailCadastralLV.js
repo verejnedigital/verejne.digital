@@ -1,23 +1,33 @@
-import React from 'react'
+import React, {Component} from 'react'
 
 import './DetailCadastralLV.css'
 
-const DetailKatasterLV = ({num, lv, onParcelShow}) => (
-  <tr onClick={onParcelShow} className="parcel">
-    <td className="key">{num < 10 ? `0${num}` : num}</td>
-    <td>
-      <a
-        target="_BLANK"
-        href={`https://kataster.skgeodesy.sk/EsknBo/Bo.svc/GeneratePrf?prfNumber=${
-          lv.foliono
-        }&cadastralUnitCode=${lv.cadastralunitcode}&outputType=html`}
-      >
-        {lv.landusename}&nbsp;<i className="fa fa-external-link" aria-hidden="true" />
-      </a>
-      <br />
-      {`${lv.cadastralunitname}, LV č. ${lv.foliono}; parcely: ${lv.parcelno}`}
-    </td>
-  </tr>
-)
+class DetailCadastralLV extends Component {
 
-export default DetailKatasterLV
+  disablePropagation = (event) => {
+    event.stopPropagation()
+  }
+
+  render() {
+    return (
+      <tr onClick={this.props.onParcelShow} className="parcel">
+        <td className="key">{this.props.num < 10 ? `0${this.props.num}` : this.props.num}</td>
+        <td>
+          <a
+            target="_BLANK"
+            href={`https://kataster.skgeodesy.sk/EsknBo/Bo.svc/GeneratePrf?prfNumber=${
+              this.props.lv.foliono
+            }&cadastralUnitCode=${this.props.lv.cadastralunitcode}&outputType=html`}
+            onClick={this.disablePropagation}
+          >
+            {this.props.lv.landusename}&nbsp;<i className="fa fa-external-link" aria-hidden="true" />
+          </a>
+          <br />
+          {`${this.props.lv.cadastralunitname}, LV č. ${this.props.lv.foliono}; parcely: ${this.props.lv.parcelno}`}
+        </td>
+      </tr>
+    )
+  }
+}
+
+export default DetailCadastralLV

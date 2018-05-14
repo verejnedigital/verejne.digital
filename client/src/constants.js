@@ -98,5 +98,12 @@ export const clusterOptions = {
   maxZoom: 16,
   radius: 60,
 }
-
 export const FACEBOOK_LIKE_SRC = 'https://www.facebook.com/plugins/like.php?href=https%3A%2F%2Fwww.facebook.com%2Fverejne.digital&width=111&layout=button_count&action=like&size=small&show_faces=true&share=false&height=46&appId='
+
+export const keys = ['income', 'compensations', 'other_income', 'offices_other']
+export const descriptions = [
+  'príjmy ',
+  'paušálne náhrady',
+  'ostatné príjmy',
+  'počas výkonu verejnej funkcie má tieto funkcie (čl. 7 ods. 1 písm. c) u. z. 357/2004)',
+]

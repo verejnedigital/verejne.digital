@@ -1,38 +1,28 @@
 import React, {Component} from 'react'
-import DetailKatasterLV from './DetailCadastralLV'
+import DetailCadastralLV from './DetailCadastralLV'
 import {Table} from 'reactstrap'
 
-class DetailKatasterTable extends Component {
-  shouldComponentUpdate(nextProps, nextState) {
-    return this.props.kataster !== nextProps.kataster
-  }
-
-  onParcelShow(lv, event) {
-    if (
-      event.target.tagName.toLowerCase() !== 'a' &&
-      event.target.parentElement.tagName.toLowerCase() !== 'a'
-    ) {
-      this.props.onParcelShow(lv)
-    }
+class DetailCadastralTable extends Component {
+  onParcelShow = (lv) => {
+    this.props.onParcelShow(lv)
   }
 
   render() {
-    const self = this
     return (
       <Table>
         <thead>
           <tr>
             <th />
-            <th>Údaje z Katastra ({this.props.kataster.length})</th>
+            <th>Údaje z Katastra ({this.props.cadastral.length})</th>
           </tr>
         </thead>
         <tbody>
-          {this.props.kataster.map((lv, key) => (
-            <DetailKatasterLV
+          {this.props.cadastral.map((lv, key) => (
+            <DetailCadastralLV
               key={key}
               num={key + 1}
               lv={lv}
-              onParcelShow={self.onParcelShow.bind(self, lv)}
+              onParcelShow={() => this.onParcelShow(lv)}
             />
           ))}
         </tbody>
@@ -41,4 +31,4 @@ class DetailKatasterTable extends Component {
   }
 }
 
-export default DetailKatasterTable
+export default DetailCadastralTable

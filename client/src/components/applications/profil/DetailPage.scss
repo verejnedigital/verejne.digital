@@ -1,4 +1,4 @@
-@import "../../../custom-colors.scss";
+@import "../../variables.scss";
 
 .header {
   padding: 20px;
@@ -19,13 +19,13 @@
     }
 
     a {
-      color:  #333;
+      color: $link-color;
       font-weight: 400;
     }
 
     a:hover {
       text-decoration: none;
-      color:  #333;
+      color: $link-color;
     }
   }
 }

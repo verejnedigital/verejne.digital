@@ -13,7 +13,7 @@ function parseJSON(res) {
   return res.json()
 }
 
-function compareKatasterForSameLandUse(a, b) {
+function compareCadastralForSameLandUse(a, b) {
   if (a.cadastralunitcode < b.cadastralunitcode) return -1
   if (a.cadastralunitcode > b.cadastralunitcode) return 1
   if (a.foliono < b.foliono) return -1
@@ -23,8 +23,8 @@ function compareKatasterForSameLandUse(a, b) {
   return 0
 }
 
-function compareKataster(a, b) {
-  if (a.landusename === b.landusename) return compareKatasterForSameLandUse(a, b)
+function compareCadastral(a, b) {
+  if (a.landusename === b.landusename) return compareCadastralForSameLandUse(a, b)
   const plocha = 'Zastavaná plocha a nádvorie'
   if (a.landusename === plocha) return -1
   if (b.landusename === plocha) return 1
@@ -33,8 +33,8 @@ function compareKataster(a, b) {
   return 0 //toto bolo pridane
 }
 
-function sortKatasterInfo(res) {
-  return res.sort(compareKataster)
+function sortCadastralInfo(res) {
+  return res.sort(compareCadastral)
 }
 
 function mergeParcely(res) {
@@ -85,13 +85,13 @@ export function listPoliticians(cb) {
     .then(cb)
 }
 
-export function katasterInfo(id, cb) {
+export function cadastralInfo(id, cb) {
   fetch(`${process.env.REACT_APP_API_URL || ''}/api/k/kataster_info_politician?id=${id}`, {
     accept: 'application/json',
   })
     .then(checkStatus)
     .then(parseJSON)
-    .then(sortKatasterInfo)
+    .then(sortCadastralInfo)
     .then(mergeParcely)
     .then(cb)
 }

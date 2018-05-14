@@ -30,27 +30,6 @@ class DetailAssetDeclaration extends Component {
     }
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    if (this.state.isImageOnServer !== nextState.isImageOnServer) {
-      return true
-    }
-
-    if (this.props.assets !== nextProps.assets) {
-      return true
-    }
-    if (this.props.year !== nextProps.year) {
-      return true
-    }
-    if (this.props.title !== nextProps.title) {
-      return true
-    }
-    if (this.props.source !== nextProps.source) {
-      return true
-    }
-
-    return false
-  }
-
   render() {
     const {assets, year, title, image, source} = this.props
     return (

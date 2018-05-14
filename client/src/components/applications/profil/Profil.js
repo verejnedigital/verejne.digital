@@ -4,6 +4,7 @@ import * as serverAPI from './actions/serverAPI'
 import PoliticiansList from './components/PoliticiansList'
 import Search from './components/Search'
 import {normalizeName} from '../../../utils'
+import {FACEBOOK_LIKE_SRC} from '../../../constants'
 import {Row, Col} from 'reactstrap'
 
 class Profil extends Component {
@@ -62,13 +63,12 @@ class Profil extends Component {
         <Col>
           <iframe
             title="fb_like"
-            src="https://www.facebook.com/plugins/like.php?href=https%3A%2F%2Fwww.facebook.com%2Fverejne.digital&width=111&layout=button_count&action=like&size=small&show_faces=true&share=true&height=46&appId="
+            src={FACEBOOK_LIKE_SRC}
             width="201"
             height="23"
             className="fbIframe"
             scrolling="no"
             frameBorder="0"
-            allowtransparency="true"
           />
         </Col>
       </Row>,

@@ -1,11 +1,11 @@
 import React, {Component} from 'react'
-import ReactDOM from 'react-dom'
+import {keys, descriptions} from '../../../constants'
 import './DetailPage.css'
 
 import * as serverAPI from './actions/serverAPI'
 import Cardboard from './components/Cardboard'
-import DetailKatasterTable from './components/DetailCadastralTable'
-import DetailAssetDeclaration from './components/DetailAssets'
+import DetailCadastralTable from './components/DetailCadastralTable'
+import DetailAsset from './components/DetailAssets'
 import MapContainer from './components/MapContainer'
 import {NavLink} from 'react-router-dom'
 import {Row, Col} from 'reactstrap'
@@ -15,10 +15,10 @@ class DetailPage extends Component {
     super(props)
     this.state = {
       politician: {},
-      kataster: [],
-      katasterAssetsFromDeclaration: [],
-      hnutelnyAssetsFromDeclaration: [],
-      prijmyAssetsFromDeclaration: [],
+      cadastral: [],
+      cadastralAssetsFromDeclaration: [],
+      movableAssetsFromDeclaration: [],
+      incomeAssetsFromDeclaration: [],
       years: [],
       currentYear: null,
       reportData: {},
@@ -29,7 +29,7 @@ class DetailPage extends Component {
   componentWillMount() {
     const id = this.props.match.params.id
     this.loadPoliticiant(id)
-    this.loadKataster(id)
+    this.loadCadastral(id)
     this.loadAssetDeclaration(id)
   }
 
@@ -41,10 +41,10 @@ class DetailPage extends Component {
     })
   }
 
-  loadKataster(id) {
-    serverAPI.katasterInfo(id, (kataster) => {
+  loadCadastral(id) {
+    serverAPI.cadastralInfo(id, (cadastral) => {
       this.setState({
-        kataster,
+        cadastral,
       })
     })
   }
@@ -53,11 +53,6 @@ class DetailPage extends Component {
     this.setState({
       mapCenter: {lat: parcel.lat, lng: parcel.lon},
     })
-
-    const node = ReactDOM.findDOMNode(this.refs.map)
-    if (node) {
-      window.scrollTo(0, node.offsetTop)
-    }
   }
 
   static splitAssets(obj, splitStr) {
@@ -70,27 +65,20 @@ class DetailPage extends Component {
 
   static parseReport(reportYear) {
     // Report contains asset declarations for several years.
-    const katasterAssetsFromDeclaration = DetailPage.splitAssets(reportYear, 'unmovable_assets')
-    const hnutelnyAssetsFromDeclaration = DetailPage.splitAssets(reportYear, 'movable_assets')
-    const prijmyAssetsFromDeclaration = []
+    const cadastralAssetsFromDeclaration = DetailPage.splitAssets(reportYear, 'unmovable_assets')
+    const movableAssetsFromDeclaration = DetailPage.splitAssets(reportYear, 'movable_assets')
+    const incomeAssetsFromDeclaration = []
     if (reportYear !== undefined) {
-      const keys = ['income', 'compensations', 'other_income', 'offices_other']
-      const descriptions = [
-        'príjmy ',
-        'paušálne náhrady',
-        'ostatné príjmy',
-        'počas výkonu verejnej funkcie má tieto funkcie (čl. 7 ods. 1 písm. c) u. z. 357/2004)',
-      ]
       for (let i = 0; i < keys.length; i++) {
         const key = keys[i]
-        prijmyAssetsFromDeclaration.push(`${descriptions[i]}: ${reportYear[key]}`)
+        incomeAssetsFromDeclaration.push(`${descriptions[i]}: ${reportYear[key]}`)
       }
     }
 
     return {
-      katasterAssetsFromDeclaration,
-      hnutelnyAssetsFromDeclaration,
-      prijmyAssetsFromDeclaration,
+      cadastralAssetsFromDeclaration,
+      movableAssetsFromDeclaration,
+      incomeAssetsFromDeclaration,
     }
   }
 
@@ -110,9 +98,9 @@ class DetailPage extends Component {
       }
 
       this.setState({
-        katasterAssetsFromDeclaration: reportByYear[latestYear].katasterAssetsFromDeclaration,
-        hnutelnyAssetsFromDeclaration: reportByYear[latestYear].hnutelnyAssetsFromDeclaration,
-        prijmyAssetsFromDeclaration: reportByYear[latestYear].prijmyAssetsFromDeclaration,
+        cadastralAssetsFromDeclaration: reportByYear[latestYear].cadastralAssetsFromDeclaration,
+        movableAssetsFromDeclaration: reportByYear[latestYear].movableAssetsFromDeclaration,
+        incomeAssetsFromDeclaration: reportByYear[latestYear].incomeAssetsFromDeclaration,
         reportData: reportByYear,
         years: availableYears,
         currentYear: latestYear,
@@ -123,9 +111,9 @@ class DetailPage extends Component {
   selectYear(year) {
     this.setState({
       currentYear: year,
-      katasterAssetsFromDeclaration: this.state.reportData[year].katasterAssetsFromDeclaration,
-      hnutelnyAssetsFromDeclaration: this.state.reportData[year].hnutelnyAssetsFromDeclaration,
-      prijmyAssetsFromDeclaration: this.state.reportData[year].prijmyAssetsFromDeclaration,
+      cadastralAssetsFromDeclaration: this.state.reportData[year].cadastralAssetsFromDeclaration,
+      movableAssetsFromDeclaration: this.state.reportData[year].movableAssetsFromDeclaration,
+      incomeAssetsFromDeclaration: this.state.reportData[year].incomeAssetsFromDeclaration,
     })
   }
 
@@ -157,8 +145,8 @@ class DetailPage extends Component {
         <Col tag="section">
           <div className="tabs">{yearTabs}</div>
           <section>
-            <DetailAssetDeclaration
-              assets={this.state.katasterAssetsFromDeclaration}
+            <DetailAsset
+              assets={this.state.cadastralAssetsFromDeclaration}
               year={this.state.currentYear}
               title="Majetkové priznanie: Nehnuteľnosti"
               image={`https://verejne.digital/img/majetok/${this.state.politician.surname}_${
@@ -168,16 +156,16 @@ class DetailPage extends Component {
             />
           </section>
           <section>
-            <DetailAssetDeclaration
-              assets={this.state.hnutelnyAssetsFromDeclaration}
+            <DetailAsset
+              assets={this.state.movableAssetsFromDeclaration}
               year={this.state.currentYear}
               title="Majetkové priznanie: Hnuteľný majetok"
               source={source}
             />
           </section>
           <section>
-            <DetailAssetDeclaration
-              assets={this.state.prijmyAssetsFromDeclaration}
+            <DetailAsset
+              assets={this.state.incomeAssetsFromDeclaration}
               year={this.state.currentYear}
               title="Majetkové priznanie: ostatné"
               source={source}
@@ -185,9 +173,9 @@ class DetailPage extends Component {
           </section>
         </Col>
         <Col tag="section" className="col">
-          <DetailKatasterTable
-            kataster={this.state.kataster}
-            onParcelShow={this.goMap.bind(this)}
+          <DetailCadastralTable
+            cadastral={this.state.cadastral}
+            onParcelShow={this.goMap}
           />
         </Col>
       </Row>
@@ -207,7 +195,7 @@ class DetailPage extends Component {
       politician,
       <Row key="map" className="detail-map">
         <Col>
-          <MapContainer assets={this.state.kataster} center={this.state.mapCenter} ref="map" />
+          <MapContainer assets={this.state.cadastral} center={this.state.mapCenter} ref="map" />
         </Col>
       </Row>,
     ]
