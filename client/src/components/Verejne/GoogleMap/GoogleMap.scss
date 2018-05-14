@@ -1,0 +1,33 @@
+$marker-width: 2rem;
+$marker-height: 2rem;
+$marker-color: rgba(66, 134, 244, 0.9);
+
+.GoogleMapWrapper {
+    height: 100%;
+    overflow: hidden;
+}
+
+.GoogleMap {
+    &__Marker {
+        position: absolute;
+        width: $marker-width;
+        height: $marker-height;
+        left: -$marker-width / 2;
+        top: -$marker-height / 2;
+        border-radius: $marker-height;
+        background-color: $marker-color;
+        text-align: center;
+        color: $marker-color !important;
+        &__Text {
+            font-size: 0.7rem !important;
+            font-weight: bold;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            color: #fff !important;
+            border-radius: 50%;
+        }
+    }
+}

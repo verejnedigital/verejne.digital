@@ -2,13 +2,13 @@
 import {createSelector} from 'reselect'
 import {sortBy, chunk} from 'lodash'
 import queryString from 'query-string'
-import {paginationChunkSize} from './constants'
-import {values} from './utils'
+import {paginationChunkSize} from '../constants'
+import {values} from '../utils'
 
 import type {Location} from 'react-router-dom'
-import type {State} from './state'
-import type {NoticesOrdering} from './components/NoticeList'
-import type {NoticeDetailProps} from './components/NoticeDetail'
+import type {NoticesOrdering} from '../components/NoticeList'
+import type {NoticeDetailProps} from '../components/NoticeDetail'
+import type {State, MapOptions, MapReference, Entity} from '../state'
 
 export const noticeDetailSelector = (state: State, props: NoticeDetailProps) =>
   props.match.params.id && state.notices.data[props.match.params.id]
@@ -54,3 +54,9 @@ export const paginatedNoticesSelector = createSelector(
 export const noticesNumPagesSelector = createSelector(dateSortedNoticesSelector, (dateSorted) =>
   Math.ceil(dateSorted.length / paginationChunkSize)
 )
+
+export const mapOptionsSelector = (state: State): MapOptions => state.mapOptions
+export const centerSelector = (state: State): [number, number] => state.mapOptions.center
+export const zoomSelector = (state: State): number => state.mapOptions.zoom
+export const mapReferenceSelector = (state: State): MapReference => state.mapReference
+export const entitiesSelector = (state: State): Array<Entity> => state.entities

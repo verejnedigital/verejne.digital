@@ -10,9 +10,9 @@ import './Main.css'
 
 class Main extends Component {
   render = () => (
-    <div>
+    <div style={{height: '100%'}}>
       <Navbar />
-      <main role="main" className="container application-container">
+      <main role="main" className="application-container">
         <Switch>
           <Route path="/verejne" exact component={Verejne} />
           <Route path="/prepojenia" exact component={Prepojenia} />
