@@ -1,7 +1,7 @@
 // @flow
 import {get, set} from 'lodash'
 import produce from 'immer'
-import {parse, stringify} from 'query-string'
+import {parse, stringify} from 'qs'
 
 import type {SegmentReducer, Path} from './types/reduxTypes'
 

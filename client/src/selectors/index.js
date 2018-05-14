@@ -1,7 +1,7 @@
 // @flow
 import {createSelector} from 'reselect'
 import {sortBy, chunk} from 'lodash'
-import queryString from 'query-string'
+import qs from 'qs'
 import {paginationChunkSize} from '../constants'
 import {values} from '../utils'
 
@@ -24,12 +24,12 @@ export const nameSortedNoticesSelector = createSelector(
 )
 
 export const paginationSelector = (_: State, props: {location: Location}): number => {
-  const query = queryString.parse(props.location.search)
+  const query = qs.parse(props.location.search)
   return Number.parseInt(query.page, 10) || 1
 }
 
 export const noticesOrderingSelector = (_: State, props: {location: Location}): NoticesOrdering => {
-  const query = queryString.parse(props.location.search)
+  const query = qs.parse(props.location.search)
   return query.ordering || 'date'
 }
 
