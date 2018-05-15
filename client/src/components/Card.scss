@@ -1,8 +1,11 @@
+@import "./variables.scss";
+
 .card-center {
   text-align: center;
   height: 100%;
+  margin-bottom: 20px;
 
   p {
-    color: #333333;
+    color: $link-color;
   }
 }
