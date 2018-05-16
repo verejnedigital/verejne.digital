@@ -1,8 +1,22 @@
+@import "./variables.scss";
+
 .card-center {
   text-align: center;
   height: 100%;
+  margin-bottom: 20px;
+
+  img {
+    @media screen and (max-width: 575px) {
+      width: 200px;
+      margin: auto;
+    }
+
+    @media screen and (min-width: 576px) {
+      width: 100%;
+    }
+  }
 
   p {
-    color: #333333;
+    color: $link-color;
   }
 }

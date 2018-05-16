@@ -2,16 +2,17 @@ import React, {Component} from 'react'
 import Card from './Card'
 import {NavLink} from 'react-router-dom'
 import './Landing.css'
+import {Row, Col, Container} from 'reactstrap'
 
 class Landing extends Component {
   render = () => [
-    <main key="main" role="main" className="container landing">
+    <Container tag="main" key="main" role="main" className="landing-page">
       <h1>
         <b>verejne.</b>digital
       </h1>
       <p className="lead">Aplikácia umelej inteligencie na dáta slovenských verejných inštitúcii</p>
-      <div className="row">
-        <div className="col">
+      <Row>
+        <Col className="col-lg-3 col-md-4 col-sm-6 col-12 card-wrapper">
           <NavLink to="/verejne" className="card-link">
             <Card
               title="Verejné dáta"
@@ -19,8 +20,8 @@ class Landing extends Component {
               imgSrc="/map.png"
             />
           </NavLink>
-        </div>
-        <div className="col">
+        </Col>
+        <Col className="col-lg-3 col-md-4 col-sm-6 col-12 card-wrapper">
           <NavLink to="/prepojenia" className="card-link">
             <Card
               title="Prepojenia"
@@ -28,8 +29,8 @@ class Landing extends Component {
               imgSrc="connections.png"
             />
           </NavLink>
-        </div>
-        <div className="col">
+        </Col>
+        <Col className="col-lg-3 col-md-4 col-sm-6 col-12 card-wrapper">
           <NavLink to="/obstaravania" className="card-link">
             <Card
               title="Obstarávania"
@@ -37,17 +38,17 @@ class Landing extends Component {
               imgSrc="search.png"
             />
           </NavLink>
-        </div>
-        <div className="col">
+        </Col>
+        <Col className="col-lg-3 col-md-4 col-sm-6 col-12 card-wrapper">
           <NavLink to="/profil" className="card-link">
-            <Card title="Profil" text="Tu je profil" imgSrc="search.png" />
+            <Card title="Profil" text="Majetok poslancov podľa priznaní a katastra" imgSrc="search.png" />
           </NavLink>
-        </div>
-      </div>
-    </main>,
-    <footer key="footer" className="footer">
+        </Col>
+      </Row>
+    </Container>,
+    <footer key="footer" className="landing-footer">
       <div className="container">
-        <ul className="float-right list-inline">
+        <ul className="float-md-right list-inline">
           <li className="list-inline-item">
             <a href="http://transparency.sk/sk/">
               <img src="/tis.png" alt="Transparency international slovakia" />
@@ -64,7 +65,7 @@ class Landing extends Component {
             </a>
           </li>
         </ul>
-        <ul className="list-inline">
+        <ul className="float-md-left list-inline footer-text">
           <li className="list-inline-item list-inline-item-text">
             <a
               href="https://medium.com/@verejne.digital/o-%C4%8Do-ide-verejne-digital-14a1c6dcbe09"

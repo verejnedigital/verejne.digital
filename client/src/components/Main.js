@@ -8,13 +8,14 @@ import NoticeList from './NoticeList'
 import NoticeDetail from './NoticeDetail'
 import Profil from './Profil/Profil'
 import DetailPage from './Profil/DetailPage'
+import {Container} from 'reactstrap'
 
 import './Main.css'
 
 class Main extends Component {
   render = () => [
     <Navigation key="navbar" />,
-    <main key="main" role="main" className="container application-container">
+    <Container key="main" role="main" className="application-container">
       <Switch>
         <Route path="/verejne" exact component={Verejne} />
         <Route path="/prepojenia" exact component={Prepojenia} />
@@ -23,7 +24,7 @@ class Main extends Component {
         <Route path="/profil" exact component={Profil} />
         <Route path="/profil/:id" component={DetailPage} />
       </Switch>
-    </main>,
+    </Container>,
   ]
 }
 
