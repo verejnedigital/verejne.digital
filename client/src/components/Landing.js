@@ -12,7 +12,7 @@ class Landing extends Component {
       </h1>
       <p className="lead">Aplikácia umelej inteligencie na dáta slovenských verejných inštitúcii</p>
       <Row>
-        <Col className="col-lg-3 col-md-4 col-sm-6 card-wrapper">
+        <Col className="col-lg-3 col-md-4 col-sm-6 col-12 card-wrapper">
           <NavLink to="/verejne" className="card-link">
             <Card
               title="Verejné dáta"
@@ -21,7 +21,7 @@ class Landing extends Component {
             />
           </NavLink>
         </Col>
-        <Col className="col-lg-3 col-md-4 col-sm-6 card-wrapper">
+        <Col className="col-lg-3 col-md-4 col-sm-6 col-12 card-wrapper">
           <NavLink to="/prepojenia" className="card-link">
             <Card
               title="Prepojenia"
@@ -30,7 +30,7 @@ class Landing extends Component {
             />
           </NavLink>
         </Col>
-        <Col className="col-lg-3 col-md-4 col-sm-6 card-wrapper">
+        <Col className="col-lg-3 col-md-4 col-sm-6 col-12 card-wrapper">
           <NavLink to="/obstaravania" className="card-link">
             <Card
               title="Obstarávania"
@@ -39,7 +39,7 @@ class Landing extends Component {
             />
           </NavLink>
         </Col>
-        <Col className="col-lg-3 col-md-4 col-sm-6 card-wrapper">
+        <Col className="col-lg-3 col-md-4 col-sm-6 col-12 card-wrapper">
           <NavLink to="/profil" className="card-link">
             <Card title="Profil" text="Majetok poslancov podľa priznaní a katastra" imgSrc="search.png" />
           </NavLink>

@@ -5,6 +5,17 @@
   height: 100%;
   margin-bottom: 20px;
 
+  img {
+    @media screen and (max-width: 575px) {
+      width: 200px;
+      margin: auto;
+    }
+
+    @media screen and (min-width: 576px) {
+      width: 100%;
+    }
+  }
+
   p {
     color: $link-color;
   }

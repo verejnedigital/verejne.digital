@@ -4,7 +4,7 @@ import {Card, CardImg, CardBody, CardTitle, CardText} from 'reactstrap'
 
 export default ({title, text, imgSrc}) => (
   <Card className="card-center">
-    <CardImg top width="100%" src={imgSrc} alt={title} />
+    <CardImg top src={imgSrc} alt={title} />
     <CardBody>
       <CardTitle>{title}</CardTitle>
       <CardText>{text}</CardText>
