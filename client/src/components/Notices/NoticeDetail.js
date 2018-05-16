@@ -3,10 +3,10 @@ import React from 'react'
 import {compose} from 'redux'
 import {connect} from 'react-redux'
 import {withDataProviders} from 'data-provider'
-import {noticeDetailProvider} from '../dataProviders/noticesDataProviders'
-import {noticeDetailSelector} from '../selectors'
+import {noticeDetailProvider} from '../../dataProviders/noticesDataProviders'
+import {noticeDetailSelector} from '../../selectors'
 
-import type {Notice, State} from '../state'
+import type {Notice, State} from '../../state'
 
 export type NoticeDetailProps = {
   notice: Notice,

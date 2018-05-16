@@ -4,18 +4,18 @@ import {compose} from 'redux'
 import {connect} from 'react-redux'
 import {Link} from 'react-router-dom'
 import {withDataProviders} from 'data-provider'
-import {noticesProvider} from '../dataProviders/noticesDataProviders'
+import {noticesProvider} from '../../dataProviders/noticesDataProviders'
 import {
   newestBulletinDateSelector,
   paginatedNoticesSelector,
   paginationSelector,
   noticesNumPagesSelector,
-} from '../selectors'
-import Pagination from './Pagination'
+} from '../../selectors'
+import Pagination from '../shared/Pagination'
 
 import type {Location, Match} from 'react-router-dom'
-import type {Dispatch} from '../types/reduxTypes'
-import type {Notice, State} from '../state'
+import type {Dispatch} from '../../types/reduxTypes'
+import type {Notice, State} from '../../state'
 
 export type NoticesOrdering = 'title' | 'date'
 
