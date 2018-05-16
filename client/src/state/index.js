@@ -24,13 +24,12 @@ export type Notice = {|
   bulletin_month: number,
   bulletin_year: number,
   bulletin_date: string, // string representation of day/month/year
-  kandidati: Array < Candidate | [] >,
+  kandidati: Array<Candidate | []>,
   price_num: number,
   price_avg: number,
 |}
 
-export type NoticeMap = { [string]: Notice }
-
+export type NoticeMap = {[string]: Notice}
 
 export type Entity = {
   eid: string,
@@ -80,7 +79,7 @@ const getInitialState = (): State => ({
     data: {},
   },
   mapOptions: {
-    center: [48.600, 19.500], // Slovakia
+    center: [48.6, 19.5], // Slovakia
     zoom: 8,
     bounds: undefined,
   },

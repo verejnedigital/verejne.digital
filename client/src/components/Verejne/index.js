@@ -15,6 +15,6 @@ const Verejne = () => (
     </div>
     <GoogleMap />
     <Legend />
-  </div >
+  </div>
 )
 export default Verejne

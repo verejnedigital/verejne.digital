@@ -173,10 +173,7 @@ class DetailPage extends Component {
           </section>
         </Col>
         <Col tag="section">
-          <DetailCadastralTable
-            cadastral={this.state.cadastral}
-            onParcelShow={this.goMap}
-          />
+          <DetailCadastralTable cadastral={this.state.cadastral} onParcelShow={this.goMap} />
         </Col>
       </Row>
     ) : null

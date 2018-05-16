@@ -15,7 +15,6 @@ export const getZoomLevel = (mapReference: MapReference): number => {
   return [ENTITY_ZOOM, SUB_CITY_ZOOM, CITY_ZOOM].filter((val) => val >= zoom).length
 }
 
-
 export const setMapReference = (mapReference: MapReference) => ({
   type: 'Set map reference',
   path: ['mapReference'],
@@ -58,27 +57,40 @@ export const fetchEntities = (): Thunk => async (dispatch, getState, {logger}) =
     restrictToSlovakia = false
   }
   const usedLevel = getZoomLevel(mapReference)
-  req += `?level=${usedLevel}&lat1=${lat1}&lng1=${lng1}&lat2=${lat2}&lng2=${lng2
-  }${restrictToSlovakia ? '&restrictToSlovakia=true' : ''}`
+  req += `?level=${usedLevel}&lat1=${lat1}&lng1=${lng1}&lat2=${lat2}&lng2=${lng2}${
+    restrictToSlovakia ? '&restrictToSlovakia=true' : ''
+  }`
   const entities = await customFetch(req)
-  dispatch(setEntities(
-    entities.map(({eid, lat, lng, name, size, ds}) => ({
-      eid, lat, lng, name, size, ds, usedLevel,
-    }))
-  ))
+  dispatch(
+    setEntities(
+      entities.map(({eid, lat, lng, name, size, ds}) => ({
+        eid,
+        lat,
+        lng,
+        name,
+        size,
+        ds,
+        usedLevel,
+      }))
+    )
+  )
 }
 
-export const initializeGoogleMap = (
-  mapReference: MapReference
-): Thunk => (dispatch, getState, {logger}) => {
+export const initializeGoogleMap = (mapReference: MapReference): Thunk => (
+  dispatch,
+  getState,
+  {logger}
+) => {
   logger.log('Initialize map')
   dispatch(setMapReference(mapReference))
   dispatch(fetchEntities())
 }
 
-export const updateMapOptions = (
-  mapOptions: MapOptions
-):Thunk => (dispatch, getState, {logger}) => {
+export const updateMapOptions = (mapOptions: MapOptions): Thunk => (
+  dispatch,
+  getState,
+  {logger}
+) => {
   logger.log('Update map options')
   dispatch(setMapOptions(mapOptions))
   dispatch(fetchEntities())

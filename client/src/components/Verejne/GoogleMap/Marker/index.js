@@ -2,7 +2,7 @@
 import React from 'react'
 
 type Props = {
-  numPoints: number
+  numPoints: number,
 }
 
 const Marker = ({numPoints}: Props) => (

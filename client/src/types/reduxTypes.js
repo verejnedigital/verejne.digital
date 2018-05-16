@@ -24,5 +24,5 @@ export type ThunkExtra = {
 export type Thunk = (
   dispatch: Dispatch,
   getState: GetState,
-  extra: ThunkExtra,
+  extra: ThunkExtra
 ) => Promise<void> | void

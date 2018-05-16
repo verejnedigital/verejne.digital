@@ -46,8 +46,8 @@ const getClusters = (mapOptions: MapOptions, entities: Array<Entity>): Array<Clu
 }
 
 const createClusters = (mapOptions: MapOptions, entities: Array<Entity>): Array<MapCluster> => {
-  const clusters = mapOptions.bounds ?
-    getClusters(mapOptions, entities).map(({wx, wy, numPoints, points}, i) => {
+  const clusters = mapOptions.bounds
+    ? getClusters(mapOptions, entities).map(({wx, wy, numPoints, points}, i) => {
       return {
         lat: wy,
         lng: wx,
@@ -55,12 +55,17 @@ const createClusters = (mapOptions: MapOptions, entities: Array<Entity>): Array<
         id: `${i}`,
         points,
       }
-    }) : []
+    })
+    : []
   return clusters
 }
 
 const GoogleMap = ({
-  mapOptions, className, entities, updateMapOptions, initializeGoogleMap,
+  mapOptions,
+  className,
+  entities,
+  updateMapOptions,
+  initializeGoogleMap,
 }: Props) => {
   return (
     <div className="GoogleMapWrapper">
@@ -74,15 +79,11 @@ const GoogleMap = ({
         onChange={updateMapOptions}
         yesIWantToUseGoogleMapApiInternals
       >
-        {
-          map(createClusters(mapOptions, entities), (e, i) => {
-            return (
-              <Marker key={i} lat={e.lat} lng={e.lng} numPoints={e.numPoints} />
-            )
-          })
-        }
+        {map(createClusters(mapOptions, entities), (e, i) => {
+          return <Marker key={i} lat={e.lat} lng={e.lng} numPoints={e.numPoints} />
+        })}
       </GMap>
-    </div >
+    </div>
   )
 }
 
@@ -95,5 +96,5 @@ export default connect(
   {
     initializeGoogleMap,
     updateMapOptions,
-  },
+  }
 )(GoogleMap)

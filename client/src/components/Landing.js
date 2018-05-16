@@ -41,7 +41,11 @@ class Landing extends Component {
         </Col>
         <Col className="col-lg-3 col-md-4 col-sm-6 col-12 card-wrapper">
           <NavLink to="/profil" className="card-link">
-            <Card title="Profil" text="Majetok poslancov podľa priznaní a katastra" imgSrc="search.png" />
+            <Card
+              title="Profil"
+              text="Majetok poslancov podľa priznaní a katastra"
+              imgSrc="search.png"
+            />
           </NavLink>
         </Col>
       </Row>

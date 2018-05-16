@@ -3,7 +3,6 @@ import React, {Component} from 'react'
 import './DetailCadastralLV.css'
 
 class DetailCadastralLV extends Component {
-
   disablePropagation = (event) => {
     event.stopPropagation()
   }
@@ -20,10 +19,15 @@ class DetailCadastralLV extends Component {
             }&cadastralUnitCode=${this.props.lv.cadastralunitcode}&outputType=html`}
             onClick={this.disablePropagation}
           >
-            {this.props.lv.landusename}&nbsp;<i className="fa fa-external-link" aria-hidden="true" />
+            {this.props.lv.landusename}&nbsp;<i
+              className="fa fa-external-link"
+              aria-hidden="true"
+            />
           </a>
           <br />
-          {`${this.props.lv.cadastralunitname}, LV č. ${this.props.lv.foliono}; parcely: ${this.props.lv.parcelno}`}
+          {`${this.props.lv.cadastralunitname}, LV č. ${this.props.lv.foliono}; parcely: ${
+            this.props.lv.parcelno
+          }`}
         </td>
       </tr>
     )
