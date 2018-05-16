@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
-import {keys, descriptions} from '../../constants'
+import {keys, descriptions, COUNTRY_ZOOM, SLOVAKIA_COORDS} from '../../constants'
+import './common.css'
 import './DetailPage.css'
 
 import * as serverAPI from './actions/serverAPI'
@@ -22,7 +23,8 @@ class DetailPage extends Component {
       years: [],
       currentYear: null,
       reportData: {},
-      mapCenter: {lat: 48.6, lng: 19.5},
+      mapCenter: SLOVAKIA_COORDS,
+      zoom: COUNTRY_ZOOM,
     }
   }
 
@@ -52,7 +54,9 @@ class DetailPage extends Component {
   goMap = (parcel) => {
     this.setState({
       mapCenter: {lat: parcel.lat, lng: parcel.lon},
+      zoom: 15,
     })
+    document.getElementById('map').scrollIntoView({behavior: 'smooth'})
   }
 
   static splitAssets(obj, splitStr) {
@@ -190,9 +194,14 @@ class DetailPage extends Component {
       </Row>,
       <Cardboard key="cardboard" politician={this.state.politician} />,
       politician,
-      <Row key="map" className="profile-map">
+      <Row key="map" id="map" className="profile-map">
         <Col>
-          <MapContainer assets={this.state.cadastral} center={this.state.mapCenter} ref="map" />
+          <MapContainer
+            assets={this.state.cadastral}
+            center={this.state.mapCenter}
+            zoom={this.state.zoom}
+            ref="map"
+          />
         </Col>
       </Row>,
     ]
