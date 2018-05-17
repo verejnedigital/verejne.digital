@@ -66,7 +66,8 @@ export type MapReference = any
 export type State = {|
   +count: number,
   +notices: {|
-    +data: NoticeMap,
+    +list: NoticeMap,
+    +details: NoticeMap,
   |},
   entities: Array<Entity>,
   mapOptions: MapOptions,
@@ -76,7 +77,8 @@ export type State = {|
 const getInitialState = (): State => ({
   count: 0,
   notices: {
-    data: {},
+    list: {},
+    details: {},
   },
   mapOptions: {
     center: [48.6, 19.5], // Slovakia

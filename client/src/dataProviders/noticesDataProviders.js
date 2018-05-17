@@ -10,7 +10,7 @@ export const noticesProvider = () => ({
       accept: 'application/json',
     },
   ],
-  onData: [dispatchReceivedData, ['notices', 'data']],
+  onData: [dispatchReceivedData, ['notices', 'list']],
   keepAliveFor: 10 * 60 * 1000,
 })
 
@@ -23,6 +23,6 @@ export const noticeDetailProvider = (id: string) => ({
       accept: 'application/json',
     },
   ],
-  onData: [dispatchReceivedData, ['notices', 'data']],
+  onData: [dispatchReceivedData, ['notices', 'details']],
   keepAliveFor: 60 * 60 * 1000,
 })

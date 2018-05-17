@@ -6,20 +6,20 @@ import {paginationChunkSize} from '../constants'
 import {values} from '../utils'
 
 import type {Location} from 'react-router-dom'
-import type {NoticesOrdering} from '../components/NoticeList'
-import type {NoticeDetailProps} from '../components/NoticeDetail'
+import type {NoticesOrdering} from '../components/Notices/NoticeList'
+import type {NoticeDetailProps} from '../components/Notices/NoticeDetail'
 import type {State, MapOptions, MapReference, Entity} from '../state'
 
 export const noticeDetailSelector = (state: State, props: NoticeDetailProps) =>
-  props.match.params.id && state.notices.data[props.match.params.id]
+  props.match.params.id && state.notices.details[props.match.params.id]
 
 export const dateSortedNoticesSelector = createSelector(
-  (state: State) => state.notices.data,
+  (state: State) => state.notices.list,
   (data) => sortBy(values(data), ['bulletin_year', 'bulletin_month', 'bulletin_day'])
 )
 
 export const nameSortedNoticesSelector = createSelector(
-  (state: State) => state.notices.data,
+  (state: State) => state.notices.list,
   (data) => sortBy(values(data), ['title'])
 )
 

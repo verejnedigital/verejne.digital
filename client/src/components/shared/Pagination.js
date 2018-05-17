@@ -2,7 +2,7 @@
 import React from 'react'
 import {Link} from 'react-router-dom'
 import {Pagination, PaginationItem, PaginationLink} from 'reactstrap'
-import {modifyQuery} from '../utils'
+import {modifyQuery} from '../../utils'
 
 type PaginationProps = {
   maxPage: number,
