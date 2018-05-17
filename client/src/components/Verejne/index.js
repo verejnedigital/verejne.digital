@@ -4,21 +4,61 @@ import GoogleMap from './GoogleMap'
 import './Verejne.css'
 import Legend from './Legend'
 import {Input, ListGroup, ListGroupItem, Badge} from 'reactstrap'
+import {connect} from 'react-redux'
+import {fetchEntities} from '../../actions/verejneActions'
+import {entitiesSelector} from '../../selectors'
+import {compose, lifecycle, branch, renderComponent, withProps, withState} from 'recompose'
+import Loading from '../Loading'
+import {sortBy, chunk, reverse} from 'lodash'
+import {VEREJNE_MAX_PAGE_ITEMS} from '../../constants'
+import Pagination from '../shared/GeneralPagination'
 
-const Verejne = () => (
+import CircleIcon from 'react-icons/lib/fa/circle'
+
+const Verejne = ({entities, fetchEntities, pageCount, currentPage, setCurrentPage}) => (
   <div className="Wrapper">
     <div className="SidePanel">
       <Input type="text" className="FormControl" placeholder="Hľadaj firmu / človeka" />
       <Input type="text" className="FormControl" placeholder="Hľadaj adresu" />
       <ListGroup>
-        <ListGroupItem>
-        Cras justo odio
-          <Badge pill className="SidePanel__List__Item__Badge">14</Badge>
-        </ListGroupItem>
+        {entities.map(({eid, name, size}) => (
+          <ListGroupItem key={eid}>
+            <CircleIcon size="18" color="#0062db" className="SidePanel__List__Item__Icon" />
+            {name}
+            <Badge pill className="SidePanel__List__Item__Badge">{size}</Badge>
+          </ListGroupItem>
+        ))}
       </ListGroup>
+      <Pagination
+        currentPage={currentPage}
+        maxPages={5}
+        pageCount={pageCount}
+        onPaginationClick={setCurrentPage}
+      />
     </div>
     <GoogleMap />
     <Legend />
   </div>
 )
-export default Verejne
+export default compose(
+  connect(
+    (state) => ({
+      entities: entitiesSelector(state),
+    }),
+    {fetchEntities},
+  ),
+  lifecycle({
+    componentDidMount() {
+      this.props.fetchEntities()
+    },
+  }),
+  withState('currentPage', 'setCurrentPage', 1),
+  withProps(({entities, currentPage}) => ({
+    entities: chunk(reverse(sortBy(entities, ['size'])), VEREJNE_MAX_PAGE_ITEMS)[currentPage - 1] || [],
+    pageCount: entities ? Math.ceil(entities.length / VEREJNE_MAX_PAGE_ITEMS) : 0,
+  })),
+  branch(
+    (props) => !props.entities.length,
+    renderComponent(Loading),
+  )
+)(Verejne)

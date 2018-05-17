@@ -15,7 +15,6 @@ import type {Thunk} from '../../../types/reduxTypes'
 
 type Props = {
   mapOptions: MapOptions,
-  className: ?string,
   entities: Array<Entity>,
   updateMapOptions: (mapOptions: MapOptions) => Thunk,
   initializeGoogleMap: (mapReference: MapReference) => Thunk,
@@ -61,7 +60,6 @@ const createClusters = (mapOptions: MapOptions, entities: Array<Entity>): Array<
 
 const GoogleMap = ({
   mapOptions,
-  className,
   entities,
   updateMapOptions,
   initializeGoogleMap,
@@ -70,7 +68,6 @@ const GoogleMap = ({
     <div className="GoogleMapWrapper">
       <GMap
         bootstrapURLKeys={{key: GOOGLE_MAP_API_KEY, language: 'sk', region: 'sk'}}
-        className={className}
         center={mapOptions.center}
         zoom={mapOptions.zoom}
         options={createMapOptions}

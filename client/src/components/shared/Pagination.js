@@ -10,6 +10,7 @@ type PaginationProps = {
   currentQuery: string,
 }
 
+// TODO use general pagination instead
 const CustomPagination = ({maxPage, currentQuery, currentPage}: PaginationProps) => {
   return (
     <Pagination>
