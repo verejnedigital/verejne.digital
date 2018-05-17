@@ -32,7 +32,7 @@ export const forwardReducerTo = <S: Object, T>(reducer: SegmentReducer<S, T>, pa
 export const modifyQuery = (queryObj: Object, newValues: Object) =>
   stringify(Object.assign(queryObj, newValues))
 
-export const normalizeName = (name: string): string =>
+export const normalizeName = (name: string) =>
   name
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')

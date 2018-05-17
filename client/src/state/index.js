@@ -1,5 +1,6 @@
 // @flow
 import {SLOVAKIA_COORDINATES} from '../constants'
+import type {ObjectMap} from '../types/commonTypes'
 
 export type Candidate = {
   id: number,
@@ -31,7 +32,43 @@ export type Notice = {|
   price_avg: number,
 |}
 
-export type NoticeMap = {[string]: Notice}
+export type Politician = {|
+  num_fields_gardens: number,
+  picture: string,
+  surname: string,
+  party_abbreviation: string,
+  firstname: string,
+  title: string,
+  term_finish: number,
+  party_nom: string,
+  num_houses_flats: number,
+  office_name_male: string,
+  num_others: number,
+  term_start: number,
+  office_name_female: string,
+  id: number,
+|}
+
+export type CadastralData = {|
+  lon: number,
+  cadastralunitcode: number,
+  landusename: string,
+  cadastralunitname: string,
+  parcelno: string,
+  lat: number,
+  foliono: number,
+|}
+
+export type AssetDeclaration = {|
+  compensations: ?string,
+  source: string,
+  year: number,
+  offices_other: string,
+  other_income: ?string,
+  income: string,
+  movable_assets: string,
+  unmovable_assets: string,
+|}
 
 export type Entity = {
   eid: string,
@@ -68,8 +105,14 @@ export type MapReference = any
 export type State = {|
   +count: number,
   +notices: {|
-    +list: NoticeMap,
-    +details: NoticeMap,
+    +list: ObjectMap<Notice>,
+    +details: ObjectMap<Notice>,
+  |},
+  +profile: {|
+    +list: ObjectMap<Politician>,
+    +cadastral: ObjectMap<CadastralData>,
+    +assetDeclarations: ObjectMap<AssetDeclaration>,
+    +query: string,
   |},
   entities: Array<Entity>,
   mapOptions: MapOptions,
@@ -81,6 +124,12 @@ const getInitialState = (): State => ({
   notices: {
     list: {},
     details: {},
+  },
+  profile: {
+    list: {},
+    cadastral: {},
+    assetDeclarations: {},
+    query: '',
   },
   mapOptions: {
     center: SLOVAKIA_COORDINATES,
