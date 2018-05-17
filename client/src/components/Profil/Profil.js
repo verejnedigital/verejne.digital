@@ -5,7 +5,7 @@ import PoliticiansList from './components/PoliticiansList'
 import Search from './components/Search'
 import {normalizeName} from '../../utils'
 import {FACEBOOK_LIKE_SRC} from '../../constants'
-import {Row, Col} from 'reactstrap'
+import {Row, Col, Container} from 'reactstrap'
 
 class Profil extends Component {
   constructor(props) {
@@ -45,39 +45,41 @@ class Profil extends Component {
   }
 
   render() {
-    return [
-      <Row tag="header" key="header" className="header profile-header">
-        <Col>
-          <h1 className="title">
-            <span className="bolder">profil</span>.verejne.digital
-          </h1>
-          <h3 className="sub-title">Majetok poslancov podľa priznaní a katastra</h3>
-        </Col>
-      </Row>,
-      <Row key="search" className="profile-search">
-        <Col className="search-form">
-          <Search filterNames={this.filterNames} />
-        </Col>
-      </Row>,
-      <Row key="fb" className="profile-fbframe">
-        <Col>
-          <iframe
-            title="fb_like"
-            src={FACEBOOK_LIKE_SRC}
-            width="201"
-            height="23"
-            className="fbIframe"
-            scrolling="no"
-            frameBorder="0"
-          />
-        </Col>
-      </Row>,
-      <Row tag="article" key="politicians" className="profile">
-        <Col>
-          <PoliticiansList politicians={this.state.politicians} />
-        </Col>
-      </Row>,
-    ]
+    return (
+      <Container className="Profile">
+        <Row tag="header" key="header" className="header profile-header">
+          <Col>
+            <h1 className="title">
+              <span className="bolder">profil</span>.verejne.digital
+            </h1>
+            <h3 className="sub-title">Majetok poslancov podľa priznaní a katastra</h3>
+          </Col>
+        </Row>
+        <Row key="search" className="profile-search">
+          <Col className="search-form">
+            <Search filterNames={this.filterNames} />
+          </Col>
+        </Row>
+        <Row key="fb" className="profile-fbframe">
+          <Col>
+            <iframe
+              title="fb_like"
+              src={FACEBOOK_LIKE_SRC}
+              width="201"
+              height="23"
+              className="fbIframe"
+              scrolling="no"
+              frameBorder="0"
+            />
+          </Col>
+        </Row>
+        <Row tag="article" key="politicians" className="profile">
+          <Col>
+            <PoliticiansList politicians={this.state.politicians} />
+          </Col>
+        </Row>
+      </Container>
+    )
   }
 }
 

@@ -1,5 +1,4 @@
 @import '../variables.scss';
-
 .FormControl {
     margin: 0.4rem 0;
 }
@@ -11,12 +10,17 @@
 }
 
 .SidePanel {
-    width: 325px;
-    height: 100%;
+    width: $verejne-sidebar-width;
     float: left;
     overflow-y: scroll;
-}
-
-.Search {
     padding: 0.2rem;
+    height: calc(100% - #{$navbar-height});
+    position: absolute;
+    &__List {
+        &__Item {
+            &__Badge {
+                float: right;
+            }
+        }
+    }
 }

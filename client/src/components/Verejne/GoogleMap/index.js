@@ -3,7 +3,6 @@ import React from 'react'
 import GMap from 'google-map-react'
 import {map} from 'lodash'
 import Marker from './Marker'
-import classnames from 'classnames'
 import {connect} from 'react-redux'
 import {mapOptionsSelector, mapReferenceSelector, entitiesSelector} from '../../../selectors'
 import {initializeGoogleMap, updateMapOptions} from '../../../actions/verejneActions'
@@ -71,7 +70,7 @@ const GoogleMap = ({
     <div className="GoogleMapWrapper">
       <GMap
         bootstrapURLKeys={{key: GOOGLE_MAP_API_KEY, language: 'sk', region: 'sk'}}
-        className={classnames('GoogleMap', className)}
+        className={className}
         center={mapOptions.center}
         zoom={mapOptions.zoom}
         options={createMapOptions}
@@ -80,7 +79,7 @@ const GoogleMap = ({
         yesIWantToUseGoogleMapApiInternals
       >
         {map(createClusters(mapOptions, entities), (e, i) => {
-          return <Marker key={i} lat={e.lat} lng={e.lng} numPoints={e.numPoints} />
+          return <Marker className={e.numPoints === 1 ? 'SimpleMarker' : 'ClusterMarker'} key={i} lat={e.lat} lng={e.lng} text={e.numPoints} />
         })}
       </GMap>
     </div>
