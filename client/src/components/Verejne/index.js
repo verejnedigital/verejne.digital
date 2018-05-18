@@ -82,10 +82,16 @@ export default compose(
     },
   }),
   withState('currentPage', 'setCurrentPage', 1),
-  withProps(({entities, currentPage}) => ({
-    entities:
-      chunk(reverse(sortBy(entities, ['size'])), VEREJNE_MAX_PAGE_ITEMS)[currentPage - 1] || [],
-    pageCount: entities ? Math.ceil(entities.length / VEREJNE_MAX_PAGE_ITEMS) : 0,
-  })),
-  branch((props) => !props.entities.length, renderComponent(Loading))
+  withProps(({entities, currentPage}) => {
+    let newEntities = entities
+    if (entities && entities.length) newEntities = chunk(reverse(sortBy(entities, ['size'])), VEREJNE_MAX_PAGE_ITEMS)[currentPage - 1]
+    return ({
+      entities: newEntities,
+      pageCount: entities ? Math.ceil(entities.length / VEREJNE_MAX_PAGE_ITEMS) : 0,
+    })
+  }),
+  branch(
+    (props) => !props.entities,
+    renderComponent(Loading),
+  )
 )(Verejne)

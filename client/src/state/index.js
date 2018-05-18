@@ -65,6 +65,7 @@ export type MapOptions = {
 }
 
 export type MapReference = any
+export type Center = {lat: number, lng: number}
 
 export type State = {|
   +count: number,

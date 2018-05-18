@@ -15,7 +15,7 @@ import {isPolitician, hasContractsWithState} from '../entityHelpers'
 import FaIconFilledCircle from 'react-icons/lib/fa/circle'
 import FaIconCircle from 'react-icons/lib/fa/circle-o'
 
-import type {MapOptions, Entity, MapReference} from '../../../state'
+import type {MapOptions, Entity, MapReference, Center} from '../../../state'
 import type {Thunk} from '../../../types/reduxTypes'
 
 type Props = {
@@ -23,6 +23,8 @@ type Props = {
   entities: Array<Entity>,
   updateMapOptions: (mapOptions: MapOptions) => Thunk,
   initializeGoogleMap: (mapReference: MapReference) => Thunk,
+  selectEntity: (entity: Entity) => Thunk,
+  zoomToLocation: (center: Center) => Thunk,
 }
 
 export type Cluster = {
@@ -77,7 +79,6 @@ const getCompanyMarker = (entity) => hasContractsWithState(entity) ? <FaIconFill
 const renderMarkers = (mapOptions, entities, selectEntity, zoomToLocation) => {
   const zoom = mapOptions.zoom
   const clusters = map(createClusters(mapOptions, entities))
-  console.log('xxxxx', clusters)
   if (zoom >= ENTITY_ZOOM) {
     return map(clusters, (e, i) => (
       <Marker
