@@ -6,6 +6,7 @@ import classnames from 'classnames'
 import {withState} from 'recompose'
 import {FACEBOOK_LIKE_SRC} from '../../../constants'
 import './Legend.css'
+import MapIcon from '../mapIcon.svg'
 
 const Legend = ({legendOpen, setLegendOpen}) => (
   <div className={classnames('Legend', {Hidden: !legendOpen})}>
@@ -37,6 +38,14 @@ const Legend = ({legendOpen, setLegendOpen}) => (
     <p>
       <FilledCircleIcon className="Svg Orange" />
       Kontakt s politikou a obchod so štátom
+    </p>
+    <p>
+      <img src={MapIcon} className="MapIconImage" alt="mapIconImage" />
+      Okres / mestská časť
+    </p>
+    <p>
+      <span className="LegendMarker">0</span>
+      <span>Skupina entít</span>
     </p>
   </div>
 )

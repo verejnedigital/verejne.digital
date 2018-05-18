@@ -15,10 +15,10 @@ import Pagination from 'react-js-pagination'
 
 import FilledCircleIcon from 'react-icons/lib/fa/circle'
 import CircleIcon from 'react-icons/lib/fa/circle-o'
-import MapIcon from './GoogleMap/Marker/mapIcon.svg'
+import MapIcon from './mapIcon.svg'
 
 const renderListItemIcon = (entity) => {
-  if (entity.size > 1) return <img src={MapIcon} style={{width: '2rem', height: '2rem'}} />
+  if (entity.size > 1) {return <img src={MapIcon} style={{width: '2rem', height: '2rem'}} alt="listItemIcon" />}
   const color = isPolitician(entity) ? '#e55600' : '#0062db'
   const Icon = hasContractsWithState(entity) ? FilledCircleIcon : CircleIcon
   return <Icon size="18" color={color} className="SidePanel__List__Item__Icon" />
@@ -84,14 +84,15 @@ export default compose(
   withState('currentPage', 'setCurrentPage', 1),
   withProps(({entities, currentPage}) => {
     let newEntities = entities
-    if (entities && entities.length) newEntities = chunk(reverse(sortBy(entities, ['size'])), VEREJNE_MAX_PAGE_ITEMS)[currentPage - 1]
-    return ({
+    if (entities && entities.length) {
+      newEntities = chunk(reverse(sortBy(entities, ['size'])), VEREJNE_MAX_PAGE_ITEMS)[
+        currentPage - 1
+      ]
+    }
+    return {
       entities: newEntities,
       pageCount: entities ? Math.ceil(entities.length / VEREJNE_MAX_PAGE_ITEMS) : 0,
-    })
+    }
   }),
-  branch(
-    (props) => !props.entities,
-    renderComponent(Loading),
-  )
+  branch((props) => !props.entities, renderComponent(Loading))
 )(Verejne)

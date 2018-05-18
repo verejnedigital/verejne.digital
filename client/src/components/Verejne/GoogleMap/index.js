@@ -4,7 +4,12 @@ import GMap from 'google-map-react'
 import Marker from './Marker'
 import {connect} from 'react-redux'
 import {mapOptionsSelector, mapReferenceSelector, entitiesSelector} from '../../../selectors'
-import {initializeGoogleMap, updateMapOptions, selectEntity, zoomToLocation} from '../../../actions/verejneActions'
+import {
+  initializeGoogleMap,
+  updateMapOptions,
+  selectEntity,
+  zoomToLocation,
+} from '../../../actions/verejneActions'
 import {GOOGLE_MAP_CONFIG, createMapOptions, clusterOptions, ENTITY_ZOOM} from '../../../constants'
 import supercluster from 'points-cluster'
 import './GoogleMap.css'
@@ -71,10 +76,14 @@ const createClusters = (mapOptions: MapOptions, entities: Array<Entity>): Array<
 }
 
 const getEntityMarker = (entity): string => {
-  return classnames('CompanyMarker', isPolitician(entity) ? 'CompanyMarker__Politician' : 'CompanyMarker__Normal')
+  return classnames(
+    'CompanyMarker',
+    isPolitician(entity) ? 'CompanyMarker__Politician' : 'CompanyMarker__Normal'
+  )
 }
 
-const getCompanyMarker = (entity) => hasContractsWithState(entity) ? <FaIconFilledCircle size="18" /> : <FaIconCircle size="18" />
+const getCompanyMarker = (entity) =>
+  hasContractsWithState(entity) ? <FaIconFilledCircle size="18" /> : <FaIconCircle size="18" />
 
 const renderMarkers = (mapOptions, entities, selectEntity, zoomToLocation) => {
   const zoom = mapOptions.zoom
@@ -109,7 +118,8 @@ const renderMarkers = (mapOptions, entities, selectEntity, zoomToLocation) => {
           else zoomToLocation({lat: e.lat, lng: e.lng})
         }}
       >
-        {e.numPoints !== 1 && <span className="Marker__Text">{e.numPoints}</span>}</Marker>
+        {e.numPoints !== 1 && <span className="Marker__Text">{e.numPoints}</span>}
+      </Marker>
     ))
   }
 }

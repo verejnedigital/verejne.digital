@@ -6,10 +6,10 @@ import './Marker.css'
 import type {Node} from 'react'
 
 type Props = {
-  title: string,
-  className: string,
+  title?: string,
+  className?: string,
   children?: Node,
-  onClick: () => void,
+  onClick?: () => void,
 }
 
 const Marker = ({className, title, children, onClick}: Props) => (
