@@ -1,6 +1,7 @@
 // @flow
-import {mapReferenceSelector} from '../selectors'
-import {ENTITY_ZOOM, SUB_CITY_ZOOM, CITY_ZOOM} from '../constants'
+import {mapReferenceSelector, zoomSelector} from '../selectors'
+import {ENTITY_ZOOM, SUB_CITY_ZOOM, CITY_ZOOM, ENTITY_CLOSE_ZOOM} from '../constants'
+import {isIndividual} from '../components/Verejne/entityHelpers'
 
 import type {MapReference, MapOptions, Entity, State} from '../state'
 import type {Thunk} from '../types/reduxTypes'
@@ -20,7 +21,7 @@ const customFetch = (url, options) => {
 
 export const getZoomLevel = (mapReference: MapReference): number => {
   const zoom = mapReference.getZoom()
-  return [ENTITY_ZOOM, SUB_CITY_ZOOM, CITY_ZOOM].filter((val) => val >= zoom).length
+  return [ENTITY_ZOOM, SUB_CITY_ZOOM, CITY_ZOOM].filter((val) => val > zoom).length
 }
 
 export const setMapReference = (mapReference: MapReference) => ({
@@ -30,7 +31,7 @@ export const setMapReference = (mapReference: MapReference) => ({
   reducer: (state: State) => mapReference,
 })
 
-export const setEntities = (entities: Array<Entity>) => ({
+export const setEntities = (entities: ?Array<Entity>) => ({
   type: 'Set entities',
   path: ['entities'],
   payload: entities,
@@ -71,6 +72,7 @@ export const fetchEntities = (): Thunk => async (dispatch, getState, {logger}) =
   const req = `${serverURL}getEntities?level=${usedLevel}&lat1=${lat1}&lng1=${lng1}&lat2=${lat2}&lng2=${lng2}${
     restrictToSlovakia ? '&restrictToSlovakia=true' : ''
   }`
+  console.log('REQ', req)
   const entities = await customFetch(req)
   dispatch(
     setEntities(
@@ -94,7 +96,6 @@ export const initializeGoogleMap = (mapReference: MapReference): Thunk => (
 ) => {
   logger.log('Initialize map')
   dispatch(setMapReference(mapReference))
-  dispatch(fetchEntities())
 }
 
 export const updateMapOptions = (mapOptions: MapOptions): Thunk => (
@@ -105,4 +106,33 @@ export const updateMapOptions = (mapOptions: MapOptions): Thunk => (
   logger.log('Update map options')
   dispatch(setMapOptions(mapOptions))
   dispatch(fetchEntities())
+}
+
+export const setMapZoom = (newZoom: number) => ({
+  type: 'Set map zoom',
+  path: ['mapOptions', 'zoom'],
+  payload: newZoom,
+  reducer: () => newZoom,
+})
+
+type Center = {lat: number, lng: number}
+export const setMapCenter = (newCenter: Center) => ({
+  type: 'Set map center',
+  path: ['mapOptions', 'center'],
+  payload: newCenter,
+  reducer: () => newCenter,
+})
+
+export const zoomToLocation = (center: Center): Thunk => (dispatch, getState) => {
+  dispatch(setMapZoom(zoomSelector(getState()) + 1))
+  console.log(center)
+  dispatch(setMapCenter({lat: parseFloat(center.lat), lng: parseFloat(center.lng)}))
+}
+
+export const selectEntity = (entity: Entity): Thunk => (dispatch, getState, {logger}) => {
+  logger.log(`Select entity ${entity.name}`)
+  const zoom = isIndividual(entity.eid) ? ENTITY_CLOSE_ZOOM : ENTITY_ZOOM
+  console.log(entity)
+  dispatch(setMapZoom(zoom))
+  dispatch(setMapCenter({lat: parseFloat(entity.lat), lng: parseFloat(entity.lng)}))
 }

@@ -1,8 +1,9 @@
 export const paginationChunkSize = 10
 export const noticesPaginationSize = 10
-export const ENTITY_ZOOM = 16
-export const SUB_CITY_ZOOM = 13
-export const CITY_ZOOM = 10
+export const ENTITY_CLOSE_ZOOM = 21
+export const ENTITY_ZOOM = 17
+export const SUB_CITY_ZOOM = 14
+export const CITY_ZOOM = 11
 export const COUNTRY_ZOOM = 8
 export const GOOGLE_MAP_API_KEY = 'AIzaSyCAXMlEL-sfzT4jVK5CQHysSPp77JnVLks'
 export const SLOVAKIA_COORDINATES = [48.6, 19.5]
@@ -110,7 +111,7 @@ export const SLOVAKIA_COORDS = {
 
 export const clusterOptions = {
   minZoom: 0,
-  maxZoom: 16,
+  maxZoom: 18,
   radius: 60,
 }
 export const FACEBOOK_LIKE_SRC =

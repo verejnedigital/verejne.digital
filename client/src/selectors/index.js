@@ -70,4 +70,4 @@ export const mapOptionsSelector = (state: State): MapOptions => state.mapOptions
 export const centerSelector = (state: State): [number, number] => state.mapOptions.center
 export const zoomSelector = (state: State): number => state.mapOptions.zoom
 export const mapReferenceSelector = (state: State): MapReference => state.mapReference
-export const entitiesSelector = (state: State): Array<Entity> => state.entities
+export const entitiesSelector = (state: State): ?Array<Entity> => state.entities

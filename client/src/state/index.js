@@ -43,6 +43,7 @@ export type Entity = {
   level: string,
   visible: string,
   ds: string,
+  name: string,
 }
 
 export type GeolocationPoint = {
@@ -71,7 +72,7 @@ export type State = {|
     +list: NoticeMap,
     +details: NoticeMap,
   |},
-  entities: Array<Entity>,
+  entities: ?Array<Entity>,
   mapOptions: MapOptions,
   mapReference: MapReference,
 |}
@@ -88,7 +89,7 @@ const getInitialState = (): State => ({
     bounds: undefined,
   },
   mapReference: undefined,
-  entities: [],
+  entities: undefined,
 })
 
 export default getInitialState
