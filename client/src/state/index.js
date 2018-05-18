@@ -1,4 +1,6 @@
 // @flow
+import {SLOVAKIA_COORDINATES} from '../constants'
+
 export type Candidate = {
   id: number,
   eid: number,
@@ -81,7 +83,7 @@ const getInitialState = (): State => ({
     details: {},
   },
   mapOptions: {
-    center: [48.6, 19.5], // Slovakia
+    center: SLOVAKIA_COORDINATES,
     zoom: 8,
     bounds: undefined,
   },

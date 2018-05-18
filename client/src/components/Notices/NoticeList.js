@@ -38,7 +38,7 @@ const NoticeList = ({
   location,
 }: NoticeListProps) => {
   return (
-    <div>
+    <div style={{textAlign: 'center'}}>
       <div>{newestBulletinDate}</div>
       {paginatedNotices.map((n) => (
         <div key={n.id}>

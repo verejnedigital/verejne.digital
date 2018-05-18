@@ -1,13 +1,18 @@
 // @flow
 import React from 'react'
+import classnames from 'classnames'
+import './Marker.css'
 
 type Props = {
-  numPoints: number,
+  text: string|number,
+  className: string,
 }
 
-const Marker = ({numPoints}: Props) => (
-  <div className="GoogleMap__Marker">
-    <span className="GoogleMap__Marker__Text">{numPoints}</span>
+const Marker = ({text, className}: Props) => (
+  <div className={classnames('Marker', className)}>
+    <span className="Marker__Text">
+      {text}
+    </span>
   </div>
 )
 

@@ -3,6 +3,8 @@ export const ENTITY_ZOOM = 16
 export const SUB_CITY_ZOOM = 13
 export const CITY_ZOOM = 10
 export const GOOGLE_MAP_API_KEY = 'AIzaSyCAXMlEL-sfzT4jVK5CQHysSPp77JnVLks'
+export const SLOVAKIA_COORDINATES = [48.6, 19.5]
+export const VEREJNE_MAX_PAGE_ITEMS = 50
 
 export const createMapOptions = (maps) => {
   return {
