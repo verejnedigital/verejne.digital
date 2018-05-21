@@ -1,13 +1,13 @@
 @import '../../variables.scss';
 .GeneralPagination {
-    justify-content: center;
-    padding: 0.2rem;
-    &__Item {
-        &__Link {
-            color: $blue-color !important;
-            &__Current {
-                background-color: $shadow-color !important;
-            }
-        }
+  justify-content: center;
+  padding: 0.2rem;
+  &__Item {
+    &__Link {
+      color: $blue-color !important;
+      &__Current {
+        background-color: $shadow-color !important;
+      }
     }
+  }
 }

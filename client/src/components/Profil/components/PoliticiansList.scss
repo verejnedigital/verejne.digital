@@ -1,15 +1,15 @@
-@import "../../variables.scss";
+@import '../../variables.scss';
 
 article.profile {
   .table {
-    border-radius:4px;
-    border:2px;
+    border-radius: 4px;
+    border: 2px;
     border-color: $border-color;
     border-style: solid;
     box-shadow: 0 4px 12px 0 $shadow-color;
     line-height: 20px;
 
-    .thumb-photo{
+    .thumb-photo {
       height: 30px;
     }
 

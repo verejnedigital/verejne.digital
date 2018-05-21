@@ -58,12 +58,7 @@ const createClusters = (mapOptions: MapOptions, entities: Array<Entity>): Array<
   return clusters
 }
 
-const GoogleMap = ({
-  mapOptions,
-  entities,
-  updateMapOptions,
-  initializeGoogleMap,
-}: Props) => {
+const GoogleMap = ({mapOptions, entities, updateMapOptions, initializeGoogleMap}: Props) => {
   return (
     <div className="GoogleMapWrapper">
       <GMap
@@ -76,7 +71,15 @@ const GoogleMap = ({
         yesIWantToUseGoogleMapApiInternals
       >
         {map(createClusters(mapOptions, entities), (e, i) => {
-          return <Marker className={e.numPoints === 1 ? 'SimpleMarker' : 'ClusterMarker'} key={i} lat={e.lat} lng={e.lng} text={e.numPoints} />
+          return (
+            <Marker
+              className={e.numPoints === 1 ? 'SimpleMarker' : 'ClusterMarker'}
+              key={i}
+              lat={e.lat}
+              lng={e.lng}
+              text={e.numPoints}
+            />
+          )
         })}
       </GMap>
     </div>

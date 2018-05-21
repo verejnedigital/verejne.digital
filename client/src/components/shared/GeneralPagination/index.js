@@ -13,7 +13,8 @@ type PaginationProps = {
 }
 
 const getPageRange = ({pageShowCount, currentPage, pageCount}) => {
-  const totalButtons = pageShowCount + 2, rangeLimit = pageCount + 2
+  const totalButtons = pageShowCount + 2,
+    rangeLimit = pageCount + 2
   const pageRange = {
     from: currentPage - Math.floor(totalButtons / 2),
     to: currentPage + Math.floor(totalButtons / 2),
@@ -37,29 +38,34 @@ const getNextPage = ({currentPage, page, from, to, pageCount}) => {
 }
 
 const GeneralPagination = ({
-  pageCount, maxPages, currentPage, onPaginationClick,
+  pageCount,
+  maxPages,
+  currentPage,
+  onPaginationClick,
 }: PaginationProps) => {
   const pageShowCount = Math.min(maxPages, pageCount)
   const {from, to} = getPageRange({pageShowCount, currentPage, pageCount})
   return (
     <Pagination className="GeneralPagination">
-      {
-        range(from, to).map((page) => (
-          <PaginationItem
-            key={page}
-            onClick={() => onPaginationClick && onPaginationClick(
-              getNextPage({currentPage, page, from, to, pageCount})
-            )}
+      {range(from, to).map((page) => (
+        <PaginationItem
+          key={page}
+          onClick={() =>
+            onPaginationClick &&
+            onPaginationClick(getNextPage({currentPage, page, from, to, pageCount}))
+          }
+        >
+          <PaginationLink
+            className={classnames('GeneralPagination__Item__Link', {
+              GeneralPagination__Item__Link__Current: page === currentPage,
+            })}
+            previous={page === from}
+            next={page === to - 1}
           >
-            <PaginationLink
-              className={classnames('GeneralPagination__Item__Link', {GeneralPagination__Item__Link__Current: page === currentPage})}
-              previous={page === from} next={page === to - 1}
-            >
-              {page !== from && page !== to - 1 && page}
-            </PaginationLink>
-          </PaginationItem>
-        ))
-      }
+            {page !== from && page !== to - 1 && page}
+          </PaginationLink>
+        </PaginationItem>
+      ))}
     </Pagination>
   )
 }

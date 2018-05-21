@@ -38,7 +38,7 @@
     "build": "npm-run-all build-css build-js",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
-    "fix": "prettier-eslint --write \"src/**/*.{js,jsx,json,css}\"",
+    "fix": "prettier-eslint --write \"src/**/*.{js,jsx,json,scss}\"",
     "build-css": "node-sass-chokidar src/ -o src/",
     "watch-css": "npm run build-css && node-sass-chokidar src/ -o src/ --watch --recursive",
     "flow": "flow"

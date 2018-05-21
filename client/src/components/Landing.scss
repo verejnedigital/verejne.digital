@@ -1,4 +1,4 @@
-@import "./variables.scss";
+@import './variables.scss';
 
 .landing-page {
   @media screen and (min-width: 576px) {
@@ -33,7 +33,7 @@ footer.landing-footer {
     padding-top: 10px;
   }
 
-  .list-inline-item-text~.list-inline-item-text {
+  .list-inline-item-text ~ .list-inline-item-text {
     border-left: 2px solid $card-border;
     padding-left: 0.5rem;
   }

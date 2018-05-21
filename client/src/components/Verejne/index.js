@@ -25,7 +25,9 @@ const Verejne = ({entities, fetchEntities, pageCount, currentPage, setCurrentPag
           <ListGroupItem key={eid}>
             <CircleIcon size="18" color="#0062db" className="SidePanel__List__Item__Icon" />
             {name}
-            <Badge pill className="SidePanel__List__Item__Badge">{size}</Badge>
+            <Badge pill className="SidePanel__List__Item__Badge">
+              {size}
+            </Badge>
           </ListGroupItem>
         ))}
       </ListGroup>
@@ -45,7 +47,7 @@ export default compose(
     (state) => ({
       entities: entitiesSelector(state),
     }),
-    {fetchEntities},
+    {fetchEntities}
   ),
   lifecycle({
     componentDidMount() {
@@ -54,11 +56,9 @@ export default compose(
   }),
   withState('currentPage', 'setCurrentPage', 1),
   withProps(({entities, currentPage}) => ({
-    entities: chunk(reverse(sortBy(entities, ['size'])), VEREJNE_MAX_PAGE_ITEMS)[currentPage - 1] || [],
+    entities:
+      chunk(reverse(sortBy(entities, ['size'])), VEREJNE_MAX_PAGE_ITEMS)[currentPage - 1] || [],
     pageCount: entities ? Math.ceil(entities.length / VEREJNE_MAX_PAGE_ITEMS) : 0,
   })),
-  branch(
-    (props) => !props.entities.length,
-    renderComponent(Loading),
-  )
+  branch((props) => !props.entities.length, renderComponent(Loading))
 )(Verejne)

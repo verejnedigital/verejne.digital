@@ -1,4 +1,4 @@
-@import "../../variables.scss";
+@import '../../variables.scss';
 
 .profile-cardboard {
   text-align: left;
@@ -20,7 +20,7 @@
   }
 
   dt::after {
-    content: ":";
+    content: ':';
   }
 
   .picture {
@@ -29,7 +29,7 @@
     top: -20px;
     right: 50px;
     box-shadow: 0 4px 12px 0 $shadow-color;
-    border: 2px solid $border-color
+    border: 2px solid $border-color;
   }
 
   .bolder {
