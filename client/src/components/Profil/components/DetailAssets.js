@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import './DetailAssets.css'
 import {Table} from 'reactstrap'
+import ExternalLink from 'react-icons/lib/fa/external-link'
 
 class DetailAssetDeclaration extends Component {
   constructor(props) {
@@ -41,7 +42,7 @@ class DetailAssetDeclaration extends Component {
               {title} ({assets.length}) <br />
               <span className="source">zdroj </span>
               <a href={source} target="_BLANK">
-                NRSR <i className="fa fa-external-link" aria-hidden="true" />
+                NRSR <ExternalLink />
               </a>
               <span className="source">{year !== 0 ? `rok ${year}` : ''}</span>
             </th>
