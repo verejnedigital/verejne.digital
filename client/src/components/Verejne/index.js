@@ -11,11 +11,18 @@ import {compose, lifecycle, branch, renderComponent, withProps, withState} from 
 import Loading from '../Loading'
 import {sortBy, chunk, reverse} from 'lodash'
 import {VEREJNE_MAX_PAGE_ITEMS} from '../../constants'
-import Pagination from '../shared/GeneralPagination'
+import Pagination from 'react-js-pagination'
 
 import CircleIcon from 'react-icons/lib/fa/circle'
 
-const Verejne = ({entities, fetchEntities, pageCount, currentPage, setCurrentPage}) => (
+const Verejne = ({
+  entities,
+  entitiesLength,
+  fetchEntities,
+  pageCount,
+  currentPage,
+  setCurrentPage,
+}) => (
   <div className="Wrapper">
     <div className="SidePanel">
       <Input type="text" className="FormControl" placeholder="Hľadaj firmu / človeka" />
@@ -32,10 +39,14 @@ const Verejne = ({entities, fetchEntities, pageCount, currentPage, setCurrentPag
         ))}
       </ListGroup>
       <Pagination
-        currentPage={currentPage}
-        maxPages={5}
-        pageCount={pageCount}
-        onPaginationClick={setCurrentPage}
+        itemClass="page-item"
+        linkClass="page-link"
+        hideNavigation
+        pageRangeDisplayed={pageCount}
+        activePage={currentPage}
+        itemsCountPerPage={VEREJNE_MAX_PAGE_ITEMS}
+        totalItemsCount={entitiesLength}
+        onChange={setCurrentPage}
       />
     </div>
     <GoogleMap />
@@ -46,6 +57,7 @@ export default compose(
   connect(
     (state) => ({
       entities: entitiesSelector(state),
+      entitiesLength: entitiesSelector(state).length,
     }),
     {fetchEntities}
   ),

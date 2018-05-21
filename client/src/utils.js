@@ -28,8 +28,9 @@ export const forwardReducerTo = <S: Object, T>(reducer: SegmentReducer<S, T>, pa
 }
 
 // adds new values to query string, replacing existing ones if needed
-export const modifyQuery = (query: string, newValues: Object) =>
-  stringify(Object.assign(parse(query), newValues))
+// expects the object from selector
+export const modifyQuery = (queryObj: Object, newValues: Object) =>
+  stringify(Object.assign(queryObj, newValues))
 
 export const normalizeName = (name: string): string =>
   name
