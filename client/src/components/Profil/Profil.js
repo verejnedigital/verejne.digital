@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import './Profil.css'
+import './common.css'
 import * as serverAPI from './actions/serverAPI'
 import PoliticiansList from './components/PoliticiansList'
 import Search from './components/Search'

@@ -1,0 +1,21 @@
+@import "../../variables.scss";
+div#map {
+  .map {
+    height: 50vh;
+    width: 100%;
+    padding-bottom: 20px;
+
+    .marker {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: $marker-background;
+      border: 2px solid $marker-border;
+      font-size: 12px;
+      font-weight: bold;
+      color: $marker-text-color;
+      text-align: center;
+      padding-top: 8px;
+    }
+  }
+}

@@ -6,7 +6,7 @@ import Marker from './Marker'
 import {connect} from 'react-redux'
 import {mapOptionsSelector, mapReferenceSelector, entitiesSelector} from '../../../selectors'
 import {initializeGoogleMap, updateMapOptions} from '../../../actions/verejneActions'
-import {GOOGLE_MAP_API_KEY, createMapOptions, clusterOptions} from '../../../constants'
+import {GOOGLE_MAP_CONFIG, createMapOptions, clusterOptions} from '../../../constants'
 import supercluster from 'points-cluster'
 import './GoogleMap.css'
 
@@ -67,7 +67,7 @@ const GoogleMap = ({
   return (
     <div className="GoogleMapWrapper">
       <GMap
-        bootstrapURLKeys={{key: GOOGLE_MAP_API_KEY, language: 'sk', region: 'sk'}}
+        bootstrapURLKeys={GOOGLE_MAP_CONFIG}
         center={mapOptions.center}
         zoom={mapOptions.zoom}
         options={createMapOptions}

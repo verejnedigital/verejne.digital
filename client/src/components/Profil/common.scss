@@ -1,6 +1,10 @@
+@import "../variables.scss";
+
 .profile-header {
   padding: 20px;
+  padding-top: $navbar-height + 20;
   margin-bottom: 0px;
+  text-align: center;
 
   h1.title {
     margin: auto;

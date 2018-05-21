@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
-import {keys, descriptions} from '../../constants'
+import {keys, descriptions, COUNTRY_ZOOM, SLOVAKIA_COORDS} from '../../constants'
+import './common.css'
 import './DetailPage.css'
 
 import * as serverAPI from './actions/serverAPI'
@@ -8,7 +9,7 @@ import DetailCadastralTable from './components/DetailCadastralTable'
 import DetailAsset from './components/DetailAssets'
 import MapContainer from './components/MapContainer'
 import {NavLink} from 'react-router-dom'
-import {Row, Col} from 'reactstrap'
+import {Row, Col, Container} from 'reactstrap'
 
 class DetailPage extends Component {
   constructor(props) {
@@ -22,7 +23,8 @@ class DetailPage extends Component {
       years: [],
       currentYear: null,
       reportData: {},
-      mapCenter: {lat: 48.6, lng: 19.5},
+      mapCenter: SLOVAKIA_COORDS,
+      zoom: COUNTRY_ZOOM,
     }
   }
 
@@ -52,7 +54,9 @@ class DetailPage extends Component {
   goMap = (parcel) => {
     this.setState({
       mapCenter: {lat: parcel.lat, lng: parcel.lon},
+      zoom: 15,
     })
+    document.getElementById('map').scrollIntoView({behavior: 'smooth'})
   }
 
   static splitAssets(obj, splitStr) {
@@ -178,24 +182,31 @@ class DetailPage extends Component {
       </Row>
     ) : null
 
-    return [
-      <Row tag="header" key="title" className="header profile-header">
-        <Col>
-          <h1 className="title">
-            <NavLink to="/profil">
-              <span className="bolder">profil</span>.verejne.digital
-            </NavLink>
-          </h1>
-        </Col>
-      </Row>,
-      <Cardboard key="cardboard" politician={this.state.politician} />,
-      politician,
-      <Row key="map" className="profile-map">
-        <Col>
-          <MapContainer assets={this.state.cadastral} center={this.state.mapCenter} ref="map" />
-        </Col>
-      </Row>,
-    ]
+    return (
+      <Container className="Profile">
+        <Row tag="header" key="title" className="header profile-header">
+          <Col>
+            <h1 className="title">
+              <NavLink to="/profil">
+                <span className="bolder">profil</span>.verejne.digital
+              </NavLink>
+            </h1>
+          </Col>
+        </Row>
+        <Cardboard key="cardboard" politician={this.state.politician} />
+        {politician}
+        <Row key="map" id="map" className="profile-map">
+          <Col>
+            <MapContainer
+              assets={this.state.cadastral}
+              center={this.state.mapCenter}
+              zoom={this.state.zoom}
+              ref="map"
+            />
+          </Col>
+        </Row>
+      </Container>
+    )
   }
 }
 
