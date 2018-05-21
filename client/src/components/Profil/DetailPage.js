@@ -9,7 +9,7 @@ import DetailCadastralTable from './components/DetailCadastralTable'
 import DetailAsset from './components/DetailAssets'
 import MapContainer from './components/MapContainer'
 import {NavLink} from 'react-router-dom'
-import {Row, Col} from 'reactstrap'
+import {Row, Col, Container} from 'reactstrap'
 
 class DetailPage extends Component {
   constructor(props) {
@@ -182,29 +182,31 @@ class DetailPage extends Component {
       </Row>
     ) : null
 
-    return [
-      <Row tag="header" key="title" className="header profile-header">
-        <Col>
-          <h1 className="title">
-            <NavLink to="/profil">
-              <span className="bolder">profil</span>.verejne.digital
-            </NavLink>
-          </h1>
-        </Col>
-      </Row>,
-      <Cardboard key="cardboard" politician={this.state.politician} />,
-      politician,
-      <Row key="map" id="map" className="profile-map">
-        <Col>
-          <MapContainer
-            assets={this.state.cadastral}
-            center={this.state.mapCenter}
-            zoom={this.state.zoom}
-            ref="map"
-          />
-        </Col>
-      </Row>,
-    ]
+    return (
+      <Container className="Profile">
+        <Row tag="header" key="title" className="header profile-header">
+          <Col>
+            <h1 className="title">
+              <NavLink to="/profil">
+                <span className="bolder">profil</span>.verejne.digital
+              </NavLink>
+            </h1>
+          </Col>
+        </Row>
+        <Cardboard key="cardboard" politician={this.state.politician} />
+        {politician}
+        <Row key="map" id="map" className="profile-map">
+          <Col>
+            <MapContainer
+              assets={this.state.cadastral}
+              center={this.state.mapCenter}
+              zoom={this.state.zoom}
+              ref="map"
+            />
+          </Col>
+        </Row>
+      </Container>
+    )
   }
 }
 
