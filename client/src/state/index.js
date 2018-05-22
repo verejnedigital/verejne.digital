@@ -31,6 +31,28 @@ export type Notice = {|
   price_avg: number,
 |}
 
+export type Related = {
+  id: number,
+  eid: number,
+  zrsr_data: Array,
+  company_stats: Array,
+  contracts: Array,
+  new_orsr_data: Array,
+  sponzori_stran_data: Array,
+  related: Array,
+  auditori_data: Array,
+  audiovizfond_data: Array,
+  entities: Array,
+  firmy_data: Array,
+  total_contracts: number,
+  advokati_data: Array,
+  nadacie_data: Array,
+  orsresd_data: Array,
+  politicians_data: Array,
+  stranicke_prispevky_data: Array,
+  uzivatelia_vyhody_ludia_data: Array
+}
+
 export type NoticeMap = {[string]: Notice}
 
 export type Entity = {
