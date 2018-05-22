@@ -1,0 +1,46 @@
+@import '../variables.scss';
+
+.similar-count {
+  background-color: $label-color;
+  color: $component-background;
+  border-radius: 8px;
+  padding-left: 3px;
+  padding-right: 3px;
+  display: inline-block;
+  min-width: 20px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.similarity {
+  color: green;
+  font-weight: lighter;
+}
+
+.similarity-high {
+  font-weight: bold;
+}
+
+.similarity-medium {
+  font-weight: bolder;
+}
+
+.similarity-low {
+  font-weight: normal;
+}
+
+.warning {
+  font-size: 130%;
+}
+
+.warning-1 {
+  color: $warning-1-color;
+}
+
+.warning-2 {
+  color: $warning-1-color;
+}
+
+.warning-3 {
+  color: $warning-1-color;
+}

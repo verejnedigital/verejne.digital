@@ -26,3 +26,16 @@ export const noticeDetailProvider = (id: string) => ({
   onData: [dispatchReceivedData, ['notices', 'details']],
   keepAliveFor: 60 * 60 * 1000,
 })
+
+export const noticeRelatedProvider = (eid: string) => ({
+  ref: `noticeRelated-${eid}`,
+  getData: [
+    fetch,
+    `${process.env.REACT_APP_API_URL || ''}/api/v/getInfo?eid=${eid}`,
+    {
+      accept: 'application/json',
+    },
+  ],
+  onData: [dispatchReceivedData, ['notices', 'related']],
+  keepAliveFor: 60 * 60 * 1000,
+})

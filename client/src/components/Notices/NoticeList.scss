@@ -1,0 +1,56 @@
+@import '../variables.scss';
+
+.notices {
+  padding-top: $navbar-height;
+
+  .sidebar {
+    background-color: $component-background;
+    border-radius: 4px;
+    border-width: 2px;
+    border-color: $border-color;
+    border-style: solid;
+    box-shadow: 0 4px 12px 0 $shadow-color;
+    height: 500px;
+    margin-bottom: 20px;
+
+    .fbfooter {
+      margin-top: auto;
+      padding-top: 20px;
+      padding-bottom: 20px;
+      padding-left: 0;
+
+      .fbIframe {
+        border: none;
+        overflow: hidden;
+      }
+    }
+  }
+
+  .main {
+    background-color: $component-background;
+    border-radius: 4px;
+    border-width: 2px;
+    border-color: $border-color;
+    border-style: solid;
+    box-shadow: 0 4px 12px 0 $shadow-color;
+    margin-bottom: 20px;
+
+    .noticeInfo {
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+
+    .paginationWrapper {
+      margin: auto;
+      width: 20%;
+    }
+
+    tbody > tr > td {
+      border-top: 1px solid lightgray;
+    }
+
+    a {
+      font-weight: bold;
+    }
+  }
+}
