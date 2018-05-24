@@ -132,3 +132,10 @@ export const selectEntity = (entity: Entity): Thunk => (dispatch, getState, {log
   dispatch(setMapZoom(zoom))
   dispatch(setMapCenter({lat: parseFloat(entity.lat), lng: parseFloat(entity.lng)}))
 }
+
+export const setCurrentPage = (newPage: number) => ({
+  type: 'Set current page',
+  path: ['publicly', 'currentPage'],
+  payload: newPage,
+  reducer: () => newPage,
+})

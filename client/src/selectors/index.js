@@ -1,9 +1,9 @@
 // @flow
 import {createSelector} from 'reselect'
-import {sortBy, chunk} from 'lodash'
 import qs from 'qs'
-import {paginationChunkSize} from '../constants'
+import {paginationChunkSize, VEREJNE_MAX_PAGE_ITEMS} from '../constants'
 import {values} from '../utils'
+import {sortBy, chunk, reverse} from 'lodash'
 
 import type {Location} from 'react-router-dom'
 import type {NoticesOrdering} from '../components/Notices/NoticeList'
@@ -71,3 +71,22 @@ export const centerSelector = (state: State): [number, number] => state.mapOptio
 export const zoomSelector = (state: State): number => state.mapOptions.zoom
 export const mapReferenceSelector = (state: State): MapReference => state.mapReference
 export const entitiesSelector = (state: State): ?Array<Entity> => state.entities
+export const currentPageSelector = (state: State): number => state.publicly.currentPage
+
+export const entitiesLengthSelector = createSelector(
+  entitiesSelector,
+  (entities) => (entities ? entities.length : 0)
+)
+
+export const pageCountSelector = createSelector(
+  entitiesSelector,
+  (entities) => (entities ? Math.ceil(entities.length / VEREJNE_MAX_PAGE_ITEMS) : 0)
+)
+
+export const currentPageEntities = createSelector(
+  entitiesSelector,
+  currentPageSelector,
+  (entities, currentPage) => {
+    return chunk(reverse(sortBy(entities, ['size'])), VEREJNE_MAX_PAGE_ITEMS)[currentPage - 1]
+  }
+)

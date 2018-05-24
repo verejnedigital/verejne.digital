@@ -73,6 +73,9 @@ export type State = {|
     +list: NoticeMap,
     +details: NoticeMap,
   |},
+  publicly: {
+    currentPage: number,
+  },
   entities: ?Array<Entity>,
   mapOptions: MapOptions,
   mapReference: MapReference,
@@ -83,6 +86,9 @@ const getInitialState = (): State => ({
   notices: {
     list: {},
     details: {},
+  },
+  publicly: {
+    currentPage: 1,
   },
   mapOptions: {
     center: SLOVAKIA_COORDINATES,
