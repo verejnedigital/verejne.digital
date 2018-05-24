@@ -5,18 +5,19 @@ import './Verejne.css'
 import Legend from './Legend'
 import {Input, ListGroup, ListGroupItem, Badge} from 'reactstrap'
 import {connect} from 'react-redux'
-import {fetchEntities, selectEntity, setCurrentPage} from '../../actions/verejneActions'
+import {selectEntity, setCurrentPage} from '../../actions/verejneActions'
 import {
   currentPageEntities,
   entitiesLengthSelector,
   pageCountSelector,
   currentPageSelector,
 } from '../../selectors'
-import {compose, lifecycle, branch, renderComponent, withProps} from 'recompose'
-import Loading from '../Loading'
+import {compose} from 'recompose'
 import Pagination from 'react-js-pagination'
 import {isPolitician, hasContractsWithState} from './entityHelpers'
 import {VEREJNE_MAX_PAGE_ITEMS, VEREJNE_PAGE_RANGE} from '../../constants'
+import {withDataProviders} from 'data-provider'
+import {entitiesProvider} from '../../dataProviders/publiclyDataProviders'
 
 import FilledCircleIcon from 'react-icons/lib/fa/circle'
 import CircleIcon from 'react-icons/lib/fa/circle-o'
@@ -83,12 +84,7 @@ export default compose(
       currentPage: currentPageSelector(state),
       pageCount: pageCountSelector(state),
     }),
-    {fetchEntities, selectEntity, setCurrentPage}
+    {selectEntity, setCurrentPage}
   ),
-  lifecycle({
-    componentDidMount() {
-      this.props.fetchEntities()
-    },
-  }),
-  branch((props) => !props.entities, renderComponent(Loading))
+  withDataProviders(() => [entitiesProvider()])
 )(Verejne)
