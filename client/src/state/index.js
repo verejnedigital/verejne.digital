@@ -37,12 +37,8 @@ export type Entity = {
   eid: string,
   lng: string,
   lat: string,
-  selected: string,
-  title: string,
   size: string,
-  level: string,
-  visible: string,
-  ds: string,
+  ds: Array<any>,
   name: string,
 }
 

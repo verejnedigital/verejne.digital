@@ -125,3 +125,12 @@ export const descriptions = [
   'ostatné príjmy',
   'počas výkonu verejnej funkcie má tieto funkcie (čl. 7 ods. 1 písm. c) u. z. 357/2004)',
 ]
+
+export const DEFAULT_ENTITIES_REQUEST_PARAMS = {
+  lat1: '47.26036122625137',
+  lng1: '16.53369140625',
+  lat2: '49.90503005077024',
+  lng2: '22.46630859375',
+  restrictToSlovakia: true,
+  usedLevel: 3,
+}

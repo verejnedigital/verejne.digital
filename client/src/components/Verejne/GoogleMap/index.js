@@ -3,7 +3,7 @@ import React from 'react'
 import GMap from 'google-map-react'
 import Marker from './Marker'
 import {connect} from 'react-redux'
-import {mapOptionsSelector, mapReferenceSelector, entitiesSelector} from '../../../selectors'
+import {mapOptionsSelector, entitiesSelector} from '../../../selectors'
 import {
   initializeGoogleMap,
   updateMapOptions,
@@ -16,6 +16,8 @@ import './GoogleMap.css'
 import {sortBy, reverse, map} from 'lodash'
 import classnames from 'classnames'
 import {isPolitician, hasContractsWithState} from '../entityHelpers'
+import {branch, compose, renderComponent} from 'recompose'
+import Loading from '../../Loading'
 
 import FaIconFilledCircle from 'react-icons/lib/fa/circle'
 import FaIconCircle from 'react-icons/lib/fa/circle-o'
@@ -30,6 +32,7 @@ type Props = {
   initializeGoogleMap: (mapReference: MapReference) => Thunk,
   selectEntity: (entity: Entity) => Thunk,
   zoomToLocation: (center: Center) => Thunk,
+  refetch: () => void,
 }
 
 export type Cluster = {
@@ -55,8 +58,8 @@ const getClusters = (mapOptions: MapOptions, entities: Array<Entity>): Array<Clu
   return clusters(mapOptions)
 }
 
-const getClusterTooltip = (entity): string => {
-  const sorted = reverse(sortBy(entity.points, ['size']))
+const getClusterTooltip = (cluster: MapCluster): string => {
+  const sorted = reverse(sortBy(cluster.points, ['size']))
   return sorted[0].name
 }
 
@@ -75,10 +78,10 @@ const createClusters = (mapOptions: MapOptions, entities: Array<Entity>): Array<
   return clusters
 }
 
-const getEntityMarker = (entity): string => {
+const getEntityMarker = (cluster: MapCluster): string => {
   return classnames(
     'CompanyMarker',
-    isPolitician(entity) ? 'CompanyMarker__Politician' : 'CompanyMarker__Normal'
+    isPolitician(cluster.points[0]) ? 'CompanyMarker__Politician' : 'CompanyMarker__Normal'
   )
 }
 
@@ -86,7 +89,6 @@ const getCompanyMarker = (entity) =>
   hasContractsWithState(entity) ? <FaIconFilledCircle size="18" /> : <FaIconCircle size="18" />
 
 const renderMarkers = (mapOptions, entities, selectEntity, zoomToLocation) => {
-  if (!entities) return null
   const zoom = mapOptions.zoom
   const clusters = map(createClusters(mapOptions, entities))
   if (zoom >= ENTITY_ZOOM) {
@@ -102,8 +104,7 @@ const renderMarkers = (mapOptions, entities, selectEntity, zoomToLocation) => {
           else zoomToLocation({lat: e.lat, lng: e.lng})
         }}
       >
-        {e.numPoints !== 1 && <span className="Marker__Text">{e.numPoints}</span>}
-        {e.numPoints === 1 && getCompanyMarker(e)}
+        {e.numPoints === 1 ? getCompanyMarker(e) : <span className="Marker__Text">{e.numPoints}</span>}
       </Marker>
     ))
   } else {
@@ -154,15 +155,19 @@ const GoogleMap = ({
   )
 }
 
-export default connect(
-  (state) => ({
-    mapOptions: mapOptionsSelector(state),
-    entities: entitiesSelector(state),
-  }),
-  {
-    initializeGoogleMap,
-    updateMapOptions,
-    selectEntity,
-    zoomToLocation,
-  }
+export default compose(
+  connect(
+    (state) => ({
+      mapOptions: mapOptionsSelector(state),
+      entities: entitiesSelector(state),
+    }),
+    {
+      initializeGoogleMap,
+      updateMapOptions,
+      selectEntity,
+      zoomToLocation,
+    }
+  ),
+  // will be displayed only on first render
+  branch((props) => !props.entities, renderComponent(Loading))
 )(GoogleMap)

@@ -13,7 +13,7 @@ export const setMapReference = (mapReference: MapReference) => ({
   reducer: (state: State) => mapReference,
 })
 
-export const setEntities = (entities: ?Array<Entity>) => ({
+export const setEntities = (entities: Array<Entity>) => ({
   type: 'Set entities',
   path: ['entities'],
   payload: entities,

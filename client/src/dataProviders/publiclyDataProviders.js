@@ -1,24 +1,25 @@
 // @flow
 import {setEntities} from '../actions/verejneActions'
-import {ENTITY_ZOOM, SUB_CITY_ZOOM, CITY_ZOOM} from '../constants'
+import {ENTITY_ZOOM, SUB_CITY_ZOOM, CITY_ZOOM, DEFAULT_ENTITIES_REQUEST_PARAMS} from '../constants'
 
-import type {MapReference} from '../state'
+import type {MapReference, Entity} from '../state'
+import type {Dispatch} from '../types/reduxTypes'
 
-export const getZoomLevel = (mapReference: MapReference): number => {
+type EntitiesRequestParams = {
+  lat1: number,
+  lng1: number,
+  lat2: number,
+  lng2: number,
+  restrictToSlovakia: boolean,
+  usedLevel: number,
+}
+
+const getZoomLevel = (mapReference: MapReference): number => {
   const zoom = mapReference.getZoom()
   return [ENTITY_ZOOM, SUB_CITY_ZOOM, CITY_ZOOM].filter((val) => val > zoom).length
 }
 
-const DEFAULT_ENTITIES_REQUEST_PARAMS = {
-  lat1: '47.26036122625137',
-  lng1: '16.53369140625',
-  lat2: '49.90503005077024',
-  lng2: '22.46630859375',
-  restrictToSlovakia: true,
-  usedLevel: 3,
-}
-
-const getRequestParams = (mapReference) => {
+const getRequestParams = (mapReference: MapReference): EntitiesRequestParams => {
   let params = DEFAULT_ENTITIES_REQUEST_PARAMS
   if (mapReference) {
     const bounds = mapReference.getBounds()
@@ -36,7 +37,7 @@ const getRequestParams = (mapReference) => {
   return params
 }
 
-const dispatchEntities = () => (ref: string, data, dispatch) =>
+const dispatchEntities = () => (ref: string, data: Array<Entity>, dispatch: Dispatch) =>
   dispatch(
     setEntities(
       data.map(({eid, lat, lng, name, size, ds}) => ({
@@ -50,7 +51,7 @@ const dispatchEntities = () => (ref: string, data, dispatch) =>
     )
   )
 
-export const getEntitiesUrlFromMapReference = (mapReference) => {
+export const getEntitiesUrlFromMapReference = (mapReference: MapReference): string => {
   const {lat1, lng1, lat2, lng2, restrictToSlovakia, usedLevel} = getRequestParams(mapReference)
   const requestPrefix = `${process.env.REACT_APP_API_URL || ''}`
   const restrictToSlovakiaParam = restrictToSlovakia ? '&restrictToSlovakia=true' : ''
@@ -69,7 +70,7 @@ export const entitiesProvider = (mapReference: MapReference) => {
       },
     ],
     onData: [dispatchEntities],
-    keepAliveFor: 1000 * 60 * 600,
+    keepAliveFor: 2000,
     needed: false,
   }
 }

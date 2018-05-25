@@ -23,6 +23,7 @@ import {
   getEntitiesUrlFromMapReference,
 } from '../../dataProviders/publiclyDataProviders'
 import {compose} from 'recompose'
+import classnames from 'classnames'
 
 import FilledCircleIcon from 'react-icons/lib/fa/circle'
 import CircleIcon from 'react-icons/lib/fa/circle-o'
@@ -32,9 +33,11 @@ const renderListItemIcon = (entity) => {
   if (entity.size > 1) {
     return <img src={MapIcon} style={{width: '2rem', height: '2rem'}} alt="listItemIcon" />
   }
-  const color = isPolitician(entity) ? '#e55600' : '#0062db'
+  const color = isPolitician(entity)
+    ? 'SidePanel__List__Item__Icon__Politician'
+    : 'SidePanel__List__Item__Icon__Normal'
   const Icon = hasContractsWithState(entity) ? FilledCircleIcon : CircleIcon
-  return <Icon size="18" color={color} className="SidePanel__List__Item__Icon" />
+  return <Icon size="18" className={classnames('SidePanel__List__Item__Icon', color)} />
 }
 
 // NOTE: there can be multiple points in the map on the same location...

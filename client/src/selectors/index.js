@@ -36,13 +36,6 @@ export const noticesOrderingSelector = createSelector(
   (query): NoticesOrdering => query.ordering || 'date'
 )
 
-// not the most elegant, but presently we need the whole list
-// sorted by date anyway
-export const newestBulletinDateSelector = createSelector(
-  dateSortedNoticesSelector,
-  (notices) => notices[0].bulletin_date
-)
-
 export const paginatedNoticesSelector = createSelector(
   dateSortedNoticesSelector,
   nameSortedNoticesSelector,
@@ -52,6 +45,13 @@ export const paginatedNoticesSelector = createSelector(
     const notices = orderBy === 'title' ? nameSorted : dateSorted
     return chunk(notices, paginationChunkSize)[page - 1]
   }
+)
+
+// not the most elegant, but presently we need the whole list
+// sorted by date anyway
+export const newestBulletinDateSelector = createSelector(
+  dateSortedNoticesSelector,
+  (notices) => notices[0].bulletin_date
 )
 
 // will make more sense once we allow searching on notices
