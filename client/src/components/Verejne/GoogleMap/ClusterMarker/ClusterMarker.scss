@@ -1,0 +1,29 @@
+@import "../../../variables.scss";
+.ClusterMarker {
+    border-radius: 50%;
+    border: 3px solid $cluster-marker-border;
+    background-color: $marker-color;
+    text-align: center;
+    color: $marker-color !important;
+}
+
+.SimpleMarker {
+    background: url('../../mapIcon.svg') no-repeat;
+    background-size: contain;
+}
+
+.CompanyMarker {
+    display: flex;
+    svg {
+        width: 50%;
+        height: 50%;
+        display: flex;
+        margin: auto;
+    }
+    &__Normal svg {
+        color: $marker-color !important;
+    }
+    &__Politician svg {
+        color: $orange-color !important;
+    }
+}

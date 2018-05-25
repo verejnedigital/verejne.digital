@@ -1,54 +1,25 @@
-@import '../../../variables.scss';
+@import "../../../variables.scss";
 .Marker {
-    position: absolute;
-    width: $marker-width;
-    height: $marker-height;
-    left: -$marker-width / 2;
-    top: -$marker-height / 2;
-    text-align: center;
-    cursor: pointer;
-    &__Text {
-        font-size: 0.7rem !important;
-        font-weight: bold;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 100%;
-        height: 100%;
-        color: #fff !important;
-        border-radius: 50%;
-    }
-    &:hover {
-        transform: scale(1.2);
-        transition: 0.2s ease;
-    }
-}
-
-.ClusterMarker {
-    border-radius: 50%;
-    border: 3px solid $cluster-marker-border;
-    background-color: $marker-color;
-    text-align: center;
-    color: $marker-color !important;
-}
-
-.SimpleMarker {
-    background: url('../../mapIcon.svg') no-repeat;
-    background-size: contain;
-}
-
-.CompanyMarker {
+  position: absolute;
+  width: $marker-width;
+  height: $marker-height;
+  left: -$marker-width / 2;
+  top: -$marker-height / 2;
+  text-align: center;
+  cursor: pointer;
+  &__Text {
+    font-size: 0.7rem !important;
+    font-weight: bold;
     display: flex;
-    svg {
-        width: 50%;
-        height: 50%;
-        display: flex;
-        margin: auto;
-    }
-    &__Normal svg {
-        color: $marker-color !important;
-    }
-    &__Politician svg {
-        color: $orange-color !important;
-    }
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    color: #fff !important;
+    border-radius: 50%;
+  }
+  &:hover {
+    transform: scale(1.2);
+    transition: 0.2s ease;
+  }
 }

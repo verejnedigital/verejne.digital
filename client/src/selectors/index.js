@@ -1,9 +1,10 @@
 // @flow
 import {createSelector} from 'reselect'
 import qs from 'qs'
-import {paginationChunkSize, VEREJNE_MAX_PAGE_ITEMS} from '../constants'
+import {paginationChunkSize, VEREJNE_MAX_PAGE_ITEMS, clusterOptions} from '../constants'
 import {values} from '../utils'
-import {sortBy, chunk, reverse} from 'lodash'
+import {sortBy, chunk, reverse, map} from 'lodash'
+import supercluster from 'points-cluster'
 
 import type {Location} from 'react-router-dom'
 import type {NoticesOrdering} from '../components/Notices/NoticeList'
@@ -83,10 +84,53 @@ export const pageCountSelector = createSelector(
   (entities) => (entities ? Math.ceil(entities.length / VEREJNE_MAX_PAGE_ITEMS) : 0)
 )
 
+// TODO performance
 export const currentPageEntities = createSelector(
   entitiesSelector,
   currentPageSelector,
   (entities, currentPage) => {
     return chunk(reverse(sortBy(entities, ['size'])), VEREJNE_MAX_PAGE_ITEMS)[currentPage - 1]
   }
+)
+
+type SuperCluster = {
+  numPoints: number,
+  points: Array<Entity>,
+  wx: number, // weighted cluster center
+  wy: number,
+  x: number, // cluster center
+  y: number,
+  zoom: number,
+}
+
+export type MapCluster = {
+  lat: number,
+  lng: number,
+  numPoints: number,
+  id: string,
+  points: Array<any>,
+}
+
+const getClusters = (mapOptions: MapOptions, entities: ?Array<Entity>): Array<SuperCluster> => {
+  const clusters = supercluster(entities, clusterOptions)
+  return clusters(mapOptions)
+}
+
+const createClusters = (mapOptions: MapOptions, entities: ?Array<Entity>): Array<MapCluster> => {
+  if (!mapOptions.bounds || !entities) return []
+  return getClusters(mapOptions, entities).map(({wx, wy, numPoints, points}, i) => {
+    return {
+      lat: wy,
+      lng: wx,
+      numPoints,
+      id: `${i}`,
+      points,
+    }
+  })
+}
+
+export const clustersSelector = createSelector(
+  mapOptionsSelector,
+  entitiesSelector,
+  (mapOptions, entities) => map(createClusters(mapOptions, entities))
 )

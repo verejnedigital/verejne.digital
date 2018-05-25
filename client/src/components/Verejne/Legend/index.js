@@ -8,7 +8,12 @@ import {FACEBOOK_LIKE_SRC} from '../../../constants'
 import './Legend.css'
 import MapIcon from '../mapIcon.svg'
 
-const Legend = ({legendOpen, setLegendOpen}) => (
+type Props = {
+  legendOpen: boolean,
+  setLegendOpen: (open: boolean) => void,
+}
+
+const Legend = ({legendOpen, setLegendOpen}: Props) => (
   <div className={classnames('Legend', {Hidden: !legendOpen})}>
     <div className="Legend__Header">
       <iframe

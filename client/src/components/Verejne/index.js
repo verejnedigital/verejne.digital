@@ -61,7 +61,7 @@ const Verejne = ({
           <ListGroupItem
             className="SidePanel__List__Item"
             key={e.eid}
-            onClick={() => selectEntity(e)}
+            onClick={selectEntity}
           >
             {renderListItemIcon(e)}
             {e.name}
