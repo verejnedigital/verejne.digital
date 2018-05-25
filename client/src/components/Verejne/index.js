@@ -11,13 +11,18 @@ import {
   entitiesLengthSelector,
   pageCountSelector,
   currentPageSelector,
+  mapReferenceSelector,
 } from '../../selectors'
-import {compose} from 'recompose'
 import Pagination from 'react-js-pagination'
 import {isPolitician, hasContractsWithState} from './entityHelpers'
 import {VEREJNE_MAX_PAGE_ITEMS, VEREJNE_PAGE_RANGE} from '../../constants'
-import {withDataProviders} from 'data-provider'
-import {entitiesProvider} from '../../dataProviders/publiclyDataProviders'
+import {map} from 'lodash'
+import {withDataProviders, withRefetch} from 'data-provider'
+import {
+  entitiesProvider,
+  getEntitiesUrlFromMapReference,
+} from '../../dataProviders/publiclyDataProviders'
+import {compose} from 'recompose'
 
 import FilledCircleIcon from 'react-icons/lib/fa/circle'
 import CircleIcon from 'react-icons/lib/fa/circle-o'
@@ -41,13 +46,15 @@ const Verejne = ({
   setCurrentPage,
   selectEntity,
   entitiesLength,
+  refetch,
+  mapReference,
 }) => (
   <div className="Wrapper">
     <div className="SidePanel">
       <Input type="text" className="FormControl" placeholder="Hľadaj firmu / človeka" />
       <Input type="text" className="FormControl" placeholder="Hľadaj adresu" />
       <ListGroup>
-        {entities.map((e) => (
+        {map(entities, (e) => (
           <ListGroupItem
             className="SidePanel__List__Item"
             key={e.eid}
@@ -72,7 +79,7 @@ const Verejne = ({
         onChange={setCurrentPage}
       />
     </div>
-    <GoogleMap />
+    <GoogleMap refetch={() => refetch(getEntitiesUrlFromMapReference(mapReference))} />
     <Legend />
   </div>
 )
@@ -83,8 +90,10 @@ export default compose(
       entities: currentPageEntities(state),
       currentPage: currentPageSelector(state),
       pageCount: pageCountSelector(state),
+      mapReference: mapReferenceSelector(state),
     }),
     {selectEntity, setCurrentPage}
   ),
-  withDataProviders(() => [entitiesProvider()])
+  withRefetch(),
+  withDataProviders(({mapReference}) => [entitiesProvider(mapReference)])
 )(Verejne)

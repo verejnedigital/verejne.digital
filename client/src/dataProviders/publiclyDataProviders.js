@@ -1,8 +1,8 @@
 // @flow
-import React from 'react'
 import {setEntities} from '../actions/verejneActions'
 import {ENTITY_ZOOM, SUB_CITY_ZOOM, CITY_ZOOM} from '../constants'
-import Loading from '../components/Loading'
+
+import type {MapReference} from '../state'
 
 export const getZoomLevel = (mapReference: MapReference): number => {
   const zoom = mapReference.getZoom()
@@ -36,7 +36,7 @@ const getRequestParams = (mapReference) => {
   return params
 }
 
-const dispatchEntities = () => (ref, data, dispatch) =>
+const dispatchEntities = () => (ref: string, data, dispatch) =>
   dispatch(
     setEntities(
       data.map(({eid, lat, lng, name, size, ds}) => ({
@@ -50,21 +50,26 @@ const dispatchEntities = () => (ref, data, dispatch) =>
     )
   )
 
-export const entitiesProvider = (mapReference) => {
+export const getEntitiesUrlFromMapReference = (mapReference) => {
   const {lat1, lng1, lat2, lng2, restrictToSlovakia, usedLevel} = getRequestParams(mapReference)
   const requestPrefix = `${process.env.REACT_APP_API_URL || ''}`
   const restrictToSlovakiaParam = restrictToSlovakia ? '&restrictToSlovakia=true' : ''
+  return `${requestPrefix}/api/v/getEntities?level=${usedLevel}&lat1=${lat1}&lng1=${lng1}&lat2=${lat2}&lng2=${lng2}${restrictToSlovakiaParam}`
+}
+
+export const entitiesProvider = (mapReference: MapReference) => {
+  const url = getEntitiesUrlFromMapReference(mapReference)
   return {
-    ref: 'publicly',
+    ref: url,
     getData: [
       fetch,
-      `${requestPrefix}/api/v/getEntities?level=${usedLevel}&lat1=${lat1}&lng1=${lng1}&lat2=${lat2}&lng2=${lng2}${restrictToSlovakiaParam}`,
+      url,
       {
         accept: 'application/json',
       },
     ],
     onData: [dispatchEntities],
-    keepAliveFor: 1000,
-    loadingComponent: <Loading />,
+    keepAliveFor: 1000 * 60 * 600,
+    needed: false,
   }
 }

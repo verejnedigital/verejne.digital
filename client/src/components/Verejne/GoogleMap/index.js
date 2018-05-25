@@ -86,6 +86,7 @@ const getCompanyMarker = (entity) =>
   hasContractsWithState(entity) ? <FaIconFilledCircle size="18" /> : <FaIconCircle size="18" />
 
 const renderMarkers = (mapOptions, entities, selectEntity, zoomToLocation) => {
+  if (!entities) return null
   const zoom = mapOptions.zoom
   const clusters = map(createClusters(mapOptions, entities))
   if (zoom >= ENTITY_ZOOM) {
@@ -131,6 +132,7 @@ const GoogleMap = ({
   initializeGoogleMap,
   selectEntity,
   zoomToLocation,
+  refetch,
 }: Props) => {
   return (
     <div className="GoogleMapWrapper">
@@ -140,7 +142,10 @@ const GoogleMap = ({
         zoom={mapOptions.zoom}
         options={createMapOptions}
         onGoogleApiLoaded={({map, maps}) => initializeGoogleMap(map)}
-        onChange={updateMapOptions}
+        onChange={(options) => {
+          refetch()
+          updateMapOptions(options)
+        }}
         yesIWantToUseGoogleMapApiInternals
       >
         {renderMarkers(mapOptions, entities, selectEntity, zoomToLocation)}
@@ -152,7 +157,6 @@ const GoogleMap = ({
 export default connect(
   (state) => ({
     mapOptions: mapOptionsSelector(state),
-    mapReference: mapReferenceSelector(state),
     entities: entitiesSelector(state),
   }),
   {
