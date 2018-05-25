@@ -1,7 +1,8 @@
 // @flow
 import {dispatchReceivedData} from './dataProvidersUtils'
+import {defaultProviderKeepAlive} from '../constants'
+import {loadImageAsync, mappingFn} from '../utils'
 
-// TODO create generic function
 export const politiciansProvider = () => ({
   ref: 'politicians',
   getData: [
@@ -12,10 +13,10 @@ export const politiciansProvider = () => ({
     },
   ],
   onData: [dispatchReceivedData, ['profile', 'list']],
-  keepAliveFor: 10 * 60 * 1000,
+  keepAliveFor: defaultProviderKeepAlive,
 })
 
-export const cadastralInfoProvider = (id: string) => ({
+export const cadastralInfoProvider = (id: string, needed: boolean = true) => ({
   ref: `politician-cadastral-info-${id}`,
   getData: [
     fetch,
@@ -24,8 +25,9 @@ export const cadastralInfoProvider = (id: string) => ({
       accept: 'application/json',
     },
   ],
-  onData: [dispatchReceivedData, ['profile', 'cadastral']],
-  keepAliveFor: 10 * 60 * 1000,
+  onData: [dispatchReceivedData, ['profile', 'cadastral'], mappingFn, 'parcelno', id],
+  keepAliveFor: defaultProviderKeepAlive,
+  needed,
 })
 
 export const detailsProvider = (id: string) => ({
@@ -37,11 +39,11 @@ export const detailsProvider = (id: string) => ({
       accept: 'application/json',
     },
   ],
-  onData: [dispatchReceivedData, ['profile', 'list']],
-  keepAliveFor: 10 * 60 * 1000,
+  onData: [dispatchReceivedData, ['profile', 'details'], mappingFn, undefined, id],
+  keepAliveFor: defaultProviderKeepAlive,
 })
 
-export const assetDeclarationProvider = (id: string) => ({
+export const assetDeclarationProvider = (id: string, needed: boolean = true) => ({
   ref: `asset-declaration-${id}`,
   getData: [
     fetch,
@@ -50,6 +52,19 @@ export const assetDeclarationProvider = (id: string) => ({
       accept: 'application/json',
     },
   ],
-  onData: [dispatchReceivedData, ['profile', 'assetDeclarations']],
-  keepAliveFor: 10 * 60 * 1000,
+  onData: [dispatchReceivedData, ['profile', 'assetDeclarations'], mappingFn, 'year', id],
+  keepAliveFor: defaultProviderKeepAlive,
+  needed,
+})
+
+const imageSrcOnData = (receiveImageSrc: (string) => void) => (ref: string, img: Image) =>
+  receiveImageSrc(img.src)
+
+// attempts to load image, provides src if it exists, otherwise nothing is received
+export const imageSrcProvider = (src: string, receiveImageSrc: (string) => void) => ({
+  ref: `image:${src}`,
+  getData: [loadImageAsync, src],
+  responseHandler: (img: Image) => img,
+  onData: [imageSrcOnData, receiveImageSrc],
+  needed: false,
 })

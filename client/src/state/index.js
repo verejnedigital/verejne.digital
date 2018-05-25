@@ -110,6 +110,7 @@ export type State = {|
   |},
   +profile: {|
     +list: ObjectMap<Politician>,
+    +details: ObjectMap<Politician>,
     +cadastral: ObjectMap<CadastralData>,
     +assetDeclarations: ObjectMap<AssetDeclaration>,
     +query: string,
@@ -127,6 +128,7 @@ const getInitialState = (): State => ({
   },
   profile: {
     list: {},
+    details: {},
     cadastral: {},
     assetDeclarations: {},
     query: '',

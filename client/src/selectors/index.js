@@ -9,6 +9,9 @@ import type {Location} from 'react-router-dom'
 import type {NoticesOrdering} from '../components/Notices/NoticeList'
 import type {NoticeDetailProps} from '../components/Notices/NoticeDetail'
 import type {State, MapOptions, MapReference, Entity} from '../state'
+import type {ParamsIdRoute} from '../types/commonTypes'
+
+export const paramsIdSelector = (_: State, props: ParamsIdRoute) => props.match.params.id
 
 export const noticeDetailSelector = (state: State, props: NoticeDetailProps) =>
   props.match.params.id && state.notices.details[props.match.params.id]

@@ -1,9 +1,38 @@
 // @flow
 import {get, set} from 'lodash'
 import produce from 'immer'
-import {parse, stringify} from 'qs'
+import {stringify, parse} from 'qs'
 
 import type {SegmentReducer, Path} from './types/reduxTypes'
+import type {Location} from 'react-router-dom'
+
+// default behaviour is to map array elements into obj by id
+// and to map single object into {[obj.id]: obj}
+// to map by something different then 'id' prop use mapByProp
+// to give default value to map by if none is available use id param
+// if id is provided with an array, the result is {[providedId]: mappedArrayObj}
+export const mappingFn = (
+  data: Array<Object> | Object,
+  mapByProp: ?string = 'id',
+  id: ?(number | string)
+): Object =>
+  id
+    ? {
+      [id]: Array.isArray(data)
+        ? data.reduce((obj, current) => {
+          obj[current[mapByProp]] = current
+          return obj
+        }, {})
+        : data,
+    }
+    : Array.isArray(data)
+      ? data.reduce((obj, current) => {
+        obj[current[mapByProp]] = current
+        return obj
+      }, {})
+      : {
+        [data[mapByProp]]: data,
+      }
 
 export const immutableSet = (obj: Object, path: ?Path, value: any) =>
   path && path.length
@@ -32,11 +61,31 @@ export const forwardReducerTo = <S: Object, T>(reducer: SegmentReducer<S, T>, pa
 export const modifyQuery = (queryObj: Object, newValues: Object) =>
   stringify(Object.assign(queryObj, newValues))
 
+// qs expects query without the '?' prefix
+export const parseQueryFromLocation = (location: Location) => parse(location.search.slice(1))
+
 export const normalizeName = (name: string) =>
   name
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
     .toLowerCase()
+
+// from https://github.com/mattdesl/promise-cookbook
+export const loadImageAsync = (url) => {
+  return new Promise((resolve, reject) => {
+    const image = new Image()
+
+    image.onload = () => {
+      resolve(image)
+    }
+
+    image.onerror = () => {
+      reject(new Error(`Could not load image at ${url}`))
+    }
+
+    image.src = url
+  })
+}
 
 // https://github.com/facebook/flow/issues/2221#issuecomment-372112477
 // there is no nice way to handle object.values in flow currently - use this instead
