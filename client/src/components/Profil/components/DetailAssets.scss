@@ -1,18 +1,18 @@
-@import "../../variables.scss";
+@import '../../variables.scss';
 
-article.profile{
+article.profile {
   table.assets-declaration {
     border-bottom-style: double;
     width: 100%;
 
     .source {
-    	color: gray;
-    	font-weight: normal;
-    	padding-left: 20px;
+      color: gray;
+      font-weight: normal;
+      padding-left: 20px;
     }
 
     .plot {
-    	max-width: 100%;
+      max-width: 100%;
     }
 
     .asset:hover {

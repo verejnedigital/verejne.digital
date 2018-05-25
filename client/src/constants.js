@@ -1,8 +1,12 @@
 export const paginationChunkSize = 10
+export const noticesPaginationSize = 10
 export const ENTITY_ZOOM = 16
 export const SUB_CITY_ZOOM = 13
 export const CITY_ZOOM = 10
+export const COUNTRY_ZOOM = 8
 export const GOOGLE_MAP_API_KEY = 'AIzaSyCAXMlEL-sfzT4jVK5CQHysSPp77JnVLks'
+export const SLOVAKIA_COORDINATES = [48.6, 19.5]
+export const VEREJNE_MAX_PAGE_ITEMS = 50
 
 export const createMapOptions = (maps) => {
   return {
@@ -91,6 +95,17 @@ export const createMapOptions = (maps) => {
       },
     ],
   }
+}
+
+export const GOOGLE_MAP_CONFIG = {
+  key: GOOGLE_MAP_API_KEY,
+  language: 'sk',
+  region: 'sk',
+}
+
+export const SLOVAKIA_COORDS = {
+  lat: 48.6,
+  lng: 19.5,
 }
 
 export const clusterOptions = {

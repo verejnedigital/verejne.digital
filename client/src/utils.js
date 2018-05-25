@@ -28,15 +28,16 @@ export const forwardReducerTo = <S: Object, T>(reducer: SegmentReducer<S, T>, pa
 }
 
 // adds new values to query string, replacing existing ones if needed
-export const modifyQuery = (query: string, newValues: Object) =>
-  stringify(Object.assign(parse(query), newValues))
+// expects the object from selector
+export const modifyQuery = (queryObj: Object, newValues: Object) =>
+  stringify(Object.assign(queryObj, newValues))
 
-// https://github.com/facebook/flow/issues/2221#issuecomment-372112477
-// there is no nice way to handle object.values in flow currently - use this instead
-export const values = <T>(obj: {[string]: T}): Array<T> => Object.keys(obj).map((k) => obj[k])
-
-export const normalizeName = (name) =>
+export const normalizeName = (name: string): string =>
   name
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
     .toLowerCase()
+
+// https://github.com/facebook/flow/issues/2221#issuecomment-372112477
+// there is no nice way to handle object.values in flow currently - use this instead
+export const values = <T>(obj: {[string]: T}): Array<T> => Object.keys(obj).map((k) => obj[k])

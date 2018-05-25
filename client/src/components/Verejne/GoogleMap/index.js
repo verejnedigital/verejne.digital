@@ -3,11 +3,10 @@ import React from 'react'
 import GMap from 'google-map-react'
 import {map} from 'lodash'
 import Marker from './Marker'
-import classnames from 'classnames'
 import {connect} from 'react-redux'
 import {mapOptionsSelector, mapReferenceSelector, entitiesSelector} from '../../../selectors'
 import {initializeGoogleMap, updateMapOptions} from '../../../actions/verejneActions'
-import {GOOGLE_MAP_API_KEY, createMapOptions, clusterOptions} from '../../../constants'
+import {GOOGLE_MAP_CONFIG, createMapOptions, clusterOptions} from '../../../constants'
 import supercluster from 'points-cluster'
 import './GoogleMap.css'
 
@@ -16,7 +15,6 @@ import type {Thunk} from '../../../types/reduxTypes'
 
 type Props = {
   mapOptions: MapOptions,
-  className: ?string,
   entities: Array<Entity>,
   updateMapOptions: (mapOptions: MapOptions) => Thunk,
   initializeGoogleMap: (mapReference: MapReference) => Thunk,
@@ -60,18 +58,11 @@ const createClusters = (mapOptions: MapOptions, entities: Array<Entity>): Array<
   return clusters
 }
 
-const GoogleMap = ({
-  mapOptions,
-  className,
-  entities,
-  updateMapOptions,
-  initializeGoogleMap,
-}: Props) => {
+const GoogleMap = ({mapOptions, entities, updateMapOptions, initializeGoogleMap}: Props) => {
   return (
     <div className="GoogleMapWrapper">
       <GMap
-        bootstrapURLKeys={{key: GOOGLE_MAP_API_KEY, language: 'sk', region: 'sk'}}
-        className={classnames('GoogleMap', className)}
+        bootstrapURLKeys={GOOGLE_MAP_CONFIG}
         center={mapOptions.center}
         zoom={mapOptions.zoom}
         options={createMapOptions}
@@ -80,7 +71,15 @@ const GoogleMap = ({
         yesIWantToUseGoogleMapApiInternals
       >
         {map(createClusters(mapOptions, entities), (e, i) => {
-          return <Marker key={i} lat={e.lat} lng={e.lng} numPoints={e.numPoints} />
+          return (
+            <Marker
+              className={e.numPoints === 1 ? 'SimpleMarker' : 'ClusterMarker'}
+              key={i}
+              lat={e.lat}
+              lng={e.lng}
+              text={e.numPoints}
+            />
+          )
         })}
       </GMap>
     </div>

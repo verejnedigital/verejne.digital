@@ -23,15 +23,18 @@ export const nameSortedNoticesSelector = createSelector(
   (data) => sortBy(values(data), ['title'])
 )
 
-export const paginationSelector = (_: State, props: {location: Location}): number => {
-  const query = qs.parse(props.location.search)
-  return Number.parseInt(query.page, 10) || 1
-}
+export const locationSearchSelector = (_: State, props: {location: Location}) =>
+  qs.parse(props.location.search.slice(1))
 
-export const noticesOrderingSelector = (_: State, props: {location: Location}): NoticesOrdering => {
-  const query = qs.parse(props.location.search)
-  return query.ordering || 'date'
-}
+export const paginationSelector = createSelector(
+  locationSearchSelector,
+  (query) => Number.parseInt(query.page, 10) || 1
+)
+
+export const noticesOrderingSelector = createSelector(
+  locationSearchSelector,
+  (query): NoticesOrdering => query.ordering || 'date'
+)
 
 // not the most elegant, but presently we need the whole list
 // sorted by date anyway
@@ -51,8 +54,16 @@ export const paginatedNoticesSelector = createSelector(
   }
 )
 
-export const noticesNumPagesSelector = createSelector(dateSortedNoticesSelector, (dateSorted) =>
-  Math.ceil(dateSorted.length / paginationChunkSize)
+// will make more sense once we allow searching on notices
+// (filtered notices will then be the input selector)
+export const noticesLengthSelector = createSelector(
+  dateSortedNoticesSelector,
+  nameSortedNoticesSelector,
+  noticesOrderingSelector,
+  (dateSorted, nameSorted, orderBy, page) => {
+    const notices = orderBy === 'title' ? nameSorted : dateSorted
+    return notices.length
+  }
 )
 
 export const mapOptionsSelector = (state: State): MapOptions => state.mapOptions

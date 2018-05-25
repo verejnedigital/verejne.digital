@@ -2,18 +2,21 @@
 import React from 'react'
 import {compose} from 'redux'
 import {connect} from 'react-redux'
-import {Link} from 'react-router-dom'
+import {Link, withRouter} from 'react-router-dom'
 import {withDataProviders} from 'data-provider'
+import Pagination from 'react-js-pagination'
 import {noticesProvider} from '../../dataProviders/noticesDataProviders'
 import {
   newestBulletinDateSelector,
   paginatedNoticesSelector,
   paginationSelector,
-  noticesNumPagesSelector,
+  noticesLengthSelector,
+  locationSearchSelector,
 } from '../../selectors'
-import Pagination from '../shared/Pagination'
+import {paginationChunkSize, noticesPaginationSize} from '../../constants'
+import {modifyQuery} from '../../utils'
 
-import type {Location, Match} from 'react-router-dom'
+import type {Location, Match, RouterHistory} from 'react-router-dom'
 import type {Dispatch} from '../../types/reduxTypes'
 import type {Notice, State} from '../../state'
 
@@ -24,9 +27,11 @@ export type NoticeListProps = {
   newestBulletinDate: string,
   paginatedNotices: Array<Notice>,
   currentPage: number,
-  numPages: number,
+  noticesLength: number,
   location: Location,
   match: Match,
+  history: RouterHistory,
+  query: Object,
 }
 
 const NoticeList = ({
@@ -34,18 +39,29 @@ const NoticeList = ({
   newestBulletinDate,
   paginatedNotices,
   currentPage,
-  numPages,
+  noticesLength,
   location,
+  history,
+  query,
 }: NoticeListProps) => {
   return (
-    <div>
+    <div style={{textAlign: 'center'}}>
       <div>{newestBulletinDate}</div>
       {paginatedNotices.map((n) => (
         <div key={n.id}>
           <Link to={`/obstaravania/${n.id}`}>{n.title}</Link>
         </div>
       ))}
-      <Pagination maxPage={numPages} currentPage={currentPage} currentQuery={location.search} />
+      <Pagination
+        itemClass="page-item"
+        linkClass="page-link"
+        hideNavigation
+        pageRangeDisplayed={noticesPaginationSize}
+        activePage={currentPage}
+        itemsCountPerPage={paginationChunkSize}
+        totalItemsCount={noticesLength}
+        onChange={(page) => history.push({search: modifyQuery(query, {page})})}
+      />
     </div>
   )
 }
@@ -55,7 +71,9 @@ export default compose(
   connect((state: State, props: NoticeListProps) => ({
     paginatedNotices: paginatedNoticesSelector(state, props),
     currentPage: paginationSelector(state, props),
-    numPages: noticesNumPagesSelector(state, props),
+    noticesLength: noticesLengthSelector(state, props),
     newestBulletinDate: newestBulletinDateSelector(state),
-  }))
+    query: locationSearchSelector(state, props),
+  })),
+  withRouter
 )(NoticeList)
