@@ -1,14 +1,24 @@
 import React, {PureComponent} from 'react'
+import {withRouter} from 'react-router-dom'
 
+import {entitiesFromQuery} from '../../utils/utils'
 import './Search.css'
 
 class Search extends PureComponent {
   constructor(props) {
     super(props)
+    const entities = entitiesFromQuery(props.location.search)
     this.state = {
-      entitySearch1: props.entitySearch1 || '',
-      entitySearch2: props.entitySearch2 || '',
+      entitySearch1: entities.eid1 || '',
+      entitySearch2: entities.eid2 || '',
     }
+  }
+
+  searchConnection = (entitySearch1, entitySearch2) => {
+    if (entitySearch1.trim() === '' || entitySearch2.trim() === '') {
+      return
+    }
+    this.props.history.push(`/prepojenia?eid1=${entitySearch1}&eid2=${entitySearch2}`)
   }
 
   updateInputValue = (e) => {
@@ -18,7 +28,7 @@ class Search extends PureComponent {
   }
 
   searchOnClick = () => {
-    this.props.searchConnection(this.state.entitySearch1, this.state.entitySearch2)
+    this.searchConnection(this.state.entitySearch1, this.state.entitySearch2)
   }
 
   checkEnter = (e) => {
@@ -82,4 +92,4 @@ class Search extends PureComponent {
   }
 }
 
-export default Search
+export default withRouter(Search)

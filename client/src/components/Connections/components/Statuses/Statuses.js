@@ -1,7 +1,7 @@
 // @flow
 import React, {PureComponent} from 'react'
 import EntityWrapper from '../../dataWrappers/EntityWrapper'
-import ConnexionWrapper from '../../dataWrappers/ConnexionWrapper'
+import ConnectionWrapper from '../../dataWrappers/ConnectionWrapper'
 import Alternative from './Alternative'
 
 class Statuses extends PureComponent {
@@ -21,14 +21,14 @@ class Statuses extends PureComponent {
   }
 
   render() {
-    const {entity1, entity2, connexions} = this.props
+    const {entity1, entity2, connections} = this.props
     const {showAlternatives1, showAlternatives2} = this.state
     return (
       <div className="statuses">
-        {connexions &&
-          (connexions.length > 0 ? (
+        {connections &&
+          (connections.length > 0 ? (
             <span id="search-status" className="searchStatus">
-              Dĺžka prepojenia: <strong>{connexions.length - 1}</strong>.&nbsp;
+              Dĺžka prepojenia: <strong>{connections.length - 1}</strong>.&nbsp;
             </span>
           ) : (
             <span id="search-status" className="searchStatus">
@@ -64,4 +64,4 @@ class Statuses extends PureComponent {
   }
 }
 
-export default EntityWrapper(ConnexionWrapper(Statuses))
+export default EntityWrapper(ConnectionWrapper(Statuses))

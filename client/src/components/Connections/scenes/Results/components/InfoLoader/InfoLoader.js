@@ -3,7 +3,7 @@ import {compose} from 'redux'
 import {connect} from 'react-redux'
 import {withDataProviders} from 'data-provider'
 
-import {connexionEntityDetailProvider} from '../../../../../../dataProviders/connexionsDataProviders'
+import {connectionEntityDetailProvider} from '../../../../../../dataProviders/connectionsDataProviders'
 // import Info from '../info/Info'
 import './InfoLoader.css'
 
@@ -22,8 +22,8 @@ const InfoLoader = (props) => (
 )
 
 export default compose(
-  withDataProviders((props) => [connexionEntityDetailProvider(props.eid)]),
+  withDataProviders((props) => [connectionEntityDetailProvider(props.eid)]),
   connect((state, props) => ({
-    data: state.connexions.entityDetails[props.eid].data,
+    data: state.connections.entityDetails[props.eid].data,
   }))
 )(InfoLoader)

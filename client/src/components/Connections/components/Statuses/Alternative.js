@@ -3,13 +3,13 @@ import {compose} from 'redux'
 import {connect} from 'react-redux'
 import {withDataProviders} from 'data-provider'
 
-import {connexionEntityDetailProvider} from '../../../../dataProviders/connexionsDataProviders'
+import {connectionEntityDetailProvider} from '../../../../dataProviders/connectionsDataProviders'
 
 const Alternative = (props) => <span>{props.name}</span>
 
 export default compose(
-  withDataProviders((props) => [connexionEntityDetailProvider(props.eid)]),
+  withDataProviders((props) => [connectionEntityDetailProvider(props.eid)]),
   connect((state, props) => ({
-    name: state.connexions.entityDetails[props.eid].name,
+    name: state.connections.entityDetails[props.eid].name,
   }))
 )(Alternative)

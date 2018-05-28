@@ -89,7 +89,7 @@ const getInitialState = (): State => ({
   },
   mapReference: undefined,
   entities: [],
-  connexions: {
+  connections: {
     entities: {},
     detail: {},
     entityDetails: {},

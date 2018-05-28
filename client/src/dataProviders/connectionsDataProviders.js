@@ -5,30 +5,30 @@ import {receiveData} from '../actions/sharedActions'
 
 const dispatchEntitiesData = (query: string) => (ref: string, data: any, dispatch: Dispatch) => {
   dispatch(
-    receiveData(['connexions', 'entities'], {id: query, eids: data.map(({eid}) => eid)}, ref)
+    receiveData(['connections', 'entities'], {id: query, eids: data.map(({eid}) => eid)}, ref)
   )
 }
 
-const dispatchConnexionData = (eid1: string, eid2: string) => (
+const dispatchConnectionData = (eid1: string, eid2: string) => (
   ref: string,
   data: any,
   dispatch: Dispatch
 ) => {
-  dispatch(receiveData(['connexions', 'detail'], {id: `${eid1}-${eid2}`, ids: data}, ref))
+  dispatch(receiveData(['connections', 'detail'], {id: `${eid1}-${eid2}`, ids: data}, ref))
 }
 
 const dispatchEntityDetailData = (eid: string) => (ref: string, data: any, dispatch: Dispatch) => {
   dispatch(
     receiveData(
-      ['connexions', 'entityDetails'],
+      ['connections', 'entityDetails'],
       {id: eid, name: data.entities[0].entity_name, data},
       ref
     )
   )
 }
 
-export const connexionEntityProvider = (query: string) => ({
-  ref: `connexionEntities-${query}`,
+export const connectionEntityProvider = (query: string) => ({
+  ref: `connectionEntities-${query}`,
   getData: [
     fetch,
     `${process.env.REACT_APP_API_URL || ''}/api/v/searchEntity?text=${query}`,
@@ -40,8 +40,8 @@ export const connexionEntityProvider = (query: string) => ({
   keepAliveFor: 10 * 60 * 1000,
 })
 
-export const connexionEntityDetailProvider = (eid: string) => ({
-  ref: `connexionEntityDetail-${eid}`,
+export const connectionEntityDetailProvider = (eid: string) => ({
+  ref: `connectionEntityDetail-${eid}`,
   getData: [
     fetch,
     `${process.env.REACT_APP_API_URL || ''}/api/v/getInfo?eid=${eid}`,
@@ -53,8 +53,8 @@ export const connexionEntityDetailProvider = (eid: string) => ({
   keepAliveFor: 10 * 60 * 1000,
 })
 
-export const connexionDetailProvider = (eid1: string, eid2: string) => ({
-  ref: `connexion-${eid1}-${eid2}`,
+export const connectionDetailProvider = (eid1: string, eid2: string) => ({
+  ref: `connection-${eid1}-${eid2}`,
   getData: [
     fetch,
     `${process.env.REACT_APP_API_URL || ''}/api/p/connection?eid1=${eid1}&eid2=${eid2}`,
@@ -62,11 +62,11 @@ export const connexionDetailProvider = (eid1: string, eid2: string) => ({
       accept: 'application/json',
     },
   ],
-  onData: [dispatchConnexionData, eid1, eid2],
+  onData: [dispatchConnectionData, eid1, eid2],
   keepAliveFor: 60 * 60 * 1000,
 })
 
-export const connexionSubgraphProvider = (eid1: string, eid2: string) => ({
+export const connectionSubgraphProvider = (eid1: string, eid2: string) => ({
   ref: `connextion-${eid1}-${eid2}`,
   getData: [
     fetch,
@@ -75,6 +75,6 @@ export const connexionSubgraphProvider = (eid1: string, eid2: string) => ({
       accept: 'application/json',
     },
   ],
-  onData: [dispatchReceivedData, ['connexion', 'subgraph']],
+  onData: [dispatchReceivedData, ['connection', 'subgraph']],
   keepAliveFor: 60 * 60 * 1000,
 })
