@@ -9,10 +9,14 @@ export default ({entityName, data}) => (
       <li key={sponzor.strana}>
         <ExternalLink
           url={`http://datanest.fair-play.sk/searches/quick?query_string=${entityName}`}
-          text={[sponzor.strana, ', ', showNumberCurrency(sponzor.hodnota_daru, (sponzor.rok < 2009 ? 'Sk' : '€')), ` (rok ${sponzor.rok})`]}
+          text={[
+            sponzor.strana,
+            ', ',
+            showNumberCurrency(sponzor.hodnota_daru, sponzor.rok < 2009 ? 'Sk' : '€'),
+            ` (rok ${sponzor.rok})`,
+          ]}
         />
       </li>
-    ))
-    }
+    ))}
   </ul>
 )

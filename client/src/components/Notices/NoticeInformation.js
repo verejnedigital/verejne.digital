@@ -9,12 +9,8 @@ export default ({data}) => {
     <tr key={index}>
       <td>
         <div className="media">
-          <div className="mx-2">
-            {item.label}
-          </div>
-          <div className="media-body">
-            {item.body}
-          </div>
+          <div className="mx-2">{item.label}</div>
+          <div className="media-body">{item.body}</div>
         </div>
       </td>
     </tr>
@@ -22,9 +18,7 @@ export default ({data}) => {
 
   return (
     <table className="dataTable table table-responsive">
-      <tbody>
-        {rows}
-      </tbody>
+      <tbody>{rows}</tbody>
     </table>
   )
 }

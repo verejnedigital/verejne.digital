@@ -50,23 +50,27 @@ const NoticeList = ({
   history,
   query,
 }: NoticeListProps) => {
-
   let bulletinTitle = ''
   let items = null
   if (paginatedNotices.length > 0) {
     const firstItem = paginatedNotices[0]
     bulletinTitle = (
       <span>
-        <strong>{newestBulletinDate}</strong> Vestník číslo <ExternalLink
-          url={`https://www.uvo.gov.sk/evestnik?poradie=${firstItem.bulletin_number}&year=${firstItem.bulletin_year}`}
-          text={<strong>{firstItem.bulletin_number}/{firstItem.bulletin_year}</strong>}
+        <strong>{newestBulletinDate}</strong> Vestník číslo{' '}
+        <ExternalLink
+          url={`https://www.uvo.gov.sk/evestnik?poradie=${firstItem.bulletin_number}&year=${
+            firstItem.bulletin_year
+          }`}
+          text={
+            <strong>
+              {firstItem.bulletin_number}/{firstItem.bulletin_year}
+            </strong>
+          }
         />
       </span>
     )
 
-    items = paginatedNotices.map(
-      (item) => <NoticeItem key={item.id} item={item} />,
-    )
+    items = paginatedNotices.map((item) => <NoticeItem key={item.id} item={item} />)
   }
 
   const pagination = (
@@ -91,16 +95,22 @@ const NoticeList = ({
           <div className="fbfooter">
             <Row>
               <Col className="col-sm-offset-2 col-sm-10 col-xs-offset-2 col-xs-10">
-                <iframe src="https://www.facebook.com/plugins/like.php?href=https%3A%2F%2Fwww.facebook.com%2Fverejne.digital&width=111&layout=button_count&action=like&size=small&show_faces=true&share=true&height=46&appId=" width="151" height="23" className="fbIframe" title="facebook" scrolling="no" frameBorder="0" />
+                <iframe
+                  src="https://www.facebook.com/plugins/like.php?href=https%3A%2F%2Fwww.facebook.com%2Fverejne.digital&width=111&layout=button_count&action=like&size=small&show_faces=true&share=true&height=46&appId="
+                  width="151"
+                  height="23"
+                  className="fbIframe"
+                  title="facebook"
+                  scrolling="no"
+                  frameBorder="0"
+                />
               </Col>
             </Row>
           </div>
         </Col>
         <Col tag="article" className="main col-xl-8 offset-xl-1 col-lg-12">
           <Row tag="header">
-            <Col className="noticeInfo text-center">
-              {bulletinTitle}
-            </Col>
+            <Col className="noticeInfo text-center">{bulletinTitle}</Col>
           </Row>
           <Row>
             <Col>
@@ -115,9 +125,7 @@ const NoticeList = ({
                     <td>Pod.</td>
                   </tr>
                 </thead>
-                <tbody>
-                  {items}
-                </tbody>
+                <tbody>{items}</tbody>
               </table>
               {pagination}
             </Col>

@@ -1,5 +1,7 @@
+@import '../../variables.scss';
+
 .result {
-  background-color: #ffffff;
+  background-color: $component-background;
   display: block;
   margin-left: auto;
   margin-right: auto;
@@ -8,23 +10,13 @@
 
   border-radius: 4px;
   border-width: 2px;
-  border-color: #cddae3;
+  border-color: $border-color;
   border-style: solid;
-  box-shadow: 0 4px 12px 0 rgba(187, 198, 206, 0.5);
-}
-
-.infoWrapper:first-of-type > .result > .entityName > .fa-circle:before {
-  content:"\f10c";
-  font-family: FontAwesome;
-}
-
-.infoWrapper:last-of-type > .result > .entityName > .fa-circle:before {
-  content:"\f10c";
-  font-family: FontAwesome;
+  box-shadow: 0 4px 12px 0 $shadow-color;
 }
 
 .entityName {
-  color: #0062db;
+  color: $marker-border;
   font-size: 15px;
   font-weight: 700;
   line-height: 36px;
@@ -42,17 +34,12 @@
   margin-bottom: 5px;
 }
 
-.result strong {
-  color: #6c8294;
-  font-weight: 400;
-}
-
 .relatedHidden {
   float: right;
 }
 
 .table > tbody > tr:first-child > td {
-    border: none;
+  border: none;
 }
 
 .table > tbody > tr > td.sizeCell {
@@ -62,12 +49,12 @@
 
 td.sizeCell > strong {
   padding-right: 5px;
-  color: #333333;
+  color: $link-color;
   font-weight: 700;
 }
 
 .sizeCellArrow {
-  color: #cddae3;
+  color: $border-color;
 }
 
 .showHideBtn {
@@ -84,7 +71,7 @@ td.sizeCell > strong {
 }
 
 .politician {
-  color: #e55600;
+  color: $orange-color;
 }
 
 .infoCloseButton {

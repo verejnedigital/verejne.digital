@@ -14,7 +14,7 @@ export default ({trend}) => {
   return (
     <span>
       &nbsp;(
-      <span title="Oproti predchádzajúcemu roku" className={colorStyle} >
+      <span title="Oproti predchádzajúcemu roku" className={colorStyle}>
         {text}
       </span>
       )
