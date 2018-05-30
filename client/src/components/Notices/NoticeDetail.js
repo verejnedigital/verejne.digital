@@ -36,38 +36,36 @@ const NoticeDetail = ({notice}: NoticeDetailProps) => {
   ]
 
   if (notice.bulletin_date) {
-    const vestnik = (<span>
-      <ExternalLink
-        url={`https://www.uvo.gov.sk/evestnik?poradie=${notice.bulletin_number}&year=${notice.bulletin_year}`}
-        text={`${notice.bulletin_number}/${notice.bulletin_year}`}
-      /> <span className="note">({notice.bulletin_date})</span>
-    </span>
+    const vestnik = (
+      <span>
+        <ExternalLink
+          url={`https://www.uvo.gov.sk/evestnik?poradie=${notice.bulletin_number}&year=${
+            notice.bulletin_year
+          }`}
+          text={`${notice.bulletin_number}/${notice.bulletin_year}`}
+        />{' '}
+        <span className="note">({notice.bulletin_date})</span>
+      </span>
     )
 
-    noticeDetailInformations.push(
-      {
-        label: <span className="my-label">Vestník:</span>,
-        body: vestnik,
-      },
-    )
+    noticeDetailInformations.push({
+      label: <span className="my-label">Vestník:</span>,
+      body: vestnik,
+    })
   }
 
-  noticeDetailInformations.push(
-    {
-      label: <span className="my-label">Vyhlásená cena:</span>,
-      body: showNumberCurrency(notice.price),
-    },
-  )
+  noticeDetailInformations.push({
+    label: <span className="my-label">Vyhlásená cena:</span>,
+    body: showNumberCurrency(notice.price),
+  })
 
   if (notice.price_num >= 5) {
     const upper = showNumberCurrency(getSuspectLevelLimit(notice, 1))
     const lower = showNumberCurrency(getSuspectLevelLimit(notice, -1))
-    noticeDetailInformations.push(
-      {
-        label: <span className="my-label">Náš odhad:</span>,
-        body: [lower, ' - ', upper],
-      },
-    )
+    noticeDetailInformations.push({
+      label: <span className="my-label">Náš odhad:</span>,
+      body: [lower, ' - ', upper],
+    })
   }
 
   return (

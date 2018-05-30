@@ -5,12 +5,16 @@ export default ({item}) => {
   if (item === null) {
     return null
   }
-  let items = <tr><td colSpan={6} className="text-center">Žiadni kandidáti</td></tr>
+  let items = (
+    <tr>
+      <td colSpan={6} className="text-center">
+        Žiadni kandidáti
+      </td>
+    </tr>
+  )
 
   if (item.kandidati.length > 0) {
-    items = item.kandidati.map(
-      (item) => <Company key={item.id} item={item} />,
-    )
+    items = item.kandidati.map((item) => <Company key={item.id} item={item} />)
   }
 
   return [
@@ -27,9 +31,7 @@ export default ({item}) => {
           <td>Pod.</td>
         </tr>
       </thead>
-      <tbody>
-        {items}
-      </tbody>
+      <tbody>{items}</tbody>
     </table>,
   ]
 }

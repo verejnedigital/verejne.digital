@@ -3,7 +3,7 @@ import {Link} from 'react-router-dom'
 import './LegendSymbols.css'
 import {addCommas} from './utilities'
 import {formatSimilarPercent} from './LegendSymbols'
-import CompanyDetails from './CompanyDetails'
+import CompanyDetails from '../shared/CompanyDetails'
 import './NoticeItem.css'
 
 class Company extends Component {
@@ -24,19 +24,29 @@ class Company extends Component {
     return (
       <tr>
         <td>
-          {this.state.showCompanyDetails && item.eid ? ([
-            <a key="close" className="company-link" onClick={() => this.toggleCompanyDetails()}>[-]</a>,
-            <CompanyDetails key="company" eid={item.eid} />,
-          ]
+          {this.state.showCompanyDetails && item.eid ? (
+            [
+              <a key="close" className="company-link" onClick={() => this.toggleCompanyDetails()}>
+                [-]
+              </a>,
+              <CompanyDetails key="company" eid={item.eid} />,
+            ]
           ) : (
-            <a className="company-link" onClick={() => this.toggleCompanyDetails()}>{item.name}</a>
-          )
-          }
+            <a className="company-link" onClick={() => this.toggleCompanyDetails()}>
+              {item.name}
+            </a>
+          )}
         </td>
-        <td><Link to={`/obstaravania/${item.id}`}>{item.title}</Link></td>
+        <td>
+          <Link to={`/obstaravania/${item.id}`}>{item.title}</Link>
+        </td>
         <td>{item.customer}</td>
-        <td className="text-nowrap text-right"><strong>{addCommas(item.price)}</strong></td>
-        <td className="text-center"><span className="similarity">{formatSimilarPercent(Math.round(item.score * 100))}</span></td>
+        <td className="text-nowrap text-right">
+          <strong>{addCommas(item.price)}</strong>
+        </td>
+        <td className="text-center">
+          <span className="similarity">{formatSimilarPercent(Math.round(item.score * 100))}</span>
+        </td>
       </tr>
     )
   }

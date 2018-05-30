@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import CompanyDetails from '../../Notices/CompanyDetails'
+import CompanyDetails from '../CompanyDetails'
 import './RecursiveInfo.css'
 
 class RecursiveInfo extends Component {
@@ -26,10 +26,9 @@ class RecursiveInfo extends Component {
       )
     } else {
       return (
-        <button
-          onClick={this.toggleExtract}
-          className="recursive-info-btn btn btn-link"
-        >{this.props.name}</button>
+        <button onClick={this.toggleExtract} className="recursive-info-btn btn btn-link">
+          {this.props.name}
+        </button>
       )
     }
   }

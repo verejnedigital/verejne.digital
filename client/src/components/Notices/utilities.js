@@ -12,7 +12,11 @@ export function addCommas(nStr) {
 }
 
 export function showNumberCurrency(num, cur = '€') {
-  return <span className="text-nowrap">{addCommas(num)} {cur}</span>
+  return (
+    <span className="text-nowrap">
+      {addCommas(num)} {cur}
+    </span>
+  )
 }
 
 export function icoUrl(ico) {
@@ -21,13 +25,19 @@ export function icoUrl(ico) {
 
 function computeTrend(num, oldNum) {
   if (!isNaN(num) && isFinite(num) && !isNaN(oldNum) && isFinite(oldNum) && oldNum !== 0) {
-    return Math.round(((num - oldNum) * 100) / Math.abs(oldNum))
+    return Math.round((num - oldNum) * 100 / Math.abs(oldNum))
   }
   return 0
 }
 
 function isValidValue(value) {
-  return !(value == null || value === 'null' || value === 'NULL' || value === 'None' || value === 'nezisten')
+  return !(
+    value == null ||
+    value === 'null' ||
+    value === 'NULL' ||
+    value === 'None' ||
+    value === 'nezisten'
+  )
 }
 
 export function isPolitician(entity) {
@@ -35,7 +45,7 @@ export function isPolitician(entity) {
 }
 
 export function getFinancialData(data, ico) {
-  const findata = { }
+  const findata = {}
   if (data.company_stats.length > 0) {
     const companyStats = data.company_stats[0]
     findata.ico = ico
@@ -68,10 +78,18 @@ export function getFinancialData(data, ico) {
 
 export function showDate(dateString) {
   const monthNames = [
-    'január', 'február', 'marec',
-    'apríl', 'máj', 'jún', 'júl',
-    'august', 'september', 'október',
-    'november', 'december',
+    'január',
+    'február',
+    'marec',
+    'apríl',
+    'máj',
+    'jún',
+    'júl',
+    'august',
+    'september',
+    'október',
+    'november',
+    'december',
   ]
 
   const date = new Date(dateString)
@@ -142,7 +160,9 @@ export function getTitle(item) {
   if (item.price && item.price_num && item.price_num >= 5) {
     const lower = expC ** (item.price_avg - 2.576 * item.price_stdev)
     const upper = expC ** (item.price_avg + 2.576 * item.price_stdev)
-    title = `${item.price} (${lower}, ${expC ** item.price_avg}, ${upper}), ${item.price_avg}, ${item.price_stdev})`
+    title = `${item.price} (${lower}, ${expC ** item.price_avg}, ${upper}), ${item.price_avg}, ${
+      item.price_stdev
+    })`
   }
   return title
 }

@@ -1,3 +1,4 @@
+// @flow
 import React from 'react'
 import {compose} from 'redux'
 import {connect} from 'react-redux'
@@ -18,9 +19,7 @@ export type CompanyDetailsProps = {
 }
 
 const CompanyDetails = ({company}: CompanyDetailsProps) => {
-  return (
-    <Info data={company} eid={company.eid} />
-  )
+  return <Info data={company} eid={company.eid} />
 }
 
 export default compose(
