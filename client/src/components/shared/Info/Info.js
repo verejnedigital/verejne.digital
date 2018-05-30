@@ -146,7 +146,7 @@ class Info extends Component {
                       text={showNumberCurrency(zisk)}
                     />
                   </span>
-                  {findata.zisk_trend !== 0 && <Trend trend={findata.zisk_trend} />}
+                  {findata.zisk_trend !== 0 && <Trend trend={8} />}
                 </td>
               </tr>
             )}
@@ -163,7 +163,7 @@ class Info extends Component {
                       text={showNumberCurrency(trzby)}
                     />
                   </span>
-                  {findata.trzby_trend !== 0 && <Trend trend={findata.trzby_trend} />}
+                  {findata.trzby_trend !== 0 && <Trend trend={10} />}
                 </td>
               </tr>
             )}

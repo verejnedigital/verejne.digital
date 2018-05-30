@@ -18,7 +18,7 @@ import type {Location} from 'react-router-dom'
 import type {NoticesOrdering} from '../components/Notices/NoticeList'
 import type {NoticeDetailProps} from '../components/Notices/NoticeDetail'
 
-import type {CompanyDetailsProps} from '../components/Notices/CompanyDetails'
+import type {CompanyDetailsProps} from '../components/shared/CompanyDetails'
 import type {State, MapOptions, Entity, MapBounds} from '../state'
 
 export const noticeDetailSelector = (state: State, props: NoticeDetailProps) =>
