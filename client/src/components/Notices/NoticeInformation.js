@@ -1,6 +1,6 @@
 import React from 'react'
 
-const NoticeInformation = ({data}) => {
+export default ({data}) => {
   if (data === null || data.length === 0) {
     return null
   }
@@ -9,7 +9,7 @@ const NoticeInformation = ({data}) => {
     <tr key={index}>
       <td>
         <div className="media">
-          <div className="media-left">
+          <div className="mx-2">
             {item.label}
           </div>
           <div className="media-body">
@@ -28,5 +28,3 @@ const NoticeInformation = ({data}) => {
     </table>
   )
 }
-
-export default NoticeInformation

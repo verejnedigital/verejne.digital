@@ -31,7 +31,20 @@ export type Notice = {|
   price_avg: number,
 |}
 
-export type Related = {
+export type Entity = {
+  eid: string,
+  lng: string,
+  lat: string,
+  selected: string,
+  title: string,
+  size: string,
+  level: string,
+  visible: string,
+  ds: Array<any>,
+  name: string,
+}
+
+export type Company = {
   id: number,
   eid: number,
   zrsr_data: Array,
@@ -42,7 +55,7 @@ export type Related = {
   related: Array,
   auditori_data: Array,
   audiovizfond_data: Array,
-  entities: Array,
+  entities: Array<Entity>,
   firmy_data: Array,
   total_contracts: number,
   advokati_data: Array,
@@ -55,14 +68,7 @@ export type Related = {
 
 export type NoticeMap = {[string]: Notice}
 
-export type Entity = {
-  eid: string,
-  lng: string,
-  lat: string,
-  size: string,
-  ds: Array<any>,
-  name: string,
-}
+export type CompanyMap = {[string]: Company}
 
 export type GeolocationPoint = {
   lat: number,
@@ -86,6 +92,7 @@ export type Center = {lat: number, lng: number}
 
 export type State = {|
   +count: number,
+  +companies: CompanyMap,
   +notices: {|
     +list: NoticeMap,
     +details: NoticeMap,
@@ -99,6 +106,7 @@ export type State = {|
 
 const getInitialState = (): State => ({
   count: 0,
+  companies: {},
   notices: {
     list: {},
     details: {},

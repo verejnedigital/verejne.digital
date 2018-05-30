@@ -18,14 +18,15 @@ import type {Location} from 'react-router-dom'
 import type {NoticesOrdering} from '../components/Notices/NoticeList'
 import type {NoticeDetailProps} from '../components/Notices/NoticeDetail'
 
-import type {NoticeRelatedProps} from '../components/Notices/NoticeRelated'
+import type {CompanyDetailsProps} from '../components/Notices/CompanyDetails'
 import type {State, MapOptions, Entity, MapBounds} from '../state'
 
 export const noticeDetailSelector = (state: State, props: NoticeDetailProps) =>
   props.match.params.id && state.notices.details[props.match.params.id]
 
-export const noticeRelatedSelector = (state: State, props: NoticeRelatedProps) =>
-  props.match.params.eid && state.notices.details[props.match.params.eid]
+export const companyDetailsSelector = (state: State, props: CompanyDetailsProps) => {
+  return props.eid && state.companies[props.eid]
+}
 
 export const dateSortedNoticesSelector = createSelector(
   (state: State) => state.notices.list,

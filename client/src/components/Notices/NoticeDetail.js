@@ -5,11 +5,12 @@ import {connect} from 'react-redux'
 import {withDataProviders} from 'data-provider'
 import {noticeDetailProvider} from '../../dataProviders/noticesDataProviders'
 import {noticeDetailSelector} from '../../selectors'
-import TabLink from './Helpers/ExternalLink'
+import ExternalLink from '../shared/ExternalLink'
 import {getSuspectLevelLimit, showNumberCurrency} from './utilities'
-import DetailList from './DetailList'
+import CompaniesTable from './CompaniesTable'
 import './NoticeDetail.css'
 import NoticeInformation from './NoticeInformation'
+import {Container, Row, Col} from 'reactstrap'
 
 import type {Notice, State} from '../../state'
 
@@ -23,8 +24,7 @@ export type NoticeDetailProps = {
 }
 
 const NoticeDetail = ({notice}: NoticeDetailProps) => {
-
-  const headerData = [
+  const noticeDetailInformations = [
     {
       label: <span className="my-label">Popis:</span>,
       body: notice.text,
@@ -37,14 +37,14 @@ const NoticeDetail = ({notice}: NoticeDetailProps) => {
 
   if (notice.bulletin_date) {
     const vestnik = (<span>
-      <TabLink
+      <ExternalLink
         url={`https://www.uvo.gov.sk/evestnik?poradie=${notice.bulletin_number}&year=${notice.bulletin_year}`}
         text={`${notice.bulletin_number}/${notice.bulletin_year}`}
       /> <span className="note">({notice.bulletin_date})</span>
     </span>
     )
 
-    headerData.push(
+    noticeDetailInformations.push(
       {
         label: <span className="my-label">Vestník:</span>,
         body: vestnik,
@@ -52,7 +52,7 @@ const NoticeDetail = ({notice}: NoticeDetailProps) => {
     )
   }
 
-  headerData.push(
+  noticeDetailInformations.push(
     {
       label: <span className="my-label">Vyhlásená cena:</span>,
       body: showNumberCurrency(notice.price),
@@ -62,7 +62,7 @@ const NoticeDetail = ({notice}: NoticeDetailProps) => {
   if (notice.price_num >= 5) {
     const upper = showNumberCurrency(getSuspectLevelLimit(notice, 1))
     const lower = showNumberCurrency(getSuspectLevelLimit(notice, -1))
-    headerData.push(
+    noticeDetailInformations.push(
       {
         label: <span className="my-label">Náš odhad:</span>,
         body: [lower, ' - ', upper],
@@ -71,26 +71,23 @@ const NoticeDetail = ({notice}: NoticeDetailProps) => {
   }
 
   return (
-    <div>
-      <div className="row">
-        <div className="col-sm-12 col-xs-12">
+    <Container tag="article" className="container-fluid notice-detail">
+      <Row>
+        <Col className="col-sm-12 col-xs-12">
           <h3 className="title">{notice.title}</h3>
-        </div>
-      </div>
-      <div className="row">
-        <div className="col-sm-12 col-xs-12">
-          <div className="section">
-            <NoticeInformation data={headerData} />
-          </div>
-          <div className="connectLine" />
-        </div>
-      </div>
-      <div className="row">
-        <div className="col-sm-12 col-xs-12">
-          <DetailList item={notice} />
-        </div>
-      </div>
-    </div>
+        </Col>
+      </Row>
+      <Row>
+        <Col tag="section" className="col-sm-12 col-xs-12">
+          <NoticeInformation data={noticeDetailInformations} />
+        </Col>
+      </Row>
+      <Row>
+        <Col tag="section" className="col-sm-12 col-xs-12">
+          <CompaniesTable item={notice} />
+        </Col>
+      </Row>
+    </Container>
   )
 }
 

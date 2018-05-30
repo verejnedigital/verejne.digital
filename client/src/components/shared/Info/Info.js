@@ -1,11 +1,16 @@
 import React, {Component} from 'react'
-import StranickePrispevky from './StranickePrispevky'
-import SponzorstvoStran from './SponzorstvoStran'
-import Vztahy from './Vztahy'
-import Zmluvy from './Zmluvy'
-import ShowTrend from './ShowTrend'
-import ExternalLink from './ExternalLink'
-import {getFinancialData, extractIco, icoUrl, showNumberCurrency, showDate, isPolitician} from '../utilities'
+import DonationsToParties from './DonationsToParties'
+import SponsorshipsOfParties from './SponsorshipsOfParties'
+import Relations from './Relations'
+import Contracts from './Contracts'
+import Trend from './Trend'
+import ExternalLink from '../ExternalLink'
+import {getFinancialData, extractIco, icoUrl, showNumberCurrency, showDate, isPolitician} from '../../Notices/utilities'
+import Circle from 'react-icons/lib/fa/circle-o'
+import MapMarker from 'react-icons/lib/fa/map-marker'
+import ChevronUp from 'react-icons/lib/fa/chevron-up'
+import ChevronDown from 'react-icons/lib/fa/chevron-down'
+import {Link} from 'react-router-dom'
 import './Info.css'
 
 class Info extends Component {
@@ -37,13 +42,11 @@ class Info extends Component {
     const trzby = findata.hasOwnProperty('trzby16') ? findata.trzby16 : findata.trzby15
     return (
       <div className="result">
-        {this.props.onClose && <i className="fa fa-close infoCloseButton" aria-hidden="true" onClick={this.props.onClose} />}
         <span className="entityName">
-          <i className={`fa fa-circle${isPolitician(data) ? ' politician' : ''}`} aria-hidden="true" />&nbsp;
-          {entity.entity_name}&nbsp;
-          <a title="Zobraz na mape" target="_blank" rel="noopener noreferrer" href={`https://verejne.digital/index.html?zobraz&${entity.lat}&${entity.lng}&${eid}&`}>
-            <i className="fa fa-map-marker" aria-hidden="true" />
-          </a>
+          <span className={`${isPolitician(data) ? 'politician' : ''}`}>
+            <Circle aria-hidden="true" />&nbsp;{entity.entity_name}&nbsp;
+          </span>
+          <Link to={`/verejne/${entity.lat}&${entity.lng}&${eid}&`}><MapMarker aria-hidden="true" /></Link>
         </span>
         <hr />
         <table className="infoDataTable table table-condensed">
@@ -127,9 +130,7 @@ class Info extends Component {
                     />
                   </span>
                   {findata.zisk_trend !== 0 &&
-                    <span title="Trend">
-                      &nbsp;(<ShowTrend trend={findata.zisk_trend} isMapView={false} />)
-                    </span>
+                    <Trend trend={findata.zisk_trend} />
                   }
                 </td>
               </tr>
@@ -145,9 +146,7 @@ class Info extends Component {
                     />
                   </span>
                   {findata.trzby_trend !== 0 &&
-                    <span title="Trend">
-                      &nbsp;(<ShowTrend trend={findata.trzby_trend} isMapView={false} />)
-                    </span>
+                    <Trend trend={findata.trzby_trend} />
                   }
                 </td>
               </tr>
@@ -200,7 +199,7 @@ class Info extends Component {
             {data.sponzori_stran_data.length >= 1 &&
               <tr>
                 <td colSpan="2"><strong>Stranícke príspevky:</strong>
-                  <SponzorstvoStran
+                  <SponsorshipsOfParties
                     entityName={entity.entity_name}
                     data={data.sponzori_stran_data}
                   />
@@ -210,7 +209,7 @@ class Info extends Component {
             {data.stranicke_prispevky_data.length >= 1 &&
               <tr>
                 <td colSpan="2"><strong>Stranícke príspevky:</strong>
-                  <StranickePrispevky
+                  <DonationsToParties
                     entityName={entity.entity_name}
                     data={data.stranicke_prispevky_data}
                   />
@@ -238,18 +237,18 @@ class Info extends Component {
                 </td>
                 <td className="sizeCell">
                   <strong>{data.related.length}</strong>
-                  <i
-                    className={this.state.showRelated ? 'fa fa-chevron-up sizeCellArrow' : 'fa fa-chevron-down sizeCellArrow'}
-                    onClick={this.showHideRelated}
-                    aria-hidden="true"
-                  />
+                  {this.state.showRelated ? (
+                    <ChevronUp className="sizeCellArrow" onClick={this.showHideRelated} aria-hidden="true" />
+                  ) : (
+                    <ChevronDown className="sizeCellArrow" onClick={this.showHideRelated} aria-hidden="true" />
+                  ) }
                 </td>
               </tr>
             }
             {data.related.length >= 1 && this.state.showRelated &&
               <tr className="noBorder">
                 <td colSpan="2">
-                  <Vztahy
+                  <Relations
                     data={data.related}
                   />
                 </td>
@@ -265,20 +264,19 @@ class Info extends Component {
                 </td>
                 <td className="sizeCell">
                   <strong>{data.contracts.length}</strong>
-                  <i
-                    className={this.state.showContracts ? 'fa fa-chevron-up sizeCellArrow' : 'fa fa-chevron-down sizeCellArrow'}
-                    onClick={this.showHideContracts}
-                    aria-hidden="true"
-                  />
+                  {this.state.showContracts ? (
+                    <ChevronUp className="sizeCellArrow" onClick={this.showHideContracts} aria-hidden="true" />
+                  ) : (
+                    <ChevronDown className="sizeCellArrow" onClick={this.showHideContracts} aria-hidden="true" />
+                  ) }
                 </td>
               </tr>
             }
-            { data.contracts.length >= 1 && this.state.showContracts &&
+            {data.contracts.length >= 1 && this.state.showContracts &&
               <tr className="noBorder">
                 <td colSpan="2">
-                  <Zmluvy
+                  <Contracts
                     data={data.contracts}
-                    isMapView={false}
                   />
                 </td>
               </tr>
