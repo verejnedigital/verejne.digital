@@ -21,7 +21,7 @@ import type {Dispatch} from '../../types/reduxTypes'
 import type {Notice, State} from '../../state'
 
 import Legend from './Legend'
-import ExternalLink from './Helpers/ExternalLink'
+import ExternalLink from '../shared/ExternalLink'
 import NoticeItem from './NoticeItem'
 import {Row, Col, Container} from 'reactstrap'
 import './NoticeList.css'
@@ -91,7 +91,7 @@ const NoticeList = ({
           <div className="fbfooter">
             <Row>
               <Col className="col-sm-offset-2 col-sm-10 col-xs-offset-2 col-xs-10">
-                <iframe src="https://www.facebook.com/plugins/like.php?href=https%3A%2F%2Fwww.facebook.com%2Fverejne.digital&width=111&layout=button_count&action=like&size=small&show_faces=true&share=true&height=46&appId=" width="151" height="23" className="fbIframe" scrolling="no" frameBorder="0" />
+                <iframe src="https://www.facebook.com/plugins/like.php?href=https%3A%2F%2Fwww.facebook.com%2Fverejne.digital&width=111&layout=button_count&action=like&size=small&show_faces=true&share=true&height=46&appId=" width="151" height="23" className="fbIframe" title="facebook" scrolling="no" frameBorder="0" />
               </Col>
             </Row>
           </div>

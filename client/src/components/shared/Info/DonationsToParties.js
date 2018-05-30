@@ -1,13 +1,13 @@
 import React from 'react'
-import TabLink from './ExternalLink'
-import {showNumberCurrency} from '../utilities'
+import ExternalLink from '../ExternalLink'
+import {showNumberCurrency} from '../../Notices/utilities'
+import './InfoList.css'
 
-const StranickePrispevky = ({entityName, data}) => (
-  <ul className="sponzorList">
+export default ({entityName, data, a}) => (
+  <ul className="contractList list-unstyled">
     {data.map((sponzor) => (
       <li key={sponzor.strana}>
-        <TabLink
-          isMapView={false}
+        <ExternalLink
           url={`http://datanest.fair-play.sk/searches/quick?query_string=${entityName}`}
           text={[sponzor.strana, ', ', showNumberCurrency(sponzor.vyska_prispevku, sponzor.mena), ` (rok ${sponzor.rok})`]}
         />
@@ -16,5 +16,3 @@ const StranickePrispevky = ({entityName, data}) => (
     }
   </ul>
 )
-
-export default StranickePrispevky

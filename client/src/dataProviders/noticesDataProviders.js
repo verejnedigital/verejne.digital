@@ -1,5 +1,15 @@
 // @flow
 import {dispatchReceivedData} from './dataProvidersUtils'
+import {receiveCompanyDetails} from '../actions/noticesActions'
+import type {Dispatch, Path} from '../types/reduxTypes'
+
+const dispatchReceivedCompanyDetails = (path: Path, eid: string) => (
+  ref: string,
+  data: any,
+  dispatch: Dispatch
+) => {
+  dispatch(receiveCompanyDetails(path, data, ref, eid))
+}
 
 export const noticesProvider = () => ({
   ref: 'notices',
@@ -27,8 +37,8 @@ export const noticeDetailProvider = (id: string) => ({
   keepAliveFor: 60 * 60 * 1000,
 })
 
-export const noticeRelatedProvider = (eid: string) => ({
-  ref: `noticeRelated-${eid}`,
+export const companyDetailsProvider = (eid: string) => ({
+  ref: `companyDetails-${eid}`,
   getData: [
     fetch,
     `${process.env.REACT_APP_API_URL || ''}/api/v/getInfo?eid=${eid}`,
@@ -36,6 +46,6 @@ export const noticeRelatedProvider = (eid: string) => ({
       accept: 'application/json',
     },
   ],
-  onData: [dispatchReceivedData, ['notices', 'related']],
+  onData: [dispatchReceivedCompanyDetails, ['companies'], eid],
   keepAliveFor: 60 * 60 * 1000,
 })
