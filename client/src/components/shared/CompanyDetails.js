@@ -11,11 +11,7 @@ import type {Company, State} from '../../state'
 
 export type CompanyDetailsProps = {
   company: Company,
-  match: {
-    params: {
-      eid: string,
-    },
-  },
+  eid: string,
 }
 
 const CompanyDetails = ({company}: CompanyDetailsProps) => {
@@ -24,7 +20,7 @@ const CompanyDetails = ({company}: CompanyDetailsProps) => {
 
 export default compose(
   withDataProviders((props: CompanyDetailsProps) => {
-    return [companyDetailsProvider(props.eid)] //props.match not working, there is something wrong
+    return [companyDetailsProvider(props.eid)]
   }),
   connect((state: State, props: CompanyDetailsProps) => ({
     company: companyDetailsSelector(state, props),
