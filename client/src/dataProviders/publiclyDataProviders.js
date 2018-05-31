@@ -70,7 +70,7 @@ export const entitiesProvider = (mapReference: MapReference) => {
       },
     ],
     onData: [dispatchEntities],
-    keepAliveFor: 2000,
+    keepAliveFor: 60 * 60 * 1000,
     needed: false,
   }
 }

@@ -2,48 +2,31 @@
 import {zoomSelector} from '../selectors'
 import {ENTITY_CLOSE_ZOOM, ENTITY_ZOOM} from '../constants'
 import {isIndividual} from '../components/Verejne/entityHelpers'
+import {reverse, sortBy} from 'lodash'
 
-import type {MapReference, MapOptions, Entity, State, Center} from '../state'
+import type {MapReference, MapOptions, Entity, Center} from '../state'
 import type {Thunk} from '../types/reduxTypes'
 
 export const setMapReference = (mapReference: MapReference) => ({
   type: 'Set map reference',
   path: ['mapReference'],
   payload: mapReference,
-  reducer: (state: State) => mapReference,
+  reducer: (state: MapReference) => mapReference,
 })
 
 export const setEntities = (entities: Array<Entity>) => ({
   type: 'Set entities',
   path: ['entities'],
   payload: entities,
-  reducer: (state: State) => entities,
+  reducer: (state: ?Array<Entity>) => reverse(sortBy(entities, ['size'])),
 })
 
 export const setMapOptions = (mapOptions: MapOptions) => ({
   type: 'Set map options',
   path: ['mapOptions'],
   payload: mapOptions,
-  reducer: (state: State) => mapOptions,
+  reducer: (state: MapOptions) => mapOptions,
 })
-
-export const initializeGoogleMap = (mapReference: MapReference): Thunk => (
-  dispatch,
-  getState,
-  {logger}
-) => {
-  logger.log('Initialize map')
-  dispatch(setMapReference(mapReference))
-}
-
-export const updateMapOptions = (mapOptions: MapOptions): Thunk => (
-  dispatch,
-  getState,
-  {logger}
-) => {
-  logger.log('Update map options')
-  dispatch(setMapOptions(mapOptions))
-}
 
 export const setMapZoom = (newZoom: number) => ({
   type: 'Set map zoom',

@@ -25,7 +25,7 @@ type ClusterMarkerProps = {
 
 const getClusterTooltip = (cluster: MapCluster): string => {
   const sorted = reverse(sortBy(cluster.points, ['size']))
-  return sorted[0].name
+  return `${sorted[0].name}...`
 }
 
 const getEntityMarker = (cluster: MapCluster): string => {

@@ -1,6 +1,6 @@
 export const paginationChunkSize = 10
 export const noticesPaginationSize = 10
-export const ENTITY_CLOSE_ZOOM = 21
+export const ENTITY_CLOSE_ZOOM = 19
 export const ENTITY_ZOOM = 17
 export const SUB_CITY_ZOOM = 14
 export const CITY_ZOOM = 11

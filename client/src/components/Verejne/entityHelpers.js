@@ -7,8 +7,7 @@ export const isIndividual = (eid: string): boolean => {
 }
 
 export const isPolitician = (entity: Entity): boolean => {
-  // TODO: == is on purpose as this field can be: null, 0, true...
-  return entity.ds && entity.ds[0] == 1
+  return entity.ds && !!entity.ds[0]
 }
 
 export const hasContractsWithState = (entity: Entity): boolean => {

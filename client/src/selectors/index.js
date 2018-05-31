@@ -3,7 +3,7 @@ import {createSelector} from 'reselect'
 import qs from 'qs'
 import {paginationChunkSize, VEREJNE_MAX_PAGE_ITEMS, clusterOptions} from '../constants'
 import {values} from '../utils'
-import {sortBy, chunk, reverse, map} from 'lodash'
+import {sortBy, chunk, map} from 'lodash'
 import supercluster from 'points-cluster'
 
 import type {Location} from 'react-router-dom'
@@ -84,12 +84,11 @@ export const pageCountSelector = createSelector(
   (entities) => (entities ? Math.ceil(entities.length / VEREJNE_MAX_PAGE_ITEMS) : 0)
 )
 
-// TODO performance
 export const currentPageEntities = createSelector(
   entitiesSelector,
   currentPageSelector,
   (entities, currentPage) => {
-    return chunk(reverse(sortBy(entities, ['size'])), VEREJNE_MAX_PAGE_ITEMS)[currentPage - 1]
+    return chunk(entities, VEREJNE_MAX_PAGE_ITEMS)[currentPage - 1]
   }
 )
 

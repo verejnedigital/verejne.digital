@@ -1,6 +1,6 @@
 // @flow
 import React from 'react'
-import GoogleMap from './GoogleMap'
+import Map from './Map'
 import './Verejne.css'
 import Legend from './Legend'
 import {Input, ListGroup, ListGroupItem, Badge} from 'reactstrap'
@@ -17,11 +17,6 @@ import Pagination from 'react-js-pagination'
 import {isPolitician, hasContractsWithState} from './entityHelpers'
 import {VEREJNE_MAX_PAGE_ITEMS, VEREJNE_PAGE_RANGE} from '../../constants'
 import {map} from 'lodash'
-import {withDataProviders, withRefetch} from 'data-provider'
-import {
-  entitiesProvider,
-  getEntitiesUrlFromMapReference,
-} from '../../dataProviders/publiclyDataProviders'
 import {compose} from 'recompose'
 import classnames from 'classnames'
 
@@ -40,7 +35,7 @@ const renderListItemIcon = (entity) => {
   return <Icon size="18" className={classnames('SidePanel__List__Item__Icon', color)} />
 }
 
-// NOTE: there can be multiple points in the map on the same location...
+// NOTE: there can be multiple points on the map on the same location...
 const Verejne = ({
   entities,
   fetchEntities,
@@ -61,7 +56,7 @@ const Verejne = ({
           <ListGroupItem
             className="SidePanel__List__Item"
             key={e.eid}
-            onClick={selectEntity}
+            onClick={() => selectEntity(e)}
           >
             {renderListItemIcon(e)}
             {e.name}
@@ -82,7 +77,7 @@ const Verejne = ({
         onChange={setCurrentPage}
       />
     </div>
-    <GoogleMap refetch={() => refetch(getEntitiesUrlFromMapReference(mapReference))} />
+    <Map />
     <Legend />
   </div>
 )
@@ -96,7 +91,5 @@ export default compose(
       mapReference: mapReferenceSelector(state),
     }),
     {selectEntity, setCurrentPage}
-  ),
-  withRefetch(),
-  withDataProviders(({mapReference}) => [entitiesProvider(mapReference)])
+  )
 )(Verejne)
