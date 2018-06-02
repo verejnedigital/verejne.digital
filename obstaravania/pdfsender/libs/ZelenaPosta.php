@@ -105,7 +105,7 @@ class ZelenaPosta
 				date('Y-m-d')),
 			'mailings' => [
 				'mailing' => [
-					'uiz1' => $this->json['company']['ico'],
+					// 'uiz1' => $this->json['company']['ico'],
 					'customId' => sprintf('%s_%s',
 						$this->json['company']['ico'],
 						date('Y-m-d')),
