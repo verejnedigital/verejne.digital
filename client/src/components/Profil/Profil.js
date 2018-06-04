@@ -11,7 +11,6 @@ import {FACEBOOK_LIKE_SRC} from '../../constants'
 import {Row, Col, Container} from 'reactstrap'
 
 import './Profil.css'
-import './common.css'
 
 import type {State, Politician} from '../../state'
 import type {ObjectMap} from '../../types/commonTypes'

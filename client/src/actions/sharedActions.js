@@ -16,11 +16,7 @@ export const receiveData = (
   type: `Received data from ${dataProviderRef}`,
   path,
   payload: data,
-  reducer: (state, data) =>
-    produce(state, (draft): void => {
-      const dataObject = mappingFn(data, ...mappingFnArgs)
-      Object.assign(draft, dataObject)
-    }),
+  reducer: (state, data) => ({...state, ...mappingFn(data, ...mappingFnArgs)}),
 })
 
 export const updateValue = <T: *>(path: Path, data: T): GenericAction<T, T> => ({
