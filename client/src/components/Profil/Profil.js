@@ -8,7 +8,7 @@ import {politiciansProvider} from '../../dataProviders/profileDataProviders'
 import {profileQuerySelector, filteredPoliticiansSelector} from '../../selectors/profileSelectors'
 import PoliticiansList from './components/PoliticiansList'
 import {FACEBOOK_LIKE_SRC} from '../../constants'
-import {Row, Col, Container} from 'reactstrap'
+import {Row, Col} from 'reactstrap'
 
 import './Profil.css'
 import './common.css'

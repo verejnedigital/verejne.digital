@@ -2,7 +2,7 @@
 import {createSelector} from 'reselect'
 import {sortBy, chunk} from 'lodash'
 import qs from 'qs'
-import {paginationChunkSize} from '../constants'
+import {PAGINATION_CHUNK_SIZE} from '../constants'
 import {values} from '../utils'
 
 import type {Location} from 'react-router-dom'
@@ -53,7 +53,7 @@ export const paginatedNoticesSelector = createSelector(
   paginationSelector,
   (dateSorted, nameSorted, orderBy, page) => {
     const notices = orderBy === 'title' ? nameSorted : dateSorted
-    return chunk(notices, paginationChunkSize)[page - 1]
+    return chunk(notices, PAGINATION_CHUNK_SIZE)[page - 1]
   }
 )
 

@@ -13,7 +13,7 @@ import {
   noticesLengthSelector,
   locationSearchSelector,
 } from '../../selectors'
-import {paginationChunkSize, noticesPaginationSize} from '../../constants'
+import {PAGINATION_CHUNK_SIZE, NOTICES_PAGINATION_SIZE} from '../../constants'
 import {modifyQuery} from '../../utils'
 
 import type {Location, Match, RouterHistory} from 'react-router-dom'
@@ -56,9 +56,9 @@ const NoticeList = ({
         itemClass="page-item"
         linkClass="page-link"
         hideNavigation
-        pageRangeDisplayed={noticesPaginationSize}
+        pageRangeDisplayed={NOTICES_PAGINATION_SIZE}
         activePage={currentPage}
-        itemsCountPerPage={paginationChunkSize}
+        itemsCountPerPage={PAGINATION_CHUNK_SIZE}
         totalItemsCount={noticesLength}
         onChange={(page) => history.push({search: modifyQuery(query, {page})})}
       />

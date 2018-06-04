@@ -1,6 +1,6 @@
 // @flow
 import {dispatchReceivedData} from './dataProvidersUtils'
-import {defaultProviderKeepAlive} from '../constants'
+import {DEFAULT_PROVIDER_KEEP_ALIVE} from '../constants'
 
 export const noticesProvider = () => ({
   ref: 'notices',
@@ -12,7 +12,7 @@ export const noticesProvider = () => ({
     },
   ],
   onData: [dispatchReceivedData, ['notices', 'list']],
-  keepAliveFor: defaultProviderKeepAlive,
+  keepAliveFor: DEFAULT_PROVIDER_KEEP_ALIVE,
 })
 
 export const noticeDetailProvider = (id: string) => ({

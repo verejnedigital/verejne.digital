@@ -1,9 +1,9 @@
 import {createSelector} from 'reselect'
-import {sortBy, uniq, last, mapKeys, mapValues} from 'lodash'
-import {normalizeName, values, parseQueryFromLocation} from '../utils'
+import {sortBy, last, mapValues} from 'lodash'
+import {normalizeName, parseQueryFromLocation} from '../utils'
 import {paramsIdSelector} from './index'
 
-import type {CadastralData, State, AssetDeclaration, Politician} from '../state'
+import type {State} from '../state'
 import type {ProfileDetailPageProps} from '../components/Profil/DetailPage'
 
 // TODO proptype

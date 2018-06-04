@@ -6,33 +6,24 @@ import {stringify, parse} from 'qs'
 import type {SegmentReducer, Path} from './types/reduxTypes'
 import type {Location} from 'react-router-dom'
 
-// default behaviour is to map array elements into obj by id
-// and to map single object into {[obj.id]: obj}
-// to map by something different then 'id' prop use mapByProp
-// to give default value to map by if none is available use id param
-// if id is provided with an array, the result is {[providedId]: mappedArrayObj}
-export const mappingFn = (
-  data: Array<Object> | Object,
-  mapByProp: ?string = 'id',
-  id: ?(number | string)
-): Object =>
-  id
-    ? {
-      [id]: Array.isArray(data)
-        ? data.reduce((obj, current) => {
-          obj[current[mapByProp]] = current
-          return obj
-        }, {})
-        : data,
-    }
-    : Array.isArray(data)
-      ? data.reduce((obj, current) => {
-        obj[current[mapByProp]] = current
-        return obj
-      }, {})
-      : {
-        [data[mapByProp]]: data,
-      }
+const normalizeObjBeforeMap = (data: Array<Object> | Object) =>
+  Array.isArray(data) ? data : [data]
+
+// obj handled as a single element of an array
+export const mappingFn = (data: Array<Object> | Object, mapByProp: ?number | ?string = 'id') => {
+  normalizeObjBeforeMap(data).reduce((obj, current) => {
+    obj[current[mapByProp]] = current
+    return obj
+  }, {})
+}
+
+export const mapArrayToId = (data: Array<Object>, id: number | string, mapByProp: ?string) => ({
+  [id]: mappingFn(data, mapByProp),
+})
+
+export const mapObjToId = (data: Object, id: number | string) => ({
+  [id]: data,
+})
 
 export const immutableSet = (obj: Object, path: ?Path, value: any) =>
   path && path.length

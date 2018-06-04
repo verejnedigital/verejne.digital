@@ -1,10 +1,8 @@
 // @flow
 import produce from 'immer'
-import {get} from 'lodash'
 import {mappingFn as defaultMappingFn} from '../utils'
 
 import type {GenericAction, Path} from '../types/reduxTypes'
-import type {State} from '../state'
 
 // merges new data into destination Path according to the mappingFn provided
 // TODO flow with generics for mappingFn
@@ -13,7 +11,7 @@ export const receiveData = (
   data: Array<Object> | Object,
   dataProviderRef: string,
   mappingFn: (Array<Object> | Object) => Object = defaultMappingFn,
-  ...mappingFnArgs: any
+  ...mappingFnArgs: Array<any>
 ): GenericAction<Object, Array<Object> | Object> => ({
   type: `Received data from ${dataProviderRef}`,
   path,

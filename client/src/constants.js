@@ -1,7 +1,7 @@
-export const paginationChunkSize = 10
-export const noticesPaginationSize = 10
+export const PAGINATION_CHUNK_SIZE = 10
+export const NOTICES_PAGINATION_SIZE = 10
 
-export const defaultProviderKeepAlive = 10 * 60 * 1000
+export const DEFAULT_PROVIDER_KEEP_ALIVE = 10 * 60 * 1000
 
 export const ENTITY_ZOOM = 16
 export const SUB_CITY_ZOOM = 13
@@ -10,7 +10,7 @@ export const COUNTRY_ZOOM = 8
 export const GOOGLE_MAP_API_KEY = 'AIzaSyCAXMlEL-sfzT4jVK5CQHysSPp77JnVLks'
 export const SLOVAKIA_COORDINATES = [48.6, 19.5]
 export const VEREJNE_MAX_PAGE_ITEMS = 50
-export const defaultMapCenter = {lat: 48.6, lng: 19.5}
+export const DEFAULT_MAP_CENTER = {lat: 48.6, lng: 19.5}
 
 export const createMapOptions = (maps) => {
   return {

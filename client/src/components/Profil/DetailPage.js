@@ -1,6 +1,6 @@
-import React, {Component} from 'react'
-import {withRouter, Link, NavLink} from 'react-router-dom'
-import {compose, bindActionCreators} from 'redux'
+import React from 'react'
+import {Link, NavLink} from 'react-router-dom'
+import {compose} from 'redux'
 import {connect} from 'react-redux'
 import {withHandlers, withState} from 'recompose'
 import {withDataProviders} from 'data-provider'
@@ -16,7 +16,7 @@ import {
   assetDeclarationsSortedYearsSelector,
   politicianCadastralSelector,
 } from '../../selectors/profileSelectors'
-import {defaultMapCenter} from '../../constants'
+import {DEFAULT_MAP_CENTER} from '../../constants'
 
 import Cardboard from './components/Cardboard'
 import DetailCadastralTable from './components/DetailCadastralTable'
@@ -112,7 +112,7 @@ export default compose(
     politician: politicianDetailSelector(state, props),
     cadastral: Object.values(politicianCadastralSelector(state, props)),
   })),
-  withState('mapCenter', 'setMapCenter', defaultMapCenter),
+  withState('mapCenter', 'setMapCenter', DEFAULT_MAP_CENTER),
   withHandlers({
     goMap: (props) => (parcel) => {
       props.setMapCenter({lat: parcel.lat, lng: parcel.lon})
