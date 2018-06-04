@@ -58,7 +58,7 @@ const Map = ({
   onChange,
 }: Props) => {
   return (
-    <div className="GoogleMapWrapper">
+    <div className="google-map-wrapper">
       <GoogleMap
         center={center}
         zoom={zoom}

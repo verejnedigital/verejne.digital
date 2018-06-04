@@ -1,25 +1,25 @@
 @import "../../../variables.scss";
-.Marker {
-  position: absolute;
-  width: $marker-width;
-  height: $marker-height;
-  left: -$marker-width / 2;
-  top: -$marker-height / 2;
-  text-align: center;
-  cursor: pointer;
-  &__Text {
-    font-size: 0.7rem !important;
-    font-weight: bold;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 100%;
-    color: #fff !important;
-    border-radius: 50%;
-  }
-  &:hover {
-    transform: scale(1.2);
-    transition: 0.2s ease;
-  }
+.marker {
+    position: absolute;
+    width: $marker-width;
+    height: $marker-height;
+    left: -$marker-width / 2;
+    top: -$marker-height / 2;
+    text-align: center;
+    cursor: pointer;
+    &__text {
+        font-size: 0.7rem !important;
+        font-weight: bold;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        color: #fff !important;
+        border-radius: 50%;
+    }
+    &:hover {
+        transform: scale(1.2);
+        transition: 0.2s ease;
+    }
 }

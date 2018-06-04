@@ -1,5 +1,5 @@
 @import "../../../variables.scss";
-.ClusterMarker {
+.cluster-marker {
     border-radius: 50%;
     border: 3px solid $cluster-marker-border;
     background-color: $marker-color;
@@ -7,12 +7,12 @@
     color: $marker-color !important;
 }
 
-.SimpleMarker {
+.simple-marker {
     background: url('../../mapIcon.svg') no-repeat;
     background-size: contain;
 }
 
-.CompanyMarker {
+.company-marker {
     display: flex;
     svg {
         width: 50%;
@@ -20,10 +20,10 @@
         display: flex;
         margin: auto;
     }
-    &__Normal svg {
+    &--normal svg {
         color: $marker-color !important;
     }
-    &__Politician svg {
+    &--politician svg {
         color: $orange-color !important;
     }
 }

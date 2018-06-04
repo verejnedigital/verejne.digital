@@ -30,8 +30,8 @@ const getClusterTooltip = (cluster: MapCluster): string => {
 
 const getEntityMarker = (cluster: MapCluster): string => {
   return classnames(
-    'CompanyMarker',
-    isPolitician(cluster.points[0]) ? 'CompanyMarker__Politician' : 'CompanyMarker__Normal'
+    'company-marker',
+    isPolitician(cluster.points[0]) ? 'company-marker--politician' : 'company-marker--normal'
   )
 }
 
@@ -49,13 +49,13 @@ const ClusterMarker = ({
   zoomToLocation,
   onClick,
 }: ClusterMarkerProps) => {
-  const MarkerText = <span className="Marker__Text">{entity.numPoints}</span>
+  const MarkerText = <span className="marker__text">{entity.numPoints}</span>
   let className, children
   if (zoom < ENTITY_ZOOM) {
-    className = entity.numPoints === 1 ? 'SimpleMarker' : 'ClusterMarker'
-    children = entity.numPoints !== 1 && <span className="Marker__Text">{entity.numPoints}</span>
+    className = entity.numPoints === 1 ? 'simple-marker' : 'cluster-marker'
+    children = entity.numPoints !== 1 && <span className="marker__text">{entity.numPoints}</span>
   } else {
-    className = entity.numPoints === 1 ? getEntityMarker(entity) : 'ClusterMarker'
+    className = entity.numPoints === 1 ? getEntityMarker(entity) : 'cluster-marker'
     children = entity.numPoints === 1 ? getCompanyMarker(entity) : MarkerText
   }
   return (

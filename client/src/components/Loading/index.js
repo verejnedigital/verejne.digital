@@ -10,7 +10,7 @@ type Props = {
 }
 
 const Loading = ({width, height}: Props) => (
-  <div className="Loading">
+  <div className="loading">
     <LoadingComponent type="tail_spin" width={width} height={height} fill="#0062db" />
   </div>
 )

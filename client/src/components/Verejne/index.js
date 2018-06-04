@@ -29,10 +29,10 @@ const renderListItemIcon = (entity) => {
     return <img src={MapIcon} style={{width: '2rem', height: '2rem'}} alt="listItemIcon" />
   }
   const color = isPolitician(entity)
-    ? 'SidePanel__List__Item__Icon__Politician'
-    : 'SidePanel__List__Item__Icon__Normal'
+    ? 'side-panel__list__item__icon--politician'
+    : 'side-panel__list__item__icon--normal'
   const Icon = hasContractsWithState(entity) ? FilledCircleIcon : CircleIcon
-  return <Icon size="18" className={classnames('SidePanel__List__Item__Icon', color)} />
+  return <Icon size="18" className={classnames('side-panel__list__item__icon', color)} />
 }
 
 // NOTE: there can be multiple points on the map on the same location...
@@ -47,20 +47,20 @@ const Verejne = ({
   refetch,
   mapReference,
 }) => (
-  <div className="Wrapper">
-    <div className="SidePanel">
-      <Input type="text" className="FormControl" placeholder="Hľadaj firmu / človeka" />
-      <Input type="text" className="FormControl" placeholder="Hľadaj adresu" />
+  <div className="wrapper">
+    <div className="side-panel">
+      <Input type="text" className="form-control" placeholder="Hľadaj firmu / človeka" />
+      <Input type="text" className="form-control" placeholder="Hľadaj adresu" />
       <ListGroup>
         {map(entities, (e) => (
           <ListGroupItem
-            className="SidePanel__List__Item"
+            className="side-panel__list__item"
             key={e.eid}
             onClick={() => selectEntity(e)}
           >
             {renderListItemIcon(e)}
             {e.name}
-            <Badge pill className="SidePanel__List__Item__Badge">
+            <Badge pill className="side-panel__list__item__badge">
               {e.size}
             </Badge>
           </ListGroupItem>

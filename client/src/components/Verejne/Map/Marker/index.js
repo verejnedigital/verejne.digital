@@ -13,7 +13,7 @@ type Props = {
 }
 
 const Marker = ({className, title, children, onClick}: Props) => (
-  <div className={classnames('Marker', className)} title={title} onClick={onClick}>
+  <div className={classnames('marker', className)} title={title} onClick={onClick}>
     {children}
   </div>
 )
