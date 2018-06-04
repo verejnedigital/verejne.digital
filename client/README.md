@@ -34,3 +34,18 @@ import './Component.css'
 ```
 
 The required `.css` files are created automatically by `node-sass-chokidar`, and are ignored (as they are essentially build files) by `.gitignore`.
+
+## Flow
+
+We use flow to add type safety to our javascript code. There are many editor extensions to take advanteges of flow. Flow is **not** used
+automtically in js files. You have to add `// @flow` on the first line.
+
+There is a command for testing flow coverage:
+
+```
+yarn flow
+```
+
+This command check for `// @flow` in every js file in the `src` directory (which doesn't already have the flow tag), and will display
+flow errors and print a table of coverage... The script also generates a webpage, where you can see the errors in a nicer format. The web page
+is located in `flow-coverage/index.html`.
