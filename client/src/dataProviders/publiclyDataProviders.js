@@ -38,18 +38,7 @@ const getRequestParams = (mapReference: MapReference): EntitiesRequestParams => 
 }
 
 const dispatchEntities = () => (ref: string, data: Array<Entity>, dispatch: Dispatch) =>
-  dispatch(
-    setEntities(
-      data.map(({eid, lat, lng, name, size, ds}) => ({
-        eid,
-        lat,
-        lng,
-        name,
-        size,
-        ds,
-      }))
-    )
-  )
+  dispatch(setEntities(data))
 
 export const getEntitiesUrlFromMapReference = (mapReference: MapReference): string => {
   const {lat1, lng1, lat2, lng2, restrictToSlovakia, usedLevel} = getRequestParams(mapReference)

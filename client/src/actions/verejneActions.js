@@ -18,7 +18,17 @@ export const setEntities = (entities: Array<Entity>) => ({
   type: 'Set entities',
   path: ['entities'],
   payload: entities,
-  reducer: (state: ?Array<Entity>) => reverse(sortBy(entities, ['size'])),
+  reducer: (state: ?Array<Entity>) => {
+    const mappedEntities = entities.map(({eid, lat, lng, name, size, ds}) => ({
+      eid,
+      lat,
+      lng,
+      name,
+      size,
+      ds,
+    }))
+    return reverse(sortBy(mappedEntities, ['size']))
+  },
 })
 
 export const setMapOptions = (mapOptions: MapOptions) => ({
