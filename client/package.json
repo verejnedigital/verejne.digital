@@ -57,7 +57,13 @@
     "redux-logger": "^3.0.6"
   },
   "flow-coverage-report": {
-    "includeGlob": ["src/**/*.js"],
-    "type": ["text", "html", "json"]
+    "includeGlob": [
+      "src/**/*.js"
+    ],
+    "type": [
+      "text",
+      "html",
+      "json"
+    ]
   }
 }

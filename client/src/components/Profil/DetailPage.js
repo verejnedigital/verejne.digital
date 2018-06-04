@@ -1,3 +1,4 @@
+// @flow
 import React from 'react'
 import {Link, NavLink} from 'react-router-dom'
 import {compose} from 'redux'
@@ -28,7 +29,7 @@ import './DetailPage.css'
 
 import type {State} from '../../state'
 
-export type ProfileDetailPageProps = {
+export type ProfileDetailPageRouterProps = {
   match: {
     params: {
       year: ?string,
@@ -36,7 +37,25 @@ export type ProfileDetailPageProps = {
   },
 }
 
-const DetailPage = ({assetsYears, selectedYear, assets, politician, cadastral, mapCenter}) => [
+export type ProfileDetailPageProps = {
+  assetsYears: any,
+  selectedYear: any,
+  assets: any,
+  politician: any,
+  cadastral: any,
+  mapCenter: any,
+  goMap: any,
+} & ProfileDetailPageRouterProps
+
+const DetailPage = ({
+  assetsYears,
+  selectedYear,
+  assets,
+  politician,
+  cadastral,
+  mapCenter,
+  goMap,
+}) => [
   <Row tag="header" key="title" className="header profile-header">
     <Col>
       <h1 className="title">
@@ -89,7 +108,7 @@ const DetailPage = ({assetsYears, selectedYear, assets, politician, cadastral, m
       </section>
     </Col>
     <Col tag="section">
-      <DetailCadastralTable cadastral={cadastral} onParcelShow={this.goMap} />
+      <DetailCadastralTable cadastral={cadastral} onParcelShow={goMap} />
     </Col>
   </Row>,
   <Row key="map" className="profile-map">
@@ -105,7 +124,7 @@ export default compose(
     cadastralInfoProvider(id),
     assetDeclarationProvider(id),
   ]),
-  connect((state: State, props: ProfileDetailPageProps) => ({
+  connect((state: State, props: ProfileDetailPageRouterProps) => ({
     selectedYear: paramsYearSelector(state, props),
     assetsYears: assetDeclarationsSortedYearsSelector(state, props),
     assets: parsedAssetDeclarationsForYearSelector(state, props),

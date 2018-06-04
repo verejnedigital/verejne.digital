@@ -11,7 +11,7 @@ const normalizeObjBeforeMap = (data: Array<Object> | Object): Array<Object> =>
 
 // obj handled as a single element of an array
 export const mappingFn = (data: Array<Object> | Object, mapByProp?: number | string = 'id') =>
-  normalizeObjBeforeMap(data).reduce((obj, current: {[string | number]: Object}) => {
+  normalizeObjBeforeMap(data).reduce((obj, current: {[string | number]: string | number}) => {
     obj[current[mapByProp]] = current
     return obj
   }, {})
@@ -61,7 +61,7 @@ export const normalizeName = (name: string) =>
     .toLowerCase()
 
 // from https://github.com/mattdesl/promise-cookbook
-export const loadImageAsync = (url) => {
+export const loadImageAsync = (url: string) => {
   return new Promise((resolve, reject) => {
     const image = new Image()
 

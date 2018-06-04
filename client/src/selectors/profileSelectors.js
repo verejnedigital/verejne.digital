@@ -4,7 +4,7 @@ import {normalizeName, parseQueryFromLocation} from '../utils'
 import {paramsIdSelector} from './index'
 
 import type {State} from '../state'
-import type {ProfileDetailPageProps} from '../components/Profil/DetailPage'
+import type {ProfileDetailPageRouterProps} from '../components/Profil/DetailPage'
 
 // TODO proptype
 export const politicianDetailSelector = createSelector(
@@ -56,7 +56,7 @@ export const assetDeclarationsLatestYearSelector = createSelector(
 )
 
 export const paramsYearSelector = createSelector(
-  (_: State, props: ProfileDetailPageProps) => parseQueryFromLocation(props.location).year,
+  (_: State, props: ProfileDetailPageRouterProps) => parseQueryFromLocation(props.location).year,
   assetDeclarationsLatestYearSelector,
   (paramsYear, latestYear) => Number.parseInt(paramsYear, 10) || latestYear
 )

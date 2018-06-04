@@ -1,7 +1,14 @@
+// @flow
 import React from 'react'
 import './Cardboard.css'
 
-const Cardboard = ({politician}) => (
+import type {Politician} from '../../../state/index'
+
+type CardboardProps = {
+  politician: Politician,
+}
+
+const Cardboard = ({politician}: CardboardProps) => (
   <div className="profile-cardboard">
     <div>
       <h3 className="name">
