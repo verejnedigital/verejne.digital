@@ -1,37 +1,29 @@
-import React, {Component} from 'react'
+import React from 'react'
 import CompanyDetails from '../CompanyDetails'
+import {compose, withState, withHandlers} from 'recompose'
 import './RecursiveInfo.css'
 
-class RecursiveInfo extends Component {
-  componentWillMount() {
-    const state = {
-      extracted: false,
-    }
-    this.setState(state)
-  }
-
-  toggleExtract = () => {
-    const stateChange = {extracted: !this.state.extracted}
-    this.setState(stateChange)
-  }
-
-  render() {
-    if (this.state.extracted) {
-      return (
-        <div className="recursive-info-wrapper">
-          <div className="recursive-info">
-            <CompanyDetails eid={this.props.eid} />
-          </div>
+const _RecursiveInfo = (({name, eid, toggledOn, toggle}) => {
+  if (toggledOn) {
+    return (
+      <div className="recursive-info-wrapper">
+        <div className="recursive-info">
+          <CompanyDetails eid={eid} />
         </div>
-      )
-    } else {
-      return (
-        <button onClick={this.toggleExtract} className="recursive-info-btn btn btn-link">
-          {this.props.name}
-        </button>
-      )
-    }
+      </div>
+    )
+  } else {
+    return (
+      <button onClick={toggle} className="recursive-info-btn btn btn-link">
+        {name}
+      </button>
+    )
   }
-}
+})
 
-export default RecursiveInfo
+export default compose(
+  withState('toggledOn', 'toggle', false),
+  withHandlers({
+    toggle: ({toggle}) => (e) => toggle((current) => !current),
+  })
+)(_RecursiveInfo)

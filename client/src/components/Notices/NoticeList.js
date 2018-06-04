@@ -21,7 +21,7 @@ import type {Dispatch} from '../../types/reduxTypes'
 import type {Notice, State} from '../../state'
 
 import Legend from './Legend'
-import ExternalLink from '../shared/ExternalLink'
+import BulletinTitle from './BulletinTitle'
 import NoticeItem from './NoticeItem'
 import {Row, Col, Container} from 'reactstrap'
 import './NoticeList.css'
@@ -50,27 +50,11 @@ const NoticeList = ({
   history,
   query,
 }: NoticeListProps) => {
-  let bulletinTitle = ''
   let items = null
+  let bulletinTitle = null
   if (paginatedNotices.length > 0) {
-    const firstItem = paginatedNotices[0]
-    bulletinTitle = (
-      <span>
-        <strong>{newestBulletinDate}</strong> Vestník číslo{' '}
-        <ExternalLink
-          url={`https://www.uvo.gov.sk/evestnik?poradie=${firstItem.bulletin_number}&year=${
-            firstItem.bulletin_year
-          }`}
-          text={
-            <strong>
-              {firstItem.bulletin_number}/{firstItem.bulletin_year}
-            </strong>
-          }
-        />
-      </span>
-    )
-
     items = paginatedNotices.map((item) => <NoticeItem key={item.id} item={item} />)
+    bulletinTitle = BulletinTitle(paginatedNotices.length, newestBulletinDate)
   }
 
   const pagination = (

@@ -2,7 +2,7 @@ import React from 'react'
 import RecursiveInfo from './RecursiveInfo'
 import './InfoList.css'
 
-export default ({data}) => (
+const Relations = ({data}) => (
   <ul className="contractList list-unstyled">
     {data.map((related) => (
       <li key={related.eid}>
@@ -11,3 +11,5 @@ export default ({data}) => (
     ))}
   </ul>
 )
+
+export default Relations

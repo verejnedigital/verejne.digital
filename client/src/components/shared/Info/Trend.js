@@ -1,7 +1,7 @@
 import React from 'react'
 import './Trend.css'
 
-export default ({trend}) => {
+const Trend = ({trend}) => {
   let colorStyle
   let text
   if (trend > 0) {
@@ -21,3 +21,5 @@ export default ({trend}) => {
     </span>
   )
 }
+
+export default Trend

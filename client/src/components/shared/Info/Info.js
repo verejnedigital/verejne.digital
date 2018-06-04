@@ -53,7 +53,7 @@ class Info extends Component {
           <span className={`${isPolitician(data) ? 'politician' : ''}`}>
             <Circle aria-hidden="true" />&nbsp;{entity.entity_name}&nbsp;
           </span>
-          <Link to={`/verejne/${entity.lat}&${entity.lng}&${eid}&`}> //TODO when verejne will be completed link has to be fixed
+          <Link to={`/verejne/${entity.lat}&${entity.lng}&${eid}&`}> {/*TODO when verejne will be completed link has to be fixed*/}
             <MapMarker aria-hidden="true" />
           </Link>{' '}
         </span>

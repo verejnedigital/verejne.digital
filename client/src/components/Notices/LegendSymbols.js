@@ -1,7 +1,6 @@
 import QuestionCircle from 'react-icons/lib/fa/question-circle'
 import ExclamationTriangle from 'react-icons/lib/fa/exclamation-triangle'
 import classnames from 'classnames'
-
 import React from 'react'
 
 export function getWarningSymbol(level) {
@@ -15,15 +14,16 @@ export function getWarningSymbol(level) {
 }
 
 export function formatSimilarPercent(value) {
-  let style = ''
-  if (value > 75) {
-    style = 'similarity-high'
-  } else if (value > 50) {
-    style = 'similarity-medium'
-  } else if (value > 25) {
-    style = 'similarity-low'
-  }
-  return <span className={classnames('similarity', style)}>{value}%</span>
+  const styles = [
+    {style: 'similarity-high', num: 75},
+    {style: 'similarity-medium', num: 50},
+    {style: 'similarity-low', num: 25},
+    {style: '', num: -1},
+  ]
+
+  return (
+    <span className={classnames('similarity', styles.find((style) => value > style.num).style)}>{value}%</span>
+  )
 }
 
 export function formatSimilarCount(value) {
