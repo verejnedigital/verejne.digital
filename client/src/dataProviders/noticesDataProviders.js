@@ -1,6 +1,7 @@
 // @flow
 import {dispatchReceivedData} from './dataProvidersUtils'
 import {DEFAULT_PROVIDER_KEEP_ALIVE} from '../constants'
+import {mapObjToId} from '../utils'
 
 export const noticesProvider = () => ({
   ref: 'notices',
@@ -24,6 +25,6 @@ export const noticeDetailProvider = (id: string) => ({
       accept: 'application/json',
     },
   ],
-  onData: [dispatchReceivedData, ['notices', 'details']],
+  onData: [dispatchReceivedData, ['notices', 'details'], mapObjToId, id],
   keepAliveFor: 60 * 60 * 1000,
 })

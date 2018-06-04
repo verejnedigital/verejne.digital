@@ -1,7 +1,7 @@
 // @flow
 import {dispatchReceivedData} from './dataProvidersUtils'
 import {DEFAULT_PROVIDER_KEEP_ALIVE} from '../constants'
-import {loadImageAsync, mappingFn} from '../utils'
+import {loadImageAsync, mapArrayToId, mapObjToId} from '../utils'
 
 export const politiciansProvider = () => ({
   ref: 'politicians',
@@ -25,7 +25,7 @@ export const cadastralInfoProvider = (id: string, needed: boolean = true) => ({
       accept: 'application/json',
     },
   ],
-  onData: [dispatchReceivedData, ['profile', 'cadastral'], mappingFn, 'parcelno', id],
+  onData: [dispatchReceivedData, ['profile', 'cadastral'], mapArrayToId, id, 'parcelno'],
   keepAliveFor: DEFAULT_PROVIDER_KEEP_ALIVE,
   needed,
 })
@@ -39,7 +39,7 @@ export const detailsProvider = (id: string) => ({
       accept: 'application/json',
     },
   ],
-  onData: [dispatchReceivedData, ['profile', 'details'], mappingFn, undefined, id],
+  onData: [dispatchReceivedData, ['profile', 'details'], mapObjToId, id],
   keepAliveFor: DEFAULT_PROVIDER_KEEP_ALIVE,
 })
 
@@ -52,7 +52,7 @@ export const assetDeclarationProvider = (id: string, needed: boolean = true) => 
       accept: 'application/json',
     },
   ],
-  onData: [dispatchReceivedData, ['profile', 'assetDeclarations'], mappingFn, 'year', id],
+  onData: [dispatchReceivedData, ['profile', 'assetDeclarations'], mapArrayToId, id, 'year'],
   keepAliveFor: DEFAULT_PROVIDER_KEEP_ALIVE,
   needed,
 })

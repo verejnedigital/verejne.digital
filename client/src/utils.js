@@ -6,18 +6,17 @@ import {stringify, parse} from 'qs'
 import type {SegmentReducer, Path} from './types/reduxTypes'
 import type {Location} from 'react-router-dom'
 
-const normalizeObjBeforeMap = (data: Array<Object> | Object) =>
+const normalizeObjBeforeMap = (data: Array<Object> | Object): Array<Object> =>
   Array.isArray(data) ? data : [data]
 
 // obj handled as a single element of an array
-export const mappingFn = (data: Array<Object> | Object, mapByProp: ?number | ?string = 'id') => {
-  normalizeObjBeforeMap(data).reduce((obj, current) => {
+export const mappingFn = (data: Array<Object> | Object, mapByProp?: number | string = 'id') =>
+  normalizeObjBeforeMap(data).reduce((obj, current: {[string | number]: Object}) => {
     obj[current[mapByProp]] = current
     return obj
   }, {})
-}
 
-export const mapArrayToId = (data: Array<Object>, id: number | string, mapByProp: ?string) => ({
+export const mapArrayToId = (data: Array<Object>, id: number | string, mapByProp?: string) => ({
   [id]: mappingFn(data, mapByProp),
 })
 

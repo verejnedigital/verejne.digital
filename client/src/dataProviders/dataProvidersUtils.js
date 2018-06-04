@@ -7,7 +7,7 @@ import type {Dispatch, Path} from '../types/reduxTypes'
 export const dispatchReceivedData = (
   path: Path,
   mappingFn: (Array<Object> | Object) => Object,
-  ...mappingFnArgs
-) => (ref: string, data: any, dispatch: Dispatch) => {
+  ...mappingFnArgs: Array<any>
+) => (ref: string, data: Array<Object> | Object, dispatch: Dispatch) => {
   dispatch(receiveData(path, data, ref, mappingFn, ...mappingFnArgs))
 }
