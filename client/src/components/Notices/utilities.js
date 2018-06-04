@@ -1,22 +1,33 @@
+// @flow
 import React from 'react'
 import {getWarningSymbol} from './LegendSymbols'
 
-export function addCommas(nStr) {
-  const x = `${nStr}`.split('.')
-  let x1 = x[0]
-  const rgx = /(\d+)(\d{3})/
-  while (rgx.test(x1)) {
-    x1 = x1.replace(rgx, '$1 $2')
-  }
-  return x1
-}
+const monthNames = [
+  'január',
+  'február',
+  'marec',
+  'apríl',
+  'máj',
+  'jún',
+  'júl',
+  'august',
+  'september',
+  'október',
+  'november',
+  'december',
+]
+
+export const expC = 2.7182818
 
 export function showNumberCurrency(num, cur = '€') {
-  return (
-    <span className="text-nowrap">
-      {addCommas(num)} {cur}
-    </span>
-  )
+  return (num)
+    ? (
+      <span className="text-nowrap">
+        {localeNumber(num)} {cur}
+      </span>
+    ) : (
+      null
+    )
 }
 
 export function icoUrl(ico) {
@@ -24,7 +35,7 @@ export function icoUrl(ico) {
 }
 
 function computeTrend(num, oldNum) {
-  if (!isNaN(num) && isFinite(num) && !isNaN(oldNum) && isFinite(oldNum) && oldNum !== 0) {
+  if (Number.isFinite(num) && Number.isFinite(oldNum) && oldNum !== 0) {
     return Math.round((num - oldNum) * 100 / Math.abs(oldNum))
   }
   return 0
@@ -77,21 +88,6 @@ export function getFinancialData(data, ico) {
 }
 
 export function showDate(dateString) {
-  const monthNames = [
-    'január',
-    'február',
-    'marec',
-    'apríl',
-    'máj',
-    'jún',
-    'júl',
-    'august',
-    'september',
-    'október',
-    'november',
-    'december',
-  ]
-
   const date = new Date(dateString)
   const day = date.getDate()
   const monthIndex = date.getMonth()
@@ -101,50 +97,30 @@ export function showDate(dateString) {
 }
 
 export function extractIco(data) {
-  let ico = null
-  if (data.new_orsr_data.length >= 1) {
-    ico = data.new_orsr_data[0].ico
-  } else if (data.orsresd_data.length >= 1) {
-    ico = data.orsresd_data[0].ico
-  } else if (data.firmy_data.length >= 1) {
-    ico = data.firmy_data[0].ico
-  }
-  // pad ico to have length 8
+  const icoSource = ['new_orsr_data', 'orsresd_data', 'firmy_data'].find((src) => data[src].length >= 1)
+  let ico = icoSource ? data[icoSource][0].ico : null
   if (ico != null) {
-    while (ico.length < 8) ico = `0${ico}`
+    while (ico.length < 8) {
+      ico = `0${ico}`
+    }
   }
   return ico
 }
 
-export const expC = 2.7182818
-
 export function getSuspectLevelLimit(obstaravanie, limit) {
-  let c = 0
-  if (limit > 0) {
-    c = limit + 1
-  } else {
-    c = limit - 1
-  }
+  const c = (limit > 0) ? limit + 1 : limit - 1
   return expC ** (obstaravanie.price_avg + c * obstaravanie.price_stdev)
 }
 
 export function getSuspectLevel(obstaravanie) {
   if (obstaravanie.price && obstaravanie.price_num && obstaravanie.price_num >= 5) {
-    if (obstaravanie.price > getSuspectLevelLimit(obstaravanie, 1)) {
-      return 1
-    } else if (obstaravanie.price > getSuspectLevelLimit(obstaravanie, 2)) {
-      return 2
-    } else if (obstaravanie.price > getSuspectLevelLimit(obstaravanie, 3)) {
-      return 3
-    } else if (obstaravanie.price < getSuspectLevelLimit(obstaravanie, -1)) {
-      return -1
-    } else if (obstaravanie.price < getSuspectLevelLimit(obstaravanie, -2)) {
-      return -2
-    } else if (obstaravanie.price < getSuspectLevelLimit(obstaravanie, -3)) {
-      return -3
-    } else {
-      return 0
-    }
+    return [1, 2, 3, -1, -2, -3].find(
+      (index) => {
+        return (index > 0) ?
+          obstaravanie.price > getSuspectLevelLimit(obstaravanie, index) :
+          obstaravanie.price < getSuspectLevelLimit(obstaravanie, index)
+      }
+    ) || 0
   } else {
     return 0
   }
@@ -155,11 +131,16 @@ export function getWarning(item) {
   return suspect !== 0 ? getWarningSymbol(suspect) : null
 }
 
+export function localeNumber(number) {
+  return (number) ? number.toLocaleString('sk-SK', {minimumFractionDigits: 2, maximumFractionDigits: 2}) : null
+}
+
 export function getTitle(item) {
   let title = ''
+  const boundMultiplier = 2.576
   if (item.price && item.price_num && item.price_num >= 5) {
-    const lower = expC ** (item.price_avg - 2.576 * item.price_stdev)
-    const upper = expC ** (item.price_avg + 2.576 * item.price_stdev)
+    const lower = expC ** (item.price_avg - boundMultiplier * item.price_stdev)
+    const upper = expC ** (item.price_avg + boundMultiplier * item.price_stdev)
     title = `${item.price} (${lower}, ${expC ** item.price_avg}, ${upper}), ${item.price_avg}, ${
       item.price_stdev
     })`

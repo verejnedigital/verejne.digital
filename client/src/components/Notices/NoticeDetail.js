@@ -24,6 +24,21 @@ export type NoticeDetailProps = {
 }
 
 const NoticeDetail = ({notice}: NoticeDetailProps) => {
+
+  const bulletin = (notice.bulletin_date) ? (
+    <span>
+      <ExternalLink
+        url={`https://www.uvo.gov.sk/evestnik?poradie=${notice.bulletin_number}&year=${
+          notice.bulletin_year
+        }`}
+        text={`${notice.bulletin_number}/${notice.bulletin_year}`}
+      />{' '}
+      <span className="note">({notice.bulletin_date})</span>
+    </span>
+  ) : null
+
+  const estimate = (notice.price_num >= 5) ? [showNumberCurrency(getSuspectLevelLimit(notice, -1)), ' - ', showNumberCurrency(getSuspectLevelLimit(notice, 1))] : null
+
   const noticeDetailInformations = [
     {
       label: <span className="my-label">Popis:</span>,
@@ -33,40 +48,19 @@ const NoticeDetail = ({notice}: NoticeDetailProps) => {
       label: <span className="my-label">Objednávateľ:</span>,
       body: notice.customer,
     },
-  ]
-
-  if (notice.bulletin_date) {
-    const vestnik = (
-      <span>
-        <ExternalLink
-          url={`https://www.uvo.gov.sk/evestnik?poradie=${notice.bulletin_number}&year=${
-            notice.bulletin_year
-          }`}
-          text={`${notice.bulletin_number}/${notice.bulletin_year}`}
-        />{' '}
-        <span className="note">({notice.bulletin_date})</span>
-      </span>
-    )
-
-    noticeDetailInformations.push({
+    {
       label: <span className="my-label">Vestník:</span>,
-      body: vestnik,
-    })
-  }
-
-  noticeDetailInformations.push({
-    label: <span className="my-label">Vyhlásená cena:</span>,
-    body: showNumberCurrency(notice.price),
-  })
-
-  if (notice.price_num >= 5) {
-    const upper = showNumberCurrency(getSuspectLevelLimit(notice, 1))
-    const lower = showNumberCurrency(getSuspectLevelLimit(notice, -1))
-    noticeDetailInformations.push({
+      body: bulletin,
+    },
+    {
+      label: <span className="my-label">Vyhlásená cena:</span>,
+      body: showNumberCurrency(notice.price),
+    },
+    {
       label: <span className="my-label">Náš odhad:</span>,
-      body: [lower, ' - ', upper],
-    })
-  }
+      body: estimate,
+    },
+  ]
 
   return (
     <Container tag="article" className="container-fluid notice-detail">
@@ -77,7 +71,7 @@ const NoticeDetail = ({notice}: NoticeDetailProps) => {
       </Row>
       <Row>
         <Col tag="section" className="col-sm-12 col-xs-12">
-          <NoticeInformation data={noticeDetailInformations} />
+          <NoticeInformation data={noticeDetailInformations.filter((o) => o.body !== null)} />
         </Col>
       </Row>
       <Row>

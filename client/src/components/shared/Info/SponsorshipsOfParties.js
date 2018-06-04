@@ -3,7 +3,7 @@ import ExternalLink from '../ExternalLink'
 import {showNumberCurrency} from '../../Notices/utilities'
 import './InfoList.css'
 
-export default ({entityName, data}) => (
+const SponsorshipsOfParties = ({entityName, data}) => (
   <ul className="contractList list-unstyled">
     {data.map((sponzor) => (
       <li key={sponzor.strana}>
@@ -20,3 +20,5 @@ export default ({entityName, data}) => (
     ))}
   </ul>
 )
+
+export default SponsorshipsOfParties

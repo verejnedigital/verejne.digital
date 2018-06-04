@@ -3,7 +3,7 @@ import ExternalLink from '../ExternalLink'
 import {showNumberCurrency} from '../../Notices/utilities'
 import './InfoList.css'
 
-export default ({data}) => (
+const Contracts = ({data}) => (
   <ul className="contractList list-unstyled">
     {data.map((contract) => (
       <li key={contract.source}>
@@ -15,3 +15,5 @@ export default ({data}) => (
     ))}
   </ul>
 )
+
+export default Contracts
