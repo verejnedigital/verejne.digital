@@ -65,15 +65,32 @@ export type MapOptions = {
 
 export type MapReference = any
 
+export type EntitySearch = {
+  eids: string[],
+  id: string,
+}
+
+export type Connections = {
+  entities: {[string]: Entity},
+  detail: {[string]: {ids: string[]}},
+  entityDetails: {
+    [string]: {
+      name: string,
+      data: any, //TODO: TBD
+    },
+  },
+}
+
 export type State = {|
   +count: number,
   +notices: {|
     +list: NoticeMap,
     +details: NoticeMap,
   |},
-  entities: Array<Entity>,
+  entities: Entity[],
   mapOptions: MapOptions,
   mapReference: MapReference,
+  connections: Connections,
 |}
 
 const getInitialState = (): State => ({

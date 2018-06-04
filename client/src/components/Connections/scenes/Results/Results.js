@@ -1,3 +1,4 @@
+// @flow
 import React from 'react'
 import ConnectionWrapper from '../../dataWrappers/ConnectionWrapper'
 import EntityWrapper from '../../dataWrappers/EntityWrapper'

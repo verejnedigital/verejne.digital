@@ -1,16 +1,28 @@
+// @flow
 import React, {PureComponent} from 'react'
 import {withRouter} from 'react-router-dom'
+import type {RouterHistory} from 'react-router'
 
-import {entitiesFromQuery} from '../../utils/utils'
+import withEntitySearch from '../../dataWrappers/EntitySearchWrapper'
 import './Search.css'
 
-class Search extends PureComponent {
+type Props = {|
+  entitySearch1: string,
+  entitySearch2: string,
+  history: RouterHistory,
+|}
+
+type State = {|
+  entitySearch1: string,
+  entitySearch2: string,
+|}
+
+class Search extends PureComponent<Props, State> {
   constructor(props) {
     super(props)
-    const entities = entitiesFromQuery(props.location.search)
     this.state = {
-      entitySearch1: entities.eid1 || '',
-      entitySearch2: entities.eid2 || '',
+      entitySearch1: props.entitySearch1,
+      entitySearch2: props.entitySearch2,
     }
   }
 
@@ -58,7 +70,7 @@ class Search extends PureComponent {
                 type="text"
                 value={this.state.entitySearch1}
                 onChange={this.updateInputValue}
-                onKeyPress={this.searchOnClickOnEnter}
+                onKeyPress={this.checkEnter}
                 placeholder="Zadaj prvú firmu / človeka"
               />
             </div>
@@ -92,4 +104,4 @@ class Search extends PureComponent {
   }
 }
 
-export default withRouter(Search)
+export default withEntitySearch(withRouter(Search))

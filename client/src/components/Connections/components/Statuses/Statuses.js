@@ -3,8 +3,20 @@ import React, {PureComponent} from 'react'
 import EntityWrapper from '../../dataWrappers/EntityWrapper'
 import ConnectionWrapper from '../../dataWrappers/ConnectionWrapper'
 import Alternative from './Alternative'
+import type {EntitySearch} from '../../../../state/index'
 
-class Statuses extends PureComponent {
+type Props = {
+  entity1: EntitySearch,
+  entity2: EntitySearch,
+  connections: string[],
+}
+
+type State = {|
+  showAlternatives1: boolean,
+  showAlternatives2: boolean,
+|}
+
+class Statuses extends PureComponent<Props, State> {
   state = {
     showAlternatives1: false,
     showAlternatives2: false,

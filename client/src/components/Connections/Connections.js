@@ -6,20 +6,15 @@ import Statuses from './components/Statuses/Statuses'
 import Results from './scenes/Results/Results'
 import './Connections.css'
 
-const PrepojeniaPage = () => (
+const Connections = () => (
   <div className="container-fluid connections">
     <div className="row">
       <div className="sidebar col-sm-5 col-md-4 col-lg-3">
         <div id="myAffix" data-spy="affix">
-          <Search searchConnection={this.searchConnection} />
+          <Search />
         </div>
       </div>
-      <div
-        className="col-sm-7 col-md-8 col-lg-9 main"
-        ref={(el) => {
-          this.main = el
-        }}
-      >
+      <div className="col-sm-7 col-md-8 col-lg-9 main">
         <Statuses />
         <Results />
       </div>
@@ -27,4 +22,4 @@ const PrepojeniaPage = () => (
   </div>
 )
 
-export default PrepojeniaPage
+export default Connections
