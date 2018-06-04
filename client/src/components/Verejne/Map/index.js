@@ -15,6 +15,7 @@ import ClusterMarker from './ClusterMarker'
 import {branch, compose, renderComponent, withHandlers} from 'recompose'
 import Loading from '../../Loading'
 import GoogleMap from '../../GoogleMap'
+import Legend from '../Legend'
 import {withDataProviders} from 'data-provider'
 import {entitiesProvider} from '../../../dataProviders/publiclyDataProviders'
 
@@ -46,8 +47,8 @@ const Map = ({
   clusters,
   onChange,
 }: Props) => {
-  return (
-    <div className="google-map-wrapper">
+  return [
+    <div key="map" className="google-map-wrapper">
       <GoogleMap center={center} zoom={zoom} onChange={onChange}>
         {map(clusters, (e, i) => (
           <ClusterMarker
@@ -61,8 +62,9 @@ const Map = ({
           />
         ))}
       </GoogleMap>
-    </div>
-  )
+    </div>,
+    <Legend key="legend" />,
+  ]
 }
 
 export default compose(

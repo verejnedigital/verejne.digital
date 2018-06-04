@@ -21,7 +21,6 @@ import type {ContextRouter} from 'react-router-dom'
 import type {Dispatch} from '../../types/reduxTypes'
 import type {Notice, State} from '../../state'
 
-import Legend from './Legend'
 import Bulletin from './Bulletin'
 import NoticeItem from './NoticeItem'
 import {Row, Col, Container} from 'reactstrap'
@@ -68,42 +67,20 @@ const NoticeList = ({
     </div>
   )
   return (
-    <Container className="container-fluid notices">
-      <Row className="">
-        <Col tag="aside" className="sidebar col-xl-3 col-lg-12">
-          <Legend />
-          <div className="fbfooter">
-            <Row>
-              <Col className="col-sm-offset-2 col-sm-10 col-xs-offset-2 col-xs-10">
-                <iframe
-                  src="https://www.facebook.com/plugins/like.php?href=https%3A%2F%2Fwww.facebook.com%2Fverejne.digital&width=111&layout=button_count&action=like&size=small&show_faces=true&share=true&height=46&appId="
-                  width="151"
-                  height="23"
-                  className="fbIframe"
-                  title="facebook"
-                  scrolling="no"
-                  frameBorder="0"
-                />
-              </Col>
-            </Row>
-          </div>
-        </Col>
-        <Col tag="article" className="main col-xl-8 offset-xl-1 col-lg-12">
-          <Row>
-            <Col>
-              {pagination}
-              {map(items, (bulletin, key) => (
-                <Bulletin
-                  key={key}
-                  items={bulletin.map((item) => <NoticeItem key={item.id} item={item} />)}
-                  number={bulletin[0].bulletin_number}
-                  year={bulletin[0].bulletin_year}
-                  date={bulletin[0].bulletin_date}
-                />
-              ))}
-              {pagination}
-            </Col>
-          </Row>
+    <Container tag="article" className="main notices">
+      <Row>
+        <Col>
+          {pagination}
+          {map(items, (bulletin, key) => (
+            <Bulletin
+              key={key}
+              items={bulletin.map((item) => <NoticeItem key={item.id} item={item} />)}
+              number={bulletin[0].bulletin_number}
+              year={bulletin[0].bulletin_year}
+              date={bulletin[0].bulletin_date}
+            />
+          ))}
+          {pagination}
         </Col>
       </Row>
     </Container>

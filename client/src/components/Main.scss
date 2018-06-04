@@ -1,4 +1,40 @@
 @import './variables.scss';
-.application-container {
-  margin-top: $navbar-height;
+html {
+  body {
+    div#root {
+      div.app {
+        div.row {
+          height: 100%;
+        }
+        height: 100%;
+      }
+      height: 100%;
+    }
+    height: 100%;
+  }
+  height: 100%;
+}
+
+.sidebar-part {
+  min-height: 100%;
+  height: 100%;
+  overflow: hidden;
+  position: fixed;
+  width: 305px;
+  float: left;
+  border-width: 2px;
+  border-color: $border-color;
+  border-style: solid;
+  box-shadow: 0 4px 12px 0 $shadow-color;
+  border-top: none;
+}
+
+.scroll-able {
+  overflow-y: scroll;
+  width: 320px;
+}
+
+.content-part {
+  float: right;
+  width: calc(100% - 320px);
 }
