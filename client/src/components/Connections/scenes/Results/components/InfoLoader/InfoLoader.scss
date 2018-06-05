@@ -1,5 +1,6 @@
+@import "../../../../../variables.scss";
 .resultLoading {
-  background-color: #ffffff;
+  background-color: $component-background;
   width: 400px;
   display: block;
   margin-left: auto;
@@ -9,16 +10,16 @@
 
   border-radius: 4px;
   border-width: 2px;
-  border-color:  #cddae3;
+  border-color: $border-color;
   border-style: solid;
-  box-shadow: 0 4px 12px 0 rgba(187, 198, 206, 0.5);
+  box-shadow: 0 4px 12px 0 $shadow-color;
 }
 
 .connectLine {
-  height:30px;
-  width:8px;
+  height: 30px;
+  width: 8px;
   padding-left: -50px;
-  background-color: #cddae3;
+  background-color: $border-color;
   margin-left: 40px;
 }
 
@@ -27,6 +28,6 @@
 }
 
 .infoWrapper:last-of-type > .connectLine {
-  height:0;
-  width:0;
+  height: 0;
+  width: 0;
 }

@@ -65,7 +65,7 @@ export type MapOptions = {
 
 export type MapReference = any
 
-export type EntitySearch = {
+export type SearchedEntity = {
   eids: string[],
   id: string,
 }

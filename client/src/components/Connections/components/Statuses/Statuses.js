@@ -1,13 +1,16 @@
 // @flow
 import React, {PureComponent} from 'react'
+import {compose} from 'redux'
+import {branch, renderNothing} from 'recompose'
+import EntitySearchWrapper from '../../dataWrappers/EntitySearchWrapper'
 import EntityWrapper from '../../dataWrappers/EntityWrapper'
 import ConnectionWrapper from '../../dataWrappers/ConnectionWrapper'
 import Alternative from './Alternative'
-import type {EntitySearch} from '../../../../state/index'
+import type {SearchedEntity} from '../../../../state/index'
 
 type Props = {
-  entity1: EntitySearch,
-  entity2: EntitySearch,
+  entity1: SearchedEntity,
+  entity2: SearchedEntity,
   connections: string[],
 }
 
@@ -37,38 +40,34 @@ class Statuses extends PureComponent<Props, State> {
     const {showAlternatives1, showAlternatives2} = this.state
     return (
       <div className="statuses">
-        {connections &&
-          (connections.length > 0 ? (
-            <span id="search-status" className="searchStatus">
-              Dĺžka prepojenia: <strong>{connections.length - 1}</strong>.&nbsp;
-            </span>
-          ) : (
-            <span id="search-status" className="searchStatus">
-              Prepojenie neexistuje.&nbsp;
-            </span>
-          ))}
-        {entity1 && (
-          <span id="search-status1" className="searchStatus">
-            {this.translateZaznam(entity1.eids.length, () =>
-              this.setState({showAlternatives1: true})
-            )}{' '}
-            pre &quot;{entity1.id}&quot;.&nbsp;
+        {connections.length > 0 ? (
+          <span id="search-status" className="searchStatus">
+            Dĺžka prepojenia: <strong>{connections.length - 1}</strong>.&nbsp;
+          </span>
+        ) : (
+          <span id="search-status" className="searchStatus">
+            Prepojenie neexistuje.&nbsp;
           </span>
         )}
-        {entity2 && (
-          <span id="search-status2" className="searchStatus">
-            {this.translateZaznam(entity2.eids.length, () =>
-              this.setState({showAlternatives2: true})
-            )}{' '}
-            pre &quot;{entity2.id}&quot;.&nbsp;
-          </span>
-        )}
+
+        <span id="search-status1" className="searchStatus">
+          {this.translateZaznam(entity1.eids.length, () =>
+            this.setState({showAlternatives1: true})
+          )}{' '}
+          pre &quot;{entity1.id}&quot;.&nbsp;
+        </span>
+
+        <span id="search-status2" className="searchStatus">
+          {this.translateZaznam(entity2.eids.length, () =>
+            this.setState({showAlternatives2: true})
+          )}{' '}
+          pre &quot;{entity2.id}&quot;.&nbsp;
+        </span>
+
         {showAlternatives1 &&
-          entity1 &&
           entity1.eids &&
           entity1.eids.map((eid) => <Alternative key={eid} eid={eid} />)}
         {showAlternatives2 &&
-          entity2 &&
           entity2.eids &&
           entity2.eids.map((eid) => <Alternative key={eid} eid={eid} />)}
       </div>
@@ -76,4 +75,11 @@ class Statuses extends PureComponent<Props, State> {
   }
 }
 
-export default EntityWrapper(ConnectionWrapper(Statuses))
+export default compose(
+  EntitySearchWrapper,
+  branch(
+    ({entitySearch1, entitySearch2}) => entitySearch1 && entitySearch2,
+    compose(EntityWrapper, ConnectionWrapper),
+    renderNothing
+  )
+)(Statuses)

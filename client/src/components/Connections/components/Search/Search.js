@@ -1,9 +1,10 @@
 // @flow
 import React, {PureComponent} from 'react'
 import {withRouter} from 'react-router-dom'
+import {compose} from 'redux'
 import type {RouterHistory} from 'react-router'
 
-import withEntitySearch from '../../dataWrappers/EntitySearchWrapper'
+import EntitySearchWrapper from '../../dataWrappers/EntitySearchWrapper'
 import './Search.css'
 
 type Props = {|
@@ -104,4 +105,4 @@ class Search extends PureComponent<Props, State> {
   }
 }
 
-export default withEntitySearch(withRouter(Search))
+export default compose(withRouter, EntitySearchWrapper)(Search)

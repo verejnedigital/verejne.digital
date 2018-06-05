@@ -10,7 +10,7 @@ const Connections = () => (
   <div className="container-fluid connections">
     <div className="row">
       <div className="sidebar col-sm-5 col-md-4 col-lg-3">
-        <div id="myAffix" data-spy="affix">
+        <div className="myAffix">
           <Search />
         </div>
       </div>

@@ -1,30 +1,32 @@
 // @flow
 import React from 'react'
+import {compose} from 'redux'
+import {branch, renderComponent} from 'recompose'
 import ConnectionWrapper from '../../dataWrappers/ConnectionWrapper'
 import EntityWrapper from '../../dataWrappers/EntityWrapper'
+import EntitySearchWrapper from '../../dataWrappers/EntitySearchWrapper'
 import InfoLoader from './components/InfoLoader/InfoLoader'
+import BeforeResults from './components/BeforeResults/BeforeResults'
 
 const Results = (props) => (
   <div>
-    {props.connections && props.connections.length > 0 ? (
-      <div className="results container-fluid">
-        {/* this.props.location.query.graph
+    <div className="results container-fluid">
+      {/* this.props.location.query.graph
               ? ''
               : <Subgraph eids_A={this.state.entity1.eids} eids_B={this.state.entity2.eids} />
               ''*/}
-        {props.connections.map((connEid) => (
-          <InfoLoader key={connEid} eid={connEid} hasConnectLine />
-        ))}
-      </div>
-    ) : (
-      <div className="beforeResultsContainer">
-        <div className="beforeResults">
-          <h1 className="whatSearch">Zadajte dvojicu</h1>
-          <h3 className="describeFor">pre začiatok vyhľadávania.</h3>
-        </div>
-      </div>
-    )}
+      {props.connections.map((connEid) => (
+        <InfoLoader key={connEid} eid={connEid} hasConnectLine />
+      ))}
+    </div>
   </div>
 )
 
-export default EntityWrapper(ConnectionWrapper(Results))
+export default compose(
+  EntitySearchWrapper,
+  branch(
+    ({entitySearch1, entitySearch2}) => entitySearch1 && entitySearch2,
+    compose(EntityWrapper, ConnectionWrapper),
+    renderComponent(BeforeResults)
+  )
+)(Results)

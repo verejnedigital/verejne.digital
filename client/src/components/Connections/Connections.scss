@@ -1,3 +1,5 @@
+@import "../variables.scss";
+
 .main,
 .container-fluid,
 .container-fluid > .row {
@@ -5,18 +7,22 @@
 }
 
 .statuses {
-  position: absolute;
+  position: relative;
   top: 10px;
   left: 0;
   width: 100%;
   text-align: center;
-  color: #859fb4;
-  font-size: 15px; /* Approximation due to font substitution */
+  color: $search-color;
+  font-size: 0.9rem;
   font-weight: 400;
 }
 
 .results {
-  padding-top: 50px;
+  padding-top: 10px;
+}
+
+.infoWrapper {
+  margin-left: auto;
 }
 
 .beforeResultsContainer {
@@ -27,12 +33,13 @@
 
 .beforeResults {
   width: 100%;
-}
 
-.beforeResults > .whatSearch, .describeFor {
-  text-align: center;
-  color: #859fb4;
-  font-weight: 400;
+  .whatSearch,
+  .describeFor {
+    text-align: center;
+    color: $search-color;
+    font-weight: 400;
+  }
 }
 
 .sidebar {
@@ -58,18 +65,18 @@
   overflow: hidden;
 }
 
-#myAffix {
+.myAffix {
   height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: #ffffff;
+  background-color: $component-background;
   padding-right: 15px;
   padding-left: 15px;
 }
 
-@media(max-width: 768px){
-    #myAffix{
-        position: relative !important;
-    }
+@media (max-width: 768px) {
+  .myAffix {
+    position: relative;
+  }
 }

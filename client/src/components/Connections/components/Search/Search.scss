@@ -1,17 +1,18 @@
+@import "../../../variables.scss";
+
 .entitysearch input {
-    border-radius: 2px;
-    border-width: 2px;
-    border-color: #cddae3;
-    border-style: solid;
-    background-color: white;
-    box-shadow: 0 4px 12px 0 rgba(187, 198, 206, 0.5);
-  }
-  
-  .searchForm {
-    width: 100%;
-  }
-  
-  .searchForm .searchTitle {
-    font-family: 'Source Code Pro', monospace;
-  }
-  
+  border-radius: 2px;
+  border-width: 2px;
+  border-color: $border-color;
+  border-style: solid;
+  background-color: $component-background;
+  box-shadow: 0 4px 12px 0 $shadow-color;
+}
+
+.searchForm {
+  width: 100%;
+}
+
+.searchForm .searchTitle {
+  font-family: "Source Code Pro", monospace;
+}
