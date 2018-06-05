@@ -1,7 +1,15 @@
 // @flow
 import {createSelector} from 'reselect'
 import qs from 'qs'
-import {paginationChunkSize, VEREJNE_MAX_PAGE_ITEMS, clusterOptions} from '../constants'
+import {
+  paginationChunkSize,
+  VEREJNE_MAX_PAGE_ITEMS,
+  clusterOptions,
+  ENTITY_ZOOM,
+  SUB_CITY_ZOOM,
+  CITY_ZOOM,
+  DEFAULT_ENTITIES_REQUEST_PARAMS,
+} from '../constants'
 import {values} from '../utils'
 import {sortBy, chunk, map} from 'lodash'
 import supercluster from 'points-cluster'
@@ -9,7 +17,7 @@ import supercluster from 'points-cluster'
 import type {Location} from 'react-router-dom'
 import type {NoticesOrdering} from '../components/Notices/NoticeList'
 import type {NoticeDetailProps} from '../components/Notices/NoticeDetail'
-import type {State, MapOptions, MapReference, Entity} from '../state'
+import type {State, MapOptions, Entity, MapBounds} from '../state'
 
 export const noticeDetailSelector = (state: State, props: NoticeDetailProps) =>
   props.match.params.id && state.notices.details[props.match.params.id]
@@ -70,7 +78,7 @@ export const noticesLengthSelector = createSelector(
 export const mapOptionsSelector = (state: State): MapOptions => state.mapOptions
 export const centerSelector = (state: State): [number, number] => state.mapOptions.center
 export const zoomSelector = (state: State): number => state.mapOptions.zoom
-export const mapReferenceSelector = (state: State): MapReference => state.mapReference
+export const boundsSelector = (state: State): ?MapBounds => state.mapOptions.bounds
 export const entitiesSelector = (state: State): ?Array<Entity> => state.entities
 export const currentPageSelector = (state: State): number => state.publicly.currentPage
 
@@ -110,6 +118,15 @@ export type MapCluster = {
   points: Array<any>,
 }
 
+type EntitiesRequestParams = {
+  lat1: number,
+  lng1: number,
+  lat2: number,
+  lng2: number,
+  restrictToSlovakia: boolean,
+  usedLevel: number,
+}
+
 const getClusters = (mapOptions: MapOptions, entities: ?Array<Entity>): Array<SuperCluster> => {
   const clusters = supercluster(entities, clusterOptions)
   return clusters(mapOptions)
@@ -132,4 +149,32 @@ export const clustersSelector = createSelector(
   mapOptionsSelector,
   entitiesSelector,
   (mapOptions, entities) => map(createClusters(mapOptions, entities))
+)
+
+const requestParamsSelector = createSelector(
+  boundsSelector,
+  zoomSelector,
+  (bounds, zoom): EntitiesRequestParams => {
+    let params = DEFAULT_ENTITIES_REQUEST_PARAMS
+    if (bounds) {
+      params = {
+        lat1: bounds.sw.lat,
+        lng1: bounds.sw.lng,
+        lat2: bounds.ne.lat,
+        lng2: bounds.ne.lng,
+        restrictToSlovakia: false,
+        usedLevel: [ENTITY_ZOOM, SUB_CITY_ZOOM, CITY_ZOOM].filter((val) => val > zoom).length,
+      }
+    }
+    return params
+  }
+)
+
+export const entitiesUrlSelector = createSelector(
+  requestParamsSelector,
+  ({lat1, lng1, lat2, lng2, restrictToSlovakia, usedLevel}) => {
+    const requestPrefix = `${process.env.REACT_APP_API_URL || ''}`
+    const restrictToSlovakiaParam = restrictToSlovakia ? '&restrictToSlovakia=true' : ''
+    return `${requestPrefix}/api/v/getEntities?level=${usedLevel}&lat1=${lat1}&lng1=${lng1}&lat2=${lat2}&lng2=${lng2}${restrictToSlovakiaParam}`
+  }
 )

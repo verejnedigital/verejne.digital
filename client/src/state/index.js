@@ -60,7 +60,6 @@ export type MapOptions = {
   bounds: ?MapBounds,
 }
 
-export type MapReference = any
 export type Center = {lat: number, lng: number}
 
 export type State = {|
@@ -74,7 +73,6 @@ export type State = {|
   },
   entities: ?Array<Entity>,
   mapOptions: MapOptions,
-  mapReference: MapReference,
 |}
 
 const getInitialState = (): State => ({
@@ -91,7 +89,6 @@ const getInitialState = (): State => ({
     zoom: 8,
     bounds: undefined,
   },
-  mapReference: undefined,
   entities: undefined,
 })
 

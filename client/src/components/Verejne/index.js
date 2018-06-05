@@ -11,7 +11,6 @@ import {
   entitiesLengthSelector,
   pageCountSelector,
   currentPageSelector,
-  mapReferenceSelector,
 } from '../../selectors'
 import Pagination from 'react-js-pagination'
 import {isPolitician, hasContractsWithState} from './entityHelpers'
@@ -45,7 +44,6 @@ const Verejne = ({
   selectEntity,
   entitiesLength,
   refetch,
-  mapReference,
 }) => (
   <div className="wrapper">
     <div className="side-panel">
@@ -88,7 +86,6 @@ export default compose(
       entities: currentPageEntities(state),
       currentPage: currentPageSelector(state),
       pageCount: pageCountSelector(state),
-      mapReference: mapReferenceSelector(state),
     }),
     {selectEntity, setCurrentPage}
   )

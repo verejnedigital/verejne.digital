@@ -6,27 +6,19 @@ import {
   centerSelector,
   entitiesSelector,
   clustersSelector,
-  mapReferenceSelector,
+  entitiesUrlSelector,
 } from '../../../selectors'
-import {
-  setMapReference,
-  setMapOptions,
-  selectEntity,
-  zoomToLocation,
-} from '../../../actions/verejneActions'
+import {setMapOptions, selectEntity, zoomToLocation} from '../../../actions/verejneActions'
 import './GoogleMap.css'
 import {map} from 'lodash'
 import ClusterMarker from './ClusterMarker'
 import {branch, compose, renderComponent, withHandlers} from 'recompose'
 import Loading from '../../Loading'
 import GoogleMap from '../../GoogleMap'
-import {withDataProviders, withRefetch} from 'data-provider'
-import {
-  entitiesProvider,
-  getEntitiesUrlFromMapReference,
-} from '../../../dataProviders/publiclyDataProviders'
+import {withDataProviders} from 'data-provider'
+import {entitiesProvider} from '../../../dataProviders/publiclyDataProviders'
 
-import type {MapOptions, Entity, MapReference, Center} from '../../../state'
+import type {MapOptions, Entity, Center} from '../../../state'
 import type {MapCluster} from '../../../selectors'
 import type {Thunk, GenericAction} from '../../../types/reduxTypes'
 
@@ -35,12 +27,10 @@ type Props = {
   center: [number, number],
   entities: Array<Entity>,
   setMapOptions: (mapOptions: MapOptions) => GenericAction<MapOptions, MapOptions>,
-  setMapReference: (mapReference: MapReference) => GenericAction<MapReference, MapReference>,
   selectEntity: (entity: Entity) => Thunk,
   zoomToLocation: (center: Center) => Thunk,
   refetch: () => void,
   clusters: Array<MapCluster>,
-  onGoogleApiLoaded: ({map: MapReference}) => any,
   onChange: (options: MapOptions) => any,
 }
 
@@ -49,22 +39,15 @@ const Map = ({
   center,
   entities,
   setMapOptions,
-  setMapReference,
   selectEntity,
   zoomToLocation,
   refetch,
   clusters,
-  onGoogleApiLoaded,
   onChange,
 }: Props) => {
   return (
     <div className="google-map-wrapper">
-      <GoogleMap
-        center={center}
-        zoom={zoom}
-        onGoogleApiLoaded={onGoogleApiLoaded}
-        onChange={onChange}
-      >
+      <GoogleMap center={center} zoom={zoom} onChange={onChange}>
         {map(clusters, (e, i) => (
           <ClusterMarker
             key={i}
@@ -88,22 +71,18 @@ export default compose(
       center: centerSelector(state),
       entities: entitiesSelector(state),
       clusters: clustersSelector(state),
-      mapReference: mapReferenceSelector(state),
+      entitiesUrl: entitiesUrlSelector(state),
     }),
     {
-      setMapReference,
       setMapOptions,
       selectEntity,
       zoomToLocation,
     }
   ),
-  withRefetch(),
-  withDataProviders(({mapReference}) => [entitiesProvider(mapReference)]),
+  withDataProviders(({entitiesUrl}) => [entitiesProvider(entitiesUrl)]),
   withHandlers({
-    onGoogleApiLoaded: ({setMapReference}) => ({map}) => setMapReference(map),
-    onChange: ({mapReference, setMapOptions, refetch}) => (options) => {
+    onChange: ({entitiesUrl, setMapOptions, refetch}) => (options) => {
       setMapOptions(options)
-      refetch(getEntitiesUrlFromMapReference(mapReference))
     },
   }),
   // display loading only before first fetch
