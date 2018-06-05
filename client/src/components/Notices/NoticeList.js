@@ -15,13 +15,14 @@ import {
 } from '../../selectors'
 import {paginationChunkSize, noticesPaginationSize} from '../../constants'
 import {modifyQuery} from '../../utils'
+import {groupBy, map} from 'lodash'
 
 import type {Location, Match, RouterHistory} from 'react-router-dom'
 import type {Dispatch} from '../../types/reduxTypes'
 import type {Notice, State} from '../../state'
 
 import Legend from './Legend'
-import BulletinTitle from './BulletinTitle'
+import Bulletin from './Bulletin'
 import NoticeItem from './NoticeItem'
 import {Row, Col, Container} from 'reactstrap'
 import './NoticeList.css'
@@ -51,10 +52,8 @@ const NoticeList = ({
   query,
 }: NoticeListProps) => {
   let items = null
-  let bulletinTitle = null
   if (paginatedNotices.length > 0) {
-    items = paginatedNotices.map((item) => <NoticeItem key={item.id} item={item} />)
-    bulletinTitle = BulletinTitle(paginatedNotices[0], newestBulletinDate)
+    items = groupBy(paginatedNotices, (item) => `${item.bulletin_number}/${item.bulletin_year}`)
   }
 
   const pagination = (
@@ -93,24 +92,20 @@ const NoticeList = ({
           </div>
         </Col>
         <Col tag="article" className="main col-xl-8 offset-xl-1 col-lg-12">
-          <Row tag="header">
-            <Col className="noticeInfo text-center">{bulletinTitle}</Col>
-          </Row>
           <Row>
             <Col>
               {pagination}
-              <table className="table table-striped table-responsive">
-                <thead>
-                  <tr>
-                    <td />
-                    <td>Názov obstarávania</td>
-                    <td>Objednávateľ</td>
-                    <td>Kto by sa mal prihlásiť</td>
-                    <td>Pod.</td>
-                  </tr>
-                </thead>
-                <tbody>{items}</tbody>
-              </table>
+              {
+                map(items, (bulletin, key) => (
+                  <Bulletin
+                    key={key}
+                    items={bulletin.map((item) => <NoticeItem key={item.id} item={item} />)}
+                    number={bulletin[0].bulletin_number}
+                    year={bulletin[0].bulletin_year}
+                    date={bulletin[0].bulletin_date}
+                  />
+                ))
+              }
               {pagination}
             </Col>
           </Row>
