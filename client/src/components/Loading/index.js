@@ -1,11 +1,21 @@
+// @flow
 import React from 'react'
 import LoadingComponent from 'react-loading-components'
 import './Loading.css'
+import {defaultProps} from 'recompose'
 
-const Loading = () => (
-  <div className="Loading">
-    <LoadingComponent type="tail_spin" width={250} height={250} fill="#0062db" />
+type Props = {
+  width: number,
+  height: number,
+}
+
+const Loading = ({width, height}: Props) => (
+  <div className="loading">
+    <LoadingComponent type="tail_spin" width={width} height={height} fill="#0062db" />
   </div>
 )
 
-export default Loading
+export default defaultProps({
+  width: 250,
+  height: 250,
+})(Loading)

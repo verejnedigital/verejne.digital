@@ -37,12 +37,9 @@ export type Entity = {
   eid: string,
   lng: string,
   lat: string,
-  selected: string,
-  title: string,
   size: string,
-  level: string,
-  visible: string,
-  ds: string,
+  ds: Array<any>,
+  name: string,
 }
 
 export type GeolocationPoint = {
@@ -63,7 +60,7 @@ export type MapOptions = {
   bounds: ?MapBounds,
 }
 
-export type MapReference = any
+export type Center = {lat: number, lng: number}
 
 export type State = {|
   +count: number,
@@ -71,9 +68,11 @@ export type State = {|
     +list: NoticeMap,
     +details: NoticeMap,
   |},
-  entities: Array<Entity>,
+  publicly: {
+    currentPage: number,
+  },
+  entities: ?Array<Entity>,
   mapOptions: MapOptions,
-  mapReference: MapReference,
 |}
 
 const getInitialState = (): State => ({
@@ -82,13 +81,15 @@ const getInitialState = (): State => ({
     list: {},
     details: {},
   },
+  publicly: {
+    currentPage: 1,
+  },
   mapOptions: {
     center: SLOVAKIA_COORDINATES,
     zoom: 8,
     bounds: undefined,
   },
-  mapReference: undefined,
-  entities: [],
+  entities: undefined,
 })
 
 export default getInitialState

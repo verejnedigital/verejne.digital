@@ -72,7 +72,7 @@ export default compose(
     paginatedNotices: paginatedNoticesSelector(state, props),
     currentPage: paginationSelector(state, props),
     noticesLength: noticesLengthSelector(state, props),
-    newestBulletinDate: newestBulletinDateSelector(state),
+    newestBulletinDate: newestBulletinDateSelector(state, props),
     query: locationSearchSelector(state, props),
   })),
   withRouter
