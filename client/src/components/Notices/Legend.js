@@ -7,7 +7,7 @@ import {Row, Col} from 'reactstrap'
 
 
 const Legend = () => (
-  <div className="legend">
+  <div className="legend-notices">
     <h2 className="title">Aktuálne obstarávania</h2>
     <p>
       Našim cieľom je identifikovať a osloviť najvhodnejších uchádzačov, ktorí by sa mali
