@@ -19,7 +19,7 @@ const monthNames = [
 
 export const expC = 2.7182818
 
-export function showNumberCurrency(num, cur = '€') {
+export function showNumberCurrency(num: number, cur: string = '€') {
   return (num)
     ? (
       <span className="text-nowrap">
@@ -30,7 +30,7 @@ export function showNumberCurrency(num, cur = '€') {
     )
 }
 
-export function icoUrl(ico) {
+export function icoUrl(ico: string) {
   return `http://www.finstat.sk/${ico}`
 }
 
@@ -55,9 +55,9 @@ export function isPolitician(entity) {
   return entity.sponzori_stran_data.length >= 1 || entity.stranicke_prispevky_data.length >= 1
 }
 
-export function getFinancialData(data, ico) {
+export function getFinancialData(data, ico: string) {
   const findata = {}
-  if (data.company_stats.length > 0) {
+  /*if (data.company_stats.length > 0) {
     const companyStats = data.company_stats[0]
     findata.ico = ico
     if (isValidValue(companyStats.datum_vzniku)) findata.zaciatok = companyStats.datum_vzniku
@@ -83,11 +83,11 @@ export function getFinancialData(data, ico) {
     } else if (isValidValue(companyStats.zamestnanci2015)) {
       findata.zamestnancov = companyStats.zamestnanci2015
     }
-  }
+  }*/
   return findata
 }
 
-export function showDate(dateString) {
+export function showDate(dateString: string) {
   const date = new Date(dateString)
   const day = date.getDate()
   const monthIndex = date.getMonth()
@@ -107,7 +107,7 @@ export function extractIco(data) {
   return ico
 }
 
-export function getSuspectLevelLimit(obstaravanie, limit) {
+export function getSuspectLevelLimit(obstaravanie, limit: number) {
   const c = (limit > 0) ? limit + 1 : limit - 1
   return expC ** (obstaravanie.price_avg + c * obstaravanie.price_stdev)
 }
@@ -131,7 +131,7 @@ export function getWarning(item) {
   return suspect !== 0 ? getWarningSymbol(suspect) : null
 }
 
-export function localeNumber(number) {
+export function localeNumber(number: number) {
   return (number) ? number.toLocaleString('sk-SK', {minimumFractionDigits: 2, maximumFractionDigits: 2}) : null
 }
 

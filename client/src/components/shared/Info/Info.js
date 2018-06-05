@@ -14,10 +14,8 @@ import {
   isPolitician,
 } from '../../Notices/utilities'
 import Circle from 'react-icons/lib/fa/circle-o'
-import MapMarker from 'react-icons/lib/fa/map-marker'
 import ChevronUp from 'react-icons/lib/fa/chevron-up'
 import ChevronDown from 'react-icons/lib/fa/chevron-down'
-import {Link} from 'react-router-dom'
 import './Info.css'
 
 class Info extends Component {
@@ -42,7 +40,7 @@ class Info extends Component {
   }
 
   render() {
-    const {data, eid} = this.props
+    const {data} = this.props
     const entity = data.entities[0]
     const findata = getFinancialData(data, extractIco(data))
     const zisk = findata.hasOwnProperty('zisk16') ? findata.zisk16 : findata.zisk15
@@ -53,9 +51,13 @@ class Info extends Component {
           <span className={`${isPolitician(data) ? 'politician' : ''}`}>
             <Circle aria-hidden="true" />&nbsp;{entity.entity_name}&nbsp;
           </span>
-          <Link to={`/verejne/${entity.lat}&${entity.lng}&${eid}&`}> {/*TODO when verejne will be completed link has to be fixed*/}
-            <MapMarker aria-hidden="true" />
-          </Link>{' '}
+          {
+            /*TODO when verejne will be completed link has to be fixed
+            <Link to={`/verejne/${entity.lat}&${entity.lng}&${eid}&`}>
+              <MapMarker aria-hidden="true" />
+              </Link>{' '}
+            */
+          }
         </span>
         <hr />
         <table className="infoDataTable table table-condensed">

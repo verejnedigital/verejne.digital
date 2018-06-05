@@ -54,7 +54,7 @@ const NoticeList = ({
   let bulletinTitle = null
   if (paginatedNotices.length > 0) {
     items = paginatedNotices.map((item) => <NoticeItem key={item.id} item={item} />)
-    bulletinTitle = BulletinTitle(paginatedNotices.length, newestBulletinDate)
+    bulletinTitle = BulletinTitle(paginatedNotices[0], newestBulletinDate)
   }
 
   const pagination = (
