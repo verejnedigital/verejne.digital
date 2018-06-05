@@ -57,7 +57,7 @@ export function isPolitician(entity) {
 
 export function getFinancialData(data, ico: string) {
   const findata = {}
-  /*if (data.company_stats.length > 0) {
+  if (data.company_stats.length > 0) {
     const companyStats = data.company_stats[0]
     findata.ico = ico
     if (isValidValue(companyStats.datum_vzniku)) findata.zaciatok = companyStats.datum_vzniku
@@ -83,7 +83,7 @@ export function getFinancialData(data, ico: string) {
     } else if (isValidValue(companyStats.zamestnanci2015)) {
       findata.zamestnancov = companyStats.zamestnanci2015
     }
-  }*/
+  }
   return findata
 }
 
