@@ -13,7 +13,7 @@ const _NoticeItem = (({item, toggledOn, toggle}) => {
   return (
     <tr title={getTitle(item)}>
       <td className="text-right">
-        <span className="similar-count">{formatSimilarCount(similarCount)}</span>
+        {item.bulletin_number}/{item.bulletin_year}<span className="similar-count">{formatSimilarCount(similarCount)}</span>
       </td>
       <td>
         <Link to={`/obstaravania/${item.id}`}>{item.title}</Link> {getWarning(item)}
