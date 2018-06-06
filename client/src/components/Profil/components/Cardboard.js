@@ -2,10 +2,10 @@
 import React from 'react'
 import './Cardboard.css'
 
-import type {Politician} from '../../../state/index'
+import type {PoliticianDetail} from '../../../state/index'
 
 type CardboardProps = {
-  politician: Politician,
+  politician: PoliticianDetail,
 }
 
 const Cardboard = ({politician}: CardboardProps) => (

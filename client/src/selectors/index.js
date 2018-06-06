@@ -5,13 +5,13 @@ import qs from 'qs'
 import {PAGINATION_CHUNK_SIZE} from '../constants'
 import {values} from '../utils'
 
-import type {Location} from 'react-router-dom'
+import type {ContextRouter} from 'react-router-dom'
 import type {NoticesOrdering} from '../components/Notices/NoticeList'
 import type {NoticeDetailProps} from '../components/Notices/NoticeDetail'
 import type {State, MapOptions, MapReference, Entity} from '../state'
-import type {ParamsIdRoute} from '../types/commonTypes'
 
-export const paramsIdSelector = (_: State, props: ParamsIdRoute) => props.match.params.id
+export const paramsIdSelector = (_: State, props: ContextRouter): string =>
+  props.match.params.id || '0'
 
 export const noticeDetailSelector = (state: State, props: NoticeDetailProps) =>
   props.match.params.id && state.notices.details[props.match.params.id]
@@ -26,7 +26,7 @@ export const nameSortedNoticesSelector = createSelector(
   (data) => sortBy(values(data), ['title'])
 )
 
-export const locationSearchSelector = (_: State, props: {location: Location}) =>
+export const locationSearchSelector = (_: State, props: ContextRouter) =>
   qs.parse(props.location.search.slice(1))
 
 export const paginationSelector = createSelector(

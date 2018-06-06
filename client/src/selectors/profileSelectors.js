@@ -1,80 +1,97 @@
+// @flow
 import {createSelector} from 'reselect'
 import {sortBy, last, mapValues} from 'lodash'
 import {normalizeName, parseQueryFromLocation} from '../utils'
 import {paramsIdSelector} from './index'
 
-import type {State} from '../state'
-import type {ProfileDetailPageRouterProps} from '../components/Profil/DetailPage'
+import type {State, Politician, PoliticianDetail, CadastralData, AssetDeclaration} from '../state'
+import type {Selector} from 'reselect'
+import type {ContextRouter} from 'react-router-dom'
+import type {ObjectMap} from '../types/commonTypes'
+import type {ParsedAssetDeclarationsType} from '../types/profileTypes'
 
-// TODO proptype
-export const politicianDetailSelector = createSelector(
-  paramsIdSelector,
-  (state: State) => state.profile.details,
-  (id, data) => data[id]
-)
+export const statePoliticianDetailSelector = (state: State): ObjectMap<PoliticianDetail> =>
+  state.profile.details
 
-export const politicianCadastralSelector = createSelector(
+export const politicianDetailSelector: Selector<
+  State,
+  ContextRouter,
+  PoliticianDetail
+> = createSelector(paramsIdSelector, statePoliticianDetailSelector, (id, data) => data[id])
+
+export const politicianCadastralSelector: Selector<
+  State,
+  ContextRouter,
+  CadastralData
+> = createSelector(
   paramsIdSelector,
   (state: State) => state.profile.cadastral,
   (id, data) => data[id]
 )
 
-export const politicianAssetDeclarationsSelector = createSelector(
+export const politicianAssetDeclarationsSelector: Selector<
+  State,
+  *,
+  ObjectMap<AssetDeclaration>
+> = createSelector(
   paramsIdSelector,
   (state: State) => state.profile.assetDeclarations,
   (id, data) => data[id]
 )
 
 // assume 1 record per year
-export const parsedAssetDeclarations = createSelector(
-  politicianAssetDeclarationsSelector,
-  (reports) =>
-    mapValues(reports, (r) => ({
-      unmovable_assets: r.unmovable_assets ? r.unmovable_assets.split('\n') : [],
-      movable_assets: r.movable_assets ? r.movable_assets.split('\n') : [],
-      income_assets: [
-        `príjmy: ${r.income}`,
-        `paušálne náhrady: ${r.compensations}`,
-        `ostatné príjmy: ${r.other_income}`,
-        `počas výkonu verejnej funkcie má tieto funkcie (čl. 7 ods. 1 písm. c) u. z. 357/2004): ${
-          r.offices_other
-        }`,
-      ],
-      source: r.source || 'http://www.nrsr.sk',
-    }))
+export const parsedAssetDeclarations: Selector<
+  State,
+  *,
+  ObjectMap<ParsedAssetDeclarationsType>
+> = createSelector(politicianAssetDeclarationsSelector, (reports) =>
+  mapValues(reports, (r) => ({
+    unmovable_assets: r.unmovable_assets ? r.unmovable_assets.split('\n') : [],
+    movable_assets: r.movable_assets ? r.movable_assets.split('\n') : [],
+    income_assets: [
+      `príjmy: ${r.income}`,
+      `paušálne náhrady: ${r.compensations}`,
+      `ostatné príjmy: ${r.other_income}`,
+      `počas výkonu verejnej funkcie má tieto funkcie (čl. 7 ods. 1 písm. c) u. z. 357/2004): ${
+        r.offices_other
+      }`,
+    ],
+    source: r.source || 'http://www.nrsr.sk',
+  }))
 )
 
 // assume 1 record per year
-export const assetDeclarationsSortedYearsSelector = createSelector(
-  politicianAssetDeclarationsSelector,
-  (reports) => sortBy(Object.keys(reports))
-)
+export const assetDeclarationsSortedYearsSelector: Selector<
+  State,
+  *,
+  Array<string>
+> = createSelector(politicianAssetDeclarationsSelector, (reports) => sortBy(Object.keys(reports)))
 
-export const assetDeclarationsLatestYearSelector = createSelector(
+export const assetDeclarationsLatestYearSelector: Selector<State, *, string> = createSelector(
   assetDeclarationsSortedYearsSelector,
   (years) => last(years)
 )
 
-export const paramsYearSelector = createSelector(
-  (_: State, props: ProfileDetailPageRouterProps) => parseQueryFromLocation(props.location).year,
+export const paramsYearSelector: Selector<State, ContextRouter, string> = createSelector(
+  (_: State, props: ContextRouter): string => parseQueryFromLocation(props.location).year,
   assetDeclarationsLatestYearSelector,
-  (paramsYear, latestYear) => Number.parseInt(paramsYear, 10) || latestYear
+  (paramsYear, latestYear) => paramsYear || latestYear
 )
 
-export const parsedAssetDeclarationsForYearSelector = createSelector(
-  paramsYearSelector,
-  parsedAssetDeclarations,
-  (year, records) => records[year]
-)
+export const parsedAssetDeclarationsForYearSelector: Selector<
+  State,
+  *,
+  ParsedAssetDeclarationsType
+> = createSelector(paramsYearSelector, parsedAssetDeclarations, (year, records) => records[year])
 
-export const profileQuerySelector = (state: State) => normalizeName(state.profile.query)
+export const profileQuerySelector = (state: State): string => normalizeName(state.profile.query)
 
-export const housesOrderedPoliticiansSelector = (state: State) =>
+export const housesOrderedPoliticiansSelector = (state: State): Array<Politician> =>
   sortBy(Object.values(state.profile.list), ['num_houses_flats'])
     .reverse()
     .map((p, i) => ({order: i + 1, ...p}))
 
-export const filteredPoliticiansSelector = createSelector(
+export const filteredPoliticiansSelector: Selector<State, *, Array<Politician>> = createSelector(
   profileQuerySelector,
   housesOrderedPoliticiansSelector,
   (query, list) =>

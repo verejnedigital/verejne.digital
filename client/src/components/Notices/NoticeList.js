@@ -16,7 +16,7 @@ import {
 import {PAGINATION_CHUNK_SIZE, NOTICES_PAGINATION_SIZE} from '../../constants'
 import {modifyQuery} from '../../utils'
 
-import type {Location, Match, RouterHistory} from 'react-router-dom'
+import type {ContextRouter} from 'react-router-dom'
 import type {Dispatch} from '../../types/reduxTypes'
 import type {Notice, State} from '../../state'
 
@@ -28,11 +28,8 @@ export type NoticeListProps = {
   paginatedNotices: Array<Notice>,
   currentPage: number,
   noticesLength: number,
-  location: Location,
-  match: Match,
-  history: RouterHistory,
   query: Object,
-}
+} & ContextRouter
 
 const NoticeList = ({
   dispatch,

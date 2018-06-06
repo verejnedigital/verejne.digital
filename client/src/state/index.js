@@ -32,6 +32,19 @@ export type Notice = {|
   price_avg: number,
 |}
 
+export type PoliticianDetail = {|
+  picture: string,
+  party_nom: string,
+  surname: string,
+  party_abbreviation: string,
+  firstname: string,
+  title: string,
+  term_finish: number,
+  office_name_male: string,
+  term_start: number,
+  office_name_female: string,
+|}
+
 export type Politician = {|
   num_fields_gardens: number,
   picture: string,
@@ -110,9 +123,9 @@ export type State = {|
   |},
   +profile: {|
     +list: ObjectMap<Politician>,
-    +details: ObjectMap<Politician>,
+    +details: ObjectMap<PoliticianDetail>,
     +cadastral: ObjectMap<CadastralData>,
-    +assetDeclarations: ObjectMap<AssetDeclaration>,
+    +assetDeclarations: ObjectMap<ObjectMap<AssetDeclaration>>,
     +query: string,
   |},
   entities: Array<Entity>,

@@ -1,5 +1,4 @@
 // @flow
-import produce from 'immer'
 import {mappingFn as defaultMappingFn} from '../utils'
 
 import type {GenericAction, Path} from '../types/reduxTypes'
