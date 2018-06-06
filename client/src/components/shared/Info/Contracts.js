@@ -8,9 +8,9 @@ import './InfoList.css'
 
 const _Contracts = (({data, toggledOn, toggle}) => {
   return [
-    <tr key="header">
+    <tr key="header" className="clickable" onClick={toggle}>
       <td>
-        <button onClick={toggle} className="showHideBtn btn btn-link">
+        <button className="showHideBtn btn btn-link">
           Zmluvy
         </button>
       </td>
