@@ -7,9 +7,9 @@ import './InfoList.css'
 
 const _Relations = (({data, toggledOn, toggle}) => {
   return [
-    <tr key="header">
+    <tr key="header" onClick={toggle} className="clickable" >
       <td>
-        <button onClick={toggle} className="showHideBtn btn btn-link">
+        <button className="showHideBtn btn btn-link">
           Vzťahy
         </button>
       </td>
