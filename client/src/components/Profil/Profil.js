@@ -47,7 +47,7 @@ class Profil extends Component {
 
   render() {
     return (
-      <Container className="Profile">
+      <Container className="profile">
         <Row tag="header" key="header" className="header profile-header">
           <Col>
             <h1 className="title">
