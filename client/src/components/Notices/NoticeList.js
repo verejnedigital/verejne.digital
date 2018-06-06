@@ -2,7 +2,7 @@
 import React from 'react'
 import {compose} from 'redux'
 import {connect} from 'react-redux'
-import {Link, withRouter} from 'react-router-dom'
+import {withRouter} from 'react-router-dom'
 import {withDataProviders} from 'data-provider'
 import Pagination from 'react-js-pagination'
 import {noticesProvider} from '../../dataProviders/noticesDataProviders'
@@ -15,10 +15,17 @@ import {
 } from '../../selectors'
 import {PAGINATION_CHUNK_SIZE, NOTICES_PAGINATION_SIZE} from '../../constants'
 import {modifyQuery} from '../../utils'
+import {groupBy, map} from 'lodash'
 
 import type {ContextRouter} from 'react-router-dom'
 import type {Dispatch} from '../../types/reduxTypes'
 import type {Notice, State} from '../../state'
+
+import Legend from './Legend'
+import Bulletin from './Bulletin'
+import NoticeItem from './NoticeItem'
+import {Row, Col, Container} from 'reactstrap'
+import './NoticeList.css'
 
 export type NoticesOrdering = 'title' | 'date'
 
@@ -41,14 +48,13 @@ const NoticeList = ({
   history,
   query,
 }: NoticeListProps) => {
-  return (
-    <div style={{textAlign: 'center'}}>
-      <div>{newestBulletinDate}</div>
-      {paginatedNotices.map((n) => (
-        <div key={n.id}>
-          <Link to={`/obstaravania/${n.id}`}>{n.title}</Link>
-        </div>
-      ))}
+  let items = null
+  if (paginatedNotices.length > 0) {
+    items = groupBy(paginatedNotices, (item) => `${item.bulletin_number}/${item.bulletin_year}`)
+  }
+
+  const pagination = (
+    <div className="paginationWrapper">
       <Pagination
         itemClass="page-item"
         linkClass="page-link"
@@ -61,6 +67,49 @@ const NoticeList = ({
       />
     </div>
   )
+  return (
+    <Container className="container-fluid notices">
+      <Row className="">
+        <Col tag="aside" className="sidebar col-xl-3 col-lg-12">
+          <Legend />
+          <div className="fbfooter">
+            <Row>
+              <Col className="col-sm-offset-2 col-sm-10 col-xs-offset-2 col-xs-10">
+                <iframe
+                  src="https://www.facebook.com/plugins/like.php?href=https%3A%2F%2Fwww.facebook.com%2Fverejne.digital&width=111&layout=button_count&action=like&size=small&show_faces=true&share=true&height=46&appId="
+                  width="151"
+                  height="23"
+                  className="fbIframe"
+                  title="facebook"
+                  scrolling="no"
+                  frameBorder="0"
+                />
+              </Col>
+            </Row>
+          </div>
+        </Col>
+        <Col tag="article" className="main col-xl-8 offset-xl-1 col-lg-12">
+          <Row>
+            <Col>
+              {pagination}
+              {
+                map(items, (bulletin, key) => (
+                  <Bulletin
+                    key={key}
+                    items={bulletin.map((item) => <NoticeItem key={item.id} item={item} />)}
+                    number={bulletin[0].bulletin_number}
+                    year={bulletin[0].bulletin_year}
+                    date={bulletin[0].bulletin_date}
+                  />
+                ))
+              }
+              {pagination}
+            </Col>
+          </Row>
+        </Col>
+      </Row>
+    </Container>
+  )
 }
 
 export default compose(
@@ -69,7 +118,7 @@ export default compose(
     paginatedNotices: paginatedNoticesSelector(state, props),
     currentPage: paginationSelector(state, props),
     noticesLength: noticesLengthSelector(state, props),
-    newestBulletinDate: newestBulletinDateSelector(state),
+    newestBulletinDate: newestBulletinDateSelector(state, props),
     query: locationSearchSelector(state, props),
   })),
   withRouter

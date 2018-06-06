@@ -3,14 +3,16 @@ export const NOTICES_PAGINATION_SIZE = 10
 
 export const DEFAULT_PROVIDER_KEEP_ALIVE = 10 * 60 * 1000
 
-export const ENTITY_ZOOM = 16
-export const SUB_CITY_ZOOM = 13
-export const CITY_ZOOM = 10
+export const DEFAULT_MAP_CENTER = {lat: 48.6, lng: 19.5}
+export const ENTITY_CLOSE_ZOOM = 19
+export const ENTITY_ZOOM = 17
+export const SUB_CITY_ZOOM = 14
+export const CITY_ZOOM = 11
 export const COUNTRY_ZOOM = 8
 export const GOOGLE_MAP_API_KEY = 'AIzaSyCAXMlEL-sfzT4jVK5CQHysSPp77JnVLks'
 export const SLOVAKIA_COORDINATES = [48.6, 19.5]
-export const VEREJNE_MAX_PAGE_ITEMS = 50
-export const DEFAULT_MAP_CENTER = {lat: 48.6, lng: 19.5}
+export const VEREJNE_MAX_PAGE_ITEMS = 25
+export const VEREJNE_PAGE_RANGE = 5
 
 export const createMapOptions = (maps) => {
   return {
@@ -114,8 +116,25 @@ export const SLOVAKIA_COORDS = {
 
 export const clusterOptions = {
   minZoom: 0,
-  maxZoom: 16,
+  maxZoom: 18,
   radius: 60,
 }
 export const FACEBOOK_LIKE_SRC =
   'https://www.facebook.com/plugins/like.php?href=https%3A%2F%2Fwww.facebook.com%2Fverejne.digital&width=111&layout=button_count&action=like&size=small&show_faces=true&share=false&height=46&appId='
+
+export const keys = ['income', 'compensations', 'other_income', 'offices_other']
+export const descriptions = [
+  'príjmy ',
+  'paušálne náhrady',
+  'ostatné príjmy',
+  'počas výkonu verejnej funkcie má tieto funkcie (čl. 7 ods. 1 písm. c) u. z. 357/2004)',
+]
+
+export const DEFAULT_ENTITIES_REQUEST_PARAMS = {
+  lat1: '47.26036122625137',
+  lng1: '16.53369140625',
+  lat2: '49.90503005077024',
+  lng2: '22.46630859375',
+  restrictToSlovakia: true,
+  usedLevel: 3,
+}

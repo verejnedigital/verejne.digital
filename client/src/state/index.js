@@ -92,8 +92,35 @@ export type Entity = {
   size: string,
   level: string,
   visible: string,
-  ds: string,
+  ds: Array<any>,
+  name: string,
 }
+
+export type Company = {
+  id: number,
+  eid: number,
+  zrsr_data: Array<any>,
+  company_stats: Array<any>,
+  contracts: Array<any>,
+  new_orsr_data: Array<any>,
+  sponzori_stran_data: Array<any>,
+  related: Array<any>,
+  auditori_data: Array<any>,
+  audiovizfond_data: Array<any>,
+  entities: Array<Entity>,
+  firmy_data: Array<any>,
+  total_contracts: number,
+  advokati_data: Array<any>,
+  nadacie_data: Array<any>,
+  orsresd_data: Array<any>,
+  politicians_data: Array<any>,
+  stranicke_prispevky_data: Array<any>,
+  uzivatelia_vyhody_ludia_data: Array<any>,
+}
+
+export type NoticeMap = {[string]: Notice}
+
+export type CompanyMap = {[string]: Company}
 
 export type GeolocationPoint = {
   lat: number,
@@ -113,10 +140,11 @@ export type MapOptions = {
   bounds: ?MapBounds,
 }
 
-export type MapReference = any
+export type Center = {lat: number, lng: number}
 
 export type State = {|
   +count: number,
+  +companies: CompanyMap,
   +notices: {|
     +list: ObjectMap<Notice>,
     +details: ObjectMap<Notice>,
@@ -128,13 +156,16 @@ export type State = {|
     +assetDeclarations: ObjectMap<ObjectMap<AssetDeclaration>>,
     +query: string,
   |},
-  entities: Array<Entity>,
+  publicly: {
+    currentPage: number,
+  },
+  entities: ?Array<Entity>,
   mapOptions: MapOptions,
-  mapReference: MapReference,
 |}
 
 const getInitialState = (): State => ({
   count: 0,
+  companies: {},
   notices: {
     list: {},
     details: {},
@@ -146,13 +177,15 @@ const getInitialState = (): State => ({
     assetDeclarations: {},
     query: '',
   },
+  publicly: {
+    currentPage: 1,
+  },
   mapOptions: {
     center: SLOVAKIA_COORDINATES,
     zoom: 8,
     bounds: undefined,
   },
-  mapReference: undefined,
-  entities: [],
+  entities: undefined,
 })
 
 export default getInitialState
