@@ -90,6 +90,22 @@ export type MapOptions = {
 
 export type Center = {lat: number, lng: number}
 
+export type SearchedEntity = {
+  eids: string[],
+  id: string,
+}
+
+export type Connections = {
+  entities: {[string]: Entity},
+  detail: {[string]: {ids: string[]}},
+  entityDetails: {
+    [string]: {
+      name: string,
+      data: any, //TODO: TBD
+    },
+  },
+}
+
 export type State = {|
   +count: number,
   +companies: CompanyMap,
@@ -100,8 +116,9 @@ export type State = {|
   publicly: {
     currentPage: number,
   },
-  entities: ?Array<Entity>,
+  entities: Entity[],
   mapOptions: MapOptions,
+  connections: Connections,
 |}
 
 const getInitialState = (): State => ({
@@ -119,7 +136,12 @@ const getInitialState = (): State => ({
     zoom: 8,
     bounds: undefined,
   },
-  entities: undefined,
+  entities: [],
+  connections: {
+    entities: {},
+    detail: {},
+    entityDetails: {},
+  },
 })
 
 export default getInitialState

@@ -1,0 +1,82 @@
+@import "../variables.scss";
+
+.main,
+.container-fluid,
+.container-fluid > .row {
+  height: 100%;
+}
+
+.statuses {
+  position: relative;
+  top: 10px;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  color: $search-color;
+  font-size: 0.9rem;
+  font-weight: 400;
+}
+
+.results {
+  padding-top: 10px;
+}
+
+.infoWrapper {
+  margin-left: auto;
+}
+
+.beforeResultsContainer {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.beforeResults {
+  width: 100%;
+
+  .whatSearch,
+  .describeFor {
+    text-align: center;
+    color: $search-color;
+    font-weight: 400;
+  }
+}
+
+.sidebar {
+  height: 100%;
+  padding-right: 0;
+  padding-left: 0;
+}
+
+.fbfooter {
+  width: 100%;
+  margin-top: auto;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  align-self: flex-end;
+}
+
+.fbfooter .col-sm-10 {
+  padding-left: 0;
+}
+
+.fbIframe {
+  border: none;
+  overflow: hidden;
+}
+
+.myAffix {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: $component-background;
+  padding-right: 15px;
+  padding-left: 15px;
+}
+
+@media (max-width: 768px) {
+  .myAffix {
+    position: relative;
+  }
+}
