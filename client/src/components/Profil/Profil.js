@@ -73,7 +73,7 @@ export default compose(
       query: profileQuerySelector(state),
       politicians: filteredPoliticiansSelector(state),
     }),
-    (dispatch: Dispatch) => bindActionCreators({updateValue}, dispatch)
+    {updateValue}
   ),
   withHandlers({
     updateQuery: (props) => (e) => {

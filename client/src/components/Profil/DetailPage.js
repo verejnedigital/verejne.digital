@@ -28,7 +28,7 @@ import {Row, Col, Container} from 'reactstrap'
 import './DetailPage.css'
 
 import type {ContextRouter} from 'react-router-dom'
-import type {State, PoliticianDetail, CadastralData} from '../../state'
+import type {State, PoliticianDetail, CadastralData, GeolocationPoint} from '../../state'
 import type {ParsedAssetDeclarationsType} from '../../types/profileTypes'
 
 export type ProfileDetailPageProps = {
@@ -37,7 +37,7 @@ export type ProfileDetailPageProps = {
   assets: ParsedAssetDeclarationsType,
   politician: PoliticianDetail,
   cadastral: CadastralData,
-  mapCenter: {lat: number, lng: number}, // TODO create mapTypes.js ?
+  mapCenter: GeolocationPoint,
   goMap: (ProfileDetailPageProps) => Function, // TODO instead take map center from url
 } & ContextRouter
 

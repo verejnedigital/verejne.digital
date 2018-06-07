@@ -4,12 +4,11 @@ import {mappingFn as defaultMappingFn} from '../utils'
 import type {GenericAction, Path} from '../types/reduxTypes'
 
 // merges new data into destination Path according to the mappingFn provided
-// TODO flow with generics for mappingFn
 export const receiveData = (
   path: Path,
   data: Array<Object> | Object,
   dataProviderRef: string,
-  mappingFn: (Array<Object> | Object) => Object = defaultMappingFn,
+  mappingFn: (Array<Object> | Object, ...args?: Array<any>) => Object = defaultMappingFn,
   ...mappingFnArgs: Array<any>
 ): GenericAction<Object, Array<Object> | Object> => ({
   type: `Received data from ${dataProviderRef}`,
