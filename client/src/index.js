@@ -33,7 +33,7 @@ class DispatchProvider extends React.Component {
 const store = getConfiguredStore()
 ReactDOM.render(
   <Provider store={store}>
-    <BrowserRouter>
+    <BrowserRouter basename={process.env.REACT_APP_BASENAME}>
       <DispatchProvider dispatch={store.dispatch}>
         <App />
       </DispatchProvider>
