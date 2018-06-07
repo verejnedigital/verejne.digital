@@ -1,6 +1,6 @@
 // @flow
 import React from 'react'
-import {compose, bindActionCreators} from 'redux'
+import {compose} from 'redux'
 import {connect} from 'react-redux'
 import {withHandlers} from 'recompose'
 import {withDataProviders} from 'data-provider'
@@ -11,11 +11,10 @@ import PoliticiansList from './components/PoliticiansList'
 import {FACEBOOK_LIKE_SRC} from '../../constants'
 import {Row, Col, Container} from 'reactstrap'
 
-import './Profil.css'
+import './Profile.css'
 
 import type {State, Politician} from '../../state'
 import type {ObjectMap} from '../../types/commonTypes'
-import type {Dispatch} from '../../types/reduxTypes'
 
 export type ProfileProps = {
   query: string,
