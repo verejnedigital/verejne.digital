@@ -138,3 +138,5 @@ export const DEFAULT_ENTITIES_REQUEST_PARAMS = {
   restrictToSlovakia: true,
   usedLevel: 3,
 }
+
+export const FIND_ENTITY_TITLE = 'Hľadaj firmu / človeka'

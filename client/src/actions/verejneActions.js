@@ -65,3 +65,23 @@ export const setAutocompleteValue = (value: string) => ({
   payload: value,
   reducer: () => value,
 })
+
+export const toggleModalOpen = () => ({
+  type: 'Toggle modal open',
+  path: ['publicly', 'entitySearchModalOpen'],
+  reducer: (open: boolean) => !open,
+})
+
+export const setEntitySearchFor = (searchFor: string) => ({
+  type: 'Set entity search for pattern',
+  path: ['publicly', 'entitySearchFor'],
+  payload: searchFor,
+  reducer: () => searchFor,
+})
+
+export const setEntitySearchEids = (entity: Array<{eid: string}>) => ({
+  type: 'Set entity search eids',
+  path: ['publicly', 'entitySearchEids'],
+  payload: entity,
+  reducer: (): Array<string> => entity.map((e) => e.eid),
+})

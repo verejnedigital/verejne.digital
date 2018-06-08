@@ -10,6 +10,7 @@ import {
   setCurrentPage,
   setAutocompleteValue,
   zoomToLocation,
+  toggleModalOpen,
 } from '../../actions/verejneActions'
 import {
   currentPageEntities,
@@ -21,11 +22,17 @@ import {
 } from '../../selectors'
 import Pagination from 'react-js-pagination'
 import {isPolitician, hasContractsWithState} from './entityHelpers'
-import {VEREJNE_MAX_PAGE_ITEMS, VEREJNE_PAGE_RANGE, ENTITY_CLOSE_ZOOM} from '../../constants'
+import {
+  VEREJNE_MAX_PAGE_ITEMS,
+  VEREJNE_PAGE_RANGE,
+  ENTITY_CLOSE_ZOOM,
+  FIND_ENTITY_TITLE,
+} from '../../constants'
 import {map} from 'lodash'
 import {compose} from 'recompose'
 import classnames from 'classnames'
 import Autocomplete from './Autocomplete'
+import EntitySearch from './EntitySearch'
 import {geocodeByAddress, getLatLng} from 'react-places-autocomplete'
 
 import FilledCircleIcon from 'react-icons/lib/fa/circle'
@@ -56,10 +63,17 @@ const Verejne = ({
   setAutocompleteValue,
   autocompleteOptions,
   zoomToLocation,
+  toggleModalOpen,
 }) => (
   <div className="wrapper">
     <div className="side-panel">
-      <Input type="text" className="form-control" placeholder="Hľadaj firmu / človeka" />
+      <Input
+        type="text"
+        className="form-control"
+        placeholder={FIND_ENTITY_TITLE}
+        onClick={toggleModalOpen}
+      />
+      <EntitySearch />
       <Autocomplete
         value={autocompleteValue}
         onSelect={(value, id) =>
@@ -112,6 +126,6 @@ export default compose(
       autocompleteValue: autocompleteValueSelector(state),
       autocompleteOptions: autocompleteOptionsSelector(state),
     }),
-    {selectEntity, setCurrentPage, setAutocompleteValue, zoomToLocation}
+    {selectEntity, setCurrentPage, setAutocompleteValue, zoomToLocation, toggleModalOpen}
   )
 )(Verejne)

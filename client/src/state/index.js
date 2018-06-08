@@ -190,6 +190,9 @@ export type State = {|
   publicly: {
     currentPage: number,
     autocompleteValue: string,
+    entitySearchModalOpen: boolean,
+    entitySearchFor: string,
+    entitySearchEids: ?Array<string>,
   },
   entities: Entity[],
   mapOptions: MapOptions,
@@ -213,6 +216,9 @@ const getInitialState = (): State => ({
   publicly: {
     currentPage: 1,
     autocompleteValue: '',
+    entitySearchModalOpen: false,
+    entitySearchFor: '',
+    entitySearchEids: undefined,
   },
   mapOptions: {
     center: SLOVAKIA_COORDINATES,
