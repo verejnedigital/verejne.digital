@@ -30,6 +30,7 @@ export type Notice = {|
   kandidati: Array<Candidate | []>,
   price_num: number,
   price_avg: number,
+  customer: string,
 |}
 
 export type PoliticianDetail = {|
@@ -96,11 +97,25 @@ export type Entity = {
   name: string,
 }
 
+export type CompanyStat = {
+  datum_vzniku: string,
+  datum_zaniku: string,
+  zisk2016: ?number,
+  trzby2016: ?number,
+  zisk2015: ?number,
+  trzby2015: ?number,
+  zisk2014: ?number,
+  trzby2014: ?number,
+  trzby2016: ?number,
+  zamestnanci2016: string,
+  zamestnanci2015: string,
+}
+
 export type Company = {
   id: number,
   eid: number,
   zrsr_data: Array<any>,
-  company_stats: Array<any>,
+  company_stats: Array<CompanyStat>,
   contracts: Array<any>,
   new_orsr_data: Array<any>,
   sponzori_stran_data: Array<any>,

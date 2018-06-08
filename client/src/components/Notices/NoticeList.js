@@ -48,7 +48,7 @@ const NoticeList = ({
   history,
   query,
 }: NoticeListProps) => {
-  let items = null
+  let items = []
   if (paginatedNotices.length > 0) {
     items = groupBy(paginatedNotices, (item) => `${item.bulletin_number}/${item.bulletin_year}`)
   }
@@ -92,17 +92,15 @@ const NoticeList = ({
           <Row>
             <Col>
               {pagination}
-              {
-                map(items, (bulletin, key) => (
-                  <Bulletin
-                    key={key}
-                    items={bulletin.map((item) => <NoticeItem key={item.id} item={item} />)}
-                    number={bulletin[0].bulletin_number}
-                    year={bulletin[0].bulletin_year}
-                    date={bulletin[0].bulletin_date}
-                  />
-                ))
-              }
+              {map(items, (bulletin, key) => (
+                <Bulletin
+                  key={key}
+                  items={bulletin.map((item) => <NoticeItem key={item.id} item={item} />)}
+                  number={bulletin[0].bulletin_number}
+                  year={bulletin[0].bulletin_year}
+                  date={bulletin[0].bulletin_date}
+                />
+              ))}
               {pagination}
             </Col>
           </Row>
