@@ -36,5 +36,18 @@
                 }
             }
         }
+    } // https://stackoverflow.com/questions/1695175/how-to-horizontally-center-an-unordered-list-of-unknown-width
+    .pagination {
+        list-style: none;
+        position: relative;
+        float: left;
+        display: block;
+        left: 50%;
+    }
+    .pagination .page-item {
+        position: relative;
+        float: left;
+        display: block;
+        right: 50%;
     }
 }

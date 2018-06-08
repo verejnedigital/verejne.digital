@@ -15,9 +15,17 @@ type Props = {
   searchOptions: Object,
   onError: ?onError,
   onSelect: ?onSelect,
+  className: ?string,
 }
 
-const Autocomplete = ({value, onChange, onSelect, onErrorBinded, searchOptions}: Props) => (
+const Autocomplete = ({
+  value,
+  onChange,
+  onSelect,
+  onErrorBinded,
+  searchOptions,
+  className,
+}: Props) => (
   <PlacesAutocomplete
     type="text"
     className="form-control"
@@ -33,7 +41,7 @@ const Autocomplete = ({value, onChange, onSelect, onErrorBinded, searchOptions}:
         <input
           {...getInputProps({
             placeholder: 'Hľadaj adresu...',
-            className: 'autocomplete__input',
+            className: classnames(className, 'autocomplete__input'),
             autoFocus: true,
           })}
         />

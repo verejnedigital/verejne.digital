@@ -70,6 +70,7 @@ const Verejne = ({
         onChange={(value) => setAutocompleteValue(value)}
         onError={(status, clearSuggestions) => clearSuggestions()}
         searchOptions={autocompleteOptions}
+        className="form-control"
       />
       <ListGroup>
         {map(entities, (e) => (
