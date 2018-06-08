@@ -34,6 +34,7 @@ type Props = {
   onChange: (options: MapOptions) => any,
 }
 
+// NOTE: there can be multiple points on the map on the same location...
 const Map = ({
   zoom,
   center,

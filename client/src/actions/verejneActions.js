@@ -31,9 +31,12 @@ export const setMapOptions = (mapOptions: MapOptions) => ({
   reducer: (state: MapOptions) => mapOptions,
 })
 
-export const zoomToLocation = (center: Center): Thunk => (dispatch, getState) => {
+export const zoomToLocation = (center: Center, withZoom?: number): Thunk => (
+  dispatch,
+  getState
+) => {
   const state = getState()
-  const zoom = zoomSelector(getState()) + 1
+  const zoom = withZoom || zoomSelector(getState()) + 1
   dispatch(setMapOptions({...mapOptionsSelector(state), zoom, center: [center.lat, center.lng]}))
 }
 
@@ -54,4 +57,11 @@ export const setCurrentPage = (newPage: number) => ({
   path: ['publicly', 'currentPage'],
   payload: newPage,
   reducer: () => newPage,
+})
+
+export const setAutocompleteValue = (value: string) => ({
+  type: 'Set autocomplete value',
+  path: ['publicly', 'autocompleteValue'],
+  payload: value,
+  reducer: () => value,
 })

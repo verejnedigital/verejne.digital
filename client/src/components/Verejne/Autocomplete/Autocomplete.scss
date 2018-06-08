@@ -1,0 +1,19 @@
+@import '../../variables.scss';
+.autocomplete {
+    &__input {
+        width: 100%;
+    }
+    &__suggestions {
+        &__item {
+            & small {
+                color: $search-color;
+            }
+            padding: 0.3rem;
+            cursor: pointer;
+            background-color: white;
+            &--active {
+                background-color: $asset-hover-color;
+            }
+        }
+    }
+}

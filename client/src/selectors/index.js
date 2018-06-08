@@ -187,3 +187,15 @@ export const entitiesUrlSelector = createSelector(
     return `${requestPrefix}/api/v/getEntities?level=${usedLevel}&lat1=${lat1}&lng1=${lng1}&lat2=${lat2}&lng2=${lng2}${restrictToSlovakiaParam}`
   }
 )
+
+export const autocompleteValueSelector = (state: State) => state.publicly.autocompleteValue
+export const autocompleteOptionsSelector = createSelector(boundsSelector, (bounds) => {
+  return {
+    bounds: bounds && {
+      east: bounds.ne.lng,
+      north: bounds.ne.lat,
+      west: bounds.sw.lng,
+      south: bounds.sw.lat,
+    },
+  }
+})
