@@ -8,6 +8,7 @@ import {toggleModalOpen, zoomToLocation} from '../../../actions/verejneActions'
 import './EntitySearchResultItem.css'
 import MapIcon from '../../../assets/mapIcon.svg'
 import {ENTITY_CLOSE_ZOOM} from '../../../constants'
+import Info from '../../shared/Info/Info'
 
 type SearchedEntity = {
   address: string,
@@ -24,7 +25,8 @@ type Props = {
   showOnMap: Function,
 }
 
-const EntitySearchResultItem = ({entities, showOnMap, firmy_data}: Props) => {
+const EntitySearchResultItem = (props: Props) => {
+  const {entities, showOnMap} = props
   return (
     <div className="list-group-item">
       <b>
@@ -32,15 +34,7 @@ const EntitySearchResultItem = ({entities, showOnMap, firmy_data}: Props) => {
         <img src={MapIcon} className="location" onClick={showOnMap} title="Zobraz na mape" />
       </b>
       <div>{entities[0].address}</div>
-      {/*TODO more work here + separate component*/}
-      {firmy_data[0] && (
-        <div>
-          IČO:{' '}
-          <a href={`https://www.finstat.sk/${firmy_data.ico}`} target="_blank">
-            {firmy_data[0].ico}
-          </a>
-        </div>
-      )}
+      <Info data={props} />
     </div>
   )
 }
@@ -49,15 +43,7 @@ const EntitySearchResultItem = ({entities, showOnMap, firmy_data}: Props) => {
 // be strictly presentional component
 export default compose(
   connect(null, {zoomToLocation, toggleModalOpen}),
-  withStateHandlers(
-    {data: undefined},
-    {
-      onData: (props) => (data) => {
-        if (!data.firmy_data[0]) console.log('aaa', data)
-        return {...data}
-      },
-    }
-  ),
+  withStateHandlers({data: undefined}, {onData: (props) => (data) => ({...data})}),
   withHandlers({
     bindedOnData: ({onData}) => () => (ref, data) => onData(data),
     showOnMap: ({entities, toggleModalOpen, zoomToLocation}) => () => {
