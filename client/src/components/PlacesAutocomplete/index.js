@@ -1,9 +1,9 @@
 // @flow
 import React from 'react'
-import PlacesAutocomplete from 'react-places-autocomplete'
+import GoogleAutocomplete from 'react-places-autocomplete'
 import {withHandlers, defaultProps, compose} from 'recompose'
 import classnames from 'classnames'
-import './Autocomplete.css'
+import './PlacesAutocomplete.css'
 
 // TODO fix flow
 type onError = (status: string, clearSuggestions: Function) => any
@@ -18,7 +18,7 @@ type Props = {
   className: ?string,
 }
 
-const Autocomplete = ({
+const PlacesAutocomplete = ({
   value,
   onChange,
   onSelect,
@@ -26,7 +26,7 @@ const Autocomplete = ({
   searchOptions,
   className,
 }: Props) => (
-  <PlacesAutocomplete
+  <GoogleAutocomplete
     type="text"
     className="form-control"
     placeholder="Hľadaj adresu"
@@ -61,7 +61,7 @@ const Autocomplete = ({
         </div>
       </div>
     )}
-  </PlacesAutocomplete>
+  </GoogleAutocomplete>
 )
 
 export default compose(
@@ -72,4 +72,4 @@ export default compose(
     onErrorBinded: (props) => (status, clearSuggestions) =>
       props.onError && props.onError(status, clearSuggestions),
   })
-)(Autocomplete)
+)(PlacesAutocomplete)

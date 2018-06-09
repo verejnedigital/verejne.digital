@@ -5,7 +5,7 @@ import {entitySearchForSelector, entitySearchEidsSelector} from '../../../select
 import {compose} from 'recompose'
 import {withDataProviders} from 'data-provider'
 import {entitiesSearchResultEidsProvider} from '../../../dataProviders/publiclyDataProviders'
-import EntityContainer from './EntityContainer'
+import EntitySearchResultItem from '../EntitySearchResultItem'
 import {map} from 'lodash'
 
 type Props = {
@@ -14,7 +14,7 @@ type Props = {
 }
 
 const EntitySearchResult = ({entitySearchEids}: Props) => (
-  <div>{map(entitySearchEids, (eid, i) => <EntityContainer key={i} eid={eid} />)}</div>
+  <div>{map(entitySearchEids, (eid, i) => <EntitySearchResultItem key={i} eid={eid} />)}</div>
 )
 
 export default compose(

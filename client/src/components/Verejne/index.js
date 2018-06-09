@@ -31,13 +31,13 @@ import {
 import {map} from 'lodash'
 import {compose} from 'recompose'
 import classnames from 'classnames'
-import Autocomplete from './Autocomplete'
+import PlacesAutocomplete from '../PlacesAutocomplete'
 import EntitySearch from './EntitySearch'
 import {geocodeByAddress, getLatLng} from 'react-places-autocomplete'
 
 import FilledCircleIcon from 'react-icons/lib/fa/circle'
 import CircleIcon from 'react-icons/lib/fa/circle-o'
-import MapIcon from './mapIcon.svg'
+import MapIcon from '../../assets/mapIcon.svg'
 
 const renderListItemIcon = (entity) => {
   if (entity.size > 1) {
@@ -74,7 +74,7 @@ const Verejne = ({
         onClick={toggleModalOpen}
       />
       <EntitySearch />
-      <Autocomplete
+      <PlacesAutocomplete
         value={autocompleteValue}
         onSelect={(value, id) =>
           geocodeByAddress(value)

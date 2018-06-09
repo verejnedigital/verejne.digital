@@ -5,8 +5,8 @@ import {withStateHandlers, compose, withHandlers} from 'recompose'
 import {connect} from 'react-redux'
 import {singleEntityProvider} from '../../../dataProviders/publiclyDataProviders'
 import {toggleModalOpen, zoomToLocation} from '../../../actions/verejneActions'
-import './EntityContainer.css'
-import MapIcon from '../mapIcon.svg'
+import './EntitySearchResultItem.css'
+import MapIcon from '../../../assets/mapIcon.svg'
 import {ENTITY_CLOSE_ZOOM} from '../../../constants'
 
 type SearchedEntity = {
@@ -24,7 +24,7 @@ type Props = {
   showOnMap: Function,
 }
 
-const EntityContainer = ({entities, showOnMap, firmy_data}: Props) => {
+const EntitySearchResultItem = ({entities, showOnMap, firmy_data}: Props) => {
   return (
     <div className="list-group-item">
       <b>
@@ -66,4 +66,4 @@ export default compose(
     },
   }),
   withDataProviders(({eid, bindedOnData}) => [singleEntityProvider(eid, bindedOnData)])
-)(EntityContainer)
+)(EntitySearchResultItem)
