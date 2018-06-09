@@ -21,12 +21,18 @@ const monthNames = [
 
 export const expC = 2.7182818
 
-export function showNumberCurrency(num: number, cur: string = '€') {
-  return num ? (
+type ShowNumberCurrencyProps = {
+  num: number,
+  cur?: string,
+}
+
+export const ShowNumberCurrency = ({num, cur = '€'}: ShowNumberCurrencyProps) => {
+  if (!num) return null
+  return (
     <span className="text-nowrap">
       {localeNumber(num)} {cur}
     </span>
-  ) : null
+  )
 }
 
 export function icoUrl(ico: string) {

@@ -13,9 +13,9 @@ type Props = {
   onChange: (value: string) => any,
   onErrorBinded: onError,
   searchOptions: Object,
-  onError: ?onError,
-  onSelect: ?onSelect,
-  className: ?string,
+  onError?: onError,
+  onSelect?: onSelect,
+  className?: string,
 }
 
 const PlacesAutocomplete = ({

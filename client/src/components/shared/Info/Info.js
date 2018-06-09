@@ -9,7 +9,7 @@ import {
   getFinancialData,
   extractIco,
   icoUrl,
-  showNumberCurrency,
+  ShowNumberCurrency,
   showDate,
   isPolitician,
 } from '../../Notices/utilities'
@@ -27,13 +27,11 @@ const Info = ({data}) => {
         <span className={`${isPolitician(data) ? 'politician' : ''}`}>
           <Circle aria-hidden="true" />&nbsp;{entity.entity_name}&nbsp;
         </span>
-        {
-          /*TODO when verejne will be completed link has to be fixed
+        {/*TODO when verejne will be completed link has to be fixed
           <Link to={`/verejne/${entity.lat}&${entity.lng}&${eid}&`}>
             <MapMarker aria-hidden="true" />
             </Link>{' '}
-          */
-        }
+          */}
       </span>
       <hr />
       <table className="infoDataTable table table-condensed">
@@ -48,14 +46,13 @@ const Info = ({data}) => {
                 <ExternalLink
                   isMapView={false}
                   url={`http://www.orsr.sk/hladaj_ico.asp?ICO=${findata.ico}&SID=0`}
-                  text={findata.ico}
-                />
+                >
+                  {findata.ico}
+                </ExternalLink>
                 &nbsp;(
-                <ExternalLink
-                  isMapView={false}
-                  url={icoUrl(findata.ico)}
-                  text={'detaily o firme'}
-                />
+                <ExternalLink isMapView={false} url={icoUrl(findata.ico)}>
+                  Detaily o firme
+                </ExternalLink>
                 )
               </td>
             </tr>
@@ -65,11 +62,9 @@ const Info = ({data}) => {
             <tr>
               <td colSpan="2">
                 <strong>Založená:</strong>&nbsp;
-                <ExternalLink
-                  isMapView={false}
-                  url={icoUrl(findata.ico)}
-                  text={showDate(findata.zaciatok)}
-                />
+                <ExternalLink isMapView={false} url={icoUrl(findata.ico)}>
+                  {showDate(findata.zaciatok)}
+                </ExternalLink>
               </td>
             </tr>
           )}
@@ -78,11 +73,9 @@ const Info = ({data}) => {
             <tr>
               <td colSpan="2">
                 <strong>Zaniknutá:</strong>&nbsp;
-                <ExternalLink
-                  isMapView={false}
-                  url={icoUrl(findata.ico)}
-                  text={showDate(findata.koniec)}
-                />
+                <ExternalLink isMapView={false} url={icoUrl(findata.ico)}>
+                  {showDate(findata.koniec)}
+                </ExternalLink>
               </td>
             </tr>
           )}
@@ -91,11 +84,9 @@ const Info = ({data}) => {
             <tr>
               <td colSpan="2">
                 <strong>Zamestnancov:</strong>&nbsp;
-                <ExternalLink
-                  isMapView={false}
-                  url={icoUrl(findata.ico)}
-                  text={findata.zamestnancov}
-                />
+                <ExternalLink isMapView={false} url={icoUrl(findata.ico)}>
+                  {findata.zamestnancov}
+                </ExternalLink>
               </td>
             </tr>
           )}
@@ -106,8 +97,9 @@ const Info = ({data}) => {
                 <ExternalLink
                   isMapView={false}
                   url={`https://verejne.digital/zrsr.html?${data.zrsr_data[0].ico}`}
-                  text={data.zrsr_data[0].ico}
-                />
+                >
+                  {data.zrsr_data[0].ico}
+                </ExternalLink>
               </td>
             </tr>
           )}
@@ -118,11 +110,9 @@ const Info = ({data}) => {
               <td colSpan="2">
                 <span>
                   <strong>Zisk v 2016:</strong>&nbsp;
-                  <ExternalLink
-                    isMapView={false}
-                    url={icoUrl(findata.ico)}
-                    text={showNumberCurrency(zisk)}
-                  />
+                  <ExternalLink isMapView={false} url={icoUrl(findata.ico)}>
+                    <ShowNumberCurrency num={zisk} />
+                  </ExternalLink>
                 </span>
                 {findata.zisk_trend !== 0 && <Trend trend={8} />}
               </td>
@@ -135,11 +125,9 @@ const Info = ({data}) => {
               <td colSpan="2">
                 <span>
                   <strong>Tržby v 2016:</strong>&nbsp;
-                  <ExternalLink
-                    isMapView={false}
-                    url={icoUrl(findata.ico)}
-                    text={showNumberCurrency(trzby)}
-                  />
+                  <ExternalLink isMapView={false} url={icoUrl(findata.ico)}>
+                    <ShowNumberCurrency num={trzby} />
+                  </ExternalLink>
                 </span>
                 {findata.trzby_trend !== 0 && <Trend trend={10} />}
               </td>
@@ -155,8 +143,9 @@ const Info = ({data}) => {
                   url={`http://www.otvorenezmluvy.sk/documents/search?utf8=%E2%9C%93&q=${
                     entity.entity_name
                   }`}
-                  text={showNumberCurrency(data.total_contracts)}
-                />
+                >
+                  <ShowNumberCurrency num={data.total_contracts} />
+                </ExternalLink>
               </td>
             </tr>
           )}
@@ -168,8 +157,9 @@ const Info = ({data}) => {
                   url={`http://datanest.fair-play.sk/searches/quick?query_string=${
                     entity.entity_name
                   }`}
-                  text={'Advokát'}
-                />
+                >
+                  Advokát
+                </ExternalLink>
               </td>
             </tr>
           )}
@@ -181,8 +171,9 @@ const Info = ({data}) => {
                   url={`http://datanest.fair-play.sk/searches/quick?query_string=${
                     entity.entity_name
                   }`}
-                  text={'Nadácia'}
-                />
+                >
+                  Nadácia
+                </ExternalLink>
               </td>
             </tr>
           )}
@@ -194,8 +185,9 @@ const Info = ({data}) => {
                   url={`http://datanest.fair-play.sk/searches/quick?query_string=${
                     entity.entity_name
                   }`}
-                  text={'Auditor'}
-                />
+                >
+                  Auditor
+                </ExternalLink>
               </td>
             </tr>
           )}
@@ -229,17 +221,14 @@ const Info = ({data}) => {
                 <ExternalLink
                   isMapView={false}
                   url={'http://www.transparency.sk/sk/zverejnujeme-zoznam-vlastnikov-firiem/'}
-                  text={'Verejný funkcionár'}
-                />
+                >
+                  Verejný funkcionár
+                </ExternalLink>
               </td>
             </tr>
           )}
-          {data.related.length >= 1 && (
-            <Relations data={data.related} />
-          )}
-          {data.contracts.length >= 1 && (
-            <Contracts data={data.contracts} />
-          )}
+          {data.related.length >= 1 && <Relations data={data.related} />}
+          {data.contracts.length >= 1 && <Contracts data={data.contracts} />}
         </tbody>
       </table>
     </div>

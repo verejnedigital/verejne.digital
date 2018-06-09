@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import ExternalLink from 'react-icons/lib/fa/external-link'
+import ExternalLinkIcon from 'react-icons/lib/fa/external-link'
 
 import './DetailCadastralLV.css'
 
@@ -20,7 +20,7 @@ class DetailCadastralLV extends Component {
             }&cadastralUnitCode=${this.props.lv.cadastralunitcode}&outputType=html`}
             onClick={this.disablePropagation}
           >
-            {this.props.lv.landusename}&nbsp;<ExternalLink />
+            {this.props.lv.landusename}&nbsp;<ExternalLinkIcon />
           </a>
           <br />
           {`${this.props.lv.cadastralunitname}, LV č. ${this.props.lv.foliono}; parcely: ${

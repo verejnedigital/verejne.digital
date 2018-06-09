@@ -10,7 +10,7 @@ import {
   Form,
   FormGroup,
   FormText,
-s} from 'reactstrap'
+} from 'reactstrap'
 import {connect} from 'react-redux'
 import {compose, withState, withHandlers} from 'recompose'
 import EntitySearchResult from '../EntitySearchResult'

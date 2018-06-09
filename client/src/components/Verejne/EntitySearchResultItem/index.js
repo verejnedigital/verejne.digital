@@ -31,7 +31,13 @@ const EntitySearchResultItem = (props: Props) => {
     <div className="list-group-item">
       <b>
         {entities[0].entity_name}
-        <img src={MapIcon} className="location" onClick={showOnMap} title="Zobraz na mape" />
+        <img
+          src={MapIcon}
+          className="location"
+          onClick={showOnMap}
+          title="Zobraz na mape"
+          alt="Zobraz na mape"
+        />
       </b>
       <div>{entities[0].address}</div>
       <Info data={props} />

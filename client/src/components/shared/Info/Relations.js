@@ -21,7 +21,7 @@ const _Relations = ({data, toggledOn, toggle}) => {
       </td>
     </tr>,
     toggledOn ? (
-      <tr className="noBorder">
+      <tr className="noBorder" key="relations">
         <td colSpan="2">
           <ul className="contractList list-unstyled">
             {data.map((related, i) => (
