@@ -1,5 +1,7 @@
 // @flow
 import {dispatchReceivedData} from './dataProvidersUtils'
+import {DEFAULT_PROVIDER_KEEP_ALIVE} from '../constants'
+import {mapObjToId} from '../utils'
 import {receiveCompanyDetails} from '../actions/noticesActions'
 import type {Dispatch, Path} from '../types/reduxTypes'
 
@@ -21,7 +23,7 @@ export const noticesProvider = () => ({
     },
   ],
   onData: [dispatchReceivedData, ['notices', 'list']],
-  keepAliveFor: 10 * 60 * 1000,
+  keepAliveFor: DEFAULT_PROVIDER_KEEP_ALIVE,
 })
 
 export const noticeDetailProvider = (id: string) => ({
@@ -33,7 +35,7 @@ export const noticeDetailProvider = (id: string) => ({
       accept: 'application/json',
     },
   ],
-  onData: [dispatchReceivedData, ['notices', 'details']],
+  onData: [dispatchReceivedData, ['notices', 'details'], mapObjToId, id],
   keepAliveFor: 60 * 60 * 1000,
 })
 

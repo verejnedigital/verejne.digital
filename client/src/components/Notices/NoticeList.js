@@ -13,11 +13,11 @@ import {
   noticesLengthSelector,
   locationSearchSelector,
 } from '../../selectors'
-import {paginationChunkSize, noticesPaginationSize} from '../../constants'
+import {PAGINATION_CHUNK_SIZE, NOTICES_PAGINATION_SIZE} from '../../constants'
 import {modifyQuery} from '../../utils'
 import {groupBy, map} from 'lodash'
 
-import type {Location, Match, RouterHistory} from 'react-router-dom'
+import type {ContextRouter} from 'react-router-dom'
 import type {Dispatch} from '../../types/reduxTypes'
 import type {Notice, State} from '../../state'
 
@@ -35,11 +35,8 @@ export type NoticeListProps = {
   paginatedNotices: Array<Notice>,
   currentPage: number,
   noticesLength: number,
-  location: Location,
-  match: Match,
-  history: RouterHistory,
   query: Object,
-}
+} & ContextRouter
 
 const NoticeList = ({
   dispatch,
@@ -62,9 +59,9 @@ const NoticeList = ({
         itemClass="page-item"
         linkClass="page-link"
         hideNavigation
-        pageRangeDisplayed={noticesPaginationSize}
+        pageRangeDisplayed={NOTICES_PAGINATION_SIZE}
         activePage={currentPage}
-        itemsCountPerPage={paginationChunkSize}
+        itemsCountPerPage={PAGINATION_CHUNK_SIZE}
         totalItemsCount={noticesLength}
         onChange={(page) => history.push({search: modifyQuery(query, {page})})}
       />

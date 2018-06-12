@@ -6,8 +6,8 @@ import Verejne from './Verejne'
 import Connections from './Connections/Connections'
 import NoticeList from './Notices/NoticeList'
 import NoticeDetail from './Notices/NoticeDetail'
-import Profil from './Profil/Profil'
-import DetailPage from './Profil/DetailPage'
+import Profile from './Profile/Profile'
+import DetailPage from './Profile/DetailPage'
 
 import './Main.css'
 
@@ -20,7 +20,7 @@ class Main extends Component {
         <Route path="/prepojenia" exact component={Connections} />
         <Route path="/obstaravania" exact component={NoticeList} />
         <Route path="/obstaravania/:id" component={NoticeDetail} />
-        <Route path="/profil" exact component={Profil} />
+        <Route path="/profil" exact component={Profile} />
         <Route path="/profil/:id" component={DetailPage} />
       </Switch>
     </div>,

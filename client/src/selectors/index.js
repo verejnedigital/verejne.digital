@@ -2,7 +2,7 @@
 import {createSelector} from 'reselect'
 import qs from 'qs'
 import {
-  paginationChunkSize,
+  PAGINATION_CHUNK_SIZE,
   VEREJNE_MAX_PAGE_ITEMS,
   clusterOptions,
   ENTITY_ZOOM,
@@ -14,12 +14,15 @@ import {values} from '../utils'
 import {sortBy, chunk, map} from 'lodash'
 import supercluster from 'points-cluster'
 
-import type {Location} from 'react-router-dom'
+import type {ContextRouter} from 'react-router-dom'
 import type {NoticesOrdering} from '../components/Notices/NoticeList'
 import type {NoticeDetailProps} from '../components/Notices/NoticeDetail'
 
 import type {CompanyDetailsProps} from '../components/shared/CompanyDetails'
 import type {State, MapOptions, Entity, MapBounds} from '../state'
+
+export const paramsIdSelector = (_: State, props: ContextRouter): string =>
+  props.match.params.id || '0'
 
 export const noticeDetailSelector = (state: State, props: NoticeDetailProps) =>
   props.match.params.id && state.notices.details[props.match.params.id]
@@ -38,7 +41,7 @@ export const nameSortedNoticesSelector = createSelector(
   (data) => sortBy(values(data), ['title'])
 )
 
-export const locationSearchSelector = (_: State, props: {location: Location}) =>
+export const locationSearchSelector = (_: State, props: ContextRouter) =>
   qs.parse(props.location.search.slice(1))
 
 export const paginationSelector = createSelector(
@@ -58,7 +61,7 @@ export const paginatedNoticesSelector = createSelector(
   paginationSelector,
   (dateSorted, nameSorted, orderBy, page) => {
     const notices = orderBy === 'title' ? nameSorted : dateSorted
-    return chunk(notices, paginationChunkSize)[page - 1]
+    return chunk(notices, PAGINATION_CHUNK_SIZE)[page - 1]
   }
 )
 

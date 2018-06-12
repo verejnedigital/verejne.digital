@@ -1,5 +1,9 @@
-export const paginationChunkSize = 10
-export const noticesPaginationSize = 10
+export const PAGINATION_CHUNK_SIZE = 10
+export const NOTICES_PAGINATION_SIZE = 10
+
+export const DEFAULT_PROVIDER_KEEP_ALIVE = 10 * 60 * 1000
+
+export const DEFAULT_MAP_CENTER = {lat: 48.6, lng: 19.5}
 export const ENTITY_CLOSE_ZOOM = 19
 export const ENTITY_ZOOM = 17
 export const SUB_CITY_ZOOM = 14
