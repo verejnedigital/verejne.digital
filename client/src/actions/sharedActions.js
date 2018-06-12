@@ -17,8 +17,8 @@ export const receiveData = (
   reducer: (state, data) => ({...state, ...mappingFn(data, ...mappingFnArgs)}),
 })
 
-export const updateValue = <T: *>(path: Path, data: T): GenericAction<T, T> => ({
-  type: 'Update data on path',
+export const updateValue = <T: *>(path: Path, data: T, type?: string): GenericAction<T, T> => ({
+  type: type || 'Update data on path',
   payload: data,
   path,
   reducer: (state: T, data: T) => data,
