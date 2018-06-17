@@ -67,7 +67,7 @@ const EntitySearch = ({
                 <p>{`Zobrazujem ${entitySearchEids.length} výsledkov pre "${entitySearchFor}".`}</p>
               )}
             </FormText>
-            <EntitySearchResult searchFor={searchEntityValue} />
+            <EntitySearchResult />
           </FormGroup>
         </Form>
       </ModalBody>

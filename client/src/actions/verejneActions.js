@@ -59,13 +59,6 @@ export const setCurrentPage = (newPage: number) => ({
   reducer: () => newPage,
 })
 
-export const setAutocompleteValue = (value: string) => ({
-  type: 'Set autocomplete value',
-  path: ['publicly', 'autocompleteValue'],
-  payload: value,
-  reducer: () => value,
-})
-
 export const toggleModalOpen = () => ({
   type: 'Toggle modal open',
   path: ['publicly', 'entitySearchModalOpen'],

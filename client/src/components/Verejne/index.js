@@ -8,10 +8,10 @@ import {connect} from 'react-redux'
 import {
   selectEntity,
   setCurrentPage,
-  setAutocompleteValue,
   zoomToLocation,
   toggleModalOpen,
 } from '../../actions/verejneActions'
+import {updateValue} from '../../actions/sharedActions'
 import {
   currentPageEntities,
   entitiesLengthSelector,
@@ -29,7 +29,7 @@ import {
   FIND_ENTITY_TITLE,
 } from '../../constants'
 import {map} from 'lodash'
-import {compose} from 'recompose'
+import {compose, withHandlers} from 'recompose'
 import classnames from 'classnames'
 import PlacesAutocomplete from '../PlacesAutocomplete'
 import EntitySearch from './EntitySearch'
@@ -81,7 +81,7 @@ const Verejne = ({
             .then((results) => getLatLng(results[0]))
             .then((location) => zoomToLocation(location, ENTITY_CLOSE_ZOOM))
         }
-        onChange={(value) => setAutocompleteValue(value)}
+        onChange={setAutocompleteValue}
         onError={(status, clearSuggestions) => clearSuggestions()}
         searchOptions={autocompleteOptions}
         className="form-control"
@@ -126,6 +126,10 @@ export default compose(
       autocompleteValue: autocompleteValueSelector(state),
       autocompleteOptions: autocompleteOptionsSelector(state),
     }),
-    {selectEntity, setCurrentPage, setAutocompleteValue, zoomToLocation, toggleModalOpen}
-  )
+    {selectEntity, setCurrentPage, updateValue, zoomToLocation, toggleModalOpen}
+  ),
+  withHandlers({
+    setAutocompleteValue: ({updateValue}) => (value) =>
+      updateValue(['publicly', 'autocompleteValue'], value, 'Set autocomplete value'),
+  })
 )(Verejne)
