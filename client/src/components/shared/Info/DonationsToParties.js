@@ -1,6 +1,6 @@
 import React from 'react'
 import ExternalLink from '../ExternalLink'
-import {showNumberCurrency} from '../../Notices/utilities'
+import {ShowNumberCurrency} from '../../Notices/utilities'
 import './InfoList.css'
 
 const DonationsToParties = ({entityName, data}) => (
@@ -9,13 +9,11 @@ const DonationsToParties = ({entityName, data}) => (
       <li key={sponzor.strana}>
         <ExternalLink
           url={`http://datanest.fair-play.sk/searches/quick?query_string=${entityName}`}
-          text={[
-            sponzor.strana,
-            ', ',
-            showNumberCurrency(sponzor.vyska_prispevku, sponzor.mena),
-            ` (rok ${sponzor.rok})`,
-          ]}
-        />
+        >
+          {`${sponzor.strana}, `}
+          <ShowNumberCurrency num={sponzor.vyska_prispevku} curr={sponzor.mena} />
+          {` (rok ${sponzor.rok})`}
+        </ExternalLink>
       </li>
     ))}
   </ul>

@@ -31,9 +31,12 @@ export const setMapOptions = (mapOptions: MapOptions) => ({
   reducer: (state: MapOptions) => mapOptions,
 })
 
-export const zoomToLocation = (center: Center): Thunk => (dispatch, getState) => {
+export const zoomToLocation = (center: Center, withZoom?: number): Thunk => (
+  dispatch,
+  getState
+) => {
   const state = getState()
-  const zoom = zoomSelector(getState()) + 1
+  const zoom = withZoom || zoomSelector(getState()) + 1
   dispatch(setMapOptions({...mapOptionsSelector(state), zoom, center: [center.lat, center.lng]}))
 }
 
@@ -54,4 +57,24 @@ export const setCurrentPage = (newPage: number) => ({
   path: ['publicly', 'currentPage'],
   payload: newPage,
   reducer: () => newPage,
+})
+
+export const toggleModalOpen = () => ({
+  type: 'Toggle modal open',
+  path: ['publicly', 'entitySearchModalOpen'],
+  reducer: (open: boolean) => !open,
+})
+
+export const setEntitySearchFor = (searchFor: string) => ({
+  type: 'Set entity search for pattern',
+  path: ['publicly', 'entitySearchFor'],
+  payload: searchFor,
+  reducer: () => searchFor,
+})
+
+export const setEntitySearchEids = (entity: Array<{eid: string}>) => ({
+  type: 'Set entity search eids',
+  path: ['publicly', 'entitySearchEids'],
+  payload: entity,
+  reducer: (): Array<string> => entity.map((e) => e.eid),
 })

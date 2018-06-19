@@ -2,7 +2,6 @@
 import {get, set} from 'lodash'
 import produce from 'immer'
 import {stringify, parse} from 'qs'
-
 import type {SegmentReducer, Path} from './types/reduxTypes'
 import type {Location} from 'react-router-dom'
 

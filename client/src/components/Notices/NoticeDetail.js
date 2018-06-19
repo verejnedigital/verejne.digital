@@ -6,7 +6,7 @@ import {withDataProviders} from 'data-provider'
 import {noticeDetailProvider} from '../../dataProviders/noticesDataProviders'
 import {noticeDetailSelector} from '../../selectors'
 import ExternalLink from '../shared/ExternalLink'
-import {getSuspectLevelLimit, showNumberCurrency} from './utilities'
+import {getSuspectLevelLimit, ShowNumberCurrency} from './utilities'
 import CompaniesTable from './CompaniesTable'
 import './NoticeDetail.css'
 import NoticeInformation from './NoticeInformation'
@@ -24,20 +24,27 @@ export type NoticeDetailProps = {
 }
 
 const NoticeDetail = ({notice}: NoticeDetailProps) => {
-
-  const bulletin = (notice.bulletin_date) ? (
+  const bulletin = notice.bulletin_date ? (
     <span>
       <ExternalLink
         url={`https://www.uvo.gov.sk/evestnik?poradie=${notice.bulletin_number}&year=${
           notice.bulletin_year
         }`}
-        text={`${notice.bulletin_number}/${notice.bulletin_year}`}
-      />{' '}
+      >
+        {`${notice.bulletin_number}/${notice.bulletin_year}`}
+      </ExternalLink>
       <span className="note">({notice.bulletin_date})</span>
     </span>
   ) : null
 
-  const estimate = (notice.price_num >= 5) ? [showNumberCurrency(getSuspectLevelLimit(notice, -1)), ' - ', showNumberCurrency(getSuspectLevelLimit(notice, 1))] : null
+  const estimate =
+    notice.price_num >= 5
+      ? [
+        <ShowNumberCurrency num={getSuspectLevelLimit(notice, -1)} key="currency-1" />,
+        ' - ',
+        <ShowNumberCurrency num={getSuspectLevelLimit(notice, 1)} key="currency-2" />,
+      ]
+      : null
 
   const noticeDetailInformations = [
     {
@@ -54,7 +61,7 @@ const NoticeDetail = ({notice}: NoticeDetailProps) => {
     },
     {
       label: <span className="my-label">Vyhlásená cena:</span>,
-      body: showNumberCurrency(notice.price),
+      body: <ShowNumberCurrency num={notice.price} />,
     },
     {
       label: <span className="my-label">Náš odhad:</span>,

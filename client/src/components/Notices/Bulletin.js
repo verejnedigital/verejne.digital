@@ -4,19 +4,16 @@ import './LegendSymbols.css'
 import {Row, Col} from 'reactstrap'
 import ExternalLink from '../shared/ExternalLink'
 
-
 const Bulletin = ({items, number, year, date}) => [
   <Row key="title">
     <Col className="noticeInfo text-center">
       <span>
         <strong>{date}</strong> Vestník číslo{' '}
-        <ExternalLink
-          url={`https://www.uvo.gov.sk/evestnik?poradie=${number}&year=${year}`}
-          text={
-            <strong>
-              {number}/{year}
-            </strong>
-          }
+        <ExternalLink url={`https://www.uvo.gov.sk/evestnik?poradie=${number}&year=${year}`}>
+          <strong>
+            {number}/{year}
+          </strong>
+        </ExternalLink>
         />
       </span>
     </Col>
@@ -31,9 +28,7 @@ const Bulletin = ({items, number, year, date}) => [
         <td>Pod.</td>
       </tr>
     </thead>
-    <tbody>
-      {items}
-    </tbody>
+    <tbody>{items}</tbody>
   </table>,
 ]
 

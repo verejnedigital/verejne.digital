@@ -6,7 +6,7 @@ import classnames from 'classnames'
 import {withState} from 'recompose'
 import {FACEBOOK_LIKE_SRC} from '../../../constants'
 import './Legend.css'
-import MapIcon from '../mapIcon.svg'
+import MapIcon from '../../../assets/mapIcon.svg'
 
 type Props = {
   legendOpen: boolean,
