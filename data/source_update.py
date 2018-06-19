@@ -1,6 +1,7 @@
 import argparse
 import csv
 import os
+import re
 import subprocess
 import sys
 import urllib
@@ -9,12 +10,12 @@ from datetime import datetime
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../data/db')))
 from db import DatabaseConnection
-from utils import json_load
+from utils import json_load, remove_accents
 
 
 """ Script for updating data sources. Specify the data sources to be updated
     as command line parameters, using the data source names from sources.json.
-    Example:
+    Example: under user datautils, execute
         python source_update.py ekosystem_ITMS --verbose
 """
 
@@ -78,6 +79,15 @@ def update_SQL_source(source, timestamp, dry_run, verbose):
     db.close()
 
 
+def normalise_CSV_column_name(column_name):
+    # remove parentheses and their content
+    column_name = re.sub(r'\([^)]*\)', '', column_name)
+    # replace spaces with an underscore
+    column_name = re.sub(r' +', '_', column_name)
+    # remove accents and convert to lower case
+    column_name = remove_accents(column_name).lower()
+    return column_name
+
 def update_CSV_source(source, timestamp, dry_run, verbose):
     # Load the CSV file
     with open(source['path'], 'r') as f:
@@ -97,16 +107,17 @@ def update_CSV_source(source, timestamp, dry_run, verbose):
     q = 'CREATE SCHEMA %s; SET search_path="%s";' % (schema, schema)
     db.execute(q)
 
-    # Create table containing the column names from CSV file
-    q = 'CREATE TABLE column_names (index int, name text);'
+    # Compute normalised column names, saving original names in a separate table
+    column_names_normalised = map(normalise_CSV_column_name, column_names)
+    q = 'CREATE TABLE column_names (name_original text, name_normalised text);'
     db.execute(q)
     q = """INSERT INTO column_names VALUES %s;"""
-    q_data = [(i, column_name) for i, column_name in enumerate(column_names)]
+    q_data = [(original, normalised) for original, normalised in zip(column_names, column_names_normalised)]
     db.execute_values(q, q_data)
 
     # Create table containing the actual data from the CSV file
     table = source['table_name']
-    table_columns = ', '.join(['col%d text' % i for i in range(len(column_names))])
+    table_columns = ', '.join(['%s text' % (name) for name in column_names_normalised])
     q = 'CREATE TABLE %s (%s);' % (table, table_columns)
     db.execute(q)
 
