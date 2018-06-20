@@ -1,27 +1,30 @@
 import React, {Component} from 'react'
-import Navbar from './Navbar'
+import Navigation from './Navigation'
 import {Route} from 'react-router-dom'
 import {Switch} from 'react-router'
 import Verejne from './Verejne'
-import Prepojenia from './Prepojenia'
-import NoticeList from './NoticeList'
-import NoticeDetail from './NoticeDetail'
+import Connections from './Connections/Connections'
+import NoticeList from './Notices/NoticeList'
+import NoticeDetail from './Notices/NoticeDetail'
+import Profile from './Profile/Profile'
+import DetailPage from './Profile/DetailPage'
+
 import './Main.css'
 
 class Main extends Component {
-  render = () => (
-    <div>
-      <Navbar />
-      <main role="main" className="container application-container">
-        <Switch>
-          <Route path="/verejne" exact component={Verejne} />
-          <Route path="/prepojenia" exact component={Prepojenia} />
-          <Route path="/obstaravania" exact component={NoticeList} />
-          <Route path="/obstaravania/:id" component={NoticeDetail} />
-        </Switch>
-      </main>
-    </div>
-  )
+  render = () => [
+    <Navigation key="navbar" />,
+    <div key="main" className="application-container">
+      <Switch>
+        <Route path="/verejne" exact component={Verejne} />
+        <Route path="/prepojenia" exact component={Connections} />
+        <Route path="/obstaravania" exact component={NoticeList} />
+        <Route path="/obstaravania/:id" component={NoticeDetail} />
+        <Route path="/profil" exact component={Profile} />
+        <Route path="/profil/:id" component={DetailPage} />
+      </Switch>
+    </div>,
+  ]
 }
 
 export default Main

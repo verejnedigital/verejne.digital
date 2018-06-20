@@ -1,6 +1,7 @@
 import argparse
 import csv
 import os
+import re
 import subprocess
 import sys
 import urllib
@@ -9,12 +10,12 @@ from datetime import datetime
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../data/db')))
 from db import DatabaseConnection
-from utils import json_load
+from utils import json_load, remove_accents
 
 
 """ Script for updating data sources. Specify the data sources to be updated
     as command line parameters, using the data source names from sources.json.
-    Example:
+    Example: under user datautils, execute
         python source_update.py ekosystem_ITMS --verbose
 """
 
@@ -60,23 +61,28 @@ def update_SQL_source(source, timestamp, dry_run, verbose):
         schema_old = source['schemas'][0]
         schema_new = 'source_' + source['name'] + '_' + timestamp
         db.rename_schema(schema_old, schema_new, verbose)
-        # TEMP
-        # For SourceDataInfo under kataster to work properly, user kataster
-        # needs to be able to see the newly created schema and tables within
-        db.grant_usage_and_select_on_schema(schema_new, 'kataster')
+        # Grant privileges to user data for data/SourceDataInfo to work properly
+        db.grant_usage_and_select_on_schema(schema_new, 'data')
     else:
         for schema_old in source['schemas']:
             schema_new = 'source_' + source['name'] + '_' + schema_old + '_' + timestamp
             db.rename_schema(schema_old, schema_new, verbose)
-            # TEMP
-            # For SourceDataInfo under kataster to work properly, user kataster
-            # needs to be able to see the newly created schema and tables within
-            db.grant_usage_and_select_on_schema(schema_new, 'kataster')
+            # Grant privileges to user data for data/SourceDataInfo to work properly
+            db.grant_usage_and_select_on_schema(schema_new, 'data')
 
     # Commit and close database connection
     db.commit()
     db.close()
 
+
+def normalise_CSV_column_name(column_name):
+    # remove parentheses and their content
+    column_name = re.sub(r'\([^)]*\)', '', column_name)
+    # replace spaces with an underscore
+    column_name = re.sub(r' +', '_', column_name)
+    # remove accents and convert to lower case
+    column_name = remove_accents(column_name).lower()
+    return column_name
 
 def update_CSV_source(source, timestamp, dry_run, verbose):
     # Load the CSV file
@@ -97,16 +103,17 @@ def update_CSV_source(source, timestamp, dry_run, verbose):
     q = 'CREATE SCHEMA %s; SET search_path="%s";' % (schema, schema)
     db.execute(q)
 
-    # Create table containing the column names from CSV file
-    q = 'CREATE TABLE column_names (index int, name text);'
+    # Compute normalised column names, saving original names in a separate table
+    column_names_normalised = map(normalise_CSV_column_name, column_names)
+    q = 'CREATE TABLE column_names (name_original text, name_normalised text);'
     db.execute(q)
     q = """INSERT INTO column_names VALUES %s;"""
-    q_data = [(i, column_name) for i, column_name in enumerate(column_names)]
+    q_data = [(original, normalised) for original, normalised in zip(column_names, column_names_normalised)]
     db.execute_values(q, q_data)
 
     # Create table containing the actual data from the CSV file
     table = source['table_name']
-    table_columns = ', '.join(['col%d text' % i for i in range(len(column_names))])
+    table_columns = ', '.join(['%s text' % (name) for name in column_names_normalised])
     q = 'CREATE TABLE %s (%s);' % (table, table_columns)
     db.execute(q)
 
@@ -115,6 +122,9 @@ def update_CSV_source(source, timestamp, dry_run, verbose):
     db.execute_values(q, data)
     if verbose:
         print('Inserted %d rows into %s.%s%s' % (len(data), schema, table, ' (dry run)' if dry_run else ''))
+
+    # Grant privileges to user data for data/SourceDataInfo to work properly
+    db.grant_usage_and_select_on_schema(schema, 'data')
 
     # Commit and close database connection
     if not dry_run:

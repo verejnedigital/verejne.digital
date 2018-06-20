@@ -1,12 +1,13 @@
 import React from 'react'
 import './Card.css'
+import {Card, CardImg, CardBody, CardTitle, CardText} from 'reactstrap'
 
 export default ({title, text, imgSrc}) => (
-  <div className="card card-center">
-    <img className="card-img-top" src={imgSrc} alt={title} />
-    <div className="card-body">
-      <h4 className="card-title">{title}</h4>
-      <p className="card-text">{text}</p>
-    </div>
-  </div>
+  <Card className="card-center">
+    <CardImg top src={imgSrc} alt={title} />
+    <CardBody>
+      <CardTitle>{title}</CardTitle>
+      <CardText>{text}</CardText>
+    </CardBody>
+  </Card>
 )

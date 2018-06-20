@@ -9,6 +9,7 @@ const App = () => (
     <Route path="/verejne" component={Main} />
     <Route path="/prepojenia" component={Main} />
     <Route path="/obstaravania" component={Main} />
+    <Route path="/profil" component={Main} />
     <Redirect to="/" />
   </Switch>
 )

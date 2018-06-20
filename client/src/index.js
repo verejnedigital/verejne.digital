@@ -7,13 +7,17 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import PropTypes from 'prop-types'
 import {BrowserRouter} from 'react-router-dom'
+import {dataProvidersConfig} from 'data-provider'
 import App from './components/App'
+import Loading from './components/Loading'
 import getConfiguredStore from './configureStore'
 import {Provider} from 'react-redux'
 
-import './custom.css'
+import './customBootstrap.css'
 
 window.Promise = Promise
+
+dataProvidersConfig({loadingComponent: <Loading />})
 
 // a short-term fix for data-provider, should get fixed in next release
 class DispatchProvider extends React.Component {
@@ -33,7 +37,7 @@ class DispatchProvider extends React.Component {
 const store = getConfiguredStore()
 ReactDOM.render(
   <Provider store={store}>
-    <BrowserRouter>
+    <BrowserRouter basename={process.env.REACT_APP_BASENAME}>
       <DispatchProvider dispatch={store.dispatch}>
         <App />
       </DispatchProvider>

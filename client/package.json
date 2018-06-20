@@ -5,20 +5,28 @@
   "dependencies": {
     "bluebird": "^3.5.1",
     "bootstrap": "^4.1.1",
+    "classnames": "^2.2.5",
     "data-provider": "^0.1.0",
     "global": "^4.3.2",
+    "google-map-react": "^1.0.2",
     "immer": "^1.2.1",
     "lodash": "^4.17.10",
     "node-sass-chokidar": "^1.2.2",
     "npm-run-all": "^4.1.2",
+    "points-cluster": "^0.1.4",
     "prop-types": "^15.6.1",
-    "query-string": "^6.1.0",
+    "qs": "^6.5.2",
     "react": "^16.3.2",
     "react-dom": "^16.3.2",
+    "react-icons": "^2.2.7",
+    "react-js-pagination": "^3.0.2",
+    "react-loading-components": "^1.1.12",
+    "react-places-autocomplete": "^7.1.2",
     "react-redux": "^5.0.7",
     "react-router-dom": "^4.2.2",
     "react-scripts": "1.1.4",
     "reactstrap": "^6.0.1",
+    "recompose": "^0.27.0",
     "redux": "^4.0.0",
     "redux-thunk": "^2.2.0",
     "regenerator-runtime": "^0.11.1",
@@ -32,10 +40,10 @@
     "build": "npm-run-all build-css build-js",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
-    "fix": "prettier-eslint --write \"src/**/*.{js,jsx,json,css}\"",
+    "fix": "prettier-eslint --write \"src/**/*.{js,jsx,json,scss}\"",
     "build-css": "node-sass-chokidar src/ -o src/",
     "watch-css": "npm run build-css && node-sass-chokidar src/ -o src/ --watch --recursive",
-    "flow": "flow"
+    "flow": "python3 ./check_flow.py & flow & flow-coverage-report"
   },
   "devDependencies": {
     "babel-eslint": "^8.2.3",
@@ -44,8 +52,19 @@
     "eslint-plugin-import": "^2.11.0",
     "eslint-plugin-react": "^7.7.0",
     "flow-bin": "^0.71.0",
+    "flow-coverage-report": "^0.5.0",
     "prettier-eslint": "^8.8.1",
     "prettier-eslint-cli": "^4.7.1",
     "redux-logger": "^3.0.6"
+  },
+  "flow-coverage-report": {
+    "includeGlob": [
+      "src/**/*.js"
+    ],
+    "type": [
+      "text",
+      "html",
+      "json"
+    ]
   }
 }

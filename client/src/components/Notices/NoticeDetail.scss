@@ -1,0 +1,21 @@
+@import '../variables.scss';
+
+.notice-detail {
+  background-color: $component-background;
+  border-radius: 4px;
+  border-width: 2px;
+  border-color: $border-color;
+  border-style: solid;
+  box-shadow: 0 4px 12px 0 $shadow-color;
+  margin-top: 112px;
+  margin-bottom: 20px;
+
+  .note {
+    color: grey;
+  }
+
+  .title {
+    font-weight: bold;
+    margin: 25px 20px;
+  }
+}

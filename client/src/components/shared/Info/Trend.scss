@@ -1,0 +1,9 @@
+@import '../../variables.scss';
+
+span.profit {
+  color: $plus-value-color;
+}
+
+span.deficit {
+  color: $minus-value-color;
+}

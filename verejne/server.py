@@ -49,7 +49,8 @@ class GetAddresses(MyServer):
         # Find addresses within the specified rectangle by querying the database
         q = """
             SELECT id AS address_id, lat, lng FROM address
-            WHERE  '(%s, %s), (%s, %s)'::box @> point(lat, lng);
+            WHERE  '(%s, %s), (%s, %s)'::box @> point(lat, lng)
+            LIMIT 1500;
             """
         q_data = (lat1, lng1, lat2, lng2)
         response = webapp2.get_app().registry['db'].query(q, q_data)

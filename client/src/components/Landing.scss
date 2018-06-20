@@ -1,8 +1,40 @@
-.landing {
-  padding: 10rem;
+@import './variables.scss';
+
+.landing-page {
+  @media screen and (min-width: 576px) {
+    padding: 2rem;
+  }
+
+  @media screen and (min-width: 768px) {
+    padding: 4rem;
+  }
+
+  @media screen and (min-width: 992px) {
+    padding: 8rem;
+  }
+
+  @media screen and (min-width: 1200px) {
+    padding: 10rem;
+  }
+
+  .card-wrapper {
+    margin-bottom: 30px;
+  }
 }
 
-.list-inline-item-text~.list-inline-item-text {
-  border-left: 2px solid #cad3d9;
-  padding-left: 0.5rem;
+footer.landing-footer {
+  background: $footer-background;
+  height: 100px;
+  position: absolute;
+  width: 100%;
+  text-align: center;
+
+  .footer-text {
+    padding-top: 10px;
+  }
+
+  .list-inline-item-text ~ .list-inline-item-text {
+    border-left: 2px solid $card-border;
+    padding-left: 0.5rem;
+  }
 }

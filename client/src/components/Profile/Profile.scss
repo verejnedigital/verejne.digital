@@ -1,0 +1,67 @@
+@import "../variables.scss";
+
+.profile-header {
+  padding: 20px;
+  padding-top: $navbar-height + 20;
+  margin-bottom: 0px;
+  text-align: center;
+
+  .sub-title {
+    margin: auto;
+    color: grey;
+    font-weight: 300;
+    line-height: 1.65rem;
+    margin-bottom: 10px;
+  }
+
+  h1.title {
+    margin: auto;
+    padding-top: 0;
+    padding-bottom: 15px;
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 0;
+    line-height: 20px;
+    height: 50px;
+  }
+
+  .bolder {
+    font-weight: bolder;
+  }
+}
+
+.profile-search {
+  margin-bottom: 20px;
+  margin-top: 20px;
+
+  .search-form {
+    .search-input {
+      background: $component-background;
+      border-radius: 2px;
+      border-width: 2px;
+      border-color: $border-color;
+      border-style: solid;
+      height: 34px;
+      color: $search-color;
+
+      &:placeholder {
+        color: $search-color;
+      }
+
+      &:focus {
+        box-shadow: inset 0 1px 1px $input-inset-shadow-color,
+          0 0 8px $input-shadow-color;
+      }
+    }
+  }
+}
+
+.profile-fbframe {
+  text-align: left;
+  padding-right: 0;
+  margin-right: 0;
+}
+
+.profile {
+  text-align: center;
+}
