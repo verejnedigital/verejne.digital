@@ -61,18 +61,14 @@ def update_SQL_source(source, timestamp, dry_run, verbose):
         schema_old = source['schemas'][0]
         schema_new = 'source_' + source['name'] + '_' + timestamp
         db.rename_schema(schema_old, schema_new, verbose)
-        # TEMP
-        # For SourceDataInfo under kataster to work properly, user kataster
-        # needs to be able to see the newly created schema and tables within
-        db.grant_usage_and_select_on_schema(schema_new, 'kataster')
+        # Grant privileges to user data for data/SourceDataInfo to work properly
+        db.grant_usage_and_select_on_schema(schema_new, 'data')
     else:
         for schema_old in source['schemas']:
             schema_new = 'source_' + source['name'] + '_' + schema_old + '_' + timestamp
             db.rename_schema(schema_old, schema_new, verbose)
-            # TEMP
-            # For SourceDataInfo under kataster to work properly, user kataster
-            # needs to be able to see the newly created schema and tables within
-            db.grant_usage_and_select_on_schema(schema_new, 'kataster')
+            # Grant privileges to user data for data/SourceDataInfo to work properly
+            db.grant_usage_and_select_on_schema(schema_new, 'data')
 
     # Commit and close database connection
     db.commit()
@@ -126,6 +122,9 @@ def update_CSV_source(source, timestamp, dry_run, verbose):
     db.execute_values(q, data)
     if verbose:
         print('Inserted %d rows into %s.%s%s' % (len(data), schema, table, ' (dry run)' if dry_run else ''))
+
+    # Grant privileges to user data for data/SourceDataInfo to work properly
+    db.grant_usage_and_select_on_schema(schema, 'data')
 
     # Commit and close database connection
     if not dry_run:

@@ -59,7 +59,7 @@ def get_source_data_info():
         the latest update (timestamp, list of table names and columns) """
 
     # Establish connection to the database
-    db = DatabaseConnection(path_config='db_config_status.yaml')
+    db = DatabaseConnection(path_config='db_config_data.yaml')
 
     # Iterate through sources listed in sources.json
     sources = json_load('../data/sources.json')
@@ -88,7 +88,7 @@ def get_source_data_info():
 def get_prod_data_info():
     """ Return list of tables and column names from the current production tables,
         and the time when these were generated. """
-    db = DatabaseConnection(path_config='db_config_status.yaml')
+    db = DatabaseConnection(path_config='db_config_data.yaml')
     schema = db.get_latest_schema('prod_')
     response = {
         'tables': _get_tables_and_columns_in_schema(db, schema),
