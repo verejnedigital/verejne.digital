@@ -87,17 +87,11 @@ def ProcessSource(db_prod, geocoder, entities, config, test_mode):
             columns_for_table[table] = table_config["columns"]
             cur.execute(table_config["create_command"])
 
-    def AddToTable(row, table, eid):
-        """ Add values for the given row into the supplementary table 'table'.
-
-        It reads the corresponding values from the row and adds them into the
-        table with the corresponding eid.
-        """
-        columns = list(columns_for_table[table])
-        values = [row[column] for column in columns]
+    def AddValuesToTable(columns, values, eid):
         if eid is not None:
             columns += ["eid"]
             values += [eid]
+ 
         if all(v is None for v in values):
             # Ignore this entry, all meaningful values are None
             return
@@ -113,6 +107,32 @@ def ProcessSource(db_prod, geocoder, entities, config, test_mode):
         with db_prod.dict_cursor() as cur:
             cur.execute(command,
                         [AsIs(table)] + values)
+
+
+
+    def AddToTable(row, table, eid, years):
+        """ Add values for the given row into the supplementary table 'table'.
+
+        It reads the corresponding values from the row and adds them into the
+        table with the corresponding eid.
+        """
+        columns = list(columns_for_table[table])
+        if years:
+            for year in years:
+                values = []
+                columns_per_year = columns[:]
+                for column in columns:
+                    col_name = column + "_" + str(year)
+                    if col_name in row:
+                        values.append(row[col_name])
+                    else:
+                        values.append(None)
+                columns_per_year.append("year")
+                values.append(year)
+                AddValuesToTable(columns_per_year, values, eid)    
+        else:
+            values = [row[column] for column in columns]
+            AddValuesToTable(columns, values, eid)
 
     with db_source.dict_cursor() as cur:
         # Read data using the given command.
@@ -180,8 +200,7 @@ def ProcessSource(db_prod, geocoder, entities, config, test_mode):
 
             if eid is None: missed_eid += 1
             found_eid += 1
-            for table in columns_for_table:
-                AddToTable(row, table, eid)
+            AddToTable(row, table, eid, table_config.get("years"))
 
     print "FOUND", found
     print "MISSED", missed
