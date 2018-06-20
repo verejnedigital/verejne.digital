@@ -119,7 +119,7 @@ company_financials:
                                 profit INT8,
                                 employees text
                        );
-                       CREATE UNIQUE INDEX ON CompanyFinancials(eid);
+                       CREATE INDEX ON CompanyFinancials(eid);
                     "
 
 
