@@ -143,6 +143,75 @@ class GetInfo(MyServer):
         result["related"] = entities.getRelated(eid)
         self.returnJSON(result)
 
+
+class GetInfos(MyServer):
+    """ Given a list of eIDs, return a dictionary indexed by eIDs containing
+        information from production tables about the respective entities.
+        If an eID is not found, the corresponding information is an empty dict.
+    """
+
+    def get(self):
+        # Parse eIDs
+        try:
+            eIDs = [int(x) for x in (self.request.GET['eids'].split(','))]
+        except:
+            self.abort(400, detail='Could not parse parameter "eids" as a list of integers')
+
+        # Limit the number of eIDs in a single query
+        max_count = 50
+        if len(eIDs) > max_count:
+            self.abort(400, detail='Too many eIDs requested at once (maximum %d)' % (max_count))
+
+        # Initialise result dictionary
+        result = {eID: {} for eID in eIDs}
+
+        # Obtain pointer to the database connection object
+        db = webapp2.get_app().registry['db']
+
+        # Query the database for basic entity information
+        q = """
+            SELECT
+                entities.id AS eid, entities.name, address.lat, address.lng, address.address
+            FROM
+                entities
+            JOIN
+                address ON address.id=entities.address_id
+            WHERE
+                entities.id IN %s
+            ;"""
+        q_data = [tuple(eIDs)]
+        for row in db.query(q, q_data):
+            eID = row['eid']
+            result[eID] = row
+            del result[eID]['eid']
+            result[eID]['related'] = []
+
+        # Query the database for related entities
+        q = """
+            SELECT
+                related.eid AS eid_source,
+                related.eid_relation AS eid,
+                related.stakeholder_type_id,
+                entities.name, address.lat, address.lng, address.address
+            FROM
+                related
+            JOIN
+                entities ON entities.id=related.eid_relation
+            JOIN
+                address ON address.id=entities.address_id
+            WHERE
+                related.eid IN %s
+            ;"""
+        q_data = [tuple(eIDs)]
+        for row in db.query(q, q_data):
+            eID = row['eid_source']
+            result[eID]['related'].append(row)
+            del result[eID]['related'][-1]['eid_source']
+
+        # Return the result as JSON
+        self.returnJSON(result)
+
+
 # Search entity by name
 class SearchEntity(MyServer):
     def get(self):
@@ -241,6 +310,7 @@ app = webapp2.WSGIApplication([
     ('/getEntitiesAtAddressId', GetEntitiesAtAddressId),
     ('/getEntities', GetEntities),
     ('/getInfo', GetInfo),
+    ('/getInfos', GetInfos),
     ('/getRelated', GetRelated),
     ('/ico', IcoRedirect),
     ('/searchEntity', SearchEntity),
