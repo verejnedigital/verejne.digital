@@ -11,10 +11,6 @@ from skgeodesy import get_cadastral_data_for_coordinates, get_cadastral_data_for
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../data/db')))
 from db import DatabaseConnection
 
-# TEMP
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../data')))
-from status import get_source_data_info, get_prod_data_info, get_public_dumps_info
-
 
 # All individual hooks inherit from this class
 # Actual work of subclasses is done in method get
@@ -100,20 +96,6 @@ class ListPoliticians(MyServer):
         db.close()
         self.returnJSON(politicians)
 
-# TEMP
-class SourceDataInfo(MyServer):
-    def get(self):
-        result = get_source_data_info()
-        self.returnJSON(result)
-class ProdDataInfo(MyServer):
-    def get(self):
-        result = get_prod_data_info()
-        self.returnJSON(result)
-class PublicDumpsInfo(MyServer):
-    def get(self):
-        result = get_public_dumps_info()
-        self.returnJSON(result)
-
 
 app = webapp2.WSGIApplication([
     ('/kataster_info_location', KatasterInfoLocation),
@@ -123,10 +105,6 @@ app = webapp2.WSGIApplication([
     ('/list_politicians', ListPoliticians),
     ('/info_politician', InfoPolitician),
     ('/asset_declarations', AssetDeclarations),
-    # TEMP
-    ('/source_data_info', SourceDataInfo),
-    ('/prod_data_info', ProdDataInfo),
-    ('/public_dumps_info', PublicDumpsInfo),
 ], debug=False)
 
 

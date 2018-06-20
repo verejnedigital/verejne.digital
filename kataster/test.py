@@ -48,17 +48,6 @@ class TestHandlers(unittest.TestCase):
     def test_asset_declarations(self):
         content = _request_json('/asset_declarations?id=40', self)
 
-    # TEMP
-    def test_source_data_info(self):
-        content = _request_json('/source_data_info', self)
-        self.assertTrue(content)
-    def test_prod_data_info(self):
-        content = _request_json('/prod_data_info', self)
-        self.assertTrue(content)
-    def test_public_dumps_info(self):
-        content = _request_json('/public_dumps_info', self)
-        self.assertTrue(content)
-
 
 if __name__ == '__main__':
     unittest.main()

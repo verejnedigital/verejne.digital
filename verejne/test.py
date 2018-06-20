@@ -48,6 +48,12 @@ class TestHandlers(unittest.TestCase):
         print('===== getInfo response =====')
         print(content)
 
+    def test_getInfos(self):
+        content = _request_json('/getInfos?eids=103,389093,389094', self)
+        self.assertTrue(content)
+        print('===== getInfos response =====')
+        print(content)
+
     def test_getRelated(self):
         content = _request_json('/getRelated?eid=389093', self)
         self.assertTrue(content)
