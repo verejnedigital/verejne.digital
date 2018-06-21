@@ -122,4 +122,45 @@ company_financials:
                        CREATE INDEX ON CompanyFinancials(eid);
                     "
 
+contracts:
+    source_schema: "ekosystem_CRZ"
+    command:   "select id as contract_id, contract_identifier, contract_price_amount, contract_price_total_amount, signed_on, effective_from, effective_to, status_id, contracting_authority_name as name, contracting_authority_formatted_address as address, contracting_authority_cin as ico from contracts"
+    tables:
+            Contracts:
+                    columns: ["contract_price_amount", "contract_price_total_amount",
+                    "signed_on", "effective_from", "effective_to", "status_id", "contract_id",
+                    "contract_identifier"]
+                    create_command: "
+                       CREATE TABLE Contracts (
+                                id SERIAL PRIMARY KEY,
+                                eid INTEGER REFERENCES Entities(id),
+                                contract_price_amount numeric,
+                                contract_price_total_amount numeric,
+                                signed_on date,
+                                effective_from date,
+                                effective_to date,
+                                status_id INT4,
+                                contract_id INT8,
+                                contract_identifier text
+                       );
+                       CREATE INDEX ON Contracts(eid);
+                       CREATE INDEX ON Contracts(contract_id);
+                    "
+
+contracts_suppliers:
+    source_schema: "ekosystem_CRZ"
+    command:   "select id as contract_id, supplier_name as name, supplier_cin as ico, supplier_formatted_address as address from contracts"
+    tables:
+            ContractsSuppliers:
+                    columns: ["contract_id"]
+                    create_command: "
+                       CREATE TABLE ContractsSuppliers (
+                                id SERIAL PRIMARY KEY,
+                                eid INTEGER REFERENCES Entities(id),
+                                contract_id INT8
+                       );
+                       CREATE INDEX ON ContractsSuppliers(eid);
+                       CREATE INDEX ON ContractsSuppliers(contract_id);
+                    "
+
 
