@@ -1,8 +1,9 @@
 // @flow
 import {createSelector} from 'reselect'
-import {sortBy, last, mapValues} from 'lodash'
+import {sortBy, last, mapValues, chunk} from 'lodash'
 import {normalizeName, parseQueryFromLocation} from '../utils'
 import {paramsIdSelector} from './index'
+import {CADASTRAL_PAGINATION_CHUNK_SIZE} from '../constants'
 
 import type {State, Politician, PoliticianDetail, CadastralData, AssetDeclaration} from '../state'
 import type {Selector} from 'reselect'
@@ -27,6 +28,11 @@ export const politicianCadastralSelector: Selector<
   paramsIdSelector,
   (state: State) => state.profile.cadastral,
   (id, data) => data[id]
+)
+
+export const politicianCadastralLengthSelector: Selector<State, *, number> = createSelector(
+  politicianCadastralSelector,
+  (cadastral) => Object.values(cadastral).length
 )
 
 export const politicianAssetDeclarationsSelector: Selector<
@@ -76,6 +82,19 @@ export const paramsYearSelector: Selector<State, ContextRouter, string> = create
   (_: State, props: ContextRouter): string => parseQueryFromLocation(props.location).year,
   assetDeclarationsLatestYearSelector,
   (paramsYear, latestYear) => paramsYear || latestYear
+)
+
+export const cadastralPageSelector: Selector<State, ContextRouter, number> = createSelector(
+  (_: State, props: ContextRouter): string => parseQueryFromLocation(props.location).cadastralPage,
+  (page) => Number.parseInt(page, 10) || 1
+)
+
+export const paginatedCadastralInfoSelector = createSelector(
+  politicianCadastralSelector,
+  cadastralPageSelector,
+  (cadastral, page) => {
+    return chunk(Object.values(cadastral), CADASTRAL_PAGINATION_CHUNK_SIZE)[page - 1]
+  }
 )
 
 export const parsedAssetDeclarationsForYearSelector: Selector<

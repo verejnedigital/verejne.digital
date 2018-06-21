@@ -3,6 +3,7 @@ import React from 'react'
 import {Link, NavLink} from 'react-router-dom'
 import {compose} from 'redux'
 import {connect} from 'react-redux'
+import {stringify} from 'qs'
 import {withHandlers, withState} from 'recompose'
 import {withDataProviders} from 'data-provider'
 import {
@@ -16,7 +17,11 @@ import {
   politicianDetailSelector,
   assetDeclarationsSortedYearsSelector,
   politicianCadastralSelector,
+  politicianCadastralLengthSelector,
+  paginatedCadastralInfoSelector,
+  cadastralPageSelector,
 } from '../../selectors/profileSelectors'
+import {locationSearchSelector} from '../../selectors'
 import {DEFAULT_MAP_CENTER} from '../../constants'
 
 import Cardboard from './components/Cardboard'
@@ -28,6 +33,7 @@ import {Row, Col, Container} from 'reactstrap'
 import './DetailPage.css'
 
 import type {ContextRouter} from 'react-router-dom'
+import type {RouterHistory} from 'react-router'
 import type {State, PoliticianDetail, CadastralData, GeolocationPoint} from '../../state'
 import type {ParsedAssetDeclarationsType} from '../../types/profileTypes'
 
@@ -37,6 +43,11 @@ export type ProfileDetailPageProps = {
   assets: ParsedAssetDeclarationsType,
   politician: PoliticianDetail,
   cadastral: CadastralData,
+  paginatedCadastral: CadastralData,
+  cadastralLength: number,
+  cadastralPage: number,
+  query: Object,
+  history: RouterHistory,
   mapCenter: GeolocationPoint,
   goMap: (ProfileDetailPageProps) => Function, // TODO instead take map center from url
 } & ContextRouter
@@ -47,6 +58,11 @@ const DetailPage = ({
   assets,
   politician,
   cadastral,
+  paginatedCadastral,
+  cadastralLength,
+  cadastralPage,
+  query,
+  history,
   mapCenter,
   goMap,
 }: ProfileDetailPageProps) => (
@@ -66,7 +82,7 @@ const DetailPage = ({
         <div className="profile-tabs">
           {assetsYears.map((y) => (
             <Link
-              to={{search: `?year=${y}`}}
+              to={{search: stringify({...query, year: y})}}
               className={y === selectedYear ? 'tab active' : 'tab'}
               key={y}
             >
@@ -103,7 +119,14 @@ const DetailPage = ({
         </section>
       </Col>
       <Col tag="section">
-        <DetailCadastralTable cadastral={cadastral} onParcelShow={goMap} />
+        <DetailCadastralTable
+          cadastral={paginatedCadastral}
+          cadastralLength={cadastralLength}
+          currentPage={cadastralPage}
+          query={query}
+          history={history}
+          onParcelShow={goMap}
+        />
       </Col>
     </Row>
     <Row key="map" className="profile-map">
@@ -126,6 +149,10 @@ export default compose(
     assets: parsedAssetDeclarationsForYearSelector(state, props),
     politician: politicianDetailSelector(state, props),
     cadastral: Object.values(politicianCadastralSelector(state, props)),
+    paginatedCadastral: paginatedCadastralInfoSelector(state, props),
+    cadastralLength: politicianCadastralLengthSelector(state, props),
+    cadastralPage: cadastralPageSelector(state, props),
+    query: locationSearchSelector(state, props),
   })),
   withState('mapCenter', 'setMapCenter', DEFAULT_MAP_CENTER),
   withHandlers({
