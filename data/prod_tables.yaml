@@ -10,7 +10,7 @@ rpo:
                        CREATE TABLE CompanyInfo (
                                 id SERIAL PRIMARY KEY,
                                 eid INTEGER REFERENCES Entities(id),
-                                ico INT4,
+                                ico INT8,
                                 established_on DATE,
                                 terminated_on DATE
                        );
@@ -39,7 +39,7 @@ related:
 
 notices:
     source_schema: "ekosystem_VVO"
-    command:   "select notices.id as notice_id,notices.contract_id,notices.title,notices.contracting_authority_name as name,notices.contracting_authority_cin as ico,notices.estimated_value_amount,notices.estimated_value_currency,notices.bulletin_issue_id,notices.notice_type_id,result_notices.short_description,result_notices.total_final_value_amount,result_notices.total_final_value_currency,raw_notices.body from notices FULL OUTER JOIN result_notices ON result_notices.raw_notice_id = notices.raw_notice_id FULL OUTER JOIN raw_notices ON raw_notices.id=notices.raw_notice_id"
+    command:   "select notices.id as notice_id,notices.contract_id,notices.title,notices.contracting_authority_name as name,notices.contracting_authority_cin as ico,notices.estimated_value_amount,notices.estimated_value_currency,notices.bulletin_issue_id,notices.notice_type_id,result_notices.short_description,result_notices.total_final_value_amount,result_notices.total_final_value_currency,raw_notices.body from notices FULL OUTER JOIN result_notices ON result_notices.raw_notice_id = notices.raw_notice_id FULL OUTER JOIN raw_notices ON raw_notices.id=notices.raw_notice_id ORDER BY notices.bulletin_issue_id DESC"
     extract_description_from_body: true
     tables:
             Notices:
@@ -65,7 +65,7 @@ notices:
                        );
                        CREATE INDEX ON Notices(eid);
                        CREATE INDEX ON Notices(notice_id);
-                       CREATE INDEX ON Notices(contract_id);
+                       CREATE UNIQUE INDEX ON Notices(contract_id);
                        CREATE INDEX ON Notices(bulletin_issue_id)
                     "
 notice_suppliers:
@@ -102,4 +102,65 @@ notice_bulletins:
                        );
                        CREATE INDEX ON NoticeBulletins(bulletin_id)
                     "
+
+company_financials:
+    source_schema: "finstat"
+    command:   "select CAST(ico as bigint),nazov as name,CAST(CAST(nullif(trzby_2017,'') as float) as bigint) as revenue_2017, CAST(CAST(nullif(trzby_2016,'') as float) as bigint) as revenue_2016, CAST(CAST(nullif(trzby_2015,'') as float) as bigint) as revenue_2015, CAST(CAST(nullif(trzby_2014,'') as float) as bigint) as revenue_2014, CAST(CAST(nullif(zisk_2017,'') as float) as bigint) as profit_2014, CAST(CAST(nullif(zisk_2016,'') as float) as bigint) as profit_2016, CAST(CAST(nullif(zisk_2015,'') as float) as bigint) as profit_2015, CAST(CAST(nullif(zisk_2014,'') as float) as bigint) as profit_2014, kategoria_poctu_zamestnancov_2015 as employees_2015, kategoria_poctu_zamestnancov_2014 as employees_2014 from company_stats"
+    tables:
+            CompanyFinancials:
+                    columns: ["revenue", "profit", "employees"]
+                    years: [2014, 2015, 2016, 2017]
+                    create_command: "
+                       CREATE TABLE CompanyFinancials (
+                                id SERIAL PRIMARY KEY,
+                                eid INTEGER REFERENCES Entities(id),
+                                year INT4,
+                                revenue INT8,
+                                profit INT8,
+                                employees text
+                       );
+                       CREATE INDEX ON CompanyFinancials(eid);
+                    "
+
+contracts:
+    source_schema: "ekosystem_CRZ"
+    command:   "select id as contract_id, contract_identifier, contract_price_amount, contract_price_total_amount, signed_on, effective_from, effective_to, status_id, contracting_authority_name as name, contracting_authority_formatted_address as address, contracting_authority_cin as ico from contracts"
+    tables:
+            Contracts:
+                    columns: ["contract_price_amount", "contract_price_total_amount",
+                    "signed_on", "effective_from", "effective_to", "status_id", "contract_id",
+                    "contract_identifier"]
+                    create_command: "
+                       CREATE TABLE Contracts (
+                                id SERIAL PRIMARY KEY,
+                                eid INTEGER REFERENCES Entities(id),
+                                contract_price_amount numeric,
+                                contract_price_total_amount numeric,
+                                signed_on date,
+                                effective_from date,
+                                effective_to date,
+                                status_id INT4,
+                                contract_id INT8,
+                                contract_identifier text
+                       );
+                       CREATE INDEX ON Contracts(eid);
+                       CREATE INDEX ON Contracts(contract_id);
+                    "
+
+contracts_suppliers:
+    source_schema: "ekosystem_CRZ"
+    command:   "select id as contract_id, supplier_name as name, supplier_cin as ico, supplier_formatted_address as address from contracts"
+    tables:
+            ContractsSuppliers:
+                    columns: ["contract_id"]
+                    create_command: "
+                       CREATE TABLE ContractsSuppliers (
+                                id SERIAL PRIMARY KEY,
+                                eid INTEGER REFERENCES Entities(id),
+                                contract_id INT8
+                       );
+                       CREATE INDEX ON ContractsSuppliers(eid);
+                       CREATE INDEX ON ContractsSuppliers(contract_id);
+                    "
+
 
