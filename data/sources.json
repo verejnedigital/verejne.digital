@@ -48,9 +48,15 @@
         "description": "FinStat.sk",
         "name": "finstat",
         "path": "/tmp/source_finstat.csv",
-        "schemas": [],
         "table_name": "company_stats",
         "type": "CSV"
+    },
+    {
+        "description": "KamIduEurofondy.sk",
+        "name": "KamIduEurofondy",
+        "path": "/tmp/data/source_KamIduEurofondy.json",
+        "table_name": "kamidueurofondy",
+        "type": "JSON"
     },
     {
         "description": "profil.verejne.digital",

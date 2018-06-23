@@ -7,6 +7,7 @@ import sys
 import urllib
 
 from datetime import datetime
+from itertools import chain
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../data/db')))
 from db import DatabaseConnection
@@ -131,6 +132,44 @@ def update_CSV_source(source, timestamp, dry_run, verbose):
         db.commit()
     db.close()
 
+def update_JSON_source(source, timestamp, dry_run, verbose):
+    # Load the JSON file
+    data = json_load(source['path'])
+
+    # Obtain column names appearing anywhere in the JSON
+    columns = sorted(list(set(chain.from_iterable([datum.keys() for datum in data]))))
+    if verbose:
+        print('Loaded JSON files with %d columns and %d data rows' % (len(columns), len(data)))
+
+    # Reorganise data into a list of tuples
+    data = [tuple(datum[column] if column in datum else "" for column in columns) for datum in data]
+
+    # Create postgres schema
+    db = DatabaseConnection(path_config='db_config_update_source.yaml')
+    schema = 'source_' + source['name'] + '_' + timestamp
+    q = 'CREATE SCHEMA "%s"; SET search_path="%s";' % (schema, schema)
+    db.execute(q)
+
+    # Create table containing the actual data from the CSV file
+    table = source['table_name']
+    table_columns = ', '.join(['%s text' % (name) for name in columns])
+    q = 'CREATE TABLE %s (%s);' % (table, table_columns)
+    db.execute(q)
+
+    # Populate the table with data
+    q = 'INSERT INTO ' + table + ' VALUES %s;'
+    db.execute_values(q, data)
+    if verbose:
+        print('Inserted %d rows into %s.%s%s' % (len(data), schema, table, ' (dry run)' if dry_run else ''))
+
+    # Grant privileges to user data for data/SourceDataInfo to work properly
+    db.grant_usage_and_select_on_schema(schema, 'data')
+
+    # Commit and close database connection
+    if not dry_run:
+        db.commit()
+    db.close()
+
 
 def main(args_dict):
     timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
@@ -149,6 +188,8 @@ def main(args_dict):
             update_SQL_source(source, timestamp, dry_run, verbose)
         elif source['type'] == 'CSV':
             update_CSV_source(source, timestamp, dry_run, verbose)
+        elif source['type'] == 'JSON':
+            update_JSON_source(source, timestamp, dry_run, verbose)
 
 
 if __name__ == '__main__':
