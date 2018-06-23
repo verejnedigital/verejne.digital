@@ -76,6 +76,22 @@
             e.parentNode.innerHTML = e.parentNode.innerHTML.replace("[+] ", "[-] ");
         }
     }
+    function _print_table_structure(table, element_id) {
+        var html = "<ul id='" + element_id + "' style='display: none;'>";
+        for (var k = 0; k < table.columns.length; k++) {
+            var column = table.columns[k];
+            html += "<li><b>" + column.column_name + "</b>";
+            html += " (" + column.data_type + ")";
+            if (column.foreign_keys.length >= 1) {
+                html += " <b>REFERENCES</b>";
+                for (var l = 0; l < column.foreign_keys.length; l++)
+                    html += " " + column.foreign_keys[l][0] + "(" + column.foreign_keys[l][1] + ")";
+            }
+            html += "</li>";
+        }
+        html += "</ul>";
+        return html;
+    }
     function print_data_sources() {
         var url = "https://verejne.digital/api/d/source_data_info";
         $.get(url, function(response) {
@@ -94,17 +110,15 @@
                     var table = source.tables[j];
                     row_html += '<li><a href="javascript:;" onclick="toggle(\'cols_list_' + i + '_' + j +'\')">';
                     row_html += "[+] " + table.name + "</a> (" + table.num_rows + " riadkov)"
-                    row_html += "<ul id='cols_list_" + i + "_" + j + "' style='display: none;'>";
-                    for (var k = 0; k < table.columns.length; k++) {
-                        var column = table.columns[k];
-                        row_html += "<li>" + column.column_name + " (" + column.data_type + ")" + "</li>";
-                    }
-                    row_html += "</ul></li>";
+                    var element_id = "cols_list_" + i + "_" + j;
+                    row_html += _print_table_structure(table, element_id);
+                    row_html += "</li>";
                 }
                 row_html += "</ul></td>";
 
-                // Time of last update
+                // Time of last update and corresponding schema name
                 row_html += "<td>" + source.update.split(' ')[0] + "</td>";
+                row_html += "<td style='font-family: monospace;'>" + source.schema + "</td>";
 
                 // Add row to table
                 document.getElementById("table_sources").innerHTML += "<tr>" + row_html + "</tr>";
@@ -117,6 +131,7 @@
         var url = "https://verejne.digital/api/d/prod_data_info";
         $.get(url, function(response) {
             document.getElementById("prod_update_time").innerHTML = response.update;
+            document.getElementById("prod_schema_name").innerHTML = response.schema;
             for (var i = 0; i < response.tables.length; i++) {
                 var table = response.tables[i];
                 var row_html = "";
@@ -126,19 +141,17 @@
                 row_html += '<a href="javascript:;" onclick="toggle(\'prod_cols_list_' + i +'\')">';
                 row_html += "[+] " + table.name + "</a> (" + table.num_rows + " riadkov)</p>";
 
-                // List of table names
-                row_html += "<ul id='prod_cols_list_" + i + "' style='display: none;'>";
-                for (var j = 0; j < table.columns.length; j++) {
-                    var column = table.columns[j];
-                    row_html += "<li>" + column.column_name + " (" + column.data_type + ")" + "</li>";
-                }
-                row_html += "</ul></td>";
+                // List columns
+                var element_id = "prod_cols_list_" + i;
+                row_html += _print_table_structure(table, element_id);
+                row_html += "</td>";
 
                 // Add row to table
                 document.getElementById("table_prod").innerHTML += "<tr>" + row_html + "</tr>";
             }
         }).error(function() {
             document.getElementById("prod_update_time").innerHTML = "Error retrieving prod data information";
+            document.getElementById("prod_schema_name").innerHTML = "Error retrieving prod data information";
             document.getElementById("table_prod").innerHTML = '<tr><td style="color:red">Error retrieving prod data information</td></tr>';
         });
     }
@@ -185,6 +198,7 @@
     <p>
         Tieto dáta získavame normalizáciou údajov z viacerých zdrojov (<a href='#sourcedata'>pozri nižšie</a>).
         Posledná aktualizácia: <span id='prod_update_time' style='font-weight: bold;'></span>
+        (databázová schéma <span id='prod_schema_name' style='font-weight: bold;'></span>)
     </p>
 
     <!-- Section 2: List our public data views/dumps -->
@@ -205,6 +219,7 @@
     <tr>
         <th>Názov zdroja</th>
         <th>Posledná aktualizácia</th>
+        <th>Názov databázovej schémy</th>
     </tr>
     <script> print_data_sources(); </script>
     </table>
