@@ -87,10 +87,13 @@ def ProcessSource(db_prod, geocoder, entities, config, test_mode):
             columns_for_table[table] = table_config["columns"]
             cur.execute(table_config["create_command"])
 
-    def AddValuesToTable(columns, values, eid):
+    def AddValuesToTable(columns, values, eid, supplier_eid=None):
         if eid is not None:
             columns += ["eid"]
             values += [eid]
+        if supplier_eid is not None:
+            columns += ["supplier_eid"]
+            values += [supplier_eid]
  
         if all(v is None for v in values):
             # Ignore this entry, all meaningful values are None
@@ -110,7 +113,7 @@ def ProcessSource(db_prod, geocoder, entities, config, test_mode):
 
 
 
-    def AddToTable(row, table, eid, years):
+    def AddToTable(row, table, eid, years, supplier_eid=None):
         """ Add values for the given row into the supplementary table 'table'.
 
         It reads the corresponding values from the row and adds them into the
@@ -132,7 +135,7 @@ def ProcessSource(db_prod, geocoder, entities, config, test_mode):
                 AddValuesToTable(columns_per_year, values, eid)    
         else:
             values = [row[column] for column in columns]
-            AddValuesToTable(columns, values, eid)
+            AddValuesToTable(columns, values, eid, supplier_eid)
 
     with db_source.dict_cursor() as cur:
         # Read data using the given command.
@@ -197,10 +200,15 @@ def ProcessSource(db_prod, geocoder, entities, config, test_mode):
                 row["eid_relation"] = eid2 
             if config.get("extract_description_from_body"):
                 row["body"] = ExtractDescriptionFromBody(row["body"])
-
+            supplier_eid = None
+            if config.get("supplier_eid"):
+                supplier_address_id = None
+                if "supplier_address" in row and not row["supplier_address"] is None:
+                    supplier_address_id = geocoder.GetAddressId(row["supplier_address"].encode("utf8")) 
+                supplier_eid = entities.GetEntity(row["supplier_ico"], row["supplier_name"], supplier_address_id)    
             if eid is None: missed_eid += 1
             found_eid += 1
-            AddToTable(row, table, eid, table_config.get("years"))
+            AddToTable(row, table, eid, table_config.get("years"), supplier_eid)
 
     print "FOUND", found
     print "MISSED", missed

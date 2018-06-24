@@ -39,8 +39,9 @@ related:
 
 notices:
     source_schema: "ekosystem_VVO"
-    command:   "select notices.id as notice_id,notices.contract_id,notices.title,notices.contracting_authority_name as name,notices.contracting_authority_cin as ico,notices.estimated_value_amount,notices.estimated_value_currency,notices.bulletin_issue_id,notices.notice_type_id,result_notices.short_description,result_notices.total_final_value_amount,result_notices.total_final_value_currency,raw_notices.body from notices FULL OUTER JOIN result_notices ON result_notices.raw_notice_id = notices.raw_notice_id FULL OUTER JOIN raw_notices ON raw_notices.id=notices.raw_notice_id ORDER BY notices.bulletin_issue_id DESC"
+    command:   "select notices.id as notice_id,notices.contract_id,notices.title,notices.contracting_authority_name as name,notices.contracting_authority_cin as ico,notices.estimated_value_amount,notices.estimated_value_currency,notices.bulletin_issue_id,notices.notice_type_id,result_notices.short_description,result_notices.total_final_value_amount,result_notices.total_final_value_currency,raw_notices.body,notice_suppliers.cin as supplier_ico,notice_suppliers.name as supplier_name from notices FULL OUTER JOIN result_notices ON result_notices.raw_notice_id = notices.raw_notice_id FULL OUTER JOIN raw_notices ON raw_notices.id=notices.raw_notice_id FULL OUTER JOIN notice_suppliers ON notice_suppliers.notice_id = notices.id ORDER BY notices.bulletin_issue_id DESC"
     extract_description_from_body: true
+    supplier_eid: true
     tables:
             Notices:
                     columns: ["notice_id", "contract_id", "title", "estimated_value_amount",
@@ -51,6 +52,7 @@ notices:
                        CREATE TABLE Notices (
                                 id SERIAL PRIMARY KEY,
                                 eid INTEGER REFERENCES Entities(id),
+                                supplier_eid INTEGER REFERENCES Entities(id),
                                 notice_id INT4,
                                 contract_id INT4,
                                 title text,
@@ -65,23 +67,9 @@ notices:
                        );
                        CREATE INDEX ON Notices(eid);
                        CREATE INDEX ON Notices(notice_id);
+                       CREATE INDEX ON Notices(supplier_eid);
                        CREATE UNIQUE INDEX ON Notices(contract_id);
                        CREATE INDEX ON Notices(bulletin_issue_id)
-                    "
-notice_suppliers:
-    source_schema: "ekosystem_VVO"
-    command:   "select notice_id,name,cin as ico from notice_suppliers"
-    tables:
-            NoticeSuppliers:
-                    columns: ["notice_id"]
-                    create_command: "
-                       CREATE TABLE NoticeSuppliers (
-                                id SERIAL PRIMARY KEY,
-                                eid INTEGER REFERENCES Entities(id),
-                                notice_id INT4
-                       );
-                       CREATE INDEX ON NoticeSuppliers(eid);
-                       CREATE INDEX ON NoticeSuppliers(notice_id)
                     "
 
 notice_bulletins:
@@ -124,7 +112,8 @@ company_financials:
 
 contracts:
     source_schema: "ekosystem_CRZ"
-    command:   "select id as contract_id, contract_identifier, contract_price_amount, contract_price_total_amount, signed_on, effective_from, effective_to, status_id, contracting_authority_name as name, contracting_authority_formatted_address as address, contracting_authority_cin as ico from contracts"
+    command:   "select id as contract_id, contract_identifier, contract_price_amount, contract_price_total_amount, signed_on, effective_from, effective_to, status_id, contracting_authority_name as name, contracting_authority_formatted_address as address, contracting_authority_cin as ico, supplier_name, supplier_cin as supplier_ico, supplier_formatted_address as supplier_address from contracts"
+    supplier_eid: true
     tables:
             Contracts:
                     columns: ["contract_price_amount", "contract_price_total_amount",
@@ -134,6 +123,7 @@ contracts:
                        CREATE TABLE Contracts (
                                 id SERIAL PRIMARY KEY,
                                 eid INTEGER REFERENCES Entities(id),
+                                supplier_eid INTEGER REFERENCES Entities(id),
                                 contract_price_amount numeric,
                                 contract_price_total_amount numeric,
                                 signed_on date,
@@ -144,23 +134,30 @@ contracts:
                                 contract_identifier text
                        );
                        CREATE INDEX ON Contracts(eid);
+                       CREATE INDEX ON Contracts(supplier_eid);
                        CREATE INDEX ON Contracts(contract_id);
                     "
 
-contracts_suppliers:
-    source_schema: "ekosystem_CRZ"
-    command:   "select id as contract_id, supplier_name as name, supplier_cin as ico, supplier_formatted_address as address from contracts"
+eufunds:
+    source_schema: "KamIduEurofondy"
+    command: "select subject_title as name, CAST(subject_company_no as bigint) as ico, title, description, link, CAST(price as numeric), state, call_state, call_title from kamidueurofondy"
     tables:
-            ContractsSuppliers:
-                    columns: ["contract_id"]
-                    create_command: "
-                       CREATE TABLE ContractsSuppliers (
+        EUFunds:
+            columns: ["title", "description", "link", "price", "state", "call_state", "call_title"]
+            create_command: "
+                       CREATE TABLE EUFunds (
                                 id SERIAL PRIMARY KEY,
                                 eid INTEGER REFERENCES Entities(id),
-                                contract_id INT8
+                                title text,
+                                description text,
+                                link text,
+                                price numeric,
+                                state text,
+                                call_state text,
+                                call_title text
                        );
-                       CREATE INDEX ON ContractsSuppliers(eid);
-                       CREATE INDEX ON ContractsSuppliers(contract_id);
+                       CREATE INDEX ON EUFunds(eid);
                     "
 
+           
 
