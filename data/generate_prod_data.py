@@ -260,18 +260,11 @@ def main(args_dict):
         config = yaml.load(stream)
     # This is where all the population happens!!!
     # Go through all the specified data sources and process them, adding data
-    # as needed.
-    # We have two loops to process first the primary source of entities.
-    for key in config.keys():
+    # as needed. We process them in the order!
+    for key in sorted(config.keys()):
         config_per_source = config[key]
-        if config_per_source.get("is_primary"):
-            print "Working on source:", key
-            ProcessSource(db_prod, geocoder, entities_lookup, config_per_source, test_mode)
-    for key in config.keys():
-        config_per_source = config[key]
-        if not config_per_source.get("is_primary"):
-            print "Working on source:", key
-            ProcessSource(db_prod, geocoder, entities_lookup, config_per_source, test_mode)
+        print "Working on source:", key
+        ProcessSource(db_prod, geocoder, entities_lookup, config_per_source, test_mode)
 
     # Grant apps read-only access to the newly created schema and tables within
     db_prod.grant_usage_and_select_on_schema(prod_schema_name, 'data')

@@ -1,8 +1,7 @@
-rpo:
+1_rpo:
     source_schema: "ekosystem_rpo"
     command:   "select distinct on(organizations.id) organizations.id as org_id,organization_identifier_entries.ipo as ico,organization_name_entries.name, organizations.established_on,organizations.terminated_on,concat_ws(' ',organization_address_entries.formatted_address,organization_address_entries.street,COALESCE(organization_address_entries.building_number,cast(organization_address_entries.reg_number as text)),organization_address_entries.postal_code,organization_address_entries.municipality,organization_address_entries.country) as address from organizations,organization_identifier_entries,organization_name_entries,organization_address_entries where organizations.id=organization_identifier_entries.organization_id and organizations.id=organization_name_entries.organization_id and organizations.id=organization_address_entries.organization_id"
     save_org_id: true
-    is_primary: true
     tables:
             CompanyInfo:
                     columns: ["ico", "established_on", "terminated_on"]
@@ -18,7 +17,7 @@ rpo:
                        CREATE UNIQUE INDEX ON CompanyInfo(ico);
                     "
 
-related:
+2_related:
     source_schema: "ekosystem_rpo"
     command:   "select organization_id as eid_relation,stakeholder_type_id,ico,concat_ws(' ',full_name,person_given_name,person_family_name) as name,concat_ws(' ',address_formatted,address_street,COALESCE(address_building_number,cast(address_reg_number as text)),address_postal_code,address_municipality,address_country) as address,effective_from,effective_to from organization_stakeholder_entries UNION select organization_id as org_id,stakeholder_type_id,ico,concat_ws(' ',full_name,person_given_name,person_family_name) as name,concat_ws(' ',address_formatted,address_street,COALESCE(address_building_number,cast(address_reg_number as text)),address_postal_code,address_municipality,address_country) as address,effective_from,effective_to from organization_statutory_entries"
     use_org_id_as_eid_relation: true
@@ -37,7 +36,7 @@ related:
                        CREATE UNIQUE INDEX ON Related(eid,stakeholder_type_id,eid_relation)
                     "
 
-notices:
+3_notices:
     source_schema: "ekosystem_VVO"
     command:   "select notices.id as notice_id,notices.contract_id,notices.title,notices.contracting_authority_name as name,notices.contracting_authority_cin as ico,notices.estimated_value_amount,notices.estimated_value_currency,notices.bulletin_issue_id,notices.notice_type_id,result_notices.short_description,result_notices.total_final_value_amount,result_notices.total_final_value_currency,raw_notices.body,notice_suppliers.cin as supplier_ico,notice_suppliers.name as supplier_name from notices FULL OUTER JOIN result_notices ON result_notices.raw_notice_id = notices.raw_notice_id FULL OUTER JOIN raw_notices ON raw_notices.id=notices.raw_notice_id FULL OUTER JOIN notice_suppliers ON notice_suppliers.notice_id = notices.id ORDER BY notices.bulletin_issue_id DESC"
     extract_description_from_body: true
@@ -72,7 +71,7 @@ notices:
                        CREATE INDEX ON Notices(bulletin_issue_id)
                     "
 
-notice_bulletins:
+4_notice_bulletins:
     source_schema: "ekosystem_VVO"
     command:   "select id as bulletin_id,year,number,published_on,source_url from bulletin_issues"
     no_entity_id: true
@@ -91,7 +90,7 @@ notice_bulletins:
                        CREATE INDEX ON NoticeBulletins(bulletin_id)
                     "
 
-company_financials:
+5_company_financials:
     source_schema: "finstat"
     command:   "select CAST(ico as bigint),nazov as name,CAST(CAST(nullif(trzby_2017,'') as float) as bigint) as revenue_2017, CAST(CAST(nullif(trzby_2016,'') as float) as bigint) as revenue_2016, CAST(CAST(nullif(trzby_2015,'') as float) as bigint) as revenue_2015, CAST(CAST(nullif(trzby_2014,'') as float) as bigint) as revenue_2014, CAST(CAST(nullif(zisk_2017,'') as float) as bigint) as profit_2014, CAST(CAST(nullif(zisk_2016,'') as float) as bigint) as profit_2016, CAST(CAST(nullif(zisk_2015,'') as float) as bigint) as profit_2015, CAST(CAST(nullif(zisk_2014,'') as float) as bigint) as profit_2014, kategoria_poctu_zamestnancov_2015 as employees_2015, kategoria_poctu_zamestnancov_2014 as employees_2014 from company_stats"
     tables:
@@ -110,7 +109,7 @@ company_financials:
                        CREATE INDEX ON CompanyFinancials(eid);
                     "
 
-contracts:
+6_contracts:
     source_schema: "ekosystem_CRZ"
     command:   "select id as contract_id, contract_identifier, contract_price_amount, contract_price_total_amount, signed_on, effective_from, effective_to, status_id, contracting_authority_name as name, contracting_authority_formatted_address as address, CASE WHEN contracting_authority_cin~E'^[\\\\d\\\\s]+$' THEN CAST(replace(contracting_authority_cin,' ','') as bigint) ELSE NULL END as ico, supplier_name, CASE WHEN supplier_cin~E'^[\\\\d\\\\s]+$' THEN CAST(replace(supplier_cin,' ','') as bigint) ELSE NULL END as supplier_ico, supplier_formatted_address as supplier_address from contracts"
     supplier_eid: true
@@ -138,7 +137,7 @@ contracts:
                        CREATE INDEX ON Contracts(contract_id);
                     "
 
-eufunds:
+7_eufunds:
     source_schema: "KamIduEurofondy"
     command: "select subject_title as name, CAST(subject_company_no as bigint) as ico, title, description, link, CAST(price as numeric), state, call_state, call_title from kamidueurofondy"
     tables:
