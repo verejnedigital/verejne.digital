@@ -30,11 +30,6 @@ export const politicianCadastralSelector: Selector<
   (id, data) => data[id]
 )
 
-export const politicianCadastralLengthSelector: Selector<State, *, number> = createSelector(
-  politicianCadastralSelector,
-  (cadastral) => Object.values(cadastral).length
-)
-
 export const politicianAssetDeclarationsSelector: Selector<
   State,
   *,
@@ -89,11 +84,32 @@ export const cadastralPageSelector: Selector<State, ContextRouter, number> = cre
   (page) => Number.parseInt(page, 10) || 1
 )
 
-export const paginatedCadastralInfoSelector = createSelector(
+export const cadastralSearchSelector: Selector<State, ContextRouter, string> = createSelector(
+  (_: State, props: ContextRouter): string =>
+    parseQueryFromLocation(props.location).cadastralSearch,
+  (search) => search || ''
+)
+
+export const filteredCadastralInfoSelector = createSelector(
   politicianCadastralSelector,
+  cadastralSearchSelector,
+  (cadastral, search) => {
+    return Object.values(cadastral).filter(({cadastralunitname}) =>
+      cadastralunitname.startsWith(search)
+    )
+  }
+)
+
+export const filteredCadastralInfoLengthSelector: Selector<State, *, number> = createSelector(
+  filteredCadastralInfoSelector,
+  (cadastral) => cadastral.length
+)
+
+export const paginatedCadastralInfoSelector = createSelector(
+  filteredCadastralInfoSelector,
   cadastralPageSelector,
   (cadastral, page) => {
-    return chunk(Object.values(cadastral), CADASTRAL_PAGINATION_CHUNK_SIZE)[page - 1]
+    return chunk(Object.values(cadastral), CADASTRAL_PAGINATION_CHUNK_SIZE)[page - 1] || []
   }
 )
 
