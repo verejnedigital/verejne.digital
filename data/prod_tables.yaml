@@ -112,7 +112,7 @@ company_financials:
 
 contracts:
     source_schema: "ekosystem_CRZ"
-    command:   "select id as contract_id, contract_identifier, contract_price_amount, contract_price_total_amount, signed_on, effective_from, effective_to, status_id, contracting_authority_name as name, contracting_authority_formatted_address as address, contracting_authority_cin as ico, supplier_name, supplier_cin as supplier_ico, supplier_formatted_address as supplier_address from contracts"
+    command:   "select id as contract_id, contract_identifier, contract_price_amount, contract_price_total_amount, signed_on, effective_from, effective_to, status_id, contracting_authority_name as name, contracting_authority_formatted_address as address, CASE WHEN contracting_authority_cin~E'^[\\\\d\\\\s]+$' THEN CAST(replace(contracting_authority_cin,' ','') as bigint) ELSE NULL END as ico, supplier_name, CASE WHEN supplier_cin~E'^[\\\\d\\\\s]+$' THEN CAST(replace(supplier_cin,' ','') as bigint) ELSE NULL END as supplier_ico, supplier_formatted_address as supplier_address from contracts"
     supplier_eid: true
     tables:
             Contracts:

@@ -204,7 +204,15 @@ def ProcessSource(db_prod, geocoder, entities, config, test_mode):
             if config.get("supplier_eid"):
                 supplier_address_id = None
                 if "supplier_address" in row and not row["supplier_address"] is None:
-                    supplier_address_id = geocoder.GetAddressId(row["supplier_address"].encode("utf8"))
+                    supplier_address = row["supplier_address"]
+                    if supplier_address:
+                        supplier_address_id = geocoder.GetAddressId(supplier_address.encode("utf8"))
+                        if supplier_address_id is None:
+                            missed_addresses.add(supplier_address)
+                            missed += 1
+                            continue
+                    else:
+                        empty += 1
                 supplier_name = ""
                 if "supplier_name" in row and not row["supplier_name"] is None:
                     supplier_name = row["supplier_name"]

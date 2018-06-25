@@ -156,6 +156,8 @@ class Entities:
     self.ico2eid[ico] = eid  
     
   def AddNewEntity(self, ico, name, address_id):
+    if address_id is None:
+        return None
     eid = self.db.add_values("Entities", [name, address_id])
     if ico is None:
       self.eid2name[eid] = name
@@ -178,7 +180,10 @@ class Entities:
       else:
         eid = self.AddNewEntity(ico, name, address_id)
         return eid
-    else:  
+    else: 
+      # Skontrolujme ci je ICO int!
+      if not isinstance(ico, (int, long)):
+        raise ValueError('ICO must be an integer')
       # Ak je to firma
       eid = self.ExistsICO(ico)
       # Ak sme ICO nasli tak ho vratime
