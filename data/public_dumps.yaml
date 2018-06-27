@@ -33,4 +33,4 @@ dumps:
             FROM
                 eufunds
         notebook_url:
-            https://verejne.digital
+            https://colab.research.google.com/drive/1EliPM69jvvtwoVJU-efP5K2bOX28XIlt

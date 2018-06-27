@@ -156,6 +156,7 @@
                                 call_title text
                        );
                        CREATE INDEX ON EUFunds(eid);
+                       CREATE UNIQUE INDEX ON EUFunds(eid,link,price);
                     "
 
 post_processing_1_trade_with_government:
