@@ -1,7 +1,7 @@
 # WARNING: You have to make sure that you have permission to publish all the data
 # in any public dump that you add or modify here.
 save_directory:
-    /data/www/beta.verejne.digital/root/data/
+    /data/www/verejne.digital/root/data/
 dumps:
     companies:
         query: |
@@ -16,15 +16,21 @@ dumps:
                 address ON address.id=entities.address_id;
         notebook_url:
             https://colab.research.google.com/drive/1AGgWhh4ZxLDJoLd34rD7Aw3wzpaLRXXB
-    obstaravania_simple:
+    obstaravania:
         query: |
             SELECT
-                notices.eid,notices.notice_id,contract_id,title,estimated_value_amount,estimated_value_currency,
-                bulletin_issue_id,notice_type_id,total_final_value_amount,total_final_value_currency,
-                noticesuppliers.eid as supplier_eid
+                eid, supplier_eid, notice_id, contract_id, title, estimated_value_amount,
+                estimated_value_currency, bulletin_issue_id, notice_type_id,
+                total_final_value_amount, total_final_value_currency
             FROM
                 notices
-            FULL OUTER JOIN
-                noticesuppliers ON noticesuppliers.notice_id = notices.notice_id;
         notebook_url:
             https://colab.research.google.com/drive/1Mks1kPcm93TptUEudD-0Ff1jPkRsrJF1
+    eurofondy:
+        query: |
+            SELECT
+                eid, title, description, link, price, state, call_state, call_title
+            FROM
+                eufunds
+        notebook_url:
+            https://verejne.digital
