@@ -8,6 +8,7 @@ import os
 import sys
 import webapp2
 
+from api_GetInfos import get_GetInfos
 from state import Entities
 from utils import yaml_load
 
@@ -163,51 +164,11 @@ class GetInfos(MyServer):
         if len(eIDs) > max_count:
             self.abort(400, detail='Too many eIDs requested at once (maximum %d)' % (max_count))
 
-        # Initialise result dictionary
-        result = {eID: {} for eID in eIDs}
-
         # Obtain pointer to the database connection object
         db = webapp2.get_app().registry['db']
 
-        # Query the database for basic entity information
-        q = """
-            SELECT
-                entities.id AS eid, entities.name, address.lat, address.lng, address.address
-            FROM
-                entities
-            JOIN
-                address ON address.id=entities.address_id
-            WHERE
-                entities.id IN %s
-            ;"""
-        q_data = [tuple(eIDs)]
-        for row in db.query(q, q_data):
-            eID = row['eid']
-            result[eID] = row
-            del result[eID]['eid']
-            result[eID]['related'] = []
-
-        # Query the database for related entities
-        q = """
-            SELECT
-                related.eid AS eid_source,
-                related.eid_relation AS eid,
-                related.stakeholder_type_id,
-                entities.name, address.lat, address.lng, address.address
-            FROM
-                related
-            JOIN
-                entities ON entities.id=related.eid_relation
-            JOIN
-                address ON address.id=entities.address_id
-            WHERE
-                related.eid IN %s
-            ;"""
-        q_data = [tuple(eIDs)]
-        for row in db.query(q, q_data):
-            eID = row['eid_source']
-            result[eID]['related'].append(row)
-            del result[eID]['related'][-1]['eid_source']
+        # Carry out the API logic
+        result = get_GetInfos(db, eIDs)
 
         # Return the result as JSON
         self.returnJSON(result)
