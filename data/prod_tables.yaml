@@ -144,6 +144,7 @@
     tables:
         EUFunds:
             columns: ["title", "description", "link", "price", "state", "call_state", "call_title"]
+            strip_html: ["description"]
             create_command: "
                        CREATE TABLE EUFunds (
                                 id SERIAL PRIMARY KEY,

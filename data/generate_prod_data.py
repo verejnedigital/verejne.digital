@@ -4,6 +4,7 @@ import os
 import sys
 import yaml
 import re
+import HTMLParser
 import xml.etree.ElementTree as ET
 from psycopg2.extensions import AsIs
 
@@ -27,6 +28,13 @@ def ExtractDescriptionFromBody(body):
             ("Value" in e.attrib):
             return e.attrib["Value"].replace("\n", " ")
     return None
+
+def StripHtml(text):
+    """ Input is html fragment. Output is text without html tags. """
+    if (text is None):
+        return ""
+    p = re.compile(r'<.*?>')    
+    return HTMLParser.HTMLParser().unescape(p.sub('', text)).replace(u'\xa0', u' ')
 
 def CreateAndSetProdSchema(db, prod_schema_name):
     """ Initialized schema with core prod tables: Entities and Address.
@@ -217,6 +225,10 @@ def ProcessSource(db_prod, geocoder, entities, config, test_mode):
                 if "supplier_name" in row and not row["supplier_name"] is None:
                     supplier_name = row["supplier_name"]
                 supplier_eid = entities.GetEntity(row["supplier_ico"], supplier_name, supplier_address_id)    
+            if table_config.get("strip_html"):
+                for strip_html_column in table_config["strip_html"]:
+                    if row.get(strip_html_column):
+                        row[strip_html_column] = StripHtml(row[strip_html_column])
             if eid is None: missed_eid += 1
             found_eid += 1
             AddToTable(row, table, eid, table_config.get("years"), supplier_eid)
