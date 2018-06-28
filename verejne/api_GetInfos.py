@@ -15,6 +15,25 @@ def _add_summary_query(db, query, eIDs, result):
         del row['eid']
         result[eID].update(row)
 
+def _add_eufunds_summary(db, eIDs, result):
+    q = """
+        SELECT
+            entities.id AS eid,
+            -- Count rows with non-null contracts only
+            COUNT(eufunds.id) AS eufunds_count,
+            -- In the sum, replace NULL value (sum of empty set) with 0
+            COALESCE(SUM(price), 0) AS eufunds_price_sum
+        FROM
+            entities
+        LEFT JOIN
+            eufunds ON eufunds.eid=entities.id
+        WHERE
+            entities.id IN %s
+        GROUP BY
+            entities.id
+        ;"""
+    _add_summary_query(db, q, eIDs, result)
+
 def _add_contracts_summary(db, eIDs, result):
     q = """
         SELECT
@@ -58,7 +77,31 @@ def _add_lateral_query(db, query, eIDs, result, field, max_rows_per_eID):
                 row[key] = str(row[key]) # for JSON serialisability
         result[eID][field].append(row)
 
-def _add_contracts_recents(db, eIDs, result, max_contracts):
+def _add_eufunds_largest(db, eIDs, result, max_per_eID):
+    q = """
+        SELECT
+            entities.id AS eid,
+            eid_eufunds.*
+        FROM
+            entities,
+            LATERAL (
+                SELECT
+                    title, link, price, state, call_state, call_title
+                FROM
+                    eufunds
+                WHERE
+                    eufunds.eid=entities.id
+                ORDER BY
+                    price DESC
+                LIMIT
+                    %s
+            ) eid_eufunds
+        WHERE
+            entities.id IN %s
+        ;"""
+    _add_lateral_query(db, q, eIDs, result, 'eufunds_largest', max_per_eID)
+
+def _add_contracts_recents(db, eIDs, result, max_per_eID):
     q = """
         SELECT
             entities.id AS eid,
@@ -89,9 +132,9 @@ def _add_contracts_recents(db, eIDs, result, max_contracts):
         WHERE
             entities.id IN %s
         ;"""
-    _add_lateral_query(db, q, eIDs, result, 'contracts_most_recent', max_contracts)
+    _add_lateral_query(db, q, eIDs, result, 'contracts_most_recent', max_per_eID)
 
-def _add_contracts_largest(db, eIDs, result, max_contracts):
+def _add_contracts_largest(db, eIDs, result, max_per_eID):
     q = """
         SELECT
             entities.id AS eid,
@@ -122,12 +165,13 @@ def _add_contracts_largest(db, eIDs, result, max_contracts):
         WHERE
             entities.id IN %s
         ;"""
-    _add_lateral_query(db, q, eIDs, result, 'contracts_largest', max_contracts)
+    _add_lateral_query(db, q, eIDs, result, 'contracts_largest', max_per_eID)
 
 
 # --- MAIN METHOD ---
 def get_GetInfos(db, eIDs):
     # Parameters
+    max_eufunds_largest = 15
     max_contracts_recents = 5
     max_contracts_largest = 15
 
@@ -153,6 +197,8 @@ def get_GetInfos(db, eIDs):
         result[eID]['related'] = []
 
     # Add information from other production tables
+    _add_eufunds_summary(db, eIDs, result)
+    _add_eufunds_largest(db, eIDs, result, max_eufunds_largest)
     _add_contracts_summary(db, eIDs, result)
     _add_contracts_recents(db, eIDs, result, max_contracts_recents)
     _add_contracts_largest(db, eIDs, result, max_contracts_largest)
