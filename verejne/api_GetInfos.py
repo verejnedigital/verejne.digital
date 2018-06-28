@@ -13,6 +13,9 @@ def _add_summary_query(db, query, eIDs, result):
     for row in rows:
         eID = row['eid']
         del row['eid']
+        for key in row:
+            if type(row[key]) == datetime.date:
+                row[key] = str(row[key]) # for JSON serialisability
         result[eID].update(row)
 
 def _add_eufunds_summary(db, eIDs, result):
@@ -31,6 +34,22 @@ def _add_eufunds_summary(db, eIDs, result):
             entities.id IN %s
         GROUP BY
             entities.id
+        ;"""
+    _add_summary_query(db, q, eIDs, result)
+
+def _add_companyinfo(db, eIDs, result):
+    q = """
+        SELECT
+            entities.id AS eid,
+            companyinfo.ico,
+            companyinfo.established_on,
+            companyinfo.terminated_on
+        FROM
+            entities
+        INNER JOIN
+            companyinfo ON companyinfo.eid=entities.id
+        WHERE
+            entities.id IN %s
         ;"""
     _add_summary_query(db, q, eIDs, result)
 
@@ -199,6 +218,7 @@ def get_GetInfos(db, eIDs):
     # Add information from other production tables
     _add_eufunds_summary(db, eIDs, result)
     _add_eufunds_largest(db, eIDs, result, max_eufunds_largest)
+    _add_companyinfo(db, eIDs, result)
     _add_contracts_summary(db, eIDs, result)
     _add_contracts_recents(db, eIDs, result, max_contracts_recents)
     _add_contracts_largest(db, eIDs, result, max_contracts_largest)
