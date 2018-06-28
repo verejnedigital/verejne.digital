@@ -3,6 +3,39 @@
 import datetime
 
 
+# --- SUMMARY QUERIES ---
+def _add_summary_query(db, query, eIDs, result):
+    # Query the database
+    query_data = [tuple(eIDs)]
+    rows = db.query(query, query_data)
+
+    # Store database responses in the result dictionary
+    for row in rows:
+        eID = row['eid']
+        del row['eid']
+        result[eID].update(row)
+
+def _add_contracts_summary(db, eIDs, result):
+    q = """
+        SELECT
+            entities.id AS eid,
+            -- Count rows with non-null contracts only
+            COUNT(contracts.id) AS contracts_count,
+            -- In the sum, replace NULL value (sum of empty set) with 0
+            COALESCE(SUM(contract_price_amount), 0) AS contracts_price_amount_sum
+        FROM
+            entities
+        LEFT JOIN
+            contracts ON contracts.supplier_eid=entities.id
+        WHERE
+            entities.id IN %s
+        GROUP BY
+            entities.id
+        ;"""
+    _add_summary_query(db, q, eIDs, result)
+
+
+# --- LATERAL QUERIES ---
 def _add_lateral_query(db, query, eIDs, result, field, max_rows_per_eID):
     """ Executes a LATERAL JOIN query and stores the resulting rows
         for each eID as a list in result[eID][field].
@@ -120,6 +153,7 @@ def get_GetInfos(db, eIDs):
         result[eID]['related'] = []
 
     # Add information from other production tables
+    _add_contracts_summary(db, eIDs, result)
     _add_contracts_recents(db, eIDs, result, max_contracts_recents)
     _add_contracts_largest(db, eIDs, result, max_contracts_largest)
 
