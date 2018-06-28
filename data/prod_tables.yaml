@@ -107,6 +107,7 @@
                                 employees text
                        );
                        CREATE INDEX ON CompanyFinancials(eid);
+                       CREATE UNIQUE INDEX ON CompanyFinancials(eid,year);
                     "
 
 6_contracts:
