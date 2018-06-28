@@ -289,7 +289,7 @@ def initialise_app(serving_directory):
     schema = db.get_latest_schema('prod_')
     db.execute('SET search_path to ' + schema + ';')
     app.registry['db'] = db
-    return
+
     # data_sources
     data_sources = yaml_load('datasources.yaml')
     app.registry['data_sources'] = data_sources
