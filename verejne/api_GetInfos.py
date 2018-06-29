@@ -65,10 +65,8 @@ def _add_contracts_summary(db, eIDs, result):
     q = """
         SELECT
             entities.id AS eid,
-            -- Count rows with non-null contracts only
             COUNT(contracts.id) AS count,
-            -- In the sum, replace NULL value (sum of empty set) with 0
-            COALESCE(SUM(contract_price_amount), 0) AS price_amount_sum
+            SUM(contract_price_amount) AS price_amount_sum
         FROM
             entities
         INNER JOIN
@@ -84,8 +82,9 @@ def _add_notices_summary(db, eIDs, result):
     q = """
         SELECT
             entities.id AS eid,
-            -- Count rows with non-null notices only
-            COUNT(notices.id) AS count
+            COUNT(notices.id) AS count,
+            -- Sum total_final_value_amount where currency is EUR
+            SUM(total_final_value_amount) FILTER (WHERE total_final_value_currency='EUR') AS total_final_value_amount_eur_sum
         FROM
             entities
         INNER JOIN
@@ -174,7 +173,7 @@ def _add_companyfinancials(db, eIDs, result):
         del row['year']
         result[eID]['companyfinancials'][year] = row
 
-def _add_contracts_recents(db, eIDs, result, max_per_eID):
+def _add_contracts_top(db, eIDs, filter_and_order, result, subfield, max_per_eID):
     q = """
         SELECT
             entities.id AS eid,
@@ -185,9 +184,12 @@ def _add_contracts_recents(db, eIDs, result, max_per_eID):
             LATERAL (
                 SELECT
                     eid AS client_eid,
+                    id,
                     contract_price_amount,
                     contract_price_total_amount,
                     signed_on,
+                    effective_from,
+                    effective_to,
                     status_id,
                     contract_id,
                     contract_identifier
@@ -195,8 +197,7 @@ def _add_contracts_recents(db, eIDs, result, max_per_eID):
                     contracts
                 WHERE
                     contracts.supplier_eid=entities.id
-                ORDER BY
-                    signed_on DESC
+        """ + filter_and_order + """
                 LIMIT
                     %s
             ) eid_contracts
@@ -205,42 +206,23 @@ def _add_contracts_recents(db, eIDs, result, max_per_eID):
         WHERE
             entities.id IN %s
         ;"""
-    _add_lateral_query(db, q, eIDs, result, 'contracts', 'most_recent', max_per_eID)
+    _add_lateral_query(db, q, eIDs, result, 'contracts', subfield, max_per_eID)
+
+def _add_contracts_recents(db, eIDs, result, max_per_eID):
+    filter_and_order = """
+        ORDER BY signed_on DESC
+    """
+    subfield = 'most_recent'
+    _add_contracts_top(db, eIDs, filter_and_order, result, subfield, max_per_eID)
 
 def _add_contracts_largest(db, eIDs, result, max_per_eID):
-    q = """
-        SELECT
-            entities.id AS eid,
-            eid_contracts.*,
-            entities_client.name AS client_name
-        FROM
-            entities,
-            LATERAL (
-                SELECT
-                    eid AS client_eid,
-                    contract_price_amount,
-                    contract_price_total_amount,
-                    signed_on,
-                    status_id,
-                    contract_id,
-                    contract_identifier
-                FROM
-                    contracts
-                WHERE
-                    contracts.supplier_eid=entities.id
-                ORDER BY
-                    contract_price_amount DESC
-                LIMIT
-                    %s
-            ) eid_contracts
-        INNER JOIN
-            entities AS entities_client ON entities_client.id=eid_contracts.client_eid
-        WHERE
-            entities.id IN %s
-        ;"""
-    _add_lateral_query(db, q, eIDs, result, 'contracts', 'largest', max_per_eID)
+    filter_and_order = """
+        ORDER BY contract_price_amount DESC
+    """
+    subfield = 'largest'
+    _add_contracts_top(db, eIDs, filter_and_order, result, subfield, max_per_eID)
 
-def _add_notices_most_recent(db, eIDs, result, max_per_eID):
+def _add_notices_top(db, eIDs, filter_and_order, result, subfield, max_per_eID):
     q = """
         SELECT
             entities.id AS eid,
@@ -251,6 +233,9 @@ def _add_notices_most_recent(db, eIDs, result, max_per_eID):
             LATERAL (
                 SELECT
                     eid AS client_eid,
+                    id,
+                    notice_id,
+                    contract_id,
                     title,
                     estimated_value_amount,
                     estimated_value_currency,
@@ -264,8 +249,7 @@ def _add_notices_most_recent(db, eIDs, result, max_per_eID):
                     notices
                 WHERE
                     notices.supplier_eid=entities.id
-                ORDER BY
-                    bulletin_issue_id DESC
+        """ + filter_and_order + """
                 LIMIT
                     %s
             ) eid_notices
@@ -274,7 +258,23 @@ def _add_notices_most_recent(db, eIDs, result, max_per_eID):
         WHERE
             entities.id IN %s
         ;"""
-    _add_lateral_query(db, q, eIDs, result, 'notices', 'most_recent', max_per_eID)
+    _add_lateral_query(db, q, eIDs, result, 'notices', subfield, max_per_eID)
+
+def _add_notices_recents(db, eIDs, result, max_per_eID):
+    filter_and_order = """
+        ORDER BY bulletin_issue_id DESC
+    """
+    subfield = 'most_recent'
+    _add_notices_top(db, eIDs, filter_and_order, result, subfield, max_per_eID)
+
+def _add_notices_largest(db, eIDs, result, max_per_eID):
+    filter_and_order = """
+            AND total_final_value_currency='EUR'
+        ORDER BY
+            total_final_value_amount DESC
+    """
+    subfield = 'largest'
+    _add_notices_top(db, eIDs, filter_and_order, result, subfield, max_per_eID)
 
 
 # --- MAIN METHOD ---
@@ -315,7 +315,8 @@ def get_GetInfos(db, eIDs):
     _add_contracts_recents(db, eIDs, result, max_contracts_recents)
     _add_contracts_largest(db, eIDs, result, max_contracts_largest)
     _add_notices_summary(db, eIDs, result)
-    _add_notices_most_recent(db, eIDs, result, max_notices_recent)
+    _add_notices_recents(db, eIDs, result, max_notices_recent)
+    _add_notices_largest(db, eIDs, result, max_notices_recent)
 
     # Query the database for related entities
     q = """
