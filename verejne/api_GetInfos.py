@@ -137,6 +137,34 @@ def _add_eufunds_largest(db, eIDs, result, max_per_eID):
         ;"""
     _add_lateral_query(db, q, eIDs, result, 'eufunds_largest', max_per_eID)
 
+def _add_companyfinancials(db, eIDs, result):
+    q = """
+        SELECT
+            entities.id AS eid,
+            companyfinancials.year,
+            companyfinancials.revenue,
+            companyfinancials.profit,
+            companyfinancials.employees
+        FROM
+            entities
+        INNER JOIN
+            companyfinancials ON companyfinancials.eid=entities.id
+        WHERE
+            entities.id IN %s
+        ;"""
+    q_data = [tuple(eIDs)]
+    rows = db.query(q, q_data)
+
+    # Store database responses in the result dictionary
+    for row in rows:
+        eID = row['eid']
+        if 'companyfinancials' not in result[eID]:
+            result[eID]['companyfinancials'] = {}
+        year = row['year']
+        del row['eid']
+        del row['year']
+        result[eID]['companyfinancials'][year] = row
+
 def _add_contracts_recents(db, eIDs, result, max_per_eID):
     q = """
         SELECT
@@ -272,6 +300,7 @@ def get_GetInfos(db, eIDs):
     # Add information from other production tables
     _add_eufunds_summary(db, eIDs, result)
     _add_eufunds_largest(db, eIDs, result, max_eufunds_largest)
+    _add_companyfinancials(db, eIDs, result)
     _add_companyinfo(db, eIDs, result)
     _add_contracts_summary(db, eIDs, result)
     _add_contracts_recents(db, eIDs, result, max_contracts_recents)
