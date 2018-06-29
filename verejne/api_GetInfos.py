@@ -3,8 +3,18 @@
 import datetime
 
 
+# --- UTILITY METHODS ---
+def _convert_dates_to_strings(row):
+    """ Given a database row returned by psycopg2,
+        convert all dates to strings (usually used
+        to ensure JSON serialisability). """
+    for key in row:
+        if type(row[key]) == datetime.date:
+            row[key] = str(row[key])
+
+
 # --- SUMMARY QUERIES ---
-def _add_summary_query(db, query, eIDs, result):
+def _add_summary_query(db, query, eIDs, result, field):
     # Query the database
     query_data = [tuple(eIDs)]
     rows = db.query(query, query_data)
@@ -13,10 +23,8 @@ def _add_summary_query(db, query, eIDs, result):
     for row in rows:
         eID = row['eid']
         del row['eid']
-        for key in row:
-            if type(row[key]) == datetime.date:
-                row[key] = str(row[key]) # for JSON serialisability
-        result[eID].update(row)
+        _convert_dates_to_strings(row)
+        result[eID][field] = row
 
 def _add_eufunds_summary(db, eIDs, result):
     q = """
@@ -28,14 +36,14 @@ def _add_eufunds_summary(db, eIDs, result):
             COALESCE(SUM(price), 0) AS eufunds_price_sum
         FROM
             entities
-        LEFT JOIN
+        INNER JOIN
             eufunds ON eufunds.eid=entities.id
         WHERE
             entities.id IN %s
         GROUP BY
             entities.id
         ;"""
-    _add_summary_query(db, q, eIDs, result)
+    _add_summary_query(db, q, eIDs, result, 'eufunds')
 
 def _add_companyinfo(db, eIDs, result):
     q = """
@@ -51,54 +59,50 @@ def _add_companyinfo(db, eIDs, result):
         WHERE
             entities.id IN %s
         ;"""
-    _add_summary_query(db, q, eIDs, result)
+    _add_summary_query(db, q, eIDs, result, 'companyinfo')
 
 def _add_contracts_summary(db, eIDs, result):
     q = """
         SELECT
             entities.id AS eid,
             -- Count rows with non-null contracts only
-            COUNT(contracts.id) AS contracts_count,
+            COUNT(contracts.id) AS count,
             -- In the sum, replace NULL value (sum of empty set) with 0
-            COALESCE(SUM(contract_price_amount), 0) AS contracts_price_amount_sum
+            COALESCE(SUM(contract_price_amount), 0) AS price_amount_sum
         FROM
             entities
-        LEFT JOIN
+        INNER JOIN
             contracts ON contracts.supplier_eid=entities.id
         WHERE
             entities.id IN %s
         GROUP BY
             entities.id
         ;"""
-    _add_summary_query(db, q, eIDs, result)
+    _add_summary_query(db, q, eIDs, result, 'contracts')
 
 def _add_notices_summary(db, eIDs, result):
     q = """
         SELECT
             entities.id AS eid,
             -- Count rows with non-null notices only
-            COUNT(notices.id) AS notices_count
+            COUNT(notices.id) AS count
         FROM
             entities
-        LEFT JOIN
+        INNER JOIN
             notices ON notices.supplier_eid=entities.id
         WHERE
             entities.id IN %s
         GROUP BY
             entities.id
         ;"""
-    _add_summary_query(db, q, eIDs, result)
+    _add_summary_query(db, q, eIDs, result, 'notices')
 
 
 # --- LATERAL QUERIES ---
-def _add_lateral_query(db, query, eIDs, result, field, max_rows_per_eID):
+def _add_lateral_query(db, query, eIDs, result, field, subfield, max_rows_per_eID):
     """ Executes a LATERAL JOIN query and stores the resulting rows
-        for each eID as a list in result[eID][field].
+        for each eID as a list in result[eID][field][subfield].
     """
-
-    # Initialise fields where information will be added
-    for eID in result:
-        result[eID][field] = []
 
     # Query the database
     query_data = [max_rows_per_eID, tuple(eIDs)]
@@ -106,12 +110,17 @@ def _add_lateral_query(db, query, eIDs, result, field, max_rows_per_eID):
 
     # Store database responses in the result dictionary
     for row in rows:
+        # Ensure insertion location exists in the result JSON
         eID = row['eid']
+        if field not in result[eID]:
+            result[eID][field] = {}
+        if subfield not in result[eID][field]:
+            result[eID][field][subfield] = []
+
+        # Prepare the row for insertion into the JSON and insert
         del row['eid']
-        for key in row:
-            if type(row[key]) == datetime.date:
-                row[key] = str(row[key]) # for JSON serialisability
-        result[eID][field].append(row)
+        _convert_dates_to_strings(row)
+        result[eID][field][subfield].append(row)
 
 def _add_eufunds_largest(db, eIDs, result, max_per_eID):
     q = """
@@ -135,7 +144,7 @@ def _add_eufunds_largest(db, eIDs, result, max_per_eID):
         WHERE
             entities.id IN %s
         ;"""
-    _add_lateral_query(db, q, eIDs, result, 'eufunds_largest', max_per_eID)
+    _add_lateral_query(db, q, eIDs, result, 'eufunds', 'largest', max_per_eID)
 
 def _add_companyfinancials(db, eIDs, result):
     q = """
@@ -196,7 +205,7 @@ def _add_contracts_recents(db, eIDs, result, max_per_eID):
         WHERE
             entities.id IN %s
         ;"""
-    _add_lateral_query(db, q, eIDs, result, 'contracts_most_recent', max_per_eID)
+    _add_lateral_query(db, q, eIDs, result, 'contracts', 'most_recent', max_per_eID)
 
 def _add_contracts_largest(db, eIDs, result, max_per_eID):
     q = """
@@ -229,7 +238,7 @@ def _add_contracts_largest(db, eIDs, result, max_per_eID):
         WHERE
             entities.id IN %s
         ;"""
-    _add_lateral_query(db, q, eIDs, result, 'contracts_largest', max_per_eID)
+    _add_lateral_query(db, q, eIDs, result, 'contracts', 'largest', max_per_eID)
 
 def _add_notices_most_recent(db, eIDs, result, max_per_eID):
     q = """
@@ -265,7 +274,7 @@ def _add_notices_most_recent(db, eIDs, result, max_per_eID):
         WHERE
             entities.id IN %s
         ;"""
-    _add_lateral_query(db, q, eIDs, result, 'notices_most_recent', max_per_eID)
+    _add_lateral_query(db, q, eIDs, result, 'notices', 'most_recent', max_per_eID)
 
 
 # --- MAIN METHOD ---
