@@ -17,9 +17,10 @@ import {
   politicianDetailSelector,
   assetDeclarationsSortedYearsSelector,
   politicianCadastralSelector,
-  politicianCadastralLengthSelector,
+  filteredCadastralInfoLengthSelector,
   paginatedCadastralInfoSelector,
   cadastralPageSelector,
+  cadastralSearchSelector,
 } from '../../selectors/profileSelectors'
 import {locationSearchSelector} from '../../selectors'
 import {DEFAULT_MAP_CENTER} from '../../constants'
@@ -46,6 +47,7 @@ export type ProfileDetailPageProps = {
   paginatedCadastral: CadastralData,
   cadastralLength: number,
   cadastralPage: number,
+  cadastralSearch: string,
   query: Object,
   history: RouterHistory,
   mapCenter: GeolocationPoint,
@@ -61,6 +63,7 @@ const DetailPage = ({
   paginatedCadastral,
   cadastralLength,
   cadastralPage,
+  cadastralSearch,
   query,
   history,
   mapCenter,
@@ -123,6 +126,7 @@ const DetailPage = ({
           cadastral={paginatedCadastral}
           cadastralLength={cadastralLength}
           currentPage={cadastralPage}
+          search={cadastralSearch}
           query={query}
           history={history}
           onParcelShow={goMap}
@@ -150,8 +154,9 @@ export default compose(
     politician: politicianDetailSelector(state, props),
     cadastral: Object.values(politicianCadastralSelector(state, props)),
     paginatedCadastral: paginatedCadastralInfoSelector(state, props),
-    cadastralLength: politicianCadastralLengthSelector(state, props),
+    cadastralLength: filteredCadastralInfoLengthSelector(state, props),
     cadastralPage: cadastralPageSelector(state, props),
+    cadastralSearch: cadastralSearchSelector(state, props),
     query: locationSearchSelector(state, props),
   })),
   withState('mapCenter', 'setMapCenter', DEFAULT_MAP_CENTER),
