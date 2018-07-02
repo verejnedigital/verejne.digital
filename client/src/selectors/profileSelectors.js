@@ -95,7 +95,7 @@ export const filteredCadastralInfoSelector = createSelector(
   cadastralSearchSelector,
   (cadastral, search) => {
     return Object.values(cadastral).filter(({cadastralunitname}) =>
-      cadastralunitname.startsWith(search)
+      normalizeName(cadastralunitname).startsWith(search)
     )
   }
 )
