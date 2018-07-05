@@ -174,6 +174,25 @@ class GetInfos(MyServer):
 
 
 # Search entity by name
+class SearchEntityByName(MyServer):
+    def get(self):
+        try:
+            text = self.request.GET["name"].encode("utf8")
+        except:
+            self.abort(400, detail="Unable to parse input text")
+
+        # Find entities with the given address_id in the database
+        q = """
+            SELECT DISTINCT id AS eid FROM entities
+            WHERE to_tsvector('unaccent', name) @@ plainto_tsquery('unaccent', %s)
+            LIMIT 20
+            """
+        q_data = [address_id]
+        response = webapp2.get_app().registry['db'].query(q, q_data)
+        self.returnJSON(response)
+
+
+# Search entity by name
 class SearchEntity(MyServer):
     def get(self):
         try:
@@ -275,6 +294,7 @@ app = webapp2.WSGIApplication([
     ('/getRelated', GetRelated),
     ('/ico', IcoRedirect),
     ('/searchEntity', SearchEntity),
+    ('/searchEntityByName', SearchEntityByName),
     ('/searchEntityByNameAndAddress', SearchEntityByNameAndAddress),
 ], debug=False)
 
