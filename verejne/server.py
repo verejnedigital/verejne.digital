@@ -187,7 +187,7 @@ class SearchEntityByName(MyServer):
             WHERE to_tsvector('unaccent', name) @@ plainto_tsquery('unaccent', %s)
             LIMIT 20
             """
-        q_data = [address_id]
+        q_data = [text]
         response = webapp2.get_app().registry['db'].query(q, q_data)
         self.returnJSON(response)
 
