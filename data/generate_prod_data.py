@@ -282,6 +282,8 @@ def main(args_dict):
     db_prod.grant_usage_and_select_on_schema(prod_schema_name, 'data')
     db_prod.grant_usage_and_select_on_schema(prod_schema_name, 'verejne')
     db_prod.grant_usage_and_select_on_schema(prod_schema_name, 'kataster')
+    db_prod.grant_usage_and_select_on_schema(prod_schema_name, 'prepojenia')
+    db_prod.grant_usage_and_select_on_schema(prod_schema_name, 'obstaravania')
 
     # Commit database changes and close database connections
     db_address_cache.commit()
