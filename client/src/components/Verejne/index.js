@@ -1,8 +1,6 @@
 // @flow
 import React from 'react'
-import Map from './Map'
 import './Verejne.css'
-import Legend from './Legend'
 import {Input, ListGroup, ListGroupItem, Badge} from 'reactstrap'
 import {connect} from 'react-redux'
 import {
@@ -65,55 +63,51 @@ const Verejne = ({
   zoomToLocation,
   toggleModalOpen,
 }) => (
-  <div className="wrapper">
-    <div className="side-panel">
-      <Input
-        type="text"
-        className="form-control"
-        placeholder={FIND_ENTITY_TITLE}
-        onClick={toggleModalOpen}
-      />
-      <EntitySearch />
-      <PlacesAutocomplete
-        value={autocompleteValue}
-        onSelect={(value, id) =>
-          geocodeByAddress(value)
-            .then((results) => getLatLng(results[0]))
-            .then((location) => zoomToLocation(location, ENTITY_CLOSE_ZOOM))
-        }
-        onChange={setAutocompleteValue}
-        onError={(status, clearSuggestions) => clearSuggestions()}
-        searchOptions={autocompleteOptions}
-        className="form-control"
-      />
-      <ListGroup>
-        {map(entities, (e) => (
-          <ListGroupItem
-            className="side-panel__list__item"
-            key={e.eid}
-            onClick={() => selectEntity(e)}
-          >
-            {renderListItemIcon(e)}
-            {e.name}
-            <Badge pill className="side-panel__list__item__badge">
-              {e.size}
-            </Badge>
-          </ListGroupItem>
-        ))}
-      </ListGroup>
-      <Pagination
-        itemClass="page-item"
-        linkClass="page-link"
-        hideNavigation
-        pageRangeDisplayed={VEREJNE_PAGE_RANGE}
-        activePage={currentPage}
-        itemsCountPerPage={VEREJNE_MAX_PAGE_ITEMS}
-        totalItemsCount={entitiesLength}
-        onChange={setCurrentPage}
-      />
-    </div>
-    <Map />
-    <Legend />
+  <div className="side-panel">
+    <Input
+      type="text"
+      className="form-control"
+      placeholder={FIND_ENTITY_TITLE}
+      onClick={toggleModalOpen}
+    />
+    <EntitySearch />
+    <PlacesAutocomplete
+      value={autocompleteValue}
+      onSelect={(value, id) =>
+        geocodeByAddress(value)
+          .then((results) => getLatLng(results[0]))
+          .then((location) => zoomToLocation(location, ENTITY_CLOSE_ZOOM))
+      }
+      onChange={setAutocompleteValue}
+      onError={(status, clearSuggestions) => clearSuggestions()}
+      searchOptions={autocompleteOptions}
+      className="form-control"
+    />
+    <ListGroup>
+      {map(entities, (e) => (
+        <ListGroupItem
+          className="side-panel__list__item"
+          key={e.eid}
+          onClick={() => selectEntity(e)}
+        >
+          {renderListItemIcon(e)}
+          {e.name}
+          <Badge pill className="side-panel__list__item__badge">
+            {e.size}
+          </Badge>
+        </ListGroupItem>
+      ))}
+    </ListGroup>
+    <Pagination
+      itemClass="page-item"
+      linkClass="page-link"
+      hideNavigation
+      pageRangeDisplayed={VEREJNE_PAGE_RANGE}
+      activePage={currentPage}
+      itemsCountPerPage={VEREJNE_MAX_PAGE_ITEMS}
+      totalItemsCount={entitiesLength}
+      onChange={setCurrentPage}
+    />
   </div>
 )
 export default compose(

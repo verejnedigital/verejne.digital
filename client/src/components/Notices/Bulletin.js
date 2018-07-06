@@ -14,7 +14,6 @@ const Bulletin = ({items, number, year, date}) => [
             {number}/{year}
           </strong>
         </ExternalLink>
-        />
       </span>
     </Col>
   </Row>,

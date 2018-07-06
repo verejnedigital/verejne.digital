@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {NavLink} from 'react-router-dom'
-import {Collapse, Navbar, NavbarToggler, NavItem} from 'reactstrap'
+import {Collapse} from 'reactstrap'
 
 import './Navigation.css'
 
@@ -18,63 +18,69 @@ class Navigation extends Component {
     })
   }
 
-  render = () => (
-    <Navbar className="navbar-expand-lg navbar-light bg-light fixed-top">
-      <NavLink to="/" className="navbar-brand">
-        verejne.digital
-      </NavLink>
-      <NavbarToggler onClick={this.toggle} />
-      <Collapse
-        className="navbar-collapse"
-        id="navbarSupportedContent"
-        isOpen={this.state.isOpen}
-        navbar
+  render = () => [
+    <header key="header" className="main-header">
+      <img src="/SKico.png" alt="logo" title="verejne.digital logo" />
+      <h1>verejne<span>.digal</span></h1>
+      <button
+        key="button"
+        className="navbar-toggle"
+        onClick={this.toggle}
       >
-        <ul className="navbar-nav mr-auto">
-          <NavItem>
-            <NavLink to="/verejne" className="nav-link">
-              Verejne data
-            </NavLink>
-          </NavItem>
-          <NavItem>
-            <NavLink to="/prepojenia" className="nav-link">
-              Prepojenia
-            </NavLink>
-          </NavItem>
-          <NavItem>
-            <NavLink to="/obstaravania" className="nav-link">
-              Obstaravania
-            </NavLink>
-          </NavItem>
-          <NavItem>
-            <NavLink to="/profil" className="nav-link">
-              Profil
-            </NavLink>
-          </NavItem>
-          <li className="nav-item">
-            <a
-              href="http://www.facebook.com/verejne.digital"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="nav-link"
-            >
-              kontaktuj nás na Facebooku
-            </a>
-          </li>
-          <li className="nav-item">
-            <a
-              href="https://medium.com/@verejne.digital/o-%C4%8Do-ide-verejne-digital-14a1c6dcbe09"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="nav-link"
-            >
-              o projekte
-            </a>
-          </li>
-        </ul>
-      </Collapse>
-    </Navbar>
-  )
+        <span className="icon-bar" />
+        <span className="icon-bar" />
+        <span className="icon-bar" />
+      </button>
+    </header>,
+    <Collapse
+      isOpen={this.state.isOpen}
+      tag="nav"
+      key="navigation"
+      className="nav"
+      id="mainMenu"
+    >
+      <div className="navigation-item">
+        <NavLink to="/verejne" className="nav-link">
+          Verejne data
+        </NavLink>
+      </div>
+      <div className="navigation-item">
+        <NavLink to="/prepojenia" className="nav-link">
+          Prepojenia
+        </NavLink>
+      </div>
+      <div className="navigation-item">
+        <NavLink to="/obstaravania" className="nav-link">
+          Obstaravania
+        </NavLink>
+      </div>
+      <div className="navigation-item">
+        <NavLink to="/profil" className="nav-link">
+          Profil
+        </NavLink>
+      </div>
+      <div className="navigation-item">
+        <a
+          href="http://www.facebook.com/verejne.digital"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="nav-link"
+        >
+          kontaktuj nás na Facebooku
+        </a>
+      </div>
+      <div className="navigation-item">
+        <a
+          href="https://medium.com/@verejne.digital/o-%C4%8Do-ide-verejne-digital-14a1c6dcbe09"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="nav-link"
+        >
+          o projekte
+        </a>
+      </div>
+    </Collapse>,
+  ]
 }
 
 export default Navigation
