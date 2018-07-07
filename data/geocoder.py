@@ -140,6 +140,10 @@ class Geocoder:
 
     def GeocodingAPILookup(self, address):
         " Performs and returns the response from Google geocoding api."
+        # Don't try to do any geocoding at the moment as we have plenty of things
+        # in the cache. Now we're mostly geocoding things where geocoding failed
+        # before. Remove this once started handling failed geocoding requests properly.
+        return None
         self.api_lookups += 1
         if (self.api_lookups > 100000):
             # The API has daily limit of 100k queries, so save some round trips
