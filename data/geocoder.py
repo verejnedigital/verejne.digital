@@ -127,22 +127,6 @@ class Geocoder:
                     if (len(new_k) > 5): result.append(new_k)
             return result
 
-        # Return generator that returns set(concat(seq, map(f, seq)))
-        # evaluating everything only once
-        def MapConcatGenerator(seq, f):
-            computed = []
-            outputed = set()
-            for s in seq:
-                if s in outputed: continue
-                yield s
-                outputed.add(s)
-                computed.append(s)
-            values = f(computed)
-            for value in values:
-                if value in outputed: continue
-                yield value
-                outputed.add(value)
-
         # Returns just [address] so can be used consistently with the above methods.
         def Identity(keys):
             return [self.NormalizeAddress(address)]
