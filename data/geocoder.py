@@ -147,8 +147,8 @@ class Geocoder:
             for res in new:
                 if res in already: continue
                 already.add(res)
+                old.append(res)
                 yield res.replace(" ", "").replace(",", "").replace("-", "")
-            old += new
 
 
     def GeocodingAPILookup(self, address):
