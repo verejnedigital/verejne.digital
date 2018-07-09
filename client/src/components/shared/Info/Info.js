@@ -16,7 +16,7 @@ import {
 import Circle from 'react-icons/lib/fa/circle-o'
 import './Info.css'
 
-const Info = ({data}) => {
+const Info = ({data, canClose, onClose}) => {
   const entity = data.entities[0]
   const findata = getFinancialData(data, extractIco(data))
   const zisk = findata.hasOwnProperty('zisk16') ? findata.zisk16 : findata.zisk15
@@ -33,6 +33,7 @@ const Info = ({data}) => {
             </Link>{' '}
           */}
       </span>
+      {canClose && <span style={{float: 'right', cursor: 'pointer'}} onClick={onClose}>X</span>}
       <hr />
       <table className="infoDataTable table table-condensed">
         <tbody>

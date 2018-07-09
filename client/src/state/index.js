@@ -219,6 +219,7 @@ const getInitialState = (): State => ({
     entitySearchModalOpen: false,
     entitySearchFor: '',
     entitySearchEids: undefined,
+    showInfo: {},
   },
   mapOptions: {
     center: SLOVAKIA_COORDINATES,

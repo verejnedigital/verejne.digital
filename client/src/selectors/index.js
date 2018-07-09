@@ -90,6 +90,13 @@ export const zoomSelector = (state: State): number => state.mapOptions.zoom
 export const boundsSelector = (state: State): ?MapBounds => state.mapOptions.bounds
 export const entitiesSelector = (state: State): ?Array<Entity> => state.entities
 export const currentPageSelector = (state: State): number => state.publicly.currentPage
+export const showInfoSelector = (state: State) => state.publicly.showInfo
+
+const panelEntitiesSelector = createSelector(
+  entitiesSelector,
+  showInfoSelector,
+  (entities, showInfo) => sortBy(entities, (entity) => !showInfo[entity.eid])
+)
 
 export const entitiesLengthSelector = createSelector(
   entitiesSelector,
@@ -102,7 +109,7 @@ export const pageCountSelector = createSelector(
 )
 
 export const currentPageEntities = createSelector(
-  entitiesSelector,
+  panelEntitiesSelector,
   currentPageSelector,
   (entities, currentPage) => {
     return chunk(entities, VEREJNE_MAX_PAGE_ITEMS)[currentPage - 1]
