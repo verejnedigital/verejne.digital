@@ -33,7 +33,7 @@ const Info = ({data, canClose, onClose}) => {
             </Link>{' '}
           */}
       </span>
-      {canClose && <span style={{float: 'right', cursor: 'pointer'}} onClick={onClose}>X</span>}
+      {canClose && <span className="infoCloseButton" onClick={onClose}>&times;</span>}
       <hr />
       <table className="infoDataTable table table-condensed">
         <tbody>

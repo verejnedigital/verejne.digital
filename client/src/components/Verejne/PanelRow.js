@@ -39,7 +39,7 @@ const DetailedInfo = compose(
   withDataProviders(({eid, bindedOnData}) => [singleEntityProvider(eid, bindedOnData)])
 )(_DetailedInfo)
 
-const _PanelRow = ({entity, selectEntity, toggleEntityInfo, showInfo, data}) =>
+const PanelRow = ({entity, selectEntity, toggleEntityInfo, showInfo, data}) =>
   showInfo ? <DetailedInfo eid={entity.eid} /> : (
     <ListGroupItem
       className="side-panel__list__item"
@@ -61,4 +61,4 @@ export default connect(
     showInfo: state.publicly.showInfo[entity.eid],
   }),
   {toggleEntityInfo, selectEntity}
-)(_PanelRow)
+)(PanelRow)
