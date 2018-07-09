@@ -78,3 +78,9 @@ export const setEntitySearchEids = (entity: Array<{eid: string}>) => ({
   payload: entity,
   reducer: (): Array<string> => entity.map((e) => e.eid),
 })
+
+export const toggleEntityInfo = (eid) => ({
+  type: 'Toggle entity info',
+  path: ['publicly', 'showInfo', eid],
+  reducer: (open: boolean) => !open,
+})

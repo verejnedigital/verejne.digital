@@ -3,7 +3,7 @@ import React from 'react'
 import Map from './Map'
 import './Verejne.css'
 import Legend from './Legend'
-import {Input, ListGroup, ListGroupItem, Badge} from 'reactstrap'
+import {Input, ListGroup} from 'reactstrap'
 import {connect} from 'react-redux'
 import {
   selectEntity,
@@ -21,7 +21,6 @@ import {
   autocompleteOptionsSelector,
 } from '../../selectors'
 import Pagination from 'react-js-pagination'
-import {isPolitician, hasContractsWithState} from './entityHelpers'
 import {
   VEREJNE_MAX_PAGE_ITEMS,
   VEREJNE_PAGE_RANGE,
@@ -30,25 +29,10 @@ import {
 } from '../../constants'
 import {map} from 'lodash'
 import {compose, withHandlers} from 'recompose'
-import classnames from 'classnames'
 import PlacesAutocomplete from '../PlacesAutocomplete'
 import EntitySearch from './EntitySearch'
 import {geocodeByAddress, getLatLng} from 'react-places-autocomplete'
-
-import FilledCircleIcon from 'react-icons/lib/fa/circle'
-import CircleIcon from 'react-icons/lib/fa/circle-o'
-import MapIcon from '../../assets/mapIcon.svg'
-
-const renderListItemIcon = (entity) => {
-  if (entity.size > 1) {
-    return <img src={MapIcon} style={{width: '2rem', height: '2rem'}} alt="listItemIcon" />
-  }
-  const color = isPolitician(entity)
-    ? 'side-panel__list__item__icon--politician'
-    : 'side-panel__list__item__icon--normal'
-  const Icon = hasContractsWithState(entity) ? FilledCircleIcon : CircleIcon
-  return <Icon size="18" className={classnames('side-panel__list__item__icon', color)} />
-}
+import PanelRow from './PanelRow'
 
 const Verejne = ({
   entities,
@@ -88,17 +72,7 @@ const Verejne = ({
       />
       <ListGroup>
         {map(entities, (e) => (
-          <ListGroupItem
-            className="side-panel__list__item"
-            key={e.eid}
-            onClick={() => selectEntity(e)}
-          >
-            {renderListItemIcon(e)}
-            {e.name}
-            <Badge pill className="side-panel__list__item__badge">
-              {e.size}
-            </Badge>
-          </ListGroupItem>
+          <PanelRow entity={e} key={e.eid} />
         ))}
       </ListGroup>
       <Pagination
