@@ -1,12 +1,14 @@
 // @flow
 import React from 'react'
+import {connect} from 'react-redux'
 import Marker from '../Marker'
 import {ENTITY_ZOOM} from '../../../../constants'
 import {sortBy, reverse} from 'lodash'
 import classnames from 'classnames'
 import {isPolitician, hasContractsWithState} from '../../entityHelpers'
-import {withHandlers} from 'recompose'
+import {withHandlers, compose} from 'recompose'
 import './ClusterMarker.css'
+import {toggleEntityInfo} from '../../../../actions/verejneActions'
 
 import FaIconFilledCircle from 'react-icons/lib/fa/circle'
 import FaIconCircle from 'react-icons/lib/fa/circle-o'
@@ -65,9 +67,16 @@ const ClusterMarker = ({
   )
 }
 
-export default withHandlers({
-  onClick: ({entity, selectEntity, zoomToLocation}) => (event) => {
-    if (entity.numPoints === 1) selectEntity(entity.points[0])
-    else zoomToLocation({lat: entity.lat, lng: entity.lng})
-  },
-})(ClusterMarker)
+export default compose(
+  connect(null, {toggleEntityInfo}),
+  withHandlers({
+    onClick: ({entity, selectEntity, zoomToLocation, toggleEntityInfo}) => (event) => {
+      if (entity.numPoints === 1) {
+        selectEntity(entity.points[0])
+        toggleEntityInfo(entity.points[0].eid)
+      } else {
+        zoomToLocation({lat: entity.lat, lng: entity.lng})
+      }
+    },
+  })
+)(ClusterMarker)
