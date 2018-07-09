@@ -14,7 +14,7 @@ type Props = {
 }
 
 const Legend = ({legendOpen, setLegendOpen}: Props) => (
-  <div className={classnames('legend', {Hidden: !legendOpen})}>
+  <div className={classnames('legend', {hidden: !legendOpen})}>
     <div className="legend__header">
       <iframe
         src={FACEBOOK_LIKE_SRC}
