@@ -2,6 +2,8 @@ import React, {Component} from 'react'
 import {NavLink} from 'react-router-dom'
 import {Collapse, Navbar, NavbarToggler, NavItem} from 'reactstrap'
 
+import FbIcon from 'react-icons/lib/fa/facebook-square'
+
 import './Navigation.css'
 
 class Navigation extends Component {
@@ -19,60 +21,76 @@ class Navigation extends Component {
   }
 
   render = () => (
-    <Navbar className="navbar-expand-lg navbar-light bg-light fixed-top">
+    <Navbar className="navbar-expand-lg navbar-light bg-light fixed-top navbar">
       <NavLink to="/" className="navbar-brand">
-        verejne.digital
+        <b>verejne</b>.digital
       </NavLink>
-      <NavbarToggler onClick={this.toggle} />
-      <Collapse
-        className="navbar-collapse"
-        id="navbarSupportedContent"
-        isOpen={this.state.isOpen}
-        navbar
-      >
-        <ul className="navbar-nav mr-auto">
-          <NavItem>
-            <NavLink to="/verejne" className="nav-link">
-              Verejne data
-            </NavLink>
-          </NavItem>
-          <NavItem>
-            <NavLink to="/prepojenia" className="nav-link">
-              Prepojenia
-            </NavLink>
-          </NavItem>
-          <NavItem>
-            <NavLink to="/obstaravania" className="nav-link">
-              Obstaravania
-            </NavLink>
-          </NavItem>
-          <NavItem>
-            <NavLink to="/profil" className="nav-link">
-              Profil
-            </NavLink>
-          </NavItem>
-          <li className="nav-item">
-            <a
-              href="http://www.facebook.com/verejne.digital"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="nav-link"
-            >
-              kontaktuj nás na Facebooku
-            </a>
-          </li>
-          <li className="nav-item">
-            <a
-              href="https://medium.com/@verejne.digital/o-%C4%8Do-ide-verejne-digital-14a1c6dcbe09"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="nav-link"
-            >
-              o projekte
-            </a>
-          </li>
-        </ul>
-      </Collapse>
+      <div className="navigation__container">
+        <NavbarToggler onClick={this.toggle} />
+        <Collapse
+          className="navbar-collapse"
+          id="navbarSupportedContent"
+          isOpen={this.state.isOpen}
+          navbar
+        >
+          <ul className="navbar-nav mr-auto">
+            <NavItem>
+              <NavLink
+                to="/verejne"
+                activeClassName="is-active"
+                className="nav-link navigation__link"
+              >
+                Verejne data
+              </NavLink>
+            </NavItem>
+            <NavItem>
+              <NavLink
+                to="/prepojenia"
+                activeClassName="is-active"
+                className="nav-link navigation__link"
+              >
+                Prepojenia
+              </NavLink>
+            </NavItem>
+            <NavItem>
+              <NavLink
+                to="/obstaravania"
+                activeClassName="is-active"
+                className="nav-link navigation__link"
+              >
+                Obstaravania
+              </NavLink>
+            </NavItem>
+            <NavItem>
+              <NavLink
+                to="/profil"
+                activeClassName="is-active"
+                className="nav-link navigation__link"
+              >
+                Profil
+              </NavLink>
+            </NavItem>
+          </ul>
+        </Collapse>
+        <div className="navigation__contact-container">
+          <a
+            href="https://medium.com/@verejne.digital/o-%C4%8Do-ide-verejne-digital-14a1c6dcbe09"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="nav-link"
+          >
+            O projekte
+          </a>
+          <a
+            href="http://www.facebook.com/verejne.digital"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="nav-link"
+          >
+            Kontakt <FbIcon />
+          </a>
+        </div>
+      </div>
     </Navbar>
   )
 }
