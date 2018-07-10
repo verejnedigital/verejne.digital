@@ -8,12 +8,11 @@ import ReactDOM from 'react-dom'
 import PropTypes from 'prop-types'
 import {BrowserRouter} from 'react-router-dom'
 import {dataProvidersConfig} from 'data-provider'
+import './customBootstrap.css'
 import App from './components/App'
 import Loading from './components/Loading'
 import getConfiguredStore from './configureStore'
 import {Provider} from 'react-redux'
-
-import './customBootstrap.css'
 
 window.Promise = Promise
 

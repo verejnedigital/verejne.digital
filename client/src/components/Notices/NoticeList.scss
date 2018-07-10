@@ -1,4 +1,4 @@
-@import '../variables.scss';
+@import "../variables.scss";
 
 .notices {
   padding-top: $navbar-height;
@@ -12,6 +12,7 @@
     box-shadow: 0 4px 12px 0 $shadow-color;
     height: 500px;
     margin-bottom: 20px;
+    padding: 2rem;
   }
 
   .fbfooter {
