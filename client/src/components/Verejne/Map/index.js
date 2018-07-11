@@ -4,11 +4,11 @@ import {connect} from 'react-redux'
 import {
   zoomSelector,
   centerSelector,
-  entitiesSelector,
+  addressesSelector,
   clustersSelector,
-  entitiesUrlSelector,
+  addressesUrlSelector,
 } from '../../../selectors'
-import {setMapOptions, selectEntity, zoomToLocation} from '../../../actions/verejneActions'
+import {setMapOptions} from '../../../actions/verejneActions'
 import './GoogleMap.css'
 import {map} from 'lodash'
 import ClusterMarker from './ClusterMarker'
@@ -16,20 +16,17 @@ import {branch, compose, renderComponent, withHandlers} from 'recompose'
 import Loading from '../../Loading'
 import GoogleMap from '../../GoogleMap'
 import {withDataProviders} from 'data-provider'
-import {entitiesProvider} from '../../../dataProviders/publiclyDataProviders'
+import {addressesProvider} from '../../../dataProviders/publiclyDataProviders'
 
-import type {MapOptions, Entity, Center} from '../../../state'
+import type {MapOptions, Entity} from '../../../state'
 import type {MapCluster} from '../../../selectors'
-import type {Thunk, GenericAction} from '../../../types/reduxTypes'
+import type {GenericAction} from '../../../types/reduxTypes'
 
 type Props = {
   zoom: number,
   center: [number, number],
   entities: Array<Entity>,
   setMapOptions: (mapOptions: MapOptions) => GenericAction<MapOptions, MapOptions>,
-  selectEntity: (entity: Entity) => Thunk,
-  zoomToLocation: (center: Center) => Thunk,
-  refetch: () => void,
   clusters: Array<MapCluster>,
   onChange: (options: MapOptions) => any,
 }
@@ -38,26 +35,19 @@ type Props = {
 const Map = ({
   zoom,
   center,
-  entities,
-  setMapOptions,
-  selectEntity,
-  zoomToLocation,
-  refetch,
   clusters,
   onChange,
 }: Props) => {
   return (
     <div className="google-map-wrapper">
       <GoogleMap center={center} zoom={zoom} onChange={onChange}>
-        {map(clusters, (e, i) => (
+        {map(clusters, (cluster, i) => (
           <ClusterMarker
             key={i}
-            entity={e}
-            selectEntity={selectEntity}
+            cluster={cluster}
             zoom={zoom}
-            zoomToLocation={zoomToLocation}
-            lat={e.lat}
-            lng={e.lng}
+            lat={cluster.lat}
+            lng={cluster.lng}
           />
         ))}
       </GoogleMap>
@@ -70,22 +60,21 @@ export default compose(
     (state) => ({
       zoom: zoomSelector(state),
       center: centerSelector(state),
-      entities: entitiesSelector(state),
+      addresses: addressesSelector(state),
       clusters: clustersSelector(state),
-      entitiesUrl: entitiesUrlSelector(state),
+      addressesUrl: addressesUrlSelector(state),
     }),
     {
       setMapOptions,
-      selectEntity,
-      zoomToLocation,
     }
   ),
-  withDataProviders(({entitiesUrl}) => [entitiesProvider(entitiesUrl)]),
+  withDataProviders(({addressesUrl}) =>
+    [addressesProvider(addressesUrl)]),
   withHandlers({
-    onChange: ({entitiesUrl, setMapOptions, refetch}) => (options) => {
+    onChange: ({setMapOptions}) => (options) => {
       setMapOptions(options)
     },
   }),
   // display loading only before first fetch
-  branch((props) => !props.entities, renderComponent(Loading))
+  branch((props) => !props.addresses, renderComponent(Loading))
 )(Map)

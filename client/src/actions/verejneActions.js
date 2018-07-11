@@ -2,10 +2,18 @@
 import {zoomSelector, mapOptionsSelector} from '../selectors'
 import {ENTITY_CLOSE_ZOOM, ENTITY_ZOOM} from '../constants'
 import {isIndividual} from '../components/Verejne/entityHelpers'
-import {reverse, sortBy} from 'lodash'
+import {reverse, sortBy, fromPairs} from 'lodash'
 
 import type {MapOptions, Entity, Center} from '../state'
 import type {Thunk} from '../types/reduxTypes'
+
+export const setAddresses = (addresses) => ({
+  type: 'Set addresses',
+  path: ['addresses'],
+  payload: null,
+  reducer: () =>
+    fromPairs(addresses.map((address) => [address.address_id, address])),
+})
 
 export const setEntities = (entities: Array<Entity>) => ({
   type: 'Set entities',
@@ -40,8 +48,7 @@ export const zoomToLocation = (center: Center, withZoom?: number): Thunk => (
   dispatch(setMapOptions({...mapOptionsSelector(state), zoom, center: [center.lat, center.lng]}))
 }
 
-export const selectEntity = (entity: Entity): Thunk => (dispatch, getState, {logger}) => {
-  //logger.log(`Select entity ${entity.name}`)
+export const selectEntity = (entity: Entity): Thunk => (dispatch, getState) => {
   const zoom = isIndividual(entity.eid) ? ENTITY_CLOSE_ZOOM : ENTITY_ZOOM
   dispatch(
     setMapOptions({

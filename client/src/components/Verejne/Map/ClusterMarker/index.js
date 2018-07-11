@@ -2,15 +2,10 @@
 import React from 'react'
 import {connect} from 'react-redux'
 import Marker from '../Marker'
-import {ENTITY_ZOOM} from '../../../../constants'
-import {sortBy, reverse} from 'lodash'
-import classnames from 'classnames'
-import {isPolitician, hasContractsWithState} from '../../entityHelpers'
+import {ENTITY_ZOOM, ENTITY_CLOSE_ZOOM} from '../../../../constants'
 import {withHandlers, compose} from 'recompose'
 import './ClusterMarker.css'
-import {toggleEntityInfo} from '../../../../actions/verejneActions'
-
-import FaIconFilledCircle from 'react-icons/lib/fa/circle'
+import {toggleEntityInfo, zoomToLocation} from '../../../../actions/verejneActions'
 import FaIconCircle from 'react-icons/lib/fa/circle-o'
 
 import type {Entity} from '../../../../state'
@@ -21,61 +16,49 @@ type ClusterMarkerProps = {
   zoom: number,
   selectEntity: (entity: Entity) => Thunk,
   zoomToLocation: ({lat: number, lng: number}) => Thunk,
-  entity: MapCluster,
+  cluster: MapCluster,
   onClick: () => void,
 }
 
-const getClusterTooltip = (cluster: MapCluster): string => {
-  const sorted = reverse(sortBy(cluster.points, ['size']))
-  return `${sorted[0].name}...`
-}
-
-const getEntityMarker = (cluster: MapCluster): string => {
-  return classnames(
-    'company-marker',
-    isPolitician(cluster.points[0]) ? 'company-marker--politician' : 'company-marker--normal'
-  )
-}
-
-const getCompanyMarker = (cluster: MapCluster) =>
-  hasContractsWithState(cluster.points[0]) ? (
-    <FaIconFilledCircle size="18" />
-  ) : (
-    <FaIconCircle size="18" />
-  )
-
 const ClusterMarker = ({
-  entity,
+  cluster,
   zoom,
   selectEntity,
   zoomToLocation,
   onClick,
 }: ClusterMarkerProps) => {
-  const MarkerText = <span className="marker__text">{entity.numPoints}</span>
+  const MarkerText = <span className="marker__text">{cluster.numPoints}</span>
   let className, children
   if (zoom < ENTITY_ZOOM) {
-    className = entity.numPoints === 1 ? 'simple-marker' : 'cluster-marker'
-    children = entity.numPoints !== 1 && <span className="marker__text">{entity.numPoints}</span>
+    className = cluster.numPoints === 1 ? 'simple-marker' : 'cluster-marker'
+    children = cluster.numPoints !== 1 && <span className="marker__text">{cluster.numPoints}</span>
   } else {
-    className = entity.numPoints === 1 ? getEntityMarker(entity) : 'cluster-marker'
-    children = entity.numPoints === 1 ? getCompanyMarker(entity) : MarkerText
+    //TODO: fix classnames after we api provides enough information
+    className = cluster.numPoints === 1 ? 'company-marker company-marker--normal' : 'cluster-marker'
+    children = cluster.numPoints === 1 ? <FaIconCircle size="18" /> : MarkerText
   }
   return (
-    <Marker className={className} title={getClusterTooltip(entity)} onClick={onClick}>
+    <Marker className={className} onClick={onClick}>
       {children}
     </Marker>
   )
 }
 
 export default compose(
-  connect(null, {toggleEntityInfo}),
+  connect(
+    null,
+    {
+      toggleEntityInfo,
+      zoomToLocation,
+    }
+  ),
   withHandlers({
-    onClick: ({entity, selectEntity, zoomToLocation, toggleEntityInfo}) => (event) => {
-      if (entity.numPoints === 1) {
-        selectEntity(entity.points[0])
-        toggleEntityInfo(entity.points[0].eid)
+    onClick: ({cluster, zoomToLocation, toggleEntityInfo}) => (event) => {
+      if (cluster.numPoints === 1) {
+        //toggleEntityInfo(cluster.points[0].eid)
+        zoomToLocation({lat: cluster.lat, lng: cluster.lng}, ENTITY_CLOSE_ZOOM)
       } else {
-        zoomToLocation({lat: entity.lat, lng: entity.lng})
+        zoomToLocation({lat: cluster.lat, lng: cluster.lng})
       }
     },
   })
