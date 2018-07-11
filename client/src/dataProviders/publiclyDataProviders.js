@@ -1,6 +1,6 @@
 // @flow
 import React from 'react'
-import {setEntities, setEntitySearchEids} from '../actions/verejneActions'
+import {setEntities, setEntitySearchEids, setAddresses} from '../actions/verejneActions'
 
 import type {Entity} from '../state'
 import type {Dispatch} from '../types/reduxTypes'
@@ -10,6 +10,26 @@ const dispatchEntities = () => (ref: string, data: Array<Entity>, dispatch: Disp
 
 const dispatchSearchEids = () => (ref: string, data: Array<{eid: string}>, dispatch: Dispatch) =>
   dispatch(setEntitySearchEids(data))
+
+const dispatchAddresses = () => (ref: string, data, dispatch: Dispatch) => {
+  dispatch(setAddresses(data))
+}
+
+export const addressesProvider = (addressesUrl: string) => {
+  return {
+    ref: addressesUrl,
+    getData: [
+      fetch,
+      addressesUrl,
+      {
+        accept: 'application/json',
+      },
+    ],
+    onData: [dispatchAddresses],
+    keepAliveFor: 60 * 60 * 1000,
+    needed: false,
+  }
+}
 
 export const entitiesProvider = (entitiesUrl: string) => {
   return {

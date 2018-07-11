@@ -11,7 +11,7 @@ import {
   DEFAULT_ENTITIES_REQUEST_PARAMS,
 } from '../constants'
 import {values} from '../utils'
-import {sortBy, chunk, map} from 'lodash'
+import {sortBy, chunk} from 'lodash'
 import supercluster from 'points-cluster'
 
 import type {ContextRouter} from 'react-router-dom'
@@ -89,6 +89,7 @@ export const centerSelector = (state: State): [number, number] => state.mapOptio
 export const zoomSelector = (state: State): number => state.mapOptions.zoom
 export const boundsSelector = (state: State): ?MapBounds => state.mapOptions.bounds
 export const entitiesSelector = (state: State): ?Array<Entity> => state.entities
+export const addressesSelector = (state: State) => state.addresses
 export const currentPageSelector = (state: State): number => state.publicly.currentPage
 export const showInfoSelector = (state: State) => state.publicly.showInfo
 
@@ -143,28 +144,27 @@ type EntitiesRequestParams = {
   usedLevel: number,
 }
 
-const getClusters = (mapOptions: MapOptions, entities: ?Array<Entity>): Array<SuperCluster> => {
-  const clusters = supercluster(entities, clusterOptions)
+const getClusters = (mapOptions: MapOptions, addresses): Array<SuperCluster> => {
+  const clusters = supercluster(addresses, clusterOptions)
   return clusters(mapOptions)
 }
 
-const createClusters = (mapOptions: MapOptions, entities: ?Array<Entity>): Array<MapCluster> => {
-  if (!mapOptions.bounds || !entities) return []
-  return getClusters(mapOptions, entities).map(({wx, wy, numPoints, points}, i) => {
-    return {
+const createClusters = (mapOptions: MapOptions, addresses): Array<MapCluster> => {
+  if (!mapOptions.bounds || !addresses) return []
+  return getClusters(mapOptions, Object.values(addresses)).map(
+    ({wx, wy, numPoints, points}, i) => ({
       lat: wy,
       lng: wx,
       numPoints,
       id: `${i}`,
       points,
-    }
-  })
+    }))
 }
 
 export const clustersSelector = createSelector(
   mapOptionsSelector,
-  entitiesSelector,
-  (mapOptions, entities) => map(createClusters(mapOptions, entities))
+  addressesSelector,
+  (mapOptions, addresses) => createClusters(mapOptions, addresses)
 )
 
 const requestParamsSelector = createSelector(
@@ -183,6 +183,15 @@ const requestParamsSelector = createSelector(
       }
     }
     return params
+  }
+)
+
+export const addressesUrlSelector = createSelector(
+  requestParamsSelector,
+  ({lat1, lng1, lat2, lng2, restrictToSlovakia, usedLevel}) => {
+    const requestPrefix = `${process.env.REACT_APP_API_URL || ''}`
+    const restrictToSlovakiaParam = restrictToSlovakia ? '&restrictToSlovakia=true' : ''
+    return `${requestPrefix}/api/v/getAddresses?level=${usedLevel}&lat1=${lat1}&lng1=${lng1}&lat2=${lat2}&lng2=${lng2}${restrictToSlovakiaParam}`
   }
 )
 
