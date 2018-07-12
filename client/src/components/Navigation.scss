@@ -1,18 +1,27 @@
 @import "./variables.scss";
 
-// classes used internally by bootstrap
 .navbar {
   box-shadow: 0 4px 12px 0 $shadow-color;
   background: $component-background;
-  padding: 0 1rem;
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
 .navbar-brand {
-  padding: 0.5rem;
+  padding: 0.5rem 0;
 }
 
 .nav-link {
   padding-top: 0.8rem;
+  border-bottom: 3px solid transparent;
+
+  &:hover {
+    border-bottom-color: $search-border-color;
+  }
+
+  &.active {
+    border-bottom-color: $active-tab-color;
+  }
 }
 
 .navbar-toggler {
@@ -25,31 +34,4 @@
 
 .navbar-brand {
   font-family: Source Code Pro, monospace;
-}
-
-// custom styling
-.navigation {
-  &__container {
-    display: flex;
-    flex: 1;
-    justify-content: space-between;
-  }
-
-  &__contact-container {
-    display: flex;
-    justify-content: flex-end;
-  }
-
-  &__link {
-    border-bottom: 3px solid transparent;
-
-    &:hover {
-      // TODO fix colors
-      border-bottom: 3px solid $search-border-color;
-    }
-
-    &.is-active {
-      border-bottom: 3px solid $active-tab-color;
-    }
-  }
 }
