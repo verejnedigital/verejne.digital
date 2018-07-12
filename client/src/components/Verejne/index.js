@@ -6,7 +6,6 @@ import Legend from './Legend'
 import {Input, ListGroup} from 'reactstrap'
 import {connect} from 'react-redux'
 import {
-  selectEntity,
   setCurrentPage,
   zoomToLocation,
   toggleModalOpen,
@@ -36,17 +35,13 @@ import PanelRow from './PanelRow'
 
 const Verejne = ({
   entities,
-  fetchEntities,
   pageCount,
   currentPage,
   setCurrentPage,
-  selectEntity,
   entitiesLength,
-  refetch,
   autocompleteValue,
   setAutocompleteValue,
   autocompleteOptions,
-  zoomToLocation,
   toggleModalOpen,
 }) => (
   <div className="wrapper">
@@ -90,6 +85,7 @@ const Verejne = ({
     <Legend />
   </div>
 )
+
 export default compose(
   connect(
     (state) => ({
@@ -100,7 +96,7 @@ export default compose(
       autocompleteValue: autocompleteValueSelector(state),
       autocompleteOptions: autocompleteOptionsSelector(state),
     }),
-    {selectEntity, setCurrentPage, updateValue, zoomToLocation, toggleModalOpen}
+    {setCurrentPage, updateValue, zoomToLocation, toggleModalOpen}
   ),
   withHandlers({
     setAutocompleteValue: ({updateValue}) => (value) =>

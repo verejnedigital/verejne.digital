@@ -11,7 +11,7 @@ import {
   DEFAULT_ENTITIES_REQUEST_PARAMS,
 } from '../constants'
 import {values} from '../utils'
-import {sortBy, chunk} from 'lodash'
+import {sortBy, chunk, filter} from 'lodash'
 import supercluster from 'points-cluster'
 
 import type {ContextRouter} from 'react-router-dom'
@@ -92,6 +92,16 @@ export const entitiesSelector = (state: State): ?Array<Entity> => state.entities
 export const addressesSelector = (state: State) => state.addresses
 export const currentPageSelector = (state: State): number => state.publicly.currentPage
 export const showInfoSelector = (state: State) => state.publicly.showInfo
+export const openedAddressDetailSelector = (state: State) => state.publicly.openedAddressDetail
+export const newEntitiesSelector = (state: State) => state.newEntities
+export const entityDetailSelector = (state: State, entityId: string) =>
+  state.entityDetails[entityId]
+
+export const addressEntitiesSelector = createSelector(
+  newEntitiesSelector,
+  openedAddressDetailSelector,
+  (entities, addressId) => filter(entities, (entity) => entity.addressId === addressId)
+)
 
 const panelEntitiesSelector = createSelector(
   entitiesSelector,
