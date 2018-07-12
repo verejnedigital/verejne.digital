@@ -5,8 +5,10 @@ import Marker from '../Marker'
 import {ENTITY_ZOOM, ENTITY_CLOSE_ZOOM} from '../../../../constants'
 import {withHandlers, compose} from 'recompose'
 import './ClusterMarker.css'
-import {toggleEntityInfo, zoomToLocation} from '../../../../actions/verejneActions'
+import {openAddressDetail, zoomToLocation} from '../../../../actions/verejneActions'
 import FaIconCircle from 'react-icons/lib/fa/circle-o'
+import {openedAddressDetailSelector} from '../../../../selectors'
+import AddressDetail from '../AddressDetail'
 
 import type {Entity} from '../../../../state'
 import type {MapCluster} from '../../../../selectors'
@@ -18,6 +20,7 @@ type ClusterMarkerProps = {
   zoomToLocation: ({lat: number, lng: number}) => Thunk,
   cluster: MapCluster,
   onClick: () => void,
+  openedAddress: number,
 }
 
 const ClusterMarker = ({
@@ -26,6 +29,7 @@ const ClusterMarker = ({
   selectEntity,
   zoomToLocation,
   onClick,
+  openedAddress,
 }: ClusterMarkerProps) => {
   const MarkerText = <span className="marker__text">{cluster.numPoints}</span>
   let className, children
@@ -39,6 +43,8 @@ const ClusterMarker = ({
   }
   return (
     <Marker className={className} onClick={onClick}>
+      {cluster.numPoints === 1 && cluster.points[0].address_id === openedAddress &&
+        <AddressDetail addressId={openedAddress} />}
       {children}
     </Marker>
   )
@@ -46,16 +52,18 @@ const ClusterMarker = ({
 
 export default compose(
   connect(
-    null,
+    (state) => ({
+      openedAddress: openedAddressDetailSelector(state),
+    }),
     {
-      toggleEntityInfo,
+      openAddressDetail,
       zoomToLocation,
     }
   ),
   withHandlers({
-    onClick: ({cluster, zoomToLocation, toggleEntityInfo}) => (event) => {
+    onClick: ({cluster, zoomToLocation, openAddressDetail}) => (event) => {
       if (cluster.numPoints === 1) {
-        //toggleEntityInfo(cluster.points[0].eid)
+        openAddressDetail(cluster.points[0].address_id)
         zoomToLocation({lat: cluster.lat, lng: cluster.lng}, ENTITY_CLOSE_ZOOM)
       } else {
         zoomToLocation({lat: cluster.lat, lng: cluster.lng})

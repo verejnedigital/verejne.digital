@@ -10,9 +10,26 @@ import type {Thunk} from '../types/reduxTypes'
 export const setAddresses = (addresses) => ({
   type: 'Set addresses',
   path: ['addresses'],
-  payload: null,
+  payload: addresses,
   reducer: () =>
     fromPairs(addresses.map((address) => [address.address_id, address])),
+})
+
+export const setNewEntities = (entities, addressId) => ({
+  type: 'Set new entities',
+  path: ['newEntities'],
+  payload: entities,
+  reducer: (state) => ({
+    ...state,
+    ...fromPairs(entities.map((entity) => [entity.id, {addressId, ...entity}])),
+  }),
+})
+
+export const setNewEntityDetail = (entity, entityId) => ({
+  type: 'Set new entity detail',
+  path: ['entityDetails', entityId],
+  payload: entity,
+  reducer: (state) => entity,
 })
 
 export const setEntities = (entities: Array<Entity>) => ({
@@ -90,4 +107,10 @@ export const toggleEntityInfo = (eid) => ({
   type: 'Toggle entity info',
   path: ['publicly', 'showInfo', eid],
   reducer: (open: boolean) => !open,
+})
+
+export const openAddressDetail = (address) => ({
+  type: 'Open address detail',
+  path: ['publicly', 'openedAddressDetail'],
+  reducer: () => address,
 })

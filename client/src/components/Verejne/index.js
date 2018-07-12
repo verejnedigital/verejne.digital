@@ -6,7 +6,6 @@ import Legend from './Legend'
 import {Input, ListGroup} from 'reactstrap'
 import {connect} from 'react-redux'
 import {
-  selectEntity,
   setCurrentPage,
   zoomToLocation,
   toggleModalOpen,
@@ -39,17 +38,13 @@ import PanelRow from './PanelRow'
 
 const Verejne = ({
   entities,
-  fetchEntities,
   pageCount,
   currentPage,
   setCurrentPage,
-  selectEntity,
   entitiesLength,
-  refetch,
   autocompleteValue,
   setAutocompleteValue,
   autocompleteOptions,
-  zoomToLocation,
   toggleModalOpen,
   entitySearchEids,
   entitySearchFor,
@@ -81,7 +76,6 @@ const Verejne = ({
         searchOptions={autocompleteOptions}
         className="form-control"
       />
-      <ListGroup>{map(entities, (e) => <PanelRow entity={e} key={e.eid} />)}</ListGroup>
       <Pagination
         itemClass="page-item"
         linkClass="page-link"
@@ -97,6 +91,7 @@ const Verejne = ({
     <Legend />
   </div>
 )
+
 export default compose(
   connect(
     (state) => ({
@@ -109,7 +104,7 @@ export default compose(
       entitySearchEids: entitySearchEidsSelector(state),
       entitySearchFor: entitySearchForSelector(state),
     }),
-    {selectEntity, setCurrentPage, updateValue, zoomToLocation, toggleModalOpen, setEntitySearchFor}
+    {setCurrentPage, updateValue, zoomToLocation, toggleModalOpen}
   ),
   withHandlers({
     setAutocompleteValue: ({updateValue}) => (value) =>

@@ -11,7 +11,7 @@ const EntityWrapper = (WrappedComponent: ComponentType<*>) => {
   const wrapped = (props) =>
     props.entity1 && props.entity2 ? <WrappedComponent {...props} /> : null
 
-  return compose(    
+  return compose(
     withDataProviders(({entitySearch1, entitySearch2}) => [
       connectionEntityProvider(entitySearch1),
       connectionEntityProvider(entitySearch2),

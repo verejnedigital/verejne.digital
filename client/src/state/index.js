@@ -227,6 +227,8 @@ const getInitialState = (): State => ({
     bounds: undefined,
   },
   entities: [],
+  newEntities: {},
+  entityDetails: {},
   addresses: {},
   connections: {
     entities: {},
