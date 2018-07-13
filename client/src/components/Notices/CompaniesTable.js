@@ -1,40 +1,38 @@
 import React from 'react'
-import Company from './Company'
 import {compose, branch, renderNothing} from 'recompose'
+import {Table} from 'reactstrap'
+import Company from './Company'
+import './CompaniesTable.css'
 
 const _CompaniesTable = ({item}) => {
   if (item === null) {
     return null
   }
-  return [
-    <header key="header">
-      <h3>Kto by sa mal prihlásiť</h3>
-    </header>,
-    <table key="companies" className="dataTable table table-responsive table-condensed">
-      <thead>
+
+  return (
+    <Table key="companies" responsive className="companies-table" borderless>
+      <thead className="companies-table-header">
         <tr>
-          <td>Firma</td>
-          <td>Čo podobné vyhral</td>
-          <td>Objednávateľ</td>
-          <td>Cena €</td>
-          <td>Pod.</td>
+          <th>Kto by sa mal prihlásiť</th>
+          <th>Čo podobné vyhral</th>
+          <th>Objednávateľ</th>
+          <th className="text-right">Cena €</th>
+          <th title="Podobnosť">Pod.</th>
         </tr>
       </thead>
       <tbody>
-        {(item.kandidati.length > 0)
-          ? item.kandidati.map((item) => <Company key={item.id} item={item} />)
-          : (
-            <tr>
-              <td colSpan={6} className="text-center">
-                Žiadni kandidáti
-              </td>
-            </tr>
-          )}
+        {item.kandidati.length > 0 ? (
+          item.kandidati.map((item) => <Company key={item.id} item={item} />)
+        ) : (
+          <tr>
+            <td colSpan={5} className="text-center">
+              Nenašli sa vyhovujúci kandidáti.
+            </td>
+          </tr>
+        )}
       </tbody>
-    </table>,
-  ]
+    </Table>
+  )
 }
 
-export default compose(
-  branch((props) => props.item === null, renderNothing)
-)(_CompaniesTable)
+export default compose(branch((props) => props.item === null, renderNothing))(_CompaniesTable)
