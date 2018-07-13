@@ -1,23 +1,17 @@
 import React from 'react'
 import {branch, renderNothing} from 'recompose'
+import './NoticeInformation.css'
 
 const _NoticeInformation = ({data}) => (
-  <table className="dataTable table table-responsive">
-    <tbody>
-      {data.map((item, index) => (
-        <tr key={index}>
-          <td>
-            <div className="media">
-              <div className="mx-2">{item.label}</div>
-              <div className="media-body">{item.body}</div>
-            </div>
-          </td>
-        </tr>
-      ))}
-    </tbody>
-  </table>
+  <ul className="notice-information">
+    {data.map(({label, body}, index) => (
+      <li className="notice-information-item" key={index}>
+        <strong>{label}:</strong> {body}
+      </li>
+    ))}
+  </ul>
 )
 
-export default branch(
-  (props) => props.data === null || props.data.length === 0, renderNothing
-)(_NoticeInformation)
+export default branch((props) => props.data === null || props.data.length === 0, renderNothing)(
+  _NoticeInformation
+)
