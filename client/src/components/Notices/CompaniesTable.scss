@@ -1,0 +1,20 @@
+@import '../variables.scss';
+
+.companies-table {
+  background-color: white;
+  padding: 0 0 0 20px;
+  border-radius: 1px;
+  margin-bottom: 0;
+}
+
+.companies-table-header tr th {
+  color: #6c8294; // TODO: Move to variables
+  font-weight: normal;
+  border-bottom: 1px solid $border-color;
+  white-space: nowrap;
+  background-color: white;
+}
+
+.companies-table td {
+  background-color: white;
+}

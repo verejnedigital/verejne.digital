@@ -1,0 +1,34 @@
+@import '../variables.scss';
+
+.company td {
+  border-top: 1px solid $border-color;
+  background-color: white;
+}
+
+.company-title {
+  a {
+    display: block;
+    max-width: 25vw;
+    text-overflow:ellipsis;
+    overflow:hidden;
+    white-space:nowrap;
+  }
+}
+
+.company-customer {
+  span {
+    display: block;
+    max-width: 25vw;
+    text-overflow:ellipsis;
+    overflow:hidden;
+    white-space:nowrap;
+  }
+}
+
+a.company-link:not([href]) {
+  color: $blue-color;
+
+  &:hover {
+    color: darken($blue-color, 10%);
+  }
+}
