@@ -8,12 +8,7 @@ type Props = {
 }
 
 const ExternalLink = ({url, children}: Props) => (
-  <a
-    href={url}
-    className="recursive-info-btn btn btn-link"
-    target="_blank"
-    rel="noopener noreferrer"
-  >
+  <a href={url} target="_blank" rel="noopener noreferrer">
     {children} <External />
   </a>
 )
