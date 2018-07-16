@@ -1,14 +1,11 @@
 @import '../variables.scss';
 
 .similar-count {
-  background-color: $label-color;
+  background-color: #b6c5d2;
   color: $component-background;
-  border-radius: 8px;
-  padding-left: 3px;
-  padding-right: 3px;
-  display: inline-block;
-  min-width: 20px;
-  text-align: center;
+  border-radius: 1rem;
+  padding: .15em .45em;
+  font-size: .85rem;
   font-weight: bold;
 }
 

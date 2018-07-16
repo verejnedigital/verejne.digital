@@ -22,10 +22,16 @@ export function formatSimilarPercent(value) {
   ]
 
   return (
-    <span className={classnames('similarity', styles.find((style) => value > style.num).style)}>{value}%</span>
+    <span className={classnames('similarity', styles.find((style) => value > style.num).style)}>
+      {value}%
+    </span>
   )
 }
 
 export function formatSimilarCount(value) {
-  return <span className="similar-count">{value}</span>
+  return (
+    <span className="similar-count" title={value}>
+      {value > 20 ? '20+' : value}
+    </span>
+  )
 }

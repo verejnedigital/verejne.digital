@@ -1,28 +1,7 @@
 @import '../variables.scss';
 
-.notices {
-  .legend-notices {
-    width: 100%;
-
-    .label {
-      color: $label-color;
-    }
-
-    .title {
-      font-family: 'Source Code Pro', monospace;
-    }
-
-    dt {
-      text-align: center;
-      padding-right: 0;
-    }
-
-    dd {
-      padding-left: 0;
-    }
-
-    .row {
-      padding: 5px;
-    }
-  }
+.notice-legend-label {
+  color: $secondary;
+  font-weight: normal;
+  font-size: 1rem;
 }
