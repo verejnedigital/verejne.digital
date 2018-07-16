@@ -1,46 +1,42 @@
-import React from 'react'
+import React, {Fragment} from 'react'
 
 import './Legend.css'
 import './LegendSymbols.css'
 import {formatSimilarCount, formatSimilarPercent, getWarningSymbol} from './LegendSymbols'
 import {Row, Col} from 'reactstrap'
 
-
 const Legend = () => (
-  <div className="legend-notices">
-    <h2 className="title">Aktuálne obstarávania</h2>
-    <p>
-      Našim cieľom je identifikovať a osloviť najvhodnejších uchádzačov, ktorí by sa mali
-      zapojiť do verejných obstarávaní. <a href=".">Viac info</a>
-    </p>
-    <hr />
-    <span className="label">Legenda:</span>
+  <Fragment>
+    <Row>
+      <Col xs={{size: 10, offset: 2}}>
+        <h3 className="notice-legend-label">Legenda:</h3>
+      </Col>
+    </Row>
     <Row tag="dl">
-      <Col tag="dt" className="col-sm-3">
+      <Col tag="dt" xs="2" className="text-right">
         {formatSimilarCount(4)}
       </Col>
-      <Col tag="dd" className="col-sm-9">
+      <Col tag="dd" xs="10">
         počet podobných obstarávaní
       </Col>
 
-      <Col tag="dt" className="col-sm-3">
+      <Col tag="dt" xs="2" className="text-right">
         {formatSimilarPercent(19)}
       </Col>
 
-      <Col tag="dd" className="col-sm-9">
+      <Col tag="dd" xs="10">
         podobnosť s predchádzajúcim obstarávaním
       </Col>
 
-      <Col tag="dt" className="col-sm-3">
-        {getWarningSymbol(-1)}
+      <Col tag="dt" xs="2" className="text-right">
+        {getWarningSymbol(1)}
       </Col>
 
-      <Col tag="dd" className="col-sm-9">
+      <Col tag="dd" xs="10">
         podozrivé obstarávanie
       </Col>
     </Row>
-    <hr />
-  </div>
+  </Fragment>
 )
 
 export default Legend

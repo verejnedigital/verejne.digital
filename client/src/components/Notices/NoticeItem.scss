@@ -1,4 +1,27 @@
-.company-link {
+@import '../variables.scss';
+
+.nowrap-ellipsis {
+  display: block;
+  width: 100%;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.notice-item-title a {
+  max-width: 50ch;
+  display: inline-block;
+}
+
+.notice-item-count {
+  width: 58px;
+}
+
+a.notice-item-link:not([href]) {
+  color: $blue-color;
   cursor: pointer;
-  font-weight: bold;
+
+  &:hover {
+    color: darken($blue-color, 10%);
+  }
 }
