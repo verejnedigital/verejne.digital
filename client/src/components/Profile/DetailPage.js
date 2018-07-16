@@ -23,7 +23,7 @@ import {
   cadastralSearchSelector,
 } from '../../selectors/profileSelectors'
 import {locationSearchSelector} from '../../selectors'
-import {DEFAULT_MAP_CENTER} from '../../constants'
+import {DEFAULT_MAP_CENTER, COUNTRY_ZOOM} from '../../constants'
 
 import Cardboard from './components/Cardboard'
 import DetailCadastralTable from './components/DetailCadastralTable'
@@ -51,6 +51,7 @@ export type ProfileDetailPageProps = {
   query: Object,
   history: RouterHistory,
   mapCenter: GeolocationPoint,
+  mapZoom: number,
   goMap: (ProfileDetailPageProps) => Function, // TODO instead take map center from url
 } & ContextRouter
 
@@ -67,6 +68,7 @@ const DetailPage = ({
   query,
   history,
   mapCenter,
+  mapZoom,
   goMap,
 }: ProfileDetailPageProps) => (
   <Container>
@@ -133,9 +135,9 @@ const DetailPage = ({
         />
       </Col>
     </Row>
-    <Row key="map" className="profile-map">
+    <Row key="map" id="map" className="profile-map">
       <Col>
-        <MapContainer assets={cadastral} center={mapCenter} />
+        <MapContainer assets={cadastral} center={mapCenter} zoom={mapZoom} />
       </Col>
     </Row>
   </Container>
@@ -160,9 +162,13 @@ export default compose(
     query: locationSearchSelector(state, props),
   })),
   withState('mapCenter', 'setMapCenter', DEFAULT_MAP_CENTER),
+  withState('mapZoom', 'setMapZoom', COUNTRY_ZOOM),
   withHandlers({
     goMap: (props) => (parcel) => {
       props.setMapCenter({lat: parcel.lat, lng: parcel.lon})
+      props.setMapZoom(15)
+      const mapElement = document.getElementById('map')
+      if (mapElement) mapElement.scrollIntoView({behavior: 'smooth'})
     },
   })
 )(DetailPage)
