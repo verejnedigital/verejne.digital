@@ -2,27 +2,23 @@
 
 .company td {
   border-top: 1px solid $border-color;
-  background-color: white;
+  background-color: $component-background;
 }
 
-.company-title {
-  a {
-    display: block;
-    max-width: 25vw;
-    text-overflow:ellipsis;
-    overflow:hidden;
-    white-space:nowrap;
-  }
+.nowrap-ellipsis {
+  display: block;
+  width: 100%;
+  text-overflow:ellipsis;
+  overflow:hidden;
+  white-space:nowrap;
 }
 
-.company-customer {
-  span {
-    display: block;
-    max-width: 25vw;
-    text-overflow:ellipsis;
-    overflow:hidden;
-    white-space:nowrap;
-  }
+.company-title a {
+  max-width: 20vw;
+}
+
+.company-customer span {
+  max-width: 10vw;
 }
 
 a.company-link:not([href]) {
