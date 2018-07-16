@@ -17,12 +17,12 @@ const _Company = ({item, toggledOn, toggle}) => {
           </a>
         </td>
         <td className="company-title">
-          <Link to={`/obstaravania/${item.id}`} title={item.title}>
+          <Link className="nowrap-ellipsis" to={`/obstaravania/${item.id}`} title={item.title}>
             {item.title}
           </Link>
         </td>
         <td className="company-customer">
-          <span>{item.customer}</span>
+          <span className="nowrap-ellipsis" title={item.customer}>{item.customer}</span>
         </td>
         <td className="text-nowrap text-right">
           <strong>{localeNumber(item.price)}</strong>
