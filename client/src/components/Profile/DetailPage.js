@@ -50,8 +50,7 @@ export type ProfileDetailPageProps = {
   cadastralSearch: string,
   query: Object,
   history: RouterHistory,
-  mapCenter: GeolocationPoint,
-  mapZoom: number,
+  mapProps: {center: GeolocationPoint, zoom: number},
   goMap: (ProfileDetailPageProps) => Function, // TODO instead take map center from url
 } & ContextRouter
 
@@ -67,8 +66,7 @@ const DetailPage = ({
   cadastralSearch,
   query,
   history,
-  mapCenter,
-  mapZoom,
+  mapProps,
   goMap,
 }: ProfileDetailPageProps) => (
   <Container>
@@ -137,7 +135,7 @@ const DetailPage = ({
     </Row>
     <Row key="map" id="map" className="profile-map">
       <Col>
-        <MapContainer assets={cadastral} center={mapCenter} zoom={mapZoom} />
+        <MapContainer assets={cadastral} {...mapProps} />
       </Col>
     </Row>
   </Container>
@@ -161,12 +159,10 @@ export default compose(
     cadastralSearch: cadastralSearchSelector(state, props),
     query: locationSearchSelector(state, props),
   })),
-  withState('mapCenter', 'setMapCenter', DEFAULT_MAP_CENTER),
-  withState('mapZoom', 'setMapZoom', COUNTRY_ZOOM),
+  withState('mapProps', 'setMapProps', {center: DEFAULT_MAP_CENTER, zoom: COUNTRY_ZOOM}),
   withHandlers({
     goMap: (props) => (parcel) => {
-      props.setMapCenter({lat: parcel.lat, lng: parcel.lon})
-      props.setMapZoom(15)
+      props.setMapProps({center: {lat: parcel.lat, lng: parcel.lon}, zoom: 15})
       const mapElement = document.getElementById('map')
       if (mapElement) mapElement.scrollIntoView({behavior: 'smooth'})
     },
