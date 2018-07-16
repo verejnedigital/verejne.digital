@@ -1,6 +1,6 @@
 @import "../variables.scss";
 
-.sidebar {
+.connections-sidebar {
   position: fixed;
   top: $navbar-height;
   bottom: 0;
@@ -9,10 +9,16 @@
   flex-direction: column;
   padding-bottom: 2rem;
   padding-top: 2rem;
+  width: 400px;
 
   @media screen and (max-width: 768px) {
-    position: relative;
-    top: 0;
+    position: static;
     margin-bottom: 2rem;
+    width: 100%;
   }
+}
+
+.connections-main {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
 }
