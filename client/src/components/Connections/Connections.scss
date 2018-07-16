@@ -1,82 +1,20 @@
 @import "../variables.scss";
 
-.main,
-.container-fluid,
-.container-fluid > .row {
-  height: 100%;
-}
-
-.statuses {
-  position: relative;
-  top: 10px;
-  left: 0;
-  width: 100%;
-  text-align: center;
-  color: $search-color;
-  font-size: 0.9rem;
-  font-weight: 400;
-}
-
-.results {
-  padding-top: 10px;
-}
-
-.infoWrapper {
-  margin: auto;
-}
-
-.beforeResultsContainer {
-  display: flex;
-  align-items: center;
-  height: 100%;
-}
-
-.beforeResults {
-  width: 100%;
-
-  .whatSearch,
-  .describeFor {
-    text-align: center;
-    color: $search-color;
-    font-weight: 400;
-  }
-}
-
 .sidebar {
-  height: 100%;
-  padding-right: 0;
-  padding-left: 0;
-}
-
-.fbfooter {
-  width: 100%;
-  margin-top: auto;
-  padding-top: 20px;
-  padding-bottom: 20px;
-  align-self: flex-end;
-}
-
-.fbfooter .col-sm-10 {
-  padding-left: 0;
-}
-
-.fbIframe {
-  border: none;
-  overflow: hidden;
-}
-
-.myAffix {
-  height: 100%;
+  position: fixed;
+  top: $navbar-height;
+  bottom: 0;
+  background-color: $component-background;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  background-color: $component-background;
-  padding-right: 15px;
-  padding-left: 15px;
-}
+  justify-content: flex-end;
+  padding-bottom: 2rem;
 
-@media (max-width: 768px) {
-  .myAffix {
+  @media screen and (max-width: 768px) {
     position: relative;
+    top: 0;
+    margin-bottom: 2rem;
+    padding-top: 2rem;
+    padding-bottom: 0;
   }
 }
