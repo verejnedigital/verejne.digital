@@ -7,14 +7,12 @@
   background-color: $component-background;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
   padding-bottom: 2rem;
+  padding-top: 2rem;
 
   @media screen and (max-width: 768px) {
     position: relative;
     top: 0;
     margin-bottom: 2rem;
-    padding-top: 2rem;
-    padding-bottom: 0;
   }
 }
