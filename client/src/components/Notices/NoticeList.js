@@ -23,7 +23,6 @@ import type {Notice, State} from '../../state'
 
 import Legend from './Legend'
 import Bulletin from './Bulletin'
-import NoticeItem from './NoticeItem'
 import {Row, Col, Container} from 'reactstrap'
 import './NoticeList.css'
 
@@ -63,37 +62,50 @@ const NoticeList = ({
       activePage={currentPage}
       itemsCountPerPage={PAGINATION_CHUNK_SIZE}
       totalItemsCount={noticesLength}
-      onChange={(page) => history.replace({search: modifyQuery(query, {page})})}
+      onChange={(page) => history.push({search: modifyQuery(query, {page})})}
     />
   )
   return (
-    <Container className="container-fluid notices">
-      <Row className="">
-        <Col tag="aside" className="sidebar col-lg-3 col-xs-12">
+    <Container fluid className="notice-list">
+      <Row>
+        <Col xl="3" tag="aside" className="notice-list-sidebar">
+          <Row>
+            <Col sm={{size: 10, offset: 2}}>
+              <h2 className="notice-list-title">Aktuálne obstarávania</h2>
+              <p>
+                Našim cieľom je identifikovať a osloviť najvhodnejších uchádzačov, ktorí by sa mali
+                zapojiť do verejných obstarávaní. <a href=".">Viac info</a>
+              </p>
+            </Col>
+          </Row>
+          <hr />
           <Legend />
-          <div className="fbfooter">
-            <iframe
-              src="https://www.facebook.com/plugins/like.php?href=https%3A%2F%2Fwww.facebook.com%2Fverejne.digital&width=111&layout=button_count&action=like&size=small&show_faces=true&share=true&height=46&appId="
-              className="fbIframe"
-              title="facebook"
-              scrolling="no"
-              frameBorder="0"
-            />
-          </div>
+          <hr />
+          <Row>
+            <Col sm={{size: 10, offset: 2}}>
+              <div className="fbfooter">
+                <iframe
+                  src="https://www.facebook.com/plugins/like.php?href=https%3A%2F%2Fwww.facebook.com%2Fverejne.digital&width=111&layout=button_count&action=like&size=small&show_faces=true&share=true&height=46&appId="
+                  className="fbIframe"
+                  title="facebook"
+                  scrolling="no"
+                  frameBorder="0"
+                />
+              </div>
+            </Col>
+          </Row>
         </Col>
-        <Col className="col-lg-8 offset-lg-1 col-xs-12">
-          <div tag="article" className="main">
-            {map(items, (bulletin, key) => (
-              <Bulletin
-                key={key}
-                items={bulletin.map((item) => <NoticeItem key={item.id} item={item} />)}
-                number={bulletin[0].bulletin_number}
-                year={bulletin[0].bulletin_year}
-                date={bulletin[0].bulletin_date}
-              />
-            ))}
-          </div>
-          {pagination}
+        <Col xl={{size: 9, offset: 3}}>
+          {map(items, (bulletin, index) => (
+            <Bulletin
+              key={index}
+              items={bulletin}
+              number={bulletin[0].bulletin_number}
+              year={bulletin[0].bulletin_year}
+              date={bulletin[0].bulletin_date}
+            />
+          ))}
+          <div className="notice-list-pagination">{pagination}</div>
         </Col>
       </Row>
     </Container>
