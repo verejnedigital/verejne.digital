@@ -10,11 +10,11 @@ import './Connections.css'
 const Connections = () => (
   <Container fluid className="connections">
     <Row>
-      <Col lg="3" md="4" className="sidebar">
+      <Col lg="3" md="4" className="connections-sidebar">
         <Search />
         <Statuses />
       </Col>
-      <Col lg={{size: 9, offset: 3}} md={{size: 8, offset: 4}}>
+      <Col lg={{size: 9, offset: 3}} md={{size: 8, offset: 4}} className="connections-main">
         <Results />
       </Col>
     </Row>

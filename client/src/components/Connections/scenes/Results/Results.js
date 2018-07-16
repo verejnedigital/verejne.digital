@@ -10,15 +10,11 @@ import BeforeResults from './components/BeforeResults/BeforeResults'
 
 const Results = (props) => (
   <div>
-    <div className="results container-fluid">
-      {/* this.props.location.query.graph
+    {/* this.props.location.query.graph
               ? ''
               : <Subgraph eids_A={this.state.entity1.eids} eids_B={this.state.entity2.eids} />
               ''*/}
-      {props.connections.map((connEid) => (
-        <InfoLoader key={connEid} eid={connEid} hasConnectLine />
-      ))}
-    </div>
+    {props.connections.map((connEid) => <InfoLoader key={connEid} eid={connEid} hasConnectLine />)}
   </div>
 )
 

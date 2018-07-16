@@ -2,12 +2,10 @@
 import React from 'react'
 
 const BeforeResults = () => (
-  <div className="beforeResultsContainer">
-    {' '}
-    <div className="beforeResults">
-      <h1 className="whatSearch">Zadajte dvojicu</h1>
-      <h3 className="describeFor">pre začiatok vyhľadávania.</h3>{' '}
-    </div>{' '}
+  <div className="row align-items-center">
+    <div className="col">
+      <h3 className="text-center">Zadajte dvojicu pre začiatok vyhľadávania.</h3>
+    </div>
   </div>
 )
 
