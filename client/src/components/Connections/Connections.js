@@ -12,9 +12,9 @@ const Connections = () => (
     <Row>
       <Col lg="3" md="4" className="sidebar">
         <Search />
+        <Statuses />
       </Col>
       <Col lg={{size: 9, offset: 3}} md={{size: 8, offset: 4}}>
-        <Statuses />
         <Results />
       </Col>
     </Row>
