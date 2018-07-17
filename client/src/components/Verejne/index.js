@@ -7,12 +7,7 @@ import {connect} from 'react-redux'
 import {geocodeByAddress, getLatLng} from 'react-places-autocomplete'
 import Pagination from 'react-js-pagination'
 
-import {
-  setCurrentPage,
-  zoomToLocation,
-  toggleModalOpen,
-  setEntitySearchFor,
-} from '../../actions/verejneActions'
+import {setCurrentPage, zoomToLocation, toggleModalOpen} from '../../actions/verejneActions'
 import {updateValue} from '../../actions/sharedActions'
 import {
   currentPageEntities,
@@ -21,8 +16,7 @@ import {
   currentPageSelector,
   autocompleteValueSelector,
   autocompleteOptionsSelector,
-  entitySearchEidsSelector,
-  entitySearchForSelector,
+  openedAddressDetailSelector,
 } from '../../selectors'
 import {
   VEREJNE_MAX_PAGE_ITEMS,
@@ -30,6 +24,7 @@ import {
   ENTITY_CLOSE_ZOOM,
   FIND_ENTITY_TITLE,
 } from '../../constants'
+import AddressDetail from './Map/AddressDetail'
 import PlacesAutocomplete from '../PlacesAutocomplete'
 import EntitySearch from './EntitySearch'
 import PanelRow from './PanelRow'
@@ -47,9 +42,7 @@ const Verejne = ({
   setAutocompleteValue,
   autocompleteOptions,
   toggleModalOpen,
-  entitySearchEids,
-  entitySearchFor,
-  setEntitySearchFor,
+  openedAddressId,
 }) => (
   <div className="wrapper">
     <div className="verejne-side-panel">
@@ -82,6 +75,7 @@ const Verejne = ({
         totalItemsCount={entitiesLength}
         onChange={setCurrentPage}
       />
+      {openedAddressId && <AddressDetail addressId={openedAddressId} />}
     </div>
     <Map />
     <Legend />
@@ -97,8 +91,7 @@ export default compose(
       pageCount: pageCountSelector(state),
       autocompleteValue: autocompleteValueSelector(state),
       autocompleteOptions: autocompleteOptionsSelector(state),
-      entitySearchEids: entitySearchEidsSelector(state),
-      entitySearchFor: entitySearchForSelector(state),
+      openedAddressId: openedAddressDetailSelector(state),
     }),
     {setCurrentPage, updateValue, zoomToLocation, toggleModalOpen}
   ),

@@ -7,14 +7,15 @@ import {ListGroupItem} from 'reactstrap'
 import {toggleEntityInfo} from '../../../../actions/verejneActions'
 import {entityDetailProvider} from '../../../../dataProviders/publiclyDataProviders'
 import {entityDetailSelector} from '../../../../selectors'
+import './ListRow.css'
 //import Info from './Info'
 
 const _DetailedInfo = ({id, toggleEntityInfo, data}) => (
-  <div>
+  <ListGroupItem className="list-row" onClick={() => toggleEntityInfo(id)}>
     There will be detail soon
     {console.log(data, 'a')}
     {/*<Info data={{entities: [data]}} canClose onClose={() => toggleEntityInfo(id)} />*/}
-  </div>
+  </ListGroupItem>
 )
 
 const DetailedInfo = compose(
@@ -28,13 +29,12 @@ const DetailedInfo = compose(
 )(_DetailedInfo)
 
 const ListRow = ({entity, toggleEntityInfo, showInfo}) =>
-  showInfo ? <DetailedInfo id={entity.id} /> : (
-    <ListGroupItem
-      className="side-panel__list__item"
-      onClick={() => toggleEntityInfo(entity.id)}
-    >
-      <CircleIcon size="10" className="side-panel__list__item__icon--normal" />
-      <div>{entity.name}</div>
+  showInfo ? (
+    <DetailedInfo id={entity.id} />
+  ) : (
+    <ListGroupItem action className="list-row" onClick={() => toggleEntityInfo(entity.id)}>
+      <CircleIcon size="10" className="list-row-icon" />
+      <span>{entity.name}</span>
     </ListGroupItem>
   )
 
