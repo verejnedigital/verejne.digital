@@ -1,14 +1,14 @@
 // @flow
 import React from 'react'
 import {connect} from 'react-redux'
-import Marker from '../Marker'
-import {ENTITY_ZOOM, ENTITY_CLOSE_ZOOM} from '../../../../constants'
 import {withHandlers, compose} from 'recompose'
-import './ClusterMarker.css'
-import {openAddressDetail, zoomToLocation} from '../../../../actions/verejneActions'
 import FaIconCircle from 'react-icons/lib/fa/circle-o'
+
+import {ENTITY_ZOOM, ENTITY_CLOSE_ZOOM} from '../../../../constants'
+import {openAddressDetail, zoomToLocation} from '../../../../actions/verejneActions'
 import {openedAddressDetailSelector} from '../../../../selectors'
-import AddressDetail from '../AddressDetail'
+import Marker from '../Marker'
+import './ClusterMarker.css'
 
 import type {Entity} from '../../../../state'
 import type {MapCluster} from '../../../../selectors'
@@ -20,7 +20,7 @@ type ClusterMarkerProps = {
   zoomToLocation: ({lat: number, lng: number}) => Thunk,
   cluster: MapCluster,
   onClick: () => void,
-  openedAddress: number,
+  openedAddressId: number,
 }
 
 const ClusterMarker = ({
@@ -29,22 +29,22 @@ const ClusterMarker = ({
   selectEntity,
   zoomToLocation,
   onClick,
-  openedAddress,
+  openedAddressId,
 }: ClusterMarkerProps) => {
   const MarkerText = <span className="marker__text">{cluster.numPoints}</span>
   let className, children
+  const selected = cluster.numPoints === 1 && cluster.points[0].address_id === openedAddressId
   if (zoom < ENTITY_ZOOM) {
     className = cluster.numPoints === 1 ? 'simple-marker' : 'cluster-marker'
     children = cluster.numPoints !== 1 && <span className="marker__text">{cluster.numPoints}</span>
   } else {
     //TODO: fix classnames after we api provides enough information
-    className = cluster.numPoints === 1 ? 'company-marker company-marker--normal' : 'cluster-marker'
+    className = cluster.numPoints === 1 ? 'company-marker' : 'cluster-marker'
     children = cluster.numPoints === 1 ? <FaIconCircle size="18" /> : MarkerText
   }
+  if (selected) className += ' selected'
   return (
     <Marker className={className} onClick={onClick}>
-      {cluster.numPoints === 1 && cluster.points[0].address_id === openedAddress &&
-        <AddressDetail addressId={openedAddress} />}
       {children}
     </Marker>
   )
@@ -53,7 +53,7 @@ const ClusterMarker = ({
 export default compose(
   connect(
     (state) => ({
-      openedAddress: openedAddressDetailSelector(state),
+      openedAddressId: openedAddressDetailSelector(state),
     }),
     {
       openAddressDetail,

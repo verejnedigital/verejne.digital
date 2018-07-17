@@ -11,8 +11,7 @@ export const setAddresses = (addresses) => ({
   type: 'Set addresses',
   path: ['addresses'],
   payload: addresses,
-  reducer: () =>
-    fromPairs(addresses.map((address) => [address.address_id, address])),
+  reducer: () => fromPairs(addresses.map((address) => [address.address_id, address])),
 })
 
 export const setNewEntities = (entities, addressId) => ({
@@ -103,14 +102,14 @@ export const setEntitySearchEids = (entity: Array<{eid: string}>) => ({
   reducer: (): Array<string> => entity.map((e) => e.eid),
 })
 
-export const toggleEntityInfo = (eid) => ({
+export const toggleEntityInfo = (eid: number) => ({
   type: 'Toggle entity info',
   path: ['publicly', 'showInfo', eid],
   reducer: (open: boolean) => !open,
 })
 
-export const openAddressDetail = (address) => ({
+export const openAddressDetail = (addressId: number) => ({
   type: 'Open address detail',
   path: ['publicly', 'openedAddressDetail'],
-  reducer: () => address,
+  reducer: () => addressId,
 })
