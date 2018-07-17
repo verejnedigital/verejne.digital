@@ -1,53 +1,20 @@
 @import "../variables.scss";
-.form-control {
-    margin: 0.4rem 0;
-}
 
 .wrapper {
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
+  overflow: hidden;
 }
 
-.side-panel {
-    width: $verejne-sidebar-width;
-    float: left;
-    overflow-y: scroll;
-    padding: 0.2rem;
-    height: calc(100% - #{$navbar-height});
-    position: absolute;
-    &__list {
-        &__item {
-            &:hover {
-                background-color: $shadow-color;
-                cursor: pointer;
-            }
-            &__badge {
-                float: right;
-            }
-            &__icon {
-                margin-left: -0.8rem;
-                margin-right: 0.8rem;
-                &--politician {
-                    color: $orange-color;
-                }
-                &--normal {
-                    color: $blue-color;
-                }
-            }
-        }
-    } // https://stackoverflow.com/questions/1695175/how-to-horizontally-center-an-unordered-list-of-unknown-width
-    .pagination {
-        list-style: none;
-        position: relative;
-        float: left;
-        display: block;
-        left: 50%;
-    }
-    .pagination .page-item {
-        position: relative;
-        float: left;
-        display: block;
-        right: 50%;
-    }
+.verejne-side-panel {
+  position: fixed;
+  top: $navbar-height + 40px;
+  left: 40px;
+  z-index: 1;
+
+  .form-control {
+    box-shadow: 0 4px 12px darken($shadow-color, 25%);
+    border-radius: 2px;
+    font-size: 1rem;
+    padding: 1em 1.5em;
+    width: 360px;
+  }
 }

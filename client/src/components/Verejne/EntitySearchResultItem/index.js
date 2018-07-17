@@ -3,6 +3,7 @@ import React from 'react'
 import {withDataProviders} from 'data-provider'
 import {withStateHandlers, compose, withHandlers} from 'recompose'
 import {connect} from 'react-redux'
+import {Button} from 'reactstrap'
 import {singleEntityProvider} from '../../../dataProviders/publiclyDataProviders'
 import {toggleModalOpen, zoomToLocation} from '../../../actions/verejneActions'
 import './EntitySearchResultItem.css'
@@ -28,18 +29,12 @@ type Props = {
 const EntitySearchResultItem = (props: Props) => {
   const {entities, showOnMap} = props
   return (
-    <div className="list-group-item">
-      <b>
-        {entities[0].entity_name}
-        <img
-          src={MapIcon}
-          className="location"
-          onClick={showOnMap}
-          title="Zobraz na mape"
-          alt="Zobraz na mape"
-        />
-      </b>
-      <div>{entities[0].address}</div>
+    <div style={{marginBottom: '1rem'}}>
+      <Button color="link" size="sm" onClick={showOnMap}>
+        <img src={MapIcon} className="location" alt="" />
+        <span> Zobraz {entities[0].entity_name} na mape</span>
+      </Button>
+      {/* TODO: Remove this when the Info component can navigate to address */}
       <Info data={props} />
     </div>
   )

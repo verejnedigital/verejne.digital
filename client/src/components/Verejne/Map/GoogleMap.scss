@@ -1,8 +1,10 @@
 @import '../../variables.scss';
+
 .google-map-wrapper {
-    height: calc(100% - #{$navbar-height});
-    overflow: hidden;
-    position: absolute;
-    width: calc(100% - #{$verejne-sidebar-width});
-    right: 0;
+  position: absolute;
+  top: $navbar-height;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  overflow: hidden;
 }
