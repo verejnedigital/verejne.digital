@@ -10,6 +10,7 @@ import {
   setCurrentPage,
   zoomToLocation,
   toggleModalOpen,
+  setEntitySearchFor,
 } from '../../actions/verejneActions'
 import {updateValue} from '../../actions/sharedActions'
 import {
@@ -19,6 +20,8 @@ import {
   currentPageSelector,
   autocompleteValueSelector,
   autocompleteOptionsSelector,
+  entitySearchEidsSelector,
+  entitySearchForSelector,
 } from '../../selectors'
 import Pagination from 'react-js-pagination'
 import {
@@ -48,6 +51,9 @@ const Verejne = ({
   autocompleteOptions,
   zoomToLocation,
   toggleModalOpen,
+  entitySearchEids,
+  entitySearchFor,
+  setEntitySearchFor,
 }) => (
   <div className="wrapper">
     <div className="side-panel">
@@ -55,7 +61,12 @@ const Verejne = ({
         type="text"
         className="form-control"
         placeholder={FIND_ENTITY_TITLE}
-        onClick={toggleModalOpen}
+        onKeyPress={(e) => {
+          if (e.key === 'Enter') {
+            setEntitySearchFor(e.target.value)
+            toggleModalOpen()
+          }
+        }}
       />
       <EntitySearch />
       <PlacesAutocomplete
@@ -70,11 +81,7 @@ const Verejne = ({
         searchOptions={autocompleteOptions}
         className="form-control"
       />
-      <ListGroup>
-        {map(entities, (e) => (
-          <PanelRow entity={e} key={e.eid} />
-        ))}
-      </ListGroup>
+      <ListGroup>{map(entities, (e) => <PanelRow entity={e} key={e.eid} />)}</ListGroup>
       <Pagination
         itemClass="page-item"
         linkClass="page-link"
@@ -99,8 +106,10 @@ export default compose(
       pageCount: pageCountSelector(state),
       autocompleteValue: autocompleteValueSelector(state),
       autocompleteOptions: autocompleteOptionsSelector(state),
+      entitySearchEids: entitySearchEidsSelector(state),
+      entitySearchFor: entitySearchForSelector(state),
     }),
-    {selectEntity, setCurrentPage, updateValue, zoomToLocation, toggleModalOpen}
+    {selectEntity, setCurrentPage, updateValue, zoomToLocation, toggleModalOpen, setEntitySearchFor}
   ),
   withHandlers({
     setAutocompleteValue: ({updateValue}) => (value) =>

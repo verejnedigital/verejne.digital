@@ -33,6 +33,7 @@ const EntitySearch = ({
   entitySearchEids,
   entitySearchFor,
 }) => {
+  const entitySearchEidsConst = entitySearchEids === undefined ? 0 : entitySearchEids.length
   return (
     <Modal
       isOpen={entitySearchModalOpen}
@@ -64,7 +65,7 @@ const EntitySearch = ({
             </div>
             <FormText>
               {entitySearchFor && (
-                <p>{`Zobrazujem ${entitySearchEids.length} výsledkov pre "${entitySearchFor}".`}</p>
+                <p>{`Zobrazujem ${entitySearchEidsConst} výsledkov pre "${entitySearchFor}".`}</p>
               )}
             </FormText>
             <EntitySearchResult />
