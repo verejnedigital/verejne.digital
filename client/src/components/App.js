@@ -1,4 +1,4 @@
-import React, {Component, Fragment} from 'react'
+import React, {Fragment} from 'react'
 import Navigation from './Navigation'
 import {Route} from 'react-router-dom'
 import {Switch} from 'react-router'
