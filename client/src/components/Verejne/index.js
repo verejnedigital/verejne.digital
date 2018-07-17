@@ -1,10 +1,12 @@
 // @flow
 import React from 'react'
-import Map from './Map'
-import './Verejne.css'
-import Legend from './Legend'
-import {Input, ListGroup} from 'reactstrap'
+import {map} from 'lodash'
+import {compose, withHandlers} from 'recompose'
+import {Input, ListGroup, FormGroup} from 'reactstrap'
 import {connect} from 'react-redux'
+import {geocodeByAddress, getLatLng} from 'react-places-autocomplete'
+import Pagination from 'react-js-pagination'
+
 import {
   setCurrentPage,
   zoomToLocation,
@@ -22,19 +24,18 @@ import {
   entitySearchEidsSelector,
   entitySearchForSelector,
 } from '../../selectors'
-import Pagination from 'react-js-pagination'
 import {
   VEREJNE_MAX_PAGE_ITEMS,
   VEREJNE_PAGE_RANGE,
   ENTITY_CLOSE_ZOOM,
   FIND_ENTITY_TITLE,
 } from '../../constants'
-import {map} from 'lodash'
-import {compose, withHandlers} from 'recompose'
 import PlacesAutocomplete from '../PlacesAutocomplete'
 import EntitySearch from './EntitySearch'
-import {geocodeByAddress, getLatLng} from 'react-places-autocomplete'
 import PanelRow from './PanelRow'
+import Map from './Map'
+import Legend from './Legend'
+import './Verejne.css'
 
 const Verejne = ({
   entities,
@@ -51,31 +52,26 @@ const Verejne = ({
   setEntitySearchFor,
 }) => (
   <div className="wrapper">
-    <div className="side-panel">
-      <Input
-        type="text"
-        className="form-control"
-        placeholder={FIND_ENTITY_TITLE}
-        onKeyPress={(e) => {
-          if (e.key === 'Enter') {
-            setEntitySearchFor(e.target.value)
-            toggleModalOpen()
-          }
-        }}
-      />
+    <div className="verejne-side-panel">
       <EntitySearch />
-      <PlacesAutocomplete
-        value={autocompleteValue}
-        onSelect={(value, id) =>
-          geocodeByAddress(value)
-            .then((results) => getLatLng(results[0]))
-            .then((location) => zoomToLocation(location, ENTITY_CLOSE_ZOOM))
-        }
-        onChange={setAutocompleteValue}
-        onError={(status, clearSuggestions) => clearSuggestions()}
-        searchOptions={autocompleteOptions}
-        className="form-control"
-      />
+      <FormGroup>
+        <Input type="text" placeholder={FIND_ENTITY_TITLE} onClick={toggleModalOpen} />
+      </FormGroup>
+      <FormGroup>
+        <PlacesAutocomplete
+          value={autocompleteValue}
+          onSelect={(value, id) =>
+            geocodeByAddress(value)
+              .then((results) => getLatLng(results[0]))
+              .then((location) => zoomToLocation(location, ENTITY_CLOSE_ZOOM))
+          }
+          onChange={setAutocompleteValue}
+          onError={(status, clearSuggestions) => clearSuggestions()}
+          searchOptions={autocompleteOptions}
+          className="form-control"
+        />
+      </FormGroup>
+      <ListGroup>{map(entities, (e) => <PanelRow entity={e} key={e.eid} />)}</ListGroup>
       <Pagination
         itemClass="page-item"
         linkClass="page-link"

@@ -33,14 +33,22 @@ const EntitySearch = ({
   entitySearchEids,
   entitySearchFor,
 }) => {
-  const entitySearchEidsConst = entitySearchEids === undefined ? 0 : entitySearchEids.length
+  const plurality = (count) => {
+    if (count === 1) {
+      return `Nájdený ${count} výsledok`
+    } else if (count > 1 && count < 5) {
+      return `Nájdené ${count} výsledky`
+    }
+    return `Nájdených ${count} výsledkov`
+  }
+
   return (
     <Modal
       isOpen={entitySearchModalOpen}
       toggle={toggleModalOpen}
       className={className}
       autoFocus
-      size="lg"
+      size="md"
     >
       <ModalHeader toggle={toggleModalOpen}>{FIND_ENTITY_TITLE}</ModalHeader>
       <ModalBody>
@@ -51,30 +59,26 @@ const EntitySearch = ({
           }}
         >
           <FormGroup>
-            <div className="searchGroup">
-              <Input
-                type="text"
-                className="form-control"
-                placeholder={FIND_ENTITY_TITLE}
-                value={searchEntityValue}
-                onChange={(e) => setSearchEntityValue(e.target.value)}
-              />
-              <Button color="primary" onClick={findEntities}>
-                {FIND_ENTITY_TITLE}
-              </Button>
-            </div>
+            <Input
+              type="text"
+              className="form-control"
+              placeholder={FIND_ENTITY_TITLE}
+              value={searchEntityValue}
+              onChange={(e) => setSearchEntityValue(e.target.value)}
+            />
             <FormText>
-              {entitySearchFor && (
-                <p>{`Zobrazujem ${entitySearchEidsConst} výsledkov pre "${entitySearchFor}".`}</p>
-              )}
+              {entitySearchFor && `${plurality(entitySearchEids.length)} pre "${entitySearchFor}".`}
             </FormText>
-            <EntitySearchResult />
           </FormGroup>
         </Form>
+        <EntitySearchResult />
       </ModalBody>
       <ModalFooter>
         <Button color="secondary" onClick={toggleModalOpen}>
           Zavrieť
+        </Button>
+        <Button color="primary" onClick={findEntities}>
+          {FIND_ENTITY_TITLE}
         </Button>
       </ModalFooter>
     </Modal>
