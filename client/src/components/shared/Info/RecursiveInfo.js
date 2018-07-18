@@ -3,15 +3,9 @@ import CompanyDetails from '../CompanyDetails'
 import {compose, withState, withHandlers} from 'recompose'
 import './RecursiveInfo.css'
 
-const _RecursiveInfo = (({name, eid, toggledOn, toggle}) => {
+const _RecursiveInfo = ({name, eid, toggledOn, toggle}) => {
   if (toggledOn) {
-    return (
-      <div className="recursive-info-wrapper">
-        <div className="recursive-info">
-          <CompanyDetails eid={eid} />
-        </div>
-      </div>
-    )
+    return <CompanyDetails eid={eid} />
   } else {
     return (
       <button onClick={toggle} className="recursive-info-btn btn btn-link">
@@ -19,7 +13,7 @@ const _RecursiveInfo = (({name, eid, toggledOn, toggle}) => {
       </button>
     )
   }
-})
+}
 
 export default compose(
   withState('toggledOn', 'toggle', false),
