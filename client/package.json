@@ -43,7 +43,7 @@
     "fix": "prettier-eslint --write \"src/**/*.{js,jsx,json,scss}\"",
     "build-css": "node-sass-chokidar src/ -o src/",
     "watch-css": "node-sass-chokidar src/ -o src/ --watch --recursive",
-    "flow": "python3 ./check_flow.py & flow & flow-coverage-report"
+    "flow": "python3 ./check_flow.py & flow & flow-coverage-report || exit 0"
   },
   "devDependencies": {
     "babel-eslint": "^8.2.3",

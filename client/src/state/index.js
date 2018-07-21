@@ -173,6 +173,44 @@ export type Connections = {
   },
 }
 
+export type Address = {
+  address_id: number,
+  lat: number,
+  lng: number,
+}
+
+// Entity returned from api call getEntitiesAtAddressId
+export type NewEntity = {
+  id: number,
+  name: string,
+}
+
+export type NewEntityState = NewEntity & {addressId: number}
+
+export type RelatedEntity = {
+  name: string,
+  stakeholder_type_id: number,
+  eid: number,
+  address: string,
+  lat: number,
+  lng: number,
+}
+
+export type EntityDetails = {
+  name: string,
+  related: RelatedEntity[],
+  address: string,
+  lat: number,
+  lng: number,
+  companyinfo: {
+    established_on: string,
+    ico: number,
+    terminated_on: string,
+  },
+}
+
+// Each property must begin with '+' to be made read only and each object
+// must be enclosed in '|' so no properties can be added to state at runtime
 export type State = {|
   +count: number,
   +companies: CompanyMap,
@@ -187,16 +225,20 @@ export type State = {|
     +assetDeclarations: ObjectMap<ObjectMap<AssetDeclaration>>,
     +query: string,
   |},
-  publicly: {
-    currentPage: number,
-    autocompleteValue: string,
-    entitySearchModalOpen: boolean,
-    entitySearchFor: string,
-    entitySearchEids: ?Array<string>,
-  },
-  entities: Entity[],
-  mapOptions: MapOptions,
-  connections: Connections,
+  +publicly: {|
+    +currentPage: number,
+    +autocompleteValue: string,
+    +entitySearchModalOpen: boolean,
+    +entitySearchFor: string,
+    +entitySearchEids: ?Array<string>,
+    +showInfo: any, //TODO: TBD
+    +openedAddressDetail: ?number,
+  |},
+  +mapOptions: MapOptions,
+  +connections: Connections,
+  +addresses: ObjectMap<Address>,
+  +newEntities: ObjectMap<NewEntityState>,
+  +entityDetails: ObjectMap<EntityDetails>,
 |}
 
 const getInitialState = (): State => ({
@@ -220,13 +262,13 @@ const getInitialState = (): State => ({
     entitySearchFor: '',
     entitySearchEids: undefined,
     showInfo: {},
+    openedAddressDetail: undefined,
   },
   mapOptions: {
     center: SLOVAKIA_COORDINATES,
     zoom: 8,
     bounds: undefined,
   },
-  entities: [],
   newEntities: {},
   entityDetails: {},
   addresses: {},

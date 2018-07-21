@@ -1,3 +1,4 @@
+// @flow
 export const PAGINATION_CHUNK_SIZE = 10
 export const NOTICES_PAGINATION_SIZE = 10
 export const CADASTRAL_PAGINATION_CHUNK_SIZE = 20
@@ -13,10 +14,19 @@ export const CITY_ZOOM = 11
 export const COUNTRY_ZOOM = 8
 export const GOOGLE_MAP_API_KEY = 'AIzaSyCAXMlEL-sfzT4jVK5CQHysSPp77JnVLks'
 export const SLOVAKIA_COORDINATES = [48.6, 19.5]
-export const VEREJNE_MAX_PAGE_ITEMS = 25
-export const VEREJNE_PAGE_RANGE = 5
 
-export const createMapOptions = (maps) => {
+// Typing only the first level is enough for now
+type GMapOptions = {
+  ControlPosition: {
+    RIGHT_CENTER: number,
+    TOP_RIGHT: number,
+  },
+  ZoomControlStyle: {
+    SMALL: number,
+  },
+}
+
+export const createMapOptions = (maps: GMapOptions) => {
   return {
     zoomControlOptions: {
       position: maps.ControlPosition.RIGHT_CENTER,
@@ -133,10 +143,10 @@ export const descriptions = [
 ]
 
 export const DEFAULT_ENTITIES_REQUEST_PARAMS = {
-  lat1: '47.26036122625137',
-  lng1: '16.53369140625',
-  lat2: '49.90503005077024',
-  lng2: '22.46630859375',
+  lat1: 47.26036122625137,
+  lng1: 16.53369140625,
+  lat2: 49.90503005077024,
+  lng2: 22.46630859375,
   restrictToSlovakia: true,
   usedLevel: 3,
 }
