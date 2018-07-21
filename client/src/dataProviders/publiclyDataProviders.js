@@ -1,26 +1,27 @@
 // @flow
 import React from 'react'
-import {setEntities, setEntitySearchEids, setAddresses,
-  setNewEntities, setNewEntityDetail} from '../actions/verejneActions'
+import {
+  setEntitySearchEids,
+  setAddresses,
+  setNewEntities,
+  setNewEntityDetail,
+} from '../actions/verejneActions'
 
-import type {Entity} from '../state'
+import type {Address, NewEntity, EntityDetails} from '../state'
 import type {Dispatch} from '../types/reduxTypes'
-
-const dispatchEntities = () => (ref: string, data: Array<Entity>, dispatch: Dispatch) =>
-  dispatch(setEntities(data))
 
 const dispatchSearchEids = () => (ref: string, data: Array<{eid: string}>, dispatch: Dispatch) =>
   dispatch(setEntitySearchEids(data))
 
-const dispatchAddresses = () => (ref: string, data, dispatch: Dispatch) => {
+const dispatchAddresses = () => (ref: string, data: Address[], dispatch: Dispatch) => {
   dispatch(setAddresses(data))
 }
 
-const dispatchnewEntities = () => (ref, data, dispatch: Dispatch) => {
+const dispatchnewEntities = () => (ref: number[], data: NewEntity[], dispatch: Dispatch) => {
   dispatch(setNewEntities(data, ref[1]))
 }
 
-const dispatchEntityDetail = () => (ref, data, dispatch: Dispatch) => {
+const dispatchEntityDetails = () => (ref: number[], data: EntityDetails, dispatch: Dispatch) => {
   dispatch(setNewEntityDetail(data[ref[1]], ref[1]))
 }
 
@@ -51,7 +52,7 @@ export const entityDetailProvider = (entityId: string) => {
         accept: 'application/json',
       },
     ],
-    onData: [dispatchEntityDetail],
+    onData: [dispatchEntityDetails],
     keepAliveFor: 60 * 60 * 1000,
   }
 }
@@ -69,22 +70,6 @@ export const addressEntitiesProvider = (addressId: string) => {
     ],
     onData: [dispatchnewEntities],
     keepAliveFor: 60 * 60 * 1000,
-  }
-}
-
-export const entitiesProvider = (entitiesUrl: string) => {
-  return {
-    ref: entitiesUrl,
-    getData: [
-      fetch,
-      entitiesUrl,
-      {
-        accept: 'application/json',
-      },
-    ],
-    onData: [dispatchEntities],
-    keepAliveFor: 60 * 60 * 1000,
-    needed: false,
   }
 }
 

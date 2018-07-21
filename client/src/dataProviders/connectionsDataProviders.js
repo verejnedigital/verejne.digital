@@ -17,7 +17,7 @@ const dispatchConnectionData = (eid1: string, eid2: string) => (
   dispatch(receiveData(['connections', 'detail'], {id: `${eid1}-${eid2}`, ids: data}, ref))
 }
 
-const dispatchEntityDetailData = (eid: string) => (ref: string, data: any, dispatch: Dispatch) => {
+const dispatchEntityDetailsData = (eid: string) => (ref: string, data: any, dispatch: Dispatch) => {
   dispatch(
     receiveData(
       ['connections', 'entityDetails'],
@@ -49,7 +49,7 @@ export const connectionEntityDetailProvider = (eid: string) => ({
       accept: 'application/json',
     },
   ],
-  onData: [dispatchEntityDetailData, eid],
+  onData: [dispatchEntityDetailsData, eid],
   keepAliveFor: 10 * 60 * 1000,
 })
 

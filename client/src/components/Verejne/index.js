@@ -1,43 +1,26 @@
 // @flow
 import React from 'react'
-import {map} from 'lodash'
 import {compose, withHandlers} from 'recompose'
-import {Input, ListGroup, FormGroup} from 'reactstrap'
+import {Input, FormGroup} from 'reactstrap'
 import {connect} from 'react-redux'
 import {geocodeByAddress, getLatLng} from 'react-places-autocomplete'
-import Pagination from 'react-js-pagination'
 
-import {setCurrentPage, zoomToLocation, toggleModalOpen} from '../../actions/verejneActions'
+import {zoomToLocation, toggleModalOpen} from '../../actions/verejneActions'
 import {updateValue} from '../../actions/sharedActions'
 import {
-  currentPageEntities,
-  entitiesLengthSelector,
-  pageCountSelector,
-  currentPageSelector,
   autocompleteValueSelector,
   autocompleteOptionsSelector,
   openedAddressDetailSelector,
 } from '../../selectors'
-import {
-  VEREJNE_MAX_PAGE_ITEMS,
-  VEREJNE_PAGE_RANGE,
-  ENTITY_CLOSE_ZOOM,
-  FIND_ENTITY_TITLE,
-} from '../../constants'
+import {ENTITY_CLOSE_ZOOM, FIND_ENTITY_TITLE} from '../../constants'
 import AddressDetail from './Map/AddressDetail'
 import PlacesAutocomplete from '../PlacesAutocomplete'
 import EntitySearch from './EntitySearch'
-import PanelRow from './PanelRow'
 import Map from './Map'
 import Legend from './Legend'
 import './Verejne.css'
 
 const Verejne = ({
-  entities,
-  pageCount,
-  currentPage,
-  setCurrentPage,
-  entitiesLength,
   autocompleteValue,
   setAutocompleteValue,
   autocompleteOptions,
@@ -64,17 +47,6 @@ const Verejne = ({
           className="form-control"
         />
       </FormGroup>
-      <ListGroup>{map(entities, (e) => <PanelRow entity={e} key={e.eid} />)}</ListGroup>
-      <Pagination
-        itemClass="page-item"
-        linkClass="page-link"
-        hideNavigation
-        pageRangeDisplayed={VEREJNE_PAGE_RANGE}
-        activePage={currentPage}
-        itemsCountPerPage={VEREJNE_MAX_PAGE_ITEMS}
-        totalItemsCount={entitiesLength}
-        onChange={setCurrentPage}
-      />
       {openedAddressId && <AddressDetail addressId={openedAddressId} />}
     </div>
     <Map />
@@ -85,15 +57,11 @@ const Verejne = ({
 export default compose(
   connect(
     (state) => ({
-      entitiesLength: entitiesLengthSelector(state),
-      entities: currentPageEntities(state),
-      currentPage: currentPageSelector(state),
-      pageCount: pageCountSelector(state),
       autocompleteValue: autocompleteValueSelector(state),
       autocompleteOptions: autocompleteOptionsSelector(state),
       openedAddressId: openedAddressDetailSelector(state),
     }),
-    {setCurrentPage, updateValue, zoomToLocation, toggleModalOpen}
+    {updateValue, zoomToLocation, toggleModalOpen}
   ),
   withHandlers({
     setAutocompleteValue: ({updateValue}) => (value) =>

@@ -1,6 +1,6 @@
 // @flow
 import {createSelector} from 'reselect'
-import {sortBy, last, mapValues, chunk} from 'lodash'
+import {sortBy, last, mapValues, chunk, filter} from 'lodash'
 import {normalizeName, parseQueryFromLocation} from '../utils'
 import {paramsIdSelector} from './index'
 import {CADASTRAL_PAGINATION_CHUNK_SIZE} from '../constants'
@@ -90,11 +90,12 @@ export const cadastralSearchSelector: Selector<State, ContextRouter, string> = c
   (search) => search || ''
 )
 
-export const filteredCadastralInfoSelector = createSelector(
+export const filteredCadastralInfoSelector: Selector<State, ContextRouter, string> = createSelector(
   politicianCadastralSelector,
   cadastralSearchSelector,
   (cadastral, search) => {
-    return Object.values(cadastral).filter(({cadastralunitname}) =>
+    // TODO: $FlowFixMe Cannot call `filter` because string is incompatible with number
+    return filter(cadastral, ({cadastralunitname}) =>
       normalizeName(cadastralunitname).startsWith(search)
     )
   }
