@@ -1,6 +1,5 @@
 // @flow
 import type {Dispatch} from '../types/reduxTypes'
-import {dispatchReceivedData} from './dataProvidersUtils'
 import {receiveData} from '../actions/sharedActions'
 
 const dispatchEntitiesData = (query: string) => (
@@ -22,6 +21,20 @@ const dispatchConnectionData = (eid1: number | number[], eid2: number | number[]
     receiveData(
       ['connections', 'detail'],
       {id: `${eid1.toString()}-${eid2.toString()}`, ids: data},
+      ref
+    )
+  )
+}
+
+const dispatchSubgraphData = (
+  eid1: number | number[],
+  eid2: number | number[],
+  transformer: (Object) => Object
+) => (ref: string, data: any, dispatch: Dispatch) => {
+  dispatch(
+    receiveData(
+      ['connections', 'subgraph'],
+      {id: `${eid1.toString()}-${eid2.toString()}`, data: transformer(data)},
       ref
     )
   )
@@ -54,7 +67,11 @@ export const connectionDetailProvider = (eid1: number | number[], eid2: number |
   keepAliveFor: 60 * 60 * 1000,
 })
 
-export const connectionSubgraphProvider = (eid1: number | number[], eid2: number | number[]) => ({
+export const connectionSubgraphProvider = (
+  eid1: number | number[],
+  eid2: number | number[],
+  transformer: (Object) => Object
+) => ({
   ref: `connextion-${eid1.toString()}-${eid2.toString()}`,
   getData: [
     fetch,
@@ -64,6 +81,6 @@ export const connectionSubgraphProvider = (eid1: number | number[], eid2: number
       accept: 'application/json',
     },
   ],
-  onData: [dispatchReceivedData, ['connection', 'subgraph']],
+  onData: [dispatchSubgraphData, eid1, eid2, transformer],
   keepAliveFor: 60 * 60 * 1000,
 })

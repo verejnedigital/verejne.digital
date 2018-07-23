@@ -7,15 +7,13 @@ import EntityWrapper, {type EntityProps} from '../dataWrappers/EntityWrapper'
 import EntitySearchWrapper, {type EntitySearchProps} from '../dataWrappers/EntitySearchWrapper'
 import InfoLoader from './InfoLoader'
 import BeforeResults from './BeforeResults'
+import Subgraph from '../scenes/Results/components/Subgraph/Subgraph'
 
 type Props = EntitySearchProps & EntityProps & ConnectionProps
 
 const Results = (props: Props) => (
   <div>
-    {/* this.props.location.query.graph
-              ? ''
-              : <Subgraph eids_A={this.state.entity1.eids} eids_B={this.state.entity2.eids} />
-              ''*/}
+    {props.showGraph ? <Subgraph {...props} /> : ''}
     {props.connections.map((connEid) => <InfoLoader key={connEid} eid={connEid} hasConnectLine />)}
   </div>
 )

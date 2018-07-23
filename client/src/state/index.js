@@ -343,6 +343,9 @@ const getInitialState = (): State => ({
   connections: {
     entities: {},
     detail: {},
+    entityDetails: {},
+    subgraph: {},
+    selectedEids: [],
   },
   addresses: {},
   entities: {},

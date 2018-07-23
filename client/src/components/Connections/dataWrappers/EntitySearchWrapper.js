@@ -17,6 +17,7 @@ const EntitySearchWrapper = (WrappedComponent: ComponentType<*>) => {
         {...props}
         entitySearch1={query.eid1 || ''}
         entitySearch2={query.eid2 || ''}
+        showGraph={query.graph || false}
       />
     )
   }
