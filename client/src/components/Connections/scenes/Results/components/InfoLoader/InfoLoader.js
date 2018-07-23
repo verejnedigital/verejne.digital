@@ -10,7 +10,7 @@ import './InfoLoader.css'
 const InfoLoader = ({data, hasConnectLine, recursive}) => (
   <div className="info-loader">
     <Info data={data} />
-    {hasConnectLine && <div className="info-loader-connection-line" />}
+    {hasConnectLine && <div className="container"><div className="info-loader-connection-line" /></div>}
   </div>
 )
 

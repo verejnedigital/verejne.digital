@@ -1,13 +1,16 @@
 @import "../../../../../variables.scss";
 
-.info-loader:last-of-type > .info-loader-connection-line {
+.info-loader:last-of-type > .container > .info-loader-connection-line {
   display: none;
+}
+
+.info-loader > .container {
+  padding: 0;
 }
 
 .info-loader-connection-line {
   height: 30px;
   width: 8px;
-  padding-left: -50px;
   background-color: $border-color;
   margin-left: 40px;
 }
