@@ -1,12 +1,13 @@
 // @flow
-import {compose} from 'redux'
 import {withDataProviders} from 'data-provider'
 import {connectionEntityDetailProvider} from '../../../../../../dataProviders/connectionsDataProviders'
 
-const NodeLoader = () => (
-  null
-)
+export type NodeLoaderProps = {
+  eid: number,
+}
 
-export default compose(
-  withDataProviders((props) => [connectionEntityDetailProvider(props.eid)]),
-)(NodeLoader)
+const NodeLoader = () => null
+
+export default withDataProviders((props: NodeLoaderProps) => [
+  connectionEntityDetailProvider(props.eid),
+])(NodeLoader)

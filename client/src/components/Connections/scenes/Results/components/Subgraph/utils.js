@@ -1,3 +1,25 @@
+// @flow
+
+export type Id = number | string
+
+export type Node = {
+  id: Id,
+  label: string,
+}
+export type Edge = {
+  from: Id,
+  to: Id,
+}
+export type Graph = {|
+  nodes: Array<Node>,
+  edges: Array<Edge>,
+  nodeIds: {[Id]: boolean},
+|}
+export type Point = {|
+  x: number,
+  y: number,
+|}
+
 // TODO read this from sass variables:
 const variables = {
   blueColor: '#0062db',
@@ -35,8 +57,11 @@ export const options = {
       //           }
     },
     politContracts: {
-      color: {background: variables.orangeColor, border: variables.orangeColor,
-        highlight: {background: variables.orangeColor, border: variables.orangeColor}},
+      color: {
+        background: variables.orangeColor,
+        border: variables.orangeColor,
+        highlight: {background: variables.orangeColor, border: variables.orangeColor},
+      },
       font: {color: variables.orangeColor},
       borderWidth: 5,
     },
@@ -75,9 +100,10 @@ export const options = {
       min: 10,
       max: 50,
     },
-    chosen: { // selected nodes have shadow
+    chosen: {
+      // selected nodes have shadow
       label: false,
-      node: (values, id, selected, hovering) => {
+      node: (values: {}, id: Id, selected: boolean, hovering: boolean) => {
         values.shadow = true
       },
     },
@@ -96,22 +122,26 @@ export const options = {
 }
 
 // hack: extract eID (id) of a given node via converting it to a string
-export const getNodeEid = (node) => {
+export const getNodeEid = (node: Node) => {
   return parseInt(node.toString(), 10)
 }
 
 // add (undirected) edge a<->b to edges if not yet present
-export const addEdgeIfMissing = (a, b, edges) => {
+export const addEdgeIfMissing = (a: Id, b: Id, edges: Array<Edge>) => {
   if (a === b) {
     return
   }
-  if (edges.some(({from, to}) => ((from === a && to === b) || (from === b && to === a)))) {
+  if (edges.some(({from, to}) => (from === a && to === b) || (from === b && to === a))) {
     return
   }
   edges.push({from: a, to: b})
 }
 
-export const addNeighbours = (graph, sourceEid, neighbours) => {
+export const addNeighbours = (
+  graph: Graph,
+  sourceEid: number,
+  neighbours: Array<{eid: number, name: string}>
+) => {
   // Update graph with new neighbours
   const nodes = graph.nodes.slice()
   const edges = graph.edges.slice()
@@ -126,9 +156,9 @@ export const addNeighbours = (graph, sourceEid, neighbours) => {
   return {nodes, edges, nodeIds}
 }
 
-export const removeNodes = (graph, idsToRemove, alsoRemoveOrphans) => {
+export const removeNodes = (graph: Graph, idsToRemove: Array<Id>, alsoRemoveOrphans: boolean) => {
   // Update graph by removing nodes
-  const possibleOrphans = {} // siblings of removes nodes
+  const possibleOrphans: {[Id]: boolean} = {} // siblings of removed nodes
   const edges = graph.edges.filter(({from, to}) => {
     if (idsToRemove.indexOf(from) !== -1) {
       possibleOrphans[to] = true
@@ -150,19 +180,23 @@ export const removeNodes = (graph, idsToRemove, alsoRemoveOrphans) => {
         delete possibleOrphans[to]
       }
     })
-    idsToRemove = idsToRemove.concat(Object.keys(possibleOrphans).map((id) => parseInt(id, 10))) // duplicates are not a problem
+    // duplicates are not a problem
+    idsToRemove = idsToRemove.concat(Object.keys(possibleOrphans).map((id) => parseInt(id, 10)))
   }
 
   const nodes = graph.nodes.filter(({id}) => idsToRemove.indexOf(id) === -1)
   const {...nodeIds} = graph.nodeIds
-  idsToRemove.forEach((id) => {delete nodeIds[id]})
+  idsToRemove.forEach((id) => {
+    delete nodeIds[id]
+  })
   return {nodes, edges, nodeIds}
 }
 
-export const transformRaw = (rawGraph) => {
+export const transformRaw = (rawGraph: {vertices: Array<{}>, edges: Array<Array<number>>}) => {
   // transforms graph data for react-graph-vis
   const {vertices: rawNodes, edges: rawEdges} = rawGraph
-  const nodes = [], edges = []
+  const nodes = []
+  const edges = []
   const nodeIds = {}
 
   rawNodes.forEach((n) => {
