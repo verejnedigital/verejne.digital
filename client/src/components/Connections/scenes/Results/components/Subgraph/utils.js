@@ -121,6 +121,11 @@ export const options = {
   },
 }
 
+const randomInt = (min, max) => {
+  // returns int in (-max, -min) + (min, max)
+  return (min + Math.floor(Math.random() * (max - min))) * (Math.random() < 0.5 ? -1 : 1)
+}
+
 // hack: extract eID (id) of a given node via converting it to a string
 export const getNodeEid = (node: Node) => {
   return parseInt(node.toString(), 10)
@@ -140,6 +145,7 @@ export const addEdgeIfMissing = (a: Id, b: Id, edges: Array<Edge>) => {
 export const addNeighbours = (
   graph: Graph,
   sourceEid: number,
+  sourcePoint: Point,
   neighbours: Array<{eid: number, name: string}>
 ) => {
   // Update graph with new neighbours
@@ -148,7 +154,12 @@ export const addNeighbours = (
   const {...nodeIds} = graph.nodeIds
   neighbours.forEach(({eid, name}) => {
     if (!nodeIds[eid]) {
-      nodes.push({id: eid, label: name})
+      nodes.push({
+        id: eid,
+        label: name,
+        x: sourcePoint.x + randomInt(20, 100),
+        y: sourcePoint.y + randomInt(20, 100),
+      })
       nodeIds[eid] = true
     }
     addEdgeIfMissing(eid, sourceEid, edges)

@@ -55,6 +55,7 @@ export type SubgraphProps = {
   entity1: SearchedEntity,
   entity2: SearchedEntity,
   updateValue: Function,
+  preloadNodes: boolean,
   handleSelect: (e: GraphEvent) => void,
   handleDoubleClick: (e: GraphEvent) => void,
   handleDrag: (e: GraphEvent) => void,
@@ -115,7 +116,7 @@ const legendGraph = (() => {
         id: '5',
         x: x + 4 * step,
         y,
-        label: 'Nenačítané údaje\nklikni pre načítanie',
+        label: 'Údaje sa\nnačítavaju',
         group: 'notLoaded',
         fixed: true,
         physics: false,
@@ -156,9 +157,9 @@ function enhanceGraph(
   primaryConnEids: Array<number>
 ) {
   // adds entity info to graph
-  const nodes = oldNodes.map(({id, label, ...props}) => {
+  const nodes = oldNodes.map(({id, label, x, y, ...props}) => {
     if (!entityDetails[id]) {
-      return {id, label, group: 'notLoaded', ...props}
+      return {id, label, group: 'notLoaded', x, y, ...props}
     }
     const data = entityDetails[id].data
     const entity = data.entities[0]
@@ -170,6 +171,7 @@ function enhanceGraph(
       group: findGroup(data),
       shape: poi ? 'box' : (data.company_stats[0] || {}).datum_zaniku ? 'diamond' : 'dot',
       shapeProperties: {borderDashes: false},
+      // delete x, y to prevent jumping on node load
       ...props,
     }
   })
@@ -196,6 +198,7 @@ const Subgraph = ({
   selectedEids,
   entityDetails,
   connections,
+  preloadNodes = true,
   handleSelect,
   handleDoubleClick,
   handleDrag,
@@ -242,7 +245,7 @@ const Subgraph = ({
               style={graphStyle}
             />
           </div>
-          {subgraph.nodes.map(({id}) => <NodeLoader key={id} eid={id} />)}
+          {preloadNodes && subgraph.nodes.map(({id}) => <NodeLoader key={id} eid={id} />)}
           {selectedEids.map((eid) => <InfoLoader key={eid} eid={eid} />)}
         </div>
       }
@@ -268,7 +271,7 @@ export default compose(
     handleSelect: (props: SubgraphProps) => ({nodes}: GraphEvent) => {
       props.updateValue(['connections', 'selectedEids'], nodes.map(getNodeEid))
     },
-    handleDoubleClick: (props: SubgraphProps) => ({nodes}: GraphEvent) => {
+    handleDoubleClick: (props: SubgraphProps) => ({nodes, pointer}: GraphEvent) => {
       const subgraphId = `${props.entity1.eids.join()}-${props.entity2.eids.join()}`
       const clickedEid = getNodeEid(nodes) // TODO can double click more nodes?
 
@@ -276,7 +279,7 @@ export default compose(
         const related = props.entityDetails[clickedEid].data.related
         props.updateValue(
           ['connections', 'subgraph', subgraphId, 'data'],
-          addNeighbours(props.subgraph, clickedEid, related)
+          addNeighbours(props.subgraph, clickedEid, pointer.canvas, related)
         )
       }
     },
