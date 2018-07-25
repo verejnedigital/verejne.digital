@@ -3,24 +3,17 @@ import React from 'react'
 import {compose} from 'redux'
 import {connect} from 'react-redux'
 import {withHandlers} from 'recompose'
-import {withDataProviders} from 'data-provider'
 import {updateValue} from '../../../../../../actions/sharedActions'
 import InfoLoader from '../InfoLoader/InfoLoader'
 import NodeLoader from './NodeLoader'
 import {isPolitician} from '../../../../../Notices/utilities'
-import {connectionSubgraphProvider} from '../../../../../../dataProviders/connectionsDataProviders'
-import {Col, Row} from 'reactstrap'
-import {
-  options as graphOptions,
-  getNodeEid,
-  addNeighbours,
-  removeNodes,
-  transformRaw,
-} from './utils'
+import SubgraphWrapper from '../../../../dataWrappers/SubgraphWrapper'
+import {options as graphOptions, getNodeEid, addNeighbours, removeNodes} from './utils'
 import {checkShaking, resetGesture} from './gestures'
 import Graph from 'react-graph-vis'
+import {Col, Row} from 'reactstrap'
 
-import type {State, Company, SearchedEntity} from '../../../../../../state'
+import type {Company, SearchedEntity} from '../../../../../../state'
 import type {Id, Graph as GraphType, Node, Point} from './utils'
 
 import './Subgraph.css'
@@ -151,7 +144,7 @@ function bold(makeBold: boolean, str: string) {
   return makeBold ? `*${str}*` : str
 }
 
-function enhanceGraph(
+function enhanceGraph( // TODO move to SubgraphWrapper?
   {nodes: oldNodes, edges: oldEdges}: GraphType,
   entityDetails: EntityDetails,
   primaryConnEids: Array<number>
@@ -204,7 +197,6 @@ const Subgraph = ({
   handleDrag,
   handleDragEnd,
 }: SubgraphProps) => {
-  const enhancedGraph = enhanceGraph(subgraph, entityDetails, connections)
   return (
     <div className="subgraph">
       {/*loading ? (
@@ -233,7 +225,7 @@ const Subgraph = ({
           </Row>
           <div className="graph">
             <Graph
-              graph={enhancedGraph}
+              graph={subgraph}
               options={graphOptions}
               events={{
                 select: handleSelect,
@@ -254,19 +246,8 @@ const Subgraph = ({
 }
 
 export default compose(
-  withDataProviders((props: SubgraphProps) => [
-    connectionSubgraphProvider(props.entity1.eids.join(), props.entity2.eids.join(), transformRaw),
-  ]),
-  connect(
-    (state: State, props: SubgraphProps) => ({
-      selectedEids: state.connections.selectedEids,
-      subgraph:
-        state.connections.subgraph[`${props.entity1.eids.join()}-${props.entity2.eids.join()}`]
-          .data,
-      entityDetails: state.connections.entityDetails, // TODO better way to access this?
-    }),
-    {updateValue}
-  ),
+  connect(() => ({enhanceGraph}), {updateValue}),
+  SubgraphWrapper,
   withHandlers({
     handleSelect: (props: SubgraphProps) => ({nodes}: GraphEvent) => {
       props.updateValue(['connections', 'selectedEids'], nodes.map(getNodeEid))

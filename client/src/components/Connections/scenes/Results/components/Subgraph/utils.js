@@ -202,31 +202,3 @@ export const removeNodes = (graph: Graph, idsToRemove: Array<Id>, alsoRemoveOrph
   })
   return {nodes, edges, nodeIds}
 }
-
-export const transformRaw = (rawGraph: {vertices: Array<{}>, edges: Array<Array<number>>}) => {
-  // transforms graph data for react-graph-vis
-  const {vertices: rawNodes, edges: rawEdges} = rawGraph
-  const nodes = []
-  const edges = []
-  const nodeIds = {}
-
-  rawNodes.forEach((n) => {
-    // skip nodes that are not connected to the other end
-    if (n.distance_from_A == null || n.distance_from_B == null) {
-      return
-    }
-    nodes.push({
-      id: n.eid,
-      label: n.entity_name,
-      distA: n.distance_from_A,
-      distB: n.distance_from_B,
-    })
-    nodeIds[n.eid] = true
-  })
-
-  rawEdges.forEach(([from, to]) => {
-    nodeIds[from] && nodeIds[to] && addEdgeIfMissing(from, to, edges)
-  })
-
-  return {nodes, edges, nodeIds}
-}
