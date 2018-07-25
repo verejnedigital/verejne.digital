@@ -1,3 +1,6 @@
+// @flow
+import type {Point} from './utils'
+
 const GESTURE_INTERVAL = 3000 // milis
 const STROKES_TO_SHAKE = 4
 const MIN_STROKE_LENGTH = 20 // px
@@ -16,7 +19,7 @@ export const resetGesture = () => {
   shakes = 0
 }
 
-export const checkShaking = ({x, y}) => {
+export const checkShaking = ({x, y}: Point) => {
   if (lastPos == null || lastPos === x) {
     lastPos = x
     gestureTimeout = setTimeout(() => {
