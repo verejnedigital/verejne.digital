@@ -58,6 +58,7 @@ export const options = {
       strokeWidth: 5,
       multi: 'md', // enables use of bold/italics
     },
+    widthConstraint: {maximum: 150},
     labelHighlightBold: false,
     shape: 'dot',
     shadow: {
@@ -122,6 +123,39 @@ export const addNeighbours = (graph, sourceEid, neighbours) => {
     }
     addEdgeIfMissing(eid, sourceEid, edges)
   })
+  return {nodes, edges, nodeIds}
+}
+
+export const removeNodes = (graph, idsToRemove, alsoRemoveOrphans) => {
+  // Update graph by removing nodes
+  const possibleOrphans = {} // siblings of removes nodes
+  const edges = graph.edges.filter(({from, to}) => {
+    if (idsToRemove.indexOf(from) !== -1) {
+      possibleOrphans[to] = true
+      return false
+    }
+    if (idsToRemove.indexOf(to) !== -1) {
+      possibleOrphans[from] = true
+      return false
+    }
+    return true
+  })
+
+  if (alsoRemoveOrphans) {
+    edges.forEach(({from, to}) => {
+      if (possibleOrphans[from]) {
+        delete possibleOrphans[from]
+      }
+      if (possibleOrphans[to]) {
+        delete possibleOrphans[to]
+      }
+    })
+    idsToRemove = idsToRemove.concat(Object.keys(possibleOrphans).map((id) => parseInt(id, 10))) // duplicates are not a problem
+  }
+
+  const nodes = graph.nodes.filter(({id}) => idsToRemove.indexOf(id) === -1)
+  const {...nodeIds} = graph.nodeIds
+  idsToRemove.forEach((id) => {delete nodeIds[id]})
   return {nodes, edges, nodeIds}
 }
 
