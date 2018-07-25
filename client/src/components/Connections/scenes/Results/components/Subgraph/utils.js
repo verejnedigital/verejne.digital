@@ -157,6 +157,7 @@ export const addNeighbours = (
       nodes.push({
         id: eid,
         label: name,
+        leaf: true,
         x: sourcePoint.x + randomInt(20, 100),
         y: sourcePoint.y + randomInt(20, 100),
       })

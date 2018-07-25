@@ -8,7 +8,13 @@ import InfoLoader from '../InfoLoader/InfoLoader'
 import NodeLoader from './NodeLoader'
 import {isPolitician} from '../../../../../Notices/utilities'
 import SubgraphWrapper from '../../../../dataWrappers/SubgraphWrapper'
-import {options as graphOptions, getNodeEid, addNeighbours, removeNodes} from './utils'
+import {
+  options as graphOptions,
+  getNodeEid,
+  addNeighbours,
+  removeNodes,
+  addEdgeIfMissing,
+} from './utils'
 import {checkShaking, resetGesture} from './gestures'
 import Graph from 'react-graph-vis'
 import {Col, Row} from 'reactstrap'
@@ -145,10 +151,16 @@ function bold(makeBold: boolean, str: string) {
 }
 
 function enhanceGraph( // TODO move to SubgraphWrapper?
-  {nodes: oldNodes, edges: oldEdges}: GraphType,
+  {nodes: oldNodes, edges: oldEdges, nodeIds}: GraphType,
   entityDetails: EntityDetails,
   primaryConnEids: Array<number>
 ) {
+  const edges = oldEdges.map(({from, to}) => ({
+    from,
+    to,
+    width: primaryConnEids.indexOf(from) !== -1 && primaryConnEids.indexOf(to) !== -1 ? 5 : 1,
+  }))
+
   // adds entity info to graph
   const nodes = oldNodes.map(({id, label, x, y, ...props}) => {
     if (!entityDetails[id]) {
@@ -157,6 +169,14 @@ function enhanceGraph( // TODO move to SubgraphWrapper?
     const data = entityDetails[id].data
     const entity = data.entities[0]
     const poi = props.distA === 0 || props.distB === 0
+    if (props.leaf && data.related.length) {
+      // add more edges to this leaf if available, then mark as non-leaf
+      data.related.forEach(({eid: relatedId}) => {
+        if (nodeIds[relatedId]) {
+          addEdgeIfMissing(id, relatedId, edges)
+        }
+      })
+    }
     return {
       id,
       label: bold(poi, `${entity.entity_name} (${data.related.length})`),
@@ -166,14 +186,10 @@ function enhanceGraph( // TODO move to SubgraphWrapper?
       shapeProperties: {borderDashes: false},
       // delete x, y to prevent jumping on node load
       ...props,
+      leaf: false,
     }
   })
-  const edges = oldEdges.map(({from, to}) => ({
-    from,
-    to,
-    width: primaryConnEids.indexOf(from) !== -1 && primaryConnEids.indexOf(to) !== -1 ? 5 : 1,
-  }))
-  return {nodes, edges}
+  return {nodes, edges, nodeIds}
 }
 
 function enhanceDrawing(/*ctx*/) {
