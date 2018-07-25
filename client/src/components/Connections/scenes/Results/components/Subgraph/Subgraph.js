@@ -6,6 +6,7 @@ import {withHandlers} from 'recompose'
 import {withDataProviders} from 'data-provider'
 import {updateValue} from '../../../../../../actions/sharedActions'
 import InfoLoader from '../InfoLoader/InfoLoader'
+import NodeLoader from './NodeLoader'
 import {isPolitician} from '../../../../../Notices/utilities'
 import {connectionSubgraphProvider} from '../../../../../../dataProviders/connectionsDataProviders'
 import {Col, Row} from 'reactstrap'
@@ -16,17 +17,17 @@ import './Subgraph.css'
 
 const legendStyle = {
   width: '100%',
-  height: '100px',
+  height: '120px',
 }
 const graphStyle = {
   width: '100%',
   height: '600px',
 }
 
-const x = 10, y = 10, step = 130
+const x = 10, y = 10, step = 140
 const legendGraph = {
   nodes: [
-    {id: '1', x, y, label: 'Firma/Osoba', fixed: true, physics: false},
+    {id: '1', x, y, label: 'Firma/Osoba\n(počet prepojení)', fixed: true, physics: false},
     {id: '2', x: x + step, y, label: 'Obchod so štátom', group: 'contracts', fixed: true, physics: false},
     {id: '3', x: x + 2 * step, y, label: 'Kontakt s politikou', group: 'politician', fixed: true, physics: false},
     {id: '4', x: x + 3 * step, y, label: 'Kontakt s politikou\na obchod so štátom', group: 'politContracts', fixed: true, physics: false},
@@ -62,7 +63,7 @@ function enhanceGraph({nodes: oldNodes, edges: oldEdges}, entityDetails, primary
       label: bold(poi, `${entity.entity_name} (${data.related.length})`),
       value: data.related.length,
       group: findGroup(data),
-      shape: (data.company_stats[0] || {}).datum_zaniku ? 'diamond' : 'dot',
+      shape: poi ? 'box' : (data.company_stats[0] || {}).datum_zaniku ? 'diamond' : 'dot',
       shapeProperties: {borderDashes: false},
       ...props,
     }
@@ -125,6 +126,7 @@ const Subgraph = ({subgraph, selectedEids, entityDetails, connections, handleSel
               style={graphStyle}
             />
           </div>
+          {subgraph.nodes.map(({id}) => <NodeLoader key={id} eid={id} />)}
           {selectedEids.map((eid) => <InfoLoader key={eid} eid={eid} />)}
         </div>
       )}
