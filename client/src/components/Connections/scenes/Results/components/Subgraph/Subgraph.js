@@ -10,7 +10,8 @@ import NodeLoader from './NodeLoader'
 import {isPolitician} from '../../../../../Notices/utilities'
 import {connectionSubgraphProvider} from '../../../../../../dataProviders/connectionsDataProviders'
 import {Col, Row} from 'reactstrap'
-import {options as graphOptions, getNodeEid, addNeighbours, transformRaw} from './utils'
+import {options as graphOptions, getNodeEid, addNeighbours, removeNodes, transformRaw} from './utils'
+import {checkShaking, resetGesture} from './gestures'
 import Graph from 'react-graph-vis'
 
 import './Subgraph.css'
@@ -86,7 +87,9 @@ function enhanceDrawing(ctx) {
   // ctx.stroke()
 }
 
-const Subgraph = ({subgraph, selectedEids, entityDetails, connections, handleSelect, handleDoubleClick}) => {
+const Subgraph = ({subgraph, selectedEids, entityDetails, connections,
+  handleSelect, handleDoubleClick, handleDrag, handleDragEnd}) => {
+
   const enhancedGraph = enhanceGraph(subgraph, entityDetails, connections)
   return (
     <div className="subgraph">
@@ -102,6 +105,7 @@ const Subgraph = ({subgraph, selectedEids, entityDetails, connections, handleSel
                 <li>Ťahanie vrchola: premiestnenie vrchola v grafe</li>
                 <li>Klik na vrchol: načítať a zobraziť detailné informácie o vrchole (v boxe pod grafom)</li>
                 <li>Dvojklik na vrchol: pridať do grafu nezobrazených susedov</li>
+                <li>Potrasenie vrcholom: odobrať vrchol z grafu</li>
               </ul>
             </Col>
             <Col lg="7" md="12">
@@ -121,6 +125,8 @@ const Subgraph = ({subgraph, selectedEids, entityDetails, connections, handleSel
               events={{
                 select: handleSelect,
                 doubleClick: handleDoubleClick,
+                dragging: handleDrag,
+                dragEnd: handleDragEnd,
                 afterDrawing: enhanceDrawing,
               }}
               style={graphStyle}
@@ -161,6 +167,22 @@ export default compose(
           addNeighbours(props.subgraph, clickedEid, related)
         )
       }
+    },
+    handleDrag: (props) => ({nodes, pointer}) => {
+      if (!nodes.length) {
+        return
+      }
+      if (checkShaking(pointer.canvas)) {
+        const subgraphId = `${props.entity1.eids.join()}-${props.entity2.eids.join()}`
+        props.updateValue(
+          ['connections', 'subgraph', subgraphId, 'data'],
+          removeNodes(props.subgraph, nodes.map(getNodeEid), true)
+        )
+        props.updateValue(['connections', 'selectedEids'], [])
+      }
+    },
+    handleDragEnd: (props) => () => {
+      resetGesture()
     },
   })
 )(Subgraph)
