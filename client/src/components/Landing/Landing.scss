@@ -1,4 +1,4 @@
-@import './variables.scss';
+@import "../variables.scss";
 
 .landing-page {
   @media screen and (min-width: 576px) {
@@ -37,4 +37,13 @@ footer.landing-footer {
     border-left: 2px solid $card-border;
     padding-left: 0.5rem;
   }
+}
+
+.landing-page .title {
+  font-family: Source Code Pro, monospace;
+  font-size: 1.1rem;
+}
+
+.landing-page .lead {
+  font-family: Source Code Pro, monospace;
 }

@@ -6,7 +6,7 @@ export default ({title, text, imgSrc}) => (
   <Card className="card-center">
     <CardImg top src={imgSrc} alt={title} />
     <CardBody>
-      <CardTitle>{title}</CardTitle>
+      <CardTitle className="section-title">{title}</CardTitle>
       <CardText>{text}</CardText>
     </CardBody>
   </Card>

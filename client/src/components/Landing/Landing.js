@@ -3,21 +3,27 @@ import Card from './Card'
 import {NavLink} from 'react-router-dom'
 import './Landing.css'
 import {Row, Col, Container} from 'reactstrap'
+import verejneDataIcon from './icons/verejne_data.png'
+import prepojeniaIcon from './icons/prepojenia.png'
+import obstaravaniaIcon from './icons/obstaravania.png'
+import profilyIcon from './icons/profily.png'
 
 class Landing extends Component {
   render = () => [
     <Container tag="main" key="main" role="main" className="landing-page">
-      <h1>
-        <b>verejne.</b>digital
-      </h1>
-      <p className="lead">Aplikácia umelej inteligencie na dáta slovenských verejných inštitúcii</p>
+      <p className="title">
+        <b>verejne</b>.digital
+      </p>
+      <p className="lead">
+        Aplikácie umelej inteligencie<br /> na dáta slovenských verejných inštitúcii
+      </p>
       <Row>
         <Col className="col-lg-3 col-md-4 col-sm-6 col-12 card-wrapper">
           <NavLink to="/verejne" className="card-link">
             <Card
               title="Verejné dáta"
               text="Obchodujú moji susedia so štátom alebo čerpajú eurofondy?"
-              imgSrc="/map.png"
+              imgSrc={verejneDataIcon}
             />
           </NavLink>
         </Col>
@@ -26,7 +32,7 @@ class Landing extends Component {
             <Card
               title="Prepojenia"
               text="Sú víťazi verejných obstarávaní prepojení na politokov?"
-              imgSrc="connections.png"
+              imgSrc={prepojeniaIcon}
             />
           </NavLink>
         </Col>
@@ -35,7 +41,7 @@ class Landing extends Component {
             <Card
               title="Obstarávania"
               text="Vyhrávajú firmy, ktoré sú v strate alebo založené len pár dní vopred?"
-              imgSrc="search.png"
+              imgSrc={obstaravaniaIcon}
             />
           </NavLink>
         </Col>
@@ -44,7 +50,7 @@ class Landing extends Component {
             <Card
               title="Profil"
               text="Majetok poslancov podľa priznaní a katastra"
-              imgSrc="search.png"
+              imgSrc={profilyIcon}
             />
           </NavLink>
         </Col>
