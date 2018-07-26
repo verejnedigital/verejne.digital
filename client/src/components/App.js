@@ -1,4 +1,4 @@
-import React, {Component, Fragment} from 'react'
+import React, {Fragment} from 'react'
 import Navigation from './Navigation'
 import {Route} from 'react-router-dom'
 import {Switch} from 'react-router'
@@ -8,14 +8,16 @@ import NoticeList from './Notices/NoticeList'
 import NoticeDetail from './Notices/NoticeDetail'
 import Profile from './Profile/Profile'
 import DetailPage from './Profile/DetailPage'
+import Landing from './Landing/Landing'
 
 import './App.css'
 
-export default () => (
+export default (props) => (
   <Fragment>
-    <Navigation />
+    <Route exact path="/:something" component={Navigation} />
     <div className="application-container">
       <Switch>
+        <Route exact path="/" component={Landing} />
         <Route path="/verejne" exact component={Verejne} />
         <Route path="/prepojenia" exact component={Connections} />
         <Route path="/obstaravania" exact component={NoticeList} />
