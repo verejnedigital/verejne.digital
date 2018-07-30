@@ -143,7 +143,7 @@ function findGroup(data: Company) {
       ? 'politician'
       : withContracts
         ? 'contracts'
-        : undefined
+        : 'normal'
 }
 
 function bold(makeBold: boolean, str: string) {
@@ -178,14 +178,13 @@ function enhanceGraph( // TODO move to SubgraphWrapper?
       })
     }
     return {
+      // delete x, y to prevent jumping on node load
+      ...props,
       id,
       label: bold(poi, `${entity.entity_name} (${data.related.length})`),
       value: data.related.length,
       group: findGroup(data),
       shape: poi ? 'box' : (data.company_stats[0] || {}).datum_zaniku ? 'diamond' : 'dot',
-      shapeProperties: {borderDashes: false},
-      // delete x, y to prevent jumping on node load
-      ...props,
       leaf: false,
     }
   })

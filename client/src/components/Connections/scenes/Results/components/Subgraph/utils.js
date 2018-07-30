@@ -42,14 +42,19 @@ export const options = {
     notLoaded: {
       shapeProperties: {borderDashes: [5, 5]},
     },
+    normal: {
+      shapeProperties: {borderDashes: false},
+    },
     contracts: {
       color: {border: variables.blueColor, highlight: {border: variables.blueColor}},
       borderWidth: 5,
+      shapeProperties: {borderDashes: false},
     },
     politician: {
       color: {border: variables.orangeColor, highlight: {border: variables.orangeColor}},
       font: {color: variables.orangeColor},
       borderWidth: 5,
+      shapeProperties: {borderDashes: false},
       // shape: 'icon',
       //           icon: {
       //               face: 'FontAwesome',
@@ -64,6 +69,7 @@ export const options = {
       },
       font: {color: variables.orangeColor},
       borderWidth: 5,
+      shapeProperties: {borderDashes: false},
     },
   },
   interaction: {
