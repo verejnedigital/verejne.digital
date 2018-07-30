@@ -12,15 +12,19 @@ import {setMapOptions, selectEntity, zoomToLocation} from '../../../actions/vere
 import './GoogleMap.css'
 import {map} from 'lodash'
 import ClusterMarker from './ClusterMarker'
-import {branch, compose, renderComponent, withHandlers} from 'recompose'
+import {branch, compose, renderComponent, withHandlers, lifecycle} from 'recompose'
 import Loading from '../../Loading'
 import GoogleMap from '../../GoogleMap'
 import {withDataProviders} from 'data-provider'
 import {entitiesProvider} from '../../../dataProviders/publiclyDataProviders'
+import {withRouter} from 'react-router-dom'
+import qs from 'qs'
+import {debounce} from 'throttle-debounce'
 
 import type {MapOptions, Entity, Center} from '../../../state'
 import type {MapCluster} from '../../../selectors'
 import type {Thunk, GenericAction} from '../../../types/reduxTypes'
+import type {RouterHistory} from 'react-router'
 
 type Props = {
   zoom: number,
@@ -32,6 +36,7 @@ type Props = {
   refetch: () => void,
   clusters: Array<MapCluster>,
   onChange: (options: MapOptions) => any,
+  history: RouterHistory,
 }
 
 // NOTE: there can be multiple points on the map on the same location...
@@ -48,7 +53,7 @@ const Map = ({
 }: Props) => {
   return (
     <div className="google-map-wrapper">
-      <GoogleMap center={center} zoom={zoom} onChange={onChange}>
+      <GoogleMap center={center} zoom={zoom} onChange={debounce(2000, onChange)}>
         {map(clusters, (e, i) => (
           <ClusterMarker
             key={i}
@@ -80,11 +85,27 @@ export default compose(
       zoomToLocation,
     }
   ),
+  withRouter,
   withDataProviders(({entitiesUrl}) => [entitiesProvider(entitiesUrl)]),
   withHandlers({
-    onChange: ({entitiesUrl, setMapOptions, refetch}) => (options) => {
-      setMapOptions(options)
-    },
+    onChange: (props) => (options) => {
+      console.log(props)
+      props.setMapOptions(options)
+      props.history.push(
+        `/verejne?lat=${options.center.lat}&lng=${options.center.lng}&zoom=${
+          options.zoom
+        }`
+      )
+    }
+  }),
+  lifecycle({
+    componentDidMount() {
+      const params = qs.parse(this.props.history.location.search.substr(1))
+      this.props.setMapOptions(
+        {center: [Number(params.lat), Number(params.lng)], zoom: Number(params.zoom)}
+      )
+      console.log(this.props)
+    }
   }),
   // display loading only before first fetch
   branch((props) => !props.entities, renderComponent(Loading))
