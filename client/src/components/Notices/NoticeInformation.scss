@@ -1,7 +1,7 @@
 @import '../variables.scss';
 
 .notice-information {
-  background-color: white;
+  background-color: $component-background;
   list-style: none;
   margin: 0;
   padding: 0 0 0 20px;
@@ -30,7 +30,7 @@
   }
 
   strong {
-    color: #6c8294; // TODO: Move to variables
+    color: $secondary;
     font-weight: normal;
   }
 }
