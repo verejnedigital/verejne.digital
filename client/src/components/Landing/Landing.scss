@@ -1,31 +1,38 @@
 @import "../variables.scss";
 
-.landing-page {
-  @media screen and (min-width: 576px) {
-    padding: 2rem;
-  }
+.landing {
+  min-height: calc(100vh - #{$navbar-height});
+  display: flex;
+  flex-direction: column;
+}
 
-  @media screen and (min-width: 768px) {
-    padding: 4rem;
-  }
+.landing-container {
+  margin-top: auto;
+  margin-bottom: auto;
+}
 
-  @media screen and (min-width: 992px) {
-    padding: 8rem;
-  }
+.landing-title {
+  font-family: Source Code Pro, monospace;
+  font-size: 1.1rem;
+  font-weight: normal;
+}
 
-  @media screen and (min-width: 1200px) {
-    padding: 10rem;
-  }
+.landing-lead {
+  font-family: Source Code Pro, monospace;
+  font-size: 1.3rem;
+}
 
-  .card-wrapper {
-    margin-bottom: 30px;
+.landing-cards {
+  padding: 1rem 0; // Fix, without it the row will crop shadows on cards.
+
+  > * {
+    margin-bottom: 1rem;
   }
 }
 
-footer.landing-footer {
+.landing-footer {
   background: $footer-background;
   height: 100px;
-  position: absolute;
   width: 100%;
   text-align: center;
 
@@ -39,11 +46,3 @@ footer.landing-footer {
   }
 }
 
-.landing-page .title {
-  font-family: Source Code Pro, monospace;
-  font-size: 1.1rem;
-}
-
-.landing-page .lead {
-  font-family: Source Code Pro, monospace;
-}

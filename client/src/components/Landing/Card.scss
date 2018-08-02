@@ -1,29 +1,40 @@
 @import "../variables.scss";
 
-.card-center {
-  box-shadow: 0 4px 12px 0 rgba(187, 198, 206, 0.5);
+.card {
+  box-shadow: 0 4px 12px 0 $shadow-color;
   text-align: center;
+  border-radius: 8px;
+  transition: box-shadow .25s;
   height: 100%;
-  width: 200px;
-  margin-bottom: 20px;
-  padding: 10px;
-  img {
-    @media screen and (max-width: 575px) {
-      width: 200px;
-      margin: auto;
-    }
 
-    @media screen and (min-width: 576px) {
-      width: 100%;
-      height: 40%;
-      margin: auto;
-    }
+  &:hover {
+    text-decoration: none;
+    box-shadow: 0 6px 18px 0 darken($shadow-color, 20%);
   }
 
   p {
     color: $link-color;
   }
 }
-.card-center .section-title {
+
+.card-image-wrap {
+  height: 100px;
+  padding-top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.card-image {
+  height: 50px;
+  width: auto;
+}
+
+.card-text {
+  margin-top: auto;
+}
+
+.card-title {
   font-family: Source Code Pro, monospace;
+  font-weight: normal;
 }
