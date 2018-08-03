@@ -1,6 +1,6 @@
 import React, {Fragment} from 'react'
 import './LegendSymbols.css'
-import {getWarning, getTitle} from './utilities'
+import {getWarning} from './utilities'
 import {formatSimilarCount, formatSimilarPercent} from './LegendSymbols'
 import CompanyDetails from '../shared/CompanyDetails'
 import {Link} from 'react-router-dom'
@@ -14,7 +14,7 @@ const _NoticeItem = ({item, toggledOn, toggle}) => {
 
   return (
     <Fragment>
-      <tr title={getTitle(item)} className="notice-item">
+      <tr className="notice-item">
         <td className="text-right notice-item-count">{formatSimilarCount(kandidati.length)}</td>
         <td className="notice-item-title">
           <Link title={item.title} className="nowrap-ellipsis" to={`/obstaravania/${item.id}`}>
@@ -22,7 +22,9 @@ const _NoticeItem = ({item, toggledOn, toggle}) => {
           </Link>{' '}
           {getWarning(item)}
         </td>
-        <td>{item.customer}</td>
+        <td>
+           <span title={item.customer}>{item.customer}</span>
+        </td>
         <td>
           <a className="notice-item-link" onClick={toggle}>
             {showCompanyDetail ? <span>[&minus;]</span> : '[+]'}{' '}

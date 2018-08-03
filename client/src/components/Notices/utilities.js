@@ -143,16 +143,3 @@ export function localeNumber(number: number) {
     ? number.toLocaleString('sk-SK', {minimumFractionDigits: 2, maximumFractionDigits: 2})
     : null
 }
-
-export function getTitle(item: Notice) {
-  let title = ''
-  const boundMultiplier = 2.576
-  if (item.price && item.price_num && item.price_num >= 5) {
-    const lower = expC ** (item.price_avg - boundMultiplier * item.price_stdev)
-    const upper = expC ** (item.price_avg + boundMultiplier * item.price_stdev)
-    title = `${item.price} (${lower}, ${expC ** item.price_avg}, ${upper}), ${item.price_avg}, ${
-      item.price_stdev
-    })`
-  }
-  return title
-}
