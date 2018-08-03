@@ -129,7 +129,7 @@ export const SLOVAKIA_COORDS = {
 export const clusterOptions = {
   minZoom: 0,
   maxZoom: 18,
-  radius: 60,
+  radius: 30,
 }
 export const FACEBOOK_LIKE_SRC =
   'https://www.facebook.com/plugins/like.php?href=https%3A%2F%2Fwww.facebook.com%2Fverejne.digital&width=111&layout=button_count&action=like&size=small&show_faces=true&share=false&height=46&appId='
