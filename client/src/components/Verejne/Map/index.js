@@ -81,9 +81,9 @@ export default compose(
   lifecycle({
     componentDidMount() {
       const params = qs.parse(this.props.history.location.search.substr(1))
-      params.lat = params.lat === undefined ? DEFAULT_MAP_CENTER.lat : params.lat
-      params.lng = params.lng === undefined ? DEFAULT_MAP_CENTER.lng : params.lng
-      params.zoom = params.zoom === undefined ? COUNTRY_ZOOM : params.zoom
+      params.lat = params.lat || DEFAULT_MAP_CENTER.lat
+      params.lng = params.lng || DEFAULT_MAP_CENTER.lng
+      params.zoom = params.zoom || COUNTRY_ZOOM
       this.props.setMapOptions({
         center: [Number(params.lat), Number(params.lng)],
         zoom: Number(params.zoom),
