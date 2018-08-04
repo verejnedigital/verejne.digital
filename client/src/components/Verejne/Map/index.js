@@ -20,7 +20,6 @@ import {addressesProvider} from '../../../dataProviders/publiclyDataProviders'
 import {withRouter} from 'react-router-dom'
 import qs from 'qs'
 import {DEFAULT_MAP_CENTER, COUNTRY_ZOOM} from '../../../constants'
-import debounce from 'lodash/debounce'
 
 import type {MapOptions, Entity} from '../../../state'
 import type {MapCluster} from '../../../selectors'
@@ -38,15 +37,10 @@ type Props = {
 }
 
 // NOTE: there can be multiple points on the map on the same location...
-const Map = ({
-  zoom,
-  center,
-  clusters,
-  onChange,
-}: Props) => {
+const Map = ({zoom, center, clusters, onChange}: Props) => {
   return (
     <div className="google-map-wrapper">
-      <GoogleMap center={center} zoom={zoom} onChange={debounce(onChange, 2000)}>
+      <GoogleMap center={center} zoom={zoom} onChange={onChange}>
         {map(clusters, (cluster, i) => (
           <ClusterMarker
             key={i}
@@ -74,16 +68,15 @@ export default compose(
       setMapOptions,
     }
   ),
-  withDataProviders(({addressesUrl}) =>
-    [addressesProvider(addressesUrl)]),
+  withDataProviders(({addressesUrl}) => [addressesProvider(addressesUrl)]),
   withRouter,
   withHandlers({
-      onChange: (props) => (options) =>  {
-        props.setMapOptions(options)
-        props.history.replace(
-          `?lat=${options.center.lat}&lng=${options.center.lng}&zoom=${options.zoom}`
-        )
-      }
+    onChange: (props) => (options) => {
+      props.setMapOptions(options)
+      props.history.replace(
+        `?lat=${options.center.lat.toFixed(6)}&lng=${options.center.lng.toFixed(6)}&zoom=${options.zoom}`
+      )
+    },
   }),
   lifecycle({
     componentDidMount() {
@@ -91,10 +84,11 @@ export default compose(
       params.lat = params.lat === undefined ? DEFAULT_MAP_CENTER.lat : params.lat
       params.lng = params.lng === undefined ? DEFAULT_MAP_CENTER.lng : params.lng
       params.zoom = params.zoom === undefined ? COUNTRY_ZOOM : params.zoom
-      this.props.setMapOptions(
-        {center: [Number(params.lat), Number(params.lng)], zoom: Number(params.zoom)}
-      )
-    }
+      this.props.setMapOptions({
+        center: [Number(params.lat), Number(params.lng)],
+        zoom: Number(params.zoom),
+      })
+    },
   }),
   // display loading only before first fetch
   branch((props) => !props.addresses, renderComponent(Loading))
