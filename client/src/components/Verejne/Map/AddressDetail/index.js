@@ -1,20 +1,20 @@
 // @flow
 import React from 'react'
 import {connect} from 'react-redux'
-import {compose} from 'recompose'
+import {withHandlers, compose} from 'recompose'
 import {withDataProviders} from 'data-provider'
 import {addressEntitiesProvider} from '../../../../dataProviders/publiclyDataProviders'
 import {addressEntitiesSelector} from '../../../../selectors'
+import {closeAddressDetail} from '../../../../actions/verejneActions'
 import {ListGroup, Button} from 'reactstrap'
 import {map} from 'lodash'
 import ListRow from './ListRow'
 import './AddressDetail.css'
 
-const AddressDetail = ({entities, addressId}) => (
+const AddressDetail = ({entities, addressId, onClick}) => (
   <div className="address-detail">
     <div className="address-detail-header">
-      {/* TODO: Fix missing action so it's possible to close this modal */}
-      <Button color="link">Close detail</Button>
+      <Button color="link" onClick={onClick}>Close detail</Button>
     </div>
     <ListGroup className="address-detail-list">
       {map(entities, (e) => <ListRow entity={e} key={e.id} />)}
@@ -25,6 +25,15 @@ const AddressDetail = ({entities, addressId}) => (
 export default compose(
   connect((state, {addressId}) => ({
     entities: addressEntitiesSelector(state),
-  })),
-  withDataProviders(({addressId}) => [addressEntitiesProvider(addressId)])
+  }),
+  {
+    closeAddressDetail,
+  },
+  ),
+  withDataProviders(({addressId}) => [addressEntitiesProvider(addressId)]),
+  withHandlers({
+    onClick: ({closeAddressDetail}) => (event) => {
+      closeAddressDetail()
+    }
+  })
 )(AddressDetail)
