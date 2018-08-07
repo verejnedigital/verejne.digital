@@ -4,7 +4,7 @@ import {Container, Col, Row} from 'reactstrap'
 
 import Search from './components/Search'
 import Statuses from './components/Statuses'
-import Results from './scenes/Results/Results'
+import Results from './components/Results'
 import './Connections.css'
 
 const Connections = () => (

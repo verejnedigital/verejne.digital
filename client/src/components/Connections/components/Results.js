@@ -2,11 +2,11 @@
 import React from 'react'
 import {compose} from 'redux'
 import {branch, renderComponent} from 'recompose'
-import ConnectionWrapper, {type ConnectionProps} from '../../dataWrappers/ConnectionWrapper'
-import EntityWrapper, {type EntityProps} from '../../dataWrappers/EntityWrapper'
-import EntitySearchWrapper, {type EntitySearchProps} from '../../dataWrappers/EntitySearchWrapper'
-import InfoLoader from './components/InfoLoader/InfoLoader'
-import BeforeResults from './components/BeforeResults/BeforeResults'
+import ConnectionWrapper, {type ConnectionProps} from '../dataWrappers/ConnectionWrapper'
+import EntityWrapper, {type EntityProps} from '../dataWrappers/EntityWrapper'
+import EntitySearchWrapper, {type EntitySearchProps} from '../dataWrappers/EntitySearchWrapper'
+import InfoLoader from './InfoLoader'
+import BeforeResults from './BeforeResults'
 
 type Props = EntitySearchProps & EntityProps & ConnectionProps
 

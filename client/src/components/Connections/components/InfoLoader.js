@@ -3,9 +3,9 @@ import React from 'react'
 import {compose} from 'redux'
 import {connect} from 'react-redux'
 import {withDataProviders} from 'data-provider'
-import {connectionEntityDetailProvider} from '../../../../../../dataProviders/connectionsDataProviders'
-import Info from '../../../../../shared/Info/Info'
-import type {State} from '../../../../../../state'
+import {connectionEntityDetailProvider} from './../../../dataProviders/connectionsDataProviders'
+import Info from './../../shared/Info/Info'
+import type {State} from './../../../state'
 import './InfoLoader.css'
 
 type OwnProps = {
