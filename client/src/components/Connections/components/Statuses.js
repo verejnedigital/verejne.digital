@@ -2,11 +2,11 @@
 import React from 'react'
 import {compose} from 'redux'
 import {branch, renderNothing, withState} from 'recompose'
-import EntitySearchWrapper from '../../dataWrappers/EntitySearchWrapper'
-import EntityWrapper from '../../dataWrappers/EntityWrapper'
-import ConnectionWrapper from '../../dataWrappers/ConnectionWrapper'
+import EntitySearchWrapper from '../dataWrappers/EntitySearchWrapper'
+import EntityWrapper from '../dataWrappers/EntityWrapper'
+import ConnectionWrapper from '../dataWrappers/ConnectionWrapper'
 import Alternative from './Alternative'
-import type {SearchedEntity} from '../../../../state/index'
+import type {SearchedEntity} from '../../../state'
 import './Statuses.css'
 
 const translateZaznam = (count: number, onClickMethod) => {
@@ -68,7 +68,7 @@ const Statuses = ({
 export default compose(
   EntitySearchWrapper,
   branch(
-    ({entitySearch1, entitySearch2}: Props) => entitySearch1 && entitySearch2,
+    ({entitySearch1, entitySearch2}: Props): boolean => !!entitySearch1 && !!entitySearch2,
     compose(
       EntityWrapper,
       ConnectionWrapper,

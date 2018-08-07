@@ -2,8 +2,8 @@
 import React from 'react'
 import {Container, Col, Row} from 'reactstrap'
 
-import Search from './components/Search/Search'
-import Statuses from './components/Statuses/Statuses'
+import Search from './components/Search'
+import Statuses from './components/Statuses'
 import Results from './scenes/Results/Results'
 import './Connections.css'
 

@@ -3,9 +3,9 @@ import React from 'react'
 import {compose} from 'redux'
 import {connect} from 'react-redux'
 import {withDataProviders} from 'data-provider'
-import type {State} from '../../../../state'
+import type {State} from '../../../state'
 
-import {connectionEntityDetailProvider} from '../../../../dataProviders/connectionsDataProviders'
+import {connectionEntityDetailProvider} from '../../../dataProviders/connectionsDataProviders'
 
 type Props = {
   name: string,
