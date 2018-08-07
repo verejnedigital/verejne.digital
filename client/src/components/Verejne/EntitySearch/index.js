@@ -1,5 +1,6 @@
 // @flow
 import React from 'react'
+import ReactDOM from 'react-dom'
 import {
   Button,
   Modal,
@@ -65,6 +66,7 @@ const EntitySearch = ({
               placeholder={FIND_ENTITY_TITLE}
               value={searchEntityValue}
               onChange={(e) => setSearchEntityValue(e.target.value)}
+              ref={input => input && ReactDOM.findDOMNode(input).focus()}
             />
             <FormText>
               {entitySearchFor && `${plurality(entitySearchEids.length)} pre "${entitySearchFor}".`}
