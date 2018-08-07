@@ -80,3 +80,9 @@ export const openAddressDetail = (addressId: number) => ({
   path: ['publicly', 'openedAddressDetail'],
   reducer: () => addressId,
 })
+
+export const closeAddressDetail = () => ({
+  type: 'Close address detail',
+  path: ['publicly', 'openedAddressDetail'],
+  reducer: () => null,
+})
