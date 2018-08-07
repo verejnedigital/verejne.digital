@@ -8,11 +8,14 @@ import {updateValue} from '../../../actions/sharedActions'
 import {Form, FormGroup, Label, Input, Button} from 'reactstrap'
 import type {ContextRouter} from 'react-router'
 
-import EntitySearchWrapper from '../dataWrappers/EntitySearchWrapper'
+import EntitySearchWrapper, {type EntitySearchProps} from '../dataWrappers/EntitySearchWrapper'
 import './Search.css'
 
-const checkEnter = (callback) => {
-  return (e) => {
+type EmptyHandler = () => void // TODO extract
+type EventHandler<T> = (e: T) => void
+
+const checkEnter = (callback: EmptyHandler): EventHandler<KeyboardEvent> => {
+  return (e: KeyboardEvent) => {
     if (e.key === 'Enter') {
       callback()
     }
@@ -24,8 +27,9 @@ type Props = {
   searchValue2: string,
   setSearchValue1: (entitySearch: string) => void,
   setSearchValue2: (entitySearch: string) => void,
-  searchConnection: (e: Event) => void,
-} & ContextRouter
+  searchConnection: EmptyHandler,
+} & EntitySearchProps &
+  ContextRouter
 
 const Search = ({
   searchValue1,

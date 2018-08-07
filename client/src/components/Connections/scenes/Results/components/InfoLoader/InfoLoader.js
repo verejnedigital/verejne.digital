@@ -5,18 +5,32 @@ import {connect} from 'react-redux'
 import {withDataProviders} from 'data-provider'
 import {connectionEntityDetailProvider} from '../../../../../../dataProviders/connectionsDataProviders'
 import Info from '../../../../../shared/Info/Info'
+import type {State} from '../../../../../../state'
 import './InfoLoader.css'
 
-const InfoLoader = ({data, hasConnectLine, recursive}) => (
+type OwnProps = {
+  eid: string,
+  hasConnectLine?: boolean,
+}
+type DispatchProps = {
+  data: any, // TODO: TBD, see status/index.js
+}
+type Props = OwnProps & DispatchProps
+
+const InfoLoader = ({data, hasConnectLine}: Props) => (
   <div className="info-loader">
     <Info data={data} />
-    {hasConnectLine && <div className="container"><div className="info-loader-connection-line" /></div>}
+    {hasConnectLine && (
+      <div className="container">
+        <div className="info-loader-connection-line" />
+      </div>
+    )}
   </div>
 )
 
 export default compose(
-  withDataProviders((props) => [connectionEntityDetailProvider(props.eid)]),
-  connect((state, props) => ({
+  withDataProviders((props: OwnProps) => [connectionEntityDetailProvider(props.eid)]),
+  connect((state: State, props: OwnProps) => ({
     data: state.connections.entityDetails[props.eid].data,
   }))
 )(InfoLoader)

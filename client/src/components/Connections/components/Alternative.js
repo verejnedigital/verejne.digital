@@ -7,15 +7,19 @@ import type {State} from '../../../state'
 
 import {connectionEntityDetailProvider} from '../../../dataProviders/connectionsDataProviders'
 
-type Props = {
+type OwnProps = {
+  eid: string,
+}
+type DispatchProps = {
   name: string,
 }
+type Props = OwnProps & DispatchProps
 
 const Alternative = ({name}: Props) => <span>{name}</span>
 
 export default compose(
-  withDataProviders((props) => [connectionEntityDetailProvider(props.eid)]),
-  connect((state: State, props) => ({
+  withDataProviders((props: OwnProps) => [connectionEntityDetailProvider(props.eid)]),
+  connect((state: State, props: OwnProps) => ({
     name: state.connections.entityDetails[props.eid].name,
   }))
 )(Alternative)
