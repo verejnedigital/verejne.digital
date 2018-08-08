@@ -1,6 +1,7 @@
 // @flow
 import React from 'react'
 import {compose} from 'redux'
+import {withHandlers} from 'recompose'
 import {connect} from 'react-redux'
 import {withRouter} from 'react-router-dom'
 import {withDataProviders} from 'data-provider'
@@ -12,10 +13,13 @@ import {
   paginationSelector,
   noticesLengthSelector,
   locationSearchSelector,
+  noticesSearchQuerySelector,
 } from '../../selectors'
 import {PAGINATION_CHUNK_SIZE, NOTICES_PAGINATION_SIZE} from '../../constants'
 import {modifyQuery} from '../../utils'
 import {groupBy, map} from 'lodash'
+
+import {updateValue} from '../../actions/sharedActions'
 
 import type {ContextRouter} from 'react-router-dom'
 import type {Dispatch} from '../../types/reduxTypes'
@@ -23,7 +27,13 @@ import type {Notice, State} from '../../state'
 
 import Legend from './Legend'
 import Bulletin from './Bulletin'
-import {Row, Col, Container} from 'reactstrap'
+import {
+  Input,
+  FormText,
+  Row,
+  Col,
+  Container
+} from 'reactstrap'
 import './NoticeList.css'
 
 export type NoticesOrdering = 'title' | 'date'
@@ -35,6 +45,7 @@ export type NoticeListProps = {
   currentPage: number,
   noticesLength: number,
   query: Object,
+  searchValue: string,
 } & ContextRouter
 
 const NoticeList = ({
@@ -46,10 +57,21 @@ const NoticeList = ({
   location,
   history,
   query,
+  searchValue,
+  updateSearchValue,
 }: NoticeListProps) => {
   let items = []
   if (paginatedNotices.length > 0) {
     items = groupBy(paginatedNotices, (item) => `${item.bulletin_number}/${item.bulletin_year}`)
+  }
+
+  const plurality = (count) => {
+    if (count === 1) {
+      return `Nájdený ${count} výsledok`
+    } else if (count > 1 && count < 5) {
+      return `Nájdené ${count} výsledky`
+    }
+    return `Nájdených ${count} výsledkov`
   }
 
   const pagination = (
@@ -96,16 +118,28 @@ const NoticeList = ({
           </Row>
         </Col>
         <Col xl={{size: 9, offset: 3}}>
-          {map(items, (bulletin, index) => (
-            <Bulletin
-              key={index}
-              items={bulletin}
-              number={bulletin[0].bulletin_number}
-              year={bulletin[0].bulletin_year}
-              date={bulletin[0].bulletin_date}
-            />
-          ))}
-          <div className="notice-list-pagination">{pagination}</div>
+          <Input
+            type="text"
+            className="form-control mt-2"
+            placeholder="Obstarávanie alebo Objednávateľ"
+            value={searchValue}
+            onChange={updateSearchValue}
+          />
+          <FormText>
+            {searchValue && `${plurality(noticesLength)} pre "${searchValue}".`}
+          </FormText>
+          {noticesLength >= 1 &&
+              map(items, (bulletin, index) => (
+                <Bulletin
+                key={index}
+                items={bulletin}
+                number={bulletin[0].bulletin_number}
+                year={bulletin[0].bulletin_year}
+                date={bulletin[0].bulletin_date}
+                />
+              ))
+          }
+          {noticesLength > 10 && <div className="notice-list-pagination">{pagination}</div>}
         </Col>
       </Row>
     </Container>
@@ -120,6 +154,15 @@ export default compose(
     noticesLength: noticesLengthSelector(state, props),
     newestBulletinDate: newestBulletinDateSelector(state, props),
     query: locationSearchSelector(state, props),
-  })),
+    searchValue: noticesSearchQuerySelector(state, props),
+  }),
+    {updateValue}
+  ),
+  withHandlers({
+    updateSearchValue: (props) => (e) => {
+      props.updateValue(['notices', 'searchQuery'], e.target.value)
+      if (props.history.location.search !== "") props.history.push({})
+    },
+  }),
   withRouter
 )(NoticeList)
