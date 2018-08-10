@@ -12,7 +12,7 @@ import {setMapOptions} from '../../../actions/verejneActions'
 import './GoogleMap.css'
 import {map} from 'lodash'
 import ClusterMarker from './ClusterMarker'
-import {branch, compose, renderComponent, withHandlers, withState} from 'recompose'
+import {branch, compose, renderComponent, withHandlers} from 'recompose'
 import Loading from '../../Loading'
 import GoogleMap from '../../GoogleMap'
 import {withDataProviders} from 'data-provider'
@@ -83,12 +83,11 @@ export default compose(
     addressesUrl: addressesUrlSelector(state),
   })),
   withDataProviders(({addressesUrl}) => [addressesProvider(addressesUrl)]),
-  withState('initialRender', 'setInitialRenderFlag', true),
   withHandlers({
     onChange: (props) => (options) => {
       props.setMapOptions(options)
       props.history.replace(
-        `?lat=${options.center.lat.toFixed(6)}&lng=${options.center.lng.toFixed(6)}&zoom=${
+        `?lat=${+options.center.lat.toFixed(6)}&lng=${+options.center.lng.toFixed(6)}&zoom=${
           options.zoom
         }`
       )
