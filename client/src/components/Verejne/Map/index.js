@@ -88,7 +88,7 @@ export default compose(
     onChange: (props) => (options) => {
       props.setMapOptions(options)
       props.history.replace(
-        `?lat=${options.center.lat.toFixed(6)}&lng=${options.center.lng.toFixed(6)}&zoom=${
+        `?lat=${+options.center.lat.toFixed(6)}&lng=${+options.center.lng.toFixed(6)}&zoom=${
           options.zoom
         }`
       )
