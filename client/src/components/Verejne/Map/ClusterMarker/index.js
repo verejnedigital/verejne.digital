@@ -1,15 +1,14 @@
 // @flow
 import React from 'react'
-import Marker from '../Marker'
-import {ENTITY_ZOOM} from '../../../../constants'
-import {sortBy, reverse} from 'lodash'
-import classnames from 'classnames'
-import {isPolitician, hasContractsWithState} from '../../entityHelpers'
-import {withHandlers} from 'recompose'
-import './ClusterMarker.css'
-
-import FaIconFilledCircle from 'react-icons/lib/fa/circle'
+import {connect} from 'react-redux'
+import {withHandlers, compose} from 'recompose'
 import FaIconCircle from 'react-icons/lib/fa/circle-o'
+
+import {ENTITY_ZOOM, ENTITY_CLOSE_ZOOM} from '../../../../constants'
+import {openAddressDetail, zoomToLocation} from '../../../../actions/verejneActions'
+import {openedAddressDetailSelector} from '../../../../selectors'
+import Marker from '../Marker'
+import './ClusterMarker.css'
 
 import type {Entity} from '../../../../state'
 import type {MapCluster} from '../../../../selectors'
@@ -19,55 +18,56 @@ type ClusterMarkerProps = {
   zoom: number,
   selectEntity: (entity: Entity) => Thunk,
   zoomToLocation: ({lat: number, lng: number}) => Thunk,
-  entity: MapCluster,
+  cluster: MapCluster,
   onClick: () => void,
+  openedAddressId: number,
 }
-
-const getClusterTooltip = (cluster: MapCluster): string => {
-  const sorted = reverse(sortBy(cluster.points, ['size']))
-  return `${sorted[0].name}...`
-}
-
-const getEntityMarker = (cluster: MapCluster): string => {
-  return classnames(
-    'company-marker',
-    isPolitician(cluster.points[0]) ? 'company-marker--politician' : 'company-marker--normal'
-  )
-}
-
-const getCompanyMarker = (cluster: MapCluster) =>
-  hasContractsWithState(cluster.points[0]) ? (
-    <FaIconFilledCircle size="18" />
-  ) : (
-    <FaIconCircle size="18" />
-  )
 
 const ClusterMarker = ({
-  entity,
+  cluster,
   zoom,
   selectEntity,
   zoomToLocation,
   onClick,
+  openedAddressId,
 }: ClusterMarkerProps) => {
-  const MarkerText = <span className="marker__text">{entity.numPoints}</span>
+  const MarkerText = <span className="marker__text">{cluster.numPoints}</span>
   let className, children
+  const selected = cluster.numPoints === 1 && cluster.points[0].address_id === openedAddressId
   if (zoom < ENTITY_ZOOM) {
-    className = entity.numPoints === 1 ? 'simple-marker' : 'cluster-marker'
-    children = entity.numPoints !== 1 && <span className="marker__text">{entity.numPoints}</span>
+    className = cluster.numPoints === 1 ? 'simple-marker' : 'cluster-marker'
+    children = cluster.numPoints !== 1 && <span className="marker__text">{cluster.numPoints}</span>
   } else {
-    className = entity.numPoints === 1 ? getEntityMarker(entity) : 'cluster-marker'
-    children = entity.numPoints === 1 ? getCompanyMarker(entity) : MarkerText
+    //TODO: fix classnames after we api provides enough information
+    className = cluster.numPoints === 1 ? 'company-marker' : 'cluster-marker'
+    children = cluster.numPoints === 1 ? <FaIconCircle size="18" /> : MarkerText
   }
+  if (selected) className += ' selected'
   return (
-    <Marker className={className} title={getClusterTooltip(entity)} onClick={onClick}>
+    <Marker className={className} onClick={onClick}>
       {children}
     </Marker>
   )
 }
 
-export default withHandlers({
-  onClick: ({entity, selectEntity, zoomToLocation}) => (event) => {
-    if (entity.numPoints === 1) selectEntity(entity.points[0])
-    else zoomToLocation({lat: entity.lat, lng: entity.lng})
-  },
-})(ClusterMarker)
+export default compose(
+  connect(
+    (state) => ({
+      openedAddressId: openedAddressDetailSelector(state),
+    }),
+    {
+      openAddressDetail,
+      zoomToLocation,
+    }
+  ),
+  withHandlers({
+    onClick: ({cluster, zoomToLocation, openAddressDetail}) => (event) => {
+      if (cluster.numPoints === 1) {
+        openAddressDetail(cluster.points[0].address_id)
+        zoomToLocation({lat: cluster.lat, lng: cluster.lng}, ENTITY_CLOSE_ZOOM)
+      } else {
+        zoomToLocation({lat: cluster.lat, lng: cluster.lng})
+      }
+    },
+  })
+)(ClusterMarker)

@@ -1,33 +1,16 @@
 @import "../../../../../variables.scss";
-.resultLoading {
-  background-color: $component-background;
-  width: 400px;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-  margin-bottom: 30px;
-  padding: 0 10px 10px;
 
-  border-radius: 4px;
-  border-width: 2px;
-  border-color: $border-color;
-  border-style: solid;
-  box-shadow: 0 4px 12px 0 $shadow-color;
+.info-loader:last-of-type > .container > .info-loader-connection-line {
+  display: none;
 }
 
-.connectLine {
+.info-loader > .container {
+  padding: 0;
+}
+
+.info-loader-connection-line {
   height: 30px;
   width: 8px;
-  padding-left: -50px;
   background-color: $border-color;
   margin-left: 40px;
-}
-
-.infoWrapper:last-of-type {
-  margin-bottom: 60px;
-}
-
-.infoWrapper:last-of-type > .connectLine {
-  height: 0;
-  width: 0;
 }

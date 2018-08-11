@@ -1,4 +1,6 @@
 // @flow
+import React from 'react'
+import Loading from './components/Loading'
 import {get, set} from 'lodash'
 import produce from 'immer'
 import {stringify, parse} from 'qs'
@@ -74,6 +76,26 @@ export const loadImageAsync = (url: string) => {
 
     image.src = url
   })
+}
+
+// run side-effects before rendering component
+export const withSideEffects = (sideEffectsFunc) => (WrappedComponent) => {
+  return class extends React.Component {
+    constructor(props) {
+      super(props)
+      this.state = {
+        done: false,
+      }
+    }
+
+    componentDidMount = () => {
+      Promise.all(sideEffectsFunc(this.props).map((val) => Promise.resolve(val))).then(() => {
+        this.setState({done: true})
+      })
+    }
+
+    render = () => (this.state.done ? <WrappedComponent {...this.props} /> : <Loading />)
+  }
 }
 
 // https://github.com/facebook/flow/issues/2221#issuecomment-372112477

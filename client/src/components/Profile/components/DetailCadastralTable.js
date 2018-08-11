@@ -11,7 +11,7 @@ class DetailCadastralTable extends Component {
   }
 
   render() {
-    const {cadastral, cadastralLength, currentPage, query, history} = this.props
+    const {cadastral, cadastralLength, currentPage, search, query, history} = this.props
 
     const pagination = (
       <div>
@@ -31,6 +31,21 @@ class DetailCadastralTable extends Component {
     return (
       <Fragment>
         {pagination}
+        <input
+          id="search"
+          className="form-control search-input"
+          type="text"
+          value={search}
+          onChange={(e) =>
+            history.push({
+              search: modifyQuery(query, {
+                cadastralSearch: e.target.value,
+                cadastralPage: 1,
+              }),
+            })
+          }
+          placeholder="Obec"
+        />
         <Table>
           <thead>
             <tr>

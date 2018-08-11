@@ -1,6 +1,6 @@
 @import "../../../variables.scss";
 
-.entitysearch input {
+.form-control { // TODO: Refactor
   border-radius: 2px;
   border-width: 2px;
   border-color: $border-color;
@@ -9,10 +9,7 @@
   box-shadow: 0 4px 12px 0 $shadow-color;
 }
 
-.searchForm {
-  width: 100%;
-}
-
-.searchForm .searchTitle {
+h2 { // TODO: Refactor
   font-family: "Source Code Pro", monospace;
+  font-weight: 200;
 }

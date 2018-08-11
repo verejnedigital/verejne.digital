@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import itertools
 import json
 import re
 import urllib
@@ -55,8 +56,8 @@ class Geocoder:
     def AddToCache(self, address, formatted_address, lat, lng):
         " Add one entry to the cache. The function takes care of generating proper keys"
         keys = set(
-                self.GetKeysForAddress(address) +
-                self.GetKeysForAddress(formatted_address)
+                list(self.GetKeysForAddress(address)) +
+                list(self.GetKeysForAddress(formatted_address))
         )
         # TODO: save memory by storing lat, lng, address only once and reusing
         # it between instances
@@ -102,13 +103,11 @@ class Geocoder:
         # Remove common suffixes not adding any value
         def ExpandKeysRemoveSuffixes(keys):
             drop_patterns = [
-                    'Slovenská republika',
-                    'Slovensko',
-                    'Slovakia',
-                    'Slovak Republic'
-            ]
-            drop_patterns = [
-                    self.NormalizeAddress(pattern) for pattern in drop_patterns
+                    'slovenská republika',
+                    'slovenska republika',
+                    'slovensko',
+                    'slovakia',
+                    'slovak republic'
             ]
             result = []
             for pattern in drop_patterns:
@@ -128,18 +127,36 @@ class Geocoder:
                     if (len(new_k) > 5): result.append(new_k)
             return result
 
-        normalized = [self.NormalizeAddress(address)]
-        normalized += ExpandKeysRemoveSlash(normalized)
-        normalized += ExpandKeysRemovePSC(normalized)
-        normalized += ExpandKeysRemoveSuffixes(normalized)
-        normalized += ExpandKeysRemoveCityPart(normalized)
-        return [self.NormalizeAddress(
-                    res.replace(" ", "").replace(",", "").replace("-", "")
-                ) for res in set(normalized)]
+        # Returns just [address] so can be used consistently with the above methods.
+        def Identity(keys):
+            return [self.NormalizeAddress(address)]
+
+        functions = [
+                Identity,
+                ExpandKeysRemoveSlash,
+                ExpandKeysRemovePSC,
+                ExpandKeysRemoveSuffixes,
+                ExpandKeysRemoveCityPart
+        ]
+        old = []
+        already = set()
+        # Apply the defined transformations one-by-one and yield any new
+        # key obtained
+        for f in functions:
+            new = f(old)
+            for res in new:
+                if res in already: continue
+                already.add(res)
+                old.append(res)
+                yield res.replace(" ", "").replace(",", "").replace("-", "")
 
 
     def GeocodingAPILookup(self, address):
         " Performs and returns the response from Google geocoding api."
+        # Don't try to do any geocoding at the moment as we have plenty of things
+        # in the cache. Now we're mostly geocoding things where geocoding failed
+        # before. Remove this once started handling failed geocoding requests properly.
+        return None
         self.api_lookups += 1
         if (self.api_lookups > 100000):
             # The API has daily limit of 100k queries, so save some round trips
@@ -193,7 +210,7 @@ class Geocoder:
         """
         #print "Geocoding", address
         def LookupKeysInCache(keys):
-            """ Check whether some key in in the cache. If so, return the
+            """ Check whether some key is in the cache. If so, return the
             Address.id for the matching lat, lng. If no entry in Address
             exists with the matching lat, lng, create one.
             """
@@ -216,12 +233,12 @@ class Geocoder:
                     return row_id["id"]
             return None
 
-        keys = self.GetKeysForAddress(address)
+        keys, keys_backup = itertools.tee(self.GetKeysForAddress(address))
         address_id = LookupKeysInCache(keys)
         if address_id is not None: return address_id
         # Did not find address id, do geocoding lookup, which add data into cache.
         self.UpdateGeocodingAPILookup(address)
-        return LookupKeysInCache(keys)
+        return LookupKeysInCache(keys_backup)
 
     
     def PrintStats(self):

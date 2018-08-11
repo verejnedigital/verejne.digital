@@ -7,6 +7,7 @@ import EntityWrapper from '../../dataWrappers/EntityWrapper'
 import ConnectionWrapper from '../../dataWrappers/ConnectionWrapper'
 import Alternative from './Alternative'
 import type {SearchedEntity} from '../../../../state/index'
+import './Statuses.css'
 
 type Props = {
   entity1: SearchedEntity,
@@ -41,29 +42,26 @@ class Statuses extends PureComponent<Props, State> {
     return (
       <div className="statuses">
         {connections.length > 0 ? (
-          <span id="search-status" className="searchStatus">
-            Dĺžka prepojenia: <strong>{connections.length - 1}</strong>.&nbsp;
-          </span>
+          <p id="search-status" className="searchStatus">
+            <span>Dĺžka prepojenia:</span> <strong>{connections.length - 1}</strong>
+          </p>
         ) : (
-          <span id="search-status" className="searchStatus">
-            Prepojenie neexistuje.&nbsp;
-          </span>
+          <p id="search-status" className="searchStatus">
+            Prepojenie neexistuje.
+          </p>
         )}
-
-        <span id="search-status1" className="searchStatus">
+        <p id="search-status1" className="searchStatus">
           {this.translateZaznam(entity1.eids.length, () =>
             this.setState({showAlternatives1: true})
-          )}{' '}
-          pre &quot;{entity1.id}&quot;.&nbsp;
-        </span>
-
+          )}
+          <span> pre</span> <strong>&quot;{entity1.id}&quot;</strong>
+        </p>
         <span id="search-status2" className="searchStatus">
           {this.translateZaznam(entity2.eids.length, () =>
             this.setState({showAlternatives2: true})
-          )}{' '}
-          pre &quot;{entity2.id}&quot;.&nbsp;
+          )}
+          <span> pre</span> <strong>&quot;{entity2.id}&quot;</strong>
         </span>
-
         {showAlternatives1 &&
           entity1.eids &&
           entity1.eids.map((eid) => <Alternative key={eid} eid={eid} />)}

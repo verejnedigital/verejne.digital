@@ -1,56 +1,48 @@
-@import '../variables.scss';
+@import "../variables.scss";
 
-.notices {
-  padding-top: $navbar-height;
-
-  .sidebar {
-    background-color: $component-background;
-    border-radius: 4px;
-    border-width: 2px;
-    border-color: $border-color;
-    border-style: solid;
-    box-shadow: 0 4px 12px 0 $shadow-color;
-    height: 500px;
-    margin-bottom: 20px;
+.notice-list {
+  hr {
+    border-top-color: $border-color;
+    width: 100%;
   }
+}
 
-  .fbfooter {
-    margin-top: auto;
-    padding-top: 20px;
-    padding-bottom: 20px;
-    padding-left: 0;
+.notice-list-sidebar {
+  background-color: $component-background;
+  position: fixed;
+  top: $navbar-height;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 0;
 
-    .fbIframe {
-      border: none;
-      overflow: hidden;
-    }
+  @media screen and (max-width: 1200px) {
+    position: relative;
+    top: 0;
+    margin-bottom: 2rem;
+    padding-top: 2rem;
   }
+}
 
-  .main {
-    background-color: $component-background;
-    border-radius: 4px;
-    border-width: 2px;
-    border-color: $border-color;
-    border-style: solid;
-    box-shadow: 0 4px 12px 0 $shadow-color;
-    margin-bottom: 20px;
+.notice-list-title {
+  font-weight: 200;
+  font-size: 2rem;
+}
 
-    .noticeInfo {
-      margin-top: 20px;
-      margin-bottom: 20px;
-    }
+.fbfooter {
+  margin-top: 10px;
+  padding: 0;
+  height: 50px;
 
-    .paginationWrapper {
-      margin: auto;
-      width: 20%;
-    }
-
-    tbody > tr > td {
-      border-top: 1px solid lightgray;
-    }
-
-    a {
-      font-weight: bold;
-    }
+  .fbIframe {
+    border: none;
+    overflow: hidden;
+    margin-top: 0;
   }
+}
+
+.notice-list-pagination {
+  display: flex;
+  justify-content: center;
 }

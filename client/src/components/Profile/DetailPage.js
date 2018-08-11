@@ -17,12 +17,13 @@ import {
   politicianDetailSelector,
   assetDeclarationsSortedYearsSelector,
   politicianCadastralSelector,
-  politicianCadastralLengthSelector,
+  filteredCadastralInfoLengthSelector,
   paginatedCadastralInfoSelector,
   cadastralPageSelector,
+  cadastralSearchSelector,
 } from '../../selectors/profileSelectors'
 import {locationSearchSelector} from '../../selectors'
-import {DEFAULT_MAP_CENTER} from '../../constants'
+import {DEFAULT_MAP_CENTER, COUNTRY_ZOOM} from '../../constants'
 
 import Cardboard from './components/Cardboard'
 import DetailCadastralTable from './components/DetailCadastralTable'
@@ -46,9 +47,10 @@ export type ProfileDetailPageProps = {
   paginatedCadastral: CadastralData,
   cadastralLength: number,
   cadastralPage: number,
+  cadastralSearch: string,
   query: Object,
   history: RouterHistory,
-  mapCenter: GeolocationPoint,
+  mapProps: {center: GeolocationPoint, zoom: number},
   goMap: (ProfileDetailPageProps) => Function, // TODO instead take map center from url
 } & ContextRouter
 
@@ -61,9 +63,10 @@ const DetailPage = ({
   paginatedCadastral,
   cadastralLength,
   cadastralPage,
+  cadastralSearch,
   query,
   history,
-  mapCenter,
+  mapProps,
   goMap,
 }: ProfileDetailPageProps) => (
   <Container>
@@ -123,15 +126,16 @@ const DetailPage = ({
           cadastral={paginatedCadastral}
           cadastralLength={cadastralLength}
           currentPage={cadastralPage}
+          search={cadastralSearch}
           query={query}
           history={history}
           onParcelShow={goMap}
         />
       </Col>
     </Row>
-    <Row key="map" className="profile-map">
+    <Row key="map" id="map" className="profile-map">
       <Col>
-        <MapContainer assets={cadastral} center={mapCenter} />
+        <MapContainer assets={cadastral} {...mapProps} />
       </Col>
     </Row>
   </Container>
@@ -150,14 +154,17 @@ export default compose(
     politician: politicianDetailSelector(state, props),
     cadastral: Object.values(politicianCadastralSelector(state, props)),
     paginatedCadastral: paginatedCadastralInfoSelector(state, props),
-    cadastralLength: politicianCadastralLengthSelector(state, props),
+    cadastralLength: filteredCadastralInfoLengthSelector(state, props),
     cadastralPage: cadastralPageSelector(state, props),
+    cadastralSearch: cadastralSearchSelector(state, props),
     query: locationSearchSelector(state, props),
   })),
-  withState('mapCenter', 'setMapCenter', DEFAULT_MAP_CENTER),
+  withState('mapProps', 'setMapProps', {center: DEFAULT_MAP_CENTER, zoom: COUNTRY_ZOOM}),
   withHandlers({
     goMap: (props) => (parcel) => {
-      props.setMapCenter({lat: parcel.lat, lng: parcel.lon})
+      props.setMapProps({center: {lat: parcel.lat, lng: parcel.lon}, zoom: 15})
+      const mapElement = document.getElementById('map')
+      if (mapElement) mapElement.scrollIntoView({behavior: 'smooth'})
     },
   })
 )(DetailPage)

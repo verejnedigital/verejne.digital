@@ -1,5 +1,6 @@
 // @flow
 import React from 'react'
+import {Container, Col, Row} from 'reactstrap'
 
 import Search from './components/Search/Search'
 import Statuses from './components/Statuses/Statuses'
@@ -7,19 +8,17 @@ import Results from './scenes/Results/Results'
 import './Connections.css'
 
 const Connections = () => (
-  <div className="container-fluid connections">
-    <div className="row">
-      <div className="sidebar col-sm-5 col-md-4 col-lg-3">
-        <div className="myAffix">
-          <Search />
-        </div>
-      </div>
-      <div className="col-sm-7 col-md-8 col-lg-9 main">
+  <Container fluid className="connections">
+    <Row>
+      <Col lg="3" md="4" className="connections-sidebar">
+        <Search />
         <Statuses />
+      </Col>
+      <Col lg={{size: 9, offset: 3}} md={{size: 8, offset: 4}} className="connections-main">
         <Results />
-      </div>
-    </div>
-  </div>
+      </Col>
+    </Row>
+  </Container>
 )
 
 export default Connections

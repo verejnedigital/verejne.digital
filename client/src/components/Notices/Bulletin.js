@@ -1,35 +1,35 @@
 import React from 'react'
 import './Legend.css'
 import './LegendSymbols.css'
-import {Row, Col} from 'reactstrap'
+import NoticeItem from './NoticeItem'
+import {Table} from 'reactstrap'
 import ExternalLink from '../shared/ExternalLink'
+import './Bulletin.css'
 
-const Bulletin = ({items, number, year, date}) => [
-  <Row key="title">
-    <Col className="noticeInfo text-center">
-      <span>
-        <strong>{date}</strong> Vestník číslo{' '}
+const Bulletin = ({items, number, year, date}) => (
+  <div className="bulletin">
+    <h3 className="bulletin-title">
+      <strong>{date}</strong>
+      <small>
+        <span>Vestník číslo </span>
         <ExternalLink url={`https://www.uvo.gov.sk/evestnik?poradie=${number}&year=${year}`}>
-          <strong>
-            {number}/{year}
-          </strong>
+          {number}/{year}
         </ExternalLink>
-        />
-      </span>
-    </Col>
-  </Row>,
-  <table key="notices-list" className="table table-striped table-responsive">
-    <thead>
-      <tr>
-        <td />
-        <td>Názov obstarávania</td>
-        <td>Objednávateľ</td>
-        <td>Kto by sa mal prihlásiť</td>
-        <td>Pod.</td>
-      </tr>
-    </thead>
-    <tbody>{items}</tbody>
-  </table>,
-]
+      </small>
+    </h3>
+    <Table responsive className="bulletin-table">
+      <thead>
+        <tr>
+          <th />
+          <th>Názov obstarávania</th>
+          <th>Objednávateľ</th>
+          <th>Kto by sa mal prihlásiť</th>
+          <th className="text-right">Pod.</th>
+        </tr>
+      </thead>
+      <tbody>{items.map((item) => <NoticeItem key={item.id} item={item} />)}</tbody>
+    </Table>
+  </div>
+)
 
 export default Bulletin

@@ -3,6 +3,7 @@ import React, {PureComponent} from 'react'
 import {withRouter} from 'react-router-dom'
 import {compose} from 'redux'
 import type {RouterHistory} from 'react-router'
+import {Form, FormGroup, Label, Input, Button} from 'reactstrap'
 
 import EntitySearchWrapper from '../../dataWrappers/EntitySearchWrapper'
 import './Search.css'
@@ -52,54 +53,37 @@ class Search extends PureComponent<Props, State> {
 
   render() {
     return (
-      <div className="searchForm">
-        <div className="searchLabel row">
-          <div className="col-sm-offset-2 col-sm-10 col-xs-offset-2 col-xs-10">
-            <h2 className="searchTitle">Vyhľadaj</h2>
-            najkratšie spojenie medzi dvojicou:
-          </div>
-        </div>
-        <div className="form-horizontal">
-          <div className="entitysearch form-group">
-            <label htmlFor="entitySearch1" className="col-sm-2 control-label col-xs-2">
-              01
-            </label>
-            <div className="col-sm-10  col-xs-10">
-              <input
-                id="entitySearch1"
-                className="form-control"
-                type="text"
-                value={this.state.entitySearch1}
-                onChange={this.updateInputValue}
-                onKeyPress={this.checkEnter}
-                placeholder="Zadaj prvú firmu / človeka"
-              />
-            </div>
-          </div>
-          <div className="entitysearch form-group">
-            <label htmlFor="entitySearch2" className="col-sm-2 control-label col-xs-2">
-              02
-            </label>
-            <div className="col-sm-10 col-xs-10">
-              <input
-                id="entitySearch2"
-                className="form-control"
-                type="text"
-                value={this.state.entitySearch2}
-                onChange={this.updateInputValue}
-                onKeyPress={this.checkEnter}
-                placeholder="Zadaj druhú firmu / človeka"
-              />
-            </div>
-          </div>
-          <div className="form-group">
-            <div className="col-sm-offset-2 col-sm-10 col-xs-offset-2 col-xs-10">
-              <button className="searchButton btn btn-primary" onClick={this.searchOnClick}>
-                Vyhľadať
-              </button>
-            </div>
-          </div>
-        </div>
+      <div>
+        <h2>Vyhľadaj</h2>
+        <p>najkratšie spojenie medzi dvojicou:</p>
+        <Form>
+          <FormGroup>
+            <Label for="entitySearch1">Prvá firma/osoba</Label>
+            <Input
+              id="entitySearch1"
+              type="text"
+              value={this.state.entitySearch1}
+              onChange={this.updateInputValue}
+              onKeyPress={this.checkEnter}
+              placeholder="Zadaj prvú firmu / človeka"
+            />
+          </FormGroup>
+          <FormGroup>
+            <label htmlFor="entitySearch2">Druhá firma/osoba</label>
+            <input
+              id="entitySearch2"
+              className="form-control"
+              type="text"
+              value={this.state.entitySearch2}
+              onChange={this.updateInputValue}
+              onKeyPress={this.checkEnter}
+              placeholder="Zadaj druhú firmu / človeka"
+            />
+          </FormGroup>
+          <Button color="primary" onClick={this.searchOnClick}>
+            Vyhľadať
+          </Button>
+        </Form>
       </div>
     )
   }

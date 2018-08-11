@@ -1,27 +1,36 @@
 // @flow
 import {zoomSelector, mapOptionsSelector} from '../selectors'
-import {ENTITY_CLOSE_ZOOM, ENTITY_ZOOM} from '../constants'
-import {isIndividual} from '../components/Verejne/entityHelpers'
-import {reverse, sortBy} from 'lodash'
+import {fromPairs} from 'lodash'
 
-import type {MapOptions, Entity, Center} from '../state'
-import type {Thunk} from '../types/reduxTypes'
+import type {MapOptions, Center, Address, NewEntityState, NewEntity, EntityDetails} from '../state'
+import type {GenericAction, Thunk} from '../types/reduxTypes'
+import type {ObjectMap} from '../types/commonTypes'
 
-export const setEntities = (entities: Array<Entity>) => ({
-  type: 'Set entities',
-  path: ['entities'],
+export const setAddresses = (addresses: Address[]) => ({
+  type: 'Set addresses',
+  path: ['addresses'],
+  payload: addresses,
+  reducer: () => fromPairs(addresses.map((address) => [address.address_id, address])),
+})
+
+export const setNewEntities = (
+  entities: NewEntity[],
+  addressId: number
+): GenericAction<ObjectMap<NewEntityState>, NewEntity[]> => ({
+  type: 'Set new entities',
+  path: ['newEntities'],
   payload: entities,
-  reducer: (state: ?Array<Entity>) => {
-    const mappedEntities = entities.map(({eid, lat, lng, name, size, ds}) => ({
-      eid,
-      lat,
-      lng,
-      name,
-      size,
-      ds,
-    }))
-    return reverse(sortBy(mappedEntities, ['size']))
-  },
+  reducer: (state) => ({
+    ...state,
+    ...fromPairs(entities.map((entity) => [entity.id, {addressId, ...entity}])),
+  }),
+})
+
+export const setNewEntityDetail = (entityDetails: EntityDetails, entityId: number) => ({
+  type: 'Set new entity detail',
+  path: ['entityDetails', entityId],
+  payload: entityDetails,
+  reducer: () => entityDetails,
 })
 
 export const setMapOptions = (mapOptions: MapOptions) => ({
@@ -39,25 +48,6 @@ export const zoomToLocation = (center: Center, withZoom?: number): Thunk => (
   const zoom = withZoom || zoomSelector(getState()) + 1
   dispatch(setMapOptions({...mapOptionsSelector(state), zoom, center: [center.lat, center.lng]}))
 }
-
-export const selectEntity = (entity: Entity): Thunk => (dispatch, getState, {logger}) => {
-  //logger.log(`Select entity ${entity.name}`)
-  const zoom = isIndividual(entity.eid) ? ENTITY_CLOSE_ZOOM : ENTITY_ZOOM
-  dispatch(
-    setMapOptions({
-      ...mapOptionsSelector(getState()),
-      zoom,
-      center: [parseFloat(entity.lat), parseFloat(entity.lng)],
-    })
-  )
-}
-
-export const setCurrentPage = (newPage: number) => ({
-  type: 'Set current page',
-  path: ['publicly', 'currentPage'],
-  payload: newPage,
-  reducer: () => newPage,
-})
 
 export const toggleModalOpen = () => ({
   type: 'Toggle modal open',
@@ -77,4 +67,22 @@ export const setEntitySearchEids = (entity: Array<{eid: string}>) => ({
   path: ['publicly', 'entitySearchEids'],
   payload: entity,
   reducer: (): Array<string> => entity.map((e) => e.eid),
+})
+
+export const toggleEntityInfo = (eid: number) => ({
+  type: 'Toggle entity info',
+  path: ['publicly', 'showInfo', eid],
+  reducer: (open: boolean) => !open,
+})
+
+export const openAddressDetail = (addressId: number) => ({
+  type: 'Open address detail',
+  path: ['publicly', 'openedAddressDetail'],
+  reducer: () => addressId,
+})
+
+export const closeAddressDetail = () => ({
+  type: 'Close address detail',
+  path: ['publicly', 'openedAddressDetail'],
+  reducer: () => null,
 })

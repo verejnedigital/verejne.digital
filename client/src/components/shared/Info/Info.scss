@@ -1,82 +1,65 @@
 @import '../../variables.scss';
 
-.result {
+.info {
   background-color: $component-background;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
   margin-bottom: 0;
-  padding: 0 10px 10px;
+  padding: 0;
 
   border-radius: 4px;
-  border-width: 2px;
-  border-color: $border-color;
-  border-style: solid;
+  border: 2px solid $border-color;
   box-shadow: 0 4px 12px 0 $shadow-color;
 }
 
-.entityName {
-  color: $marker-border;
-  font-size: 15px;
-  font-weight: 700;
-  line-height: 36px;
-  text-align: left;
+.info-header {
+  padding: .5rem .75rem .4rem .75rem;
+  border-bottom: 1px solid $border-color;
+  position: relative;
+
+  h3 {
+    color: $marker-border;
+    margin-bottom: 0;
+    font-size: 1rem;
+    line-height: 1rem;
+    display: inline-flex;
+    align-items: center;
+
+    &.politician {
+      color: $orange-color;
+    }
+  }
 }
 
-.infoDataTable {
-  margin-left: 10px;
-  table-layout: fixed;
-  margin-bottom: 0;
+.info-main {
+  padding: .5rem .75rem;
 }
 
-.result hr {
-  margin-top: 0;
-  margin-bottom: 5px;
+.info-close-button {
+  position: absolute;
+  right: .5rem;
+  top: .5rem;
+  cursor: pointer;
 }
 
-.relatedHidden {
-  float: right;
+.info-item {
+  padding: .5em 0;
 }
 
-.table > tbody > tr:first-child > td {
-  border: none;
+.info-item-label {
+  color: $secondary;
+  font-weight: normal;
+  margin-right: .5em;
 }
 
-.table > tbody > tr > td.sizeCell {
-  text-align: right;
-  padding-right: 10px;
-}
-
-td.sizeCell > strong {
-  padding-right: 5px;
-  color: $link-color;
-  font-weight: 700;
-}
-
-.sizeCellArrow {
-  color: $border-color;
-}
-
-.showHideBtn {
+.info-list {
+  list-style: none;
   padding: 0;
+  margin: 0;
 }
 
-.table > tbody > tr.noBorder > td {
-  border-top: 0;
-  padding-top: 0;
-}
+.info-badges {
+  font-size: 1rem;
 
-.dataTable .sponzorList {
-  margin-bottom: 0;
-}
-
-.politician {
-  color: $orange-color;
-}
-
-.infoCloseButton {
-  float: right;
-  color: lightgray;
-  display: inline-block;
-  margin: 10px 5px;
+  & > * + * {
+    margin-left: .5em;
+  }
 }

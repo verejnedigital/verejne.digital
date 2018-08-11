@@ -1,36 +1,40 @@
 import React, {Component} from 'react'
-import {NavLink} from 'react-router-dom'
-import {Collapse, Navbar, NavbarToggler, NavItem} from 'reactstrap'
+import {NavLink, withRouter} from 'react-router-dom'
+import {Collapse, Navbar, NavbarToggler, NavItem, Nav} from 'reactstrap'
+
+import FbIcon from 'react-icons/lib/fa/facebook-square'
 
 import './Navigation.css'
 
 class Navigation extends Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      isOpen: false,
+  state = {
+    isOpen: false,
+    pathname: this.props.location.pathname,
+  }
+
+  static getDerivedStateFromProps(props, state) {
+    // NOTE: We need to hide mobile menu when we navigate to other page.
+    if (props.location.pathname !== state.pathname) {
+      return {isOpen: false, pathname: props.location.pathname}
+    } else {
+      return {pathname: props.location.pathname}
     }
   }
 
   toggle = () => {
-    this.setState({
-      isOpen: !this.state.isOpen,
-    })
+    this.setState((state) => ({
+      isOpen: !state.isOpen,
+    }))
   }
 
   render = () => (
-    <Navbar className="navbar-expand-lg navbar-light bg-light fixed-top">
+    <Navbar light fixed="top" expand="lg">
       <NavLink to="/" className="navbar-brand">
-        verejne.digital
+        <b>verejne</b>.digital
       </NavLink>
       <NavbarToggler onClick={this.toggle} />
-      <Collapse
-        className="navbar-collapse"
-        id="navbarSupportedContent"
-        isOpen={this.state.isOpen}
-        navbar
-      >
-        <ul className="navbar-nav mr-auto">
+      <Collapse isOpen={this.state.isOpen} navbar>
+        <Nav navbar className="mr-auto">
           <NavItem>
             <NavLink to="/verejne" className="nav-link">
               Verejne data
@@ -51,30 +55,32 @@ class Navigation extends Component {
               Profil
             </NavLink>
           </NavItem>
-          <li className="nav-item">
-            <a
-              href="http://www.facebook.com/verejne.digital"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="nav-link"
-            >
-              kontaktuj nás na Facebooku
-            </a>
-          </li>
-          <li className="nav-item">
+        </Nav>
+        <Nav className="ml-auto" navbar>
+          <NavItem>
             <a
               href="https://medium.com/@verejne.digital/o-%C4%8Do-ide-verejne-digital-14a1c6dcbe09"
               target="_blank"
               rel="noopener noreferrer"
               className="nav-link"
             >
-              o projekte
+              O projekte
             </a>
-          </li>
-        </ul>
+          </NavItem>
+          <NavItem>
+            <a
+              href="http://www.facebook.com/verejne.digital"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="nav-link"
+            >
+              Kontakt <FbIcon />
+            </a>
+          </NavItem>
+        </Nav>
       </Collapse>
     </Navbar>
   )
 }
 
-export default Navigation
+export default withRouter(Navigation)

@@ -3,7 +3,6 @@ import {createSelector} from 'reselect'
 import qs from 'qs'
 import {
   PAGINATION_CHUNK_SIZE,
-  VEREJNE_MAX_PAGE_ITEMS,
   clusterOptions,
   ENTITY_ZOOM,
   SUB_CITY_ZOOM,
@@ -11,7 +10,7 @@ import {
   DEFAULT_ENTITIES_REQUEST_PARAMS,
 } from '../constants'
 import {values} from '../utils'
-import {sortBy, chunk, map} from 'lodash'
+import {sortBy, chunk, filter} from 'lodash'
 import supercluster from 'points-cluster'
 
 import type {ContextRouter} from 'react-router-dom'
@@ -19,7 +18,7 @@ import type {NoticesOrdering} from '../components/Notices/NoticeList'
 import type {NoticeDetailProps} from '../components/Notices/NoticeDetail'
 
 import type {CompanyDetailsProps} from '../components/shared/CompanyDetails'
-import type {State, MapOptions, Entity, MapBounds} from '../state'
+import type {State, MapOptions, Entity, MapBounds, EntityDetails} from '../state'
 
 export const paramsIdSelector = (_: State, props: ContextRouter): string =>
   props.match.params.id || '0'
@@ -88,25 +87,17 @@ export const mapOptionsSelector = (state: State): MapOptions => state.mapOptions
 export const centerSelector = (state: State): [number, number] => state.mapOptions.center
 export const zoomSelector = (state: State): number => state.mapOptions.zoom
 export const boundsSelector = (state: State): ?MapBounds => state.mapOptions.bounds
-export const entitiesSelector = (state: State): ?Array<Entity> => state.entities
-export const currentPageSelector = (state: State): number => state.publicly.currentPage
+export const addressesSelector = (state: State) => state.addresses
+export const showInfoSelector = (state: State) => state.publicly.showInfo
+export const openedAddressDetailSelector = (state: State) => state.publicly.openedAddressDetail
+export const newEntitiesSelector = (state: State) => state.newEntities
+export const entityDetailSelector = (state: State, entityId: string): EntityDetails =>
+  state.entityDetails[entityId]
 
-export const entitiesLengthSelector = createSelector(
-  entitiesSelector,
-  (entities) => (entities ? entities.length : 0)
-)
-
-export const pageCountSelector = createSelector(
-  entitiesSelector,
-  (entities) => (entities ? Math.ceil(entities.length / VEREJNE_MAX_PAGE_ITEMS) : 0)
-)
-
-export const currentPageEntities = createSelector(
-  entitiesSelector,
-  currentPageSelector,
-  (entities, currentPage) => {
-    return chunk(entities, VEREJNE_MAX_PAGE_ITEMS)[currentPage - 1]
-  }
+export const addressEntitiesSelector = createSelector(
+  newEntitiesSelector,
+  openedAddressDetailSelector,
+  (entities, addressId) => filter(entities, (entity) => entity.addressId === addressId)
 )
 
 type SuperCluster = {
@@ -136,28 +127,28 @@ type EntitiesRequestParams = {
   usedLevel: number,
 }
 
-const getClusters = (mapOptions: MapOptions, entities: ?Array<Entity>): Array<SuperCluster> => {
-  const clusters = supercluster(entities, clusterOptions)
+const getClusters = (mapOptions: MapOptions, addresses): Array<SuperCluster> => {
+  const clusters = supercluster(addresses, clusterOptions)
   return clusters(mapOptions)
 }
 
-const createClusters = (mapOptions: MapOptions, entities: ?Array<Entity>): Array<MapCluster> => {
-  if (!mapOptions.bounds || !entities) return []
-  return getClusters(mapOptions, entities).map(({wx, wy, numPoints, points}, i) => {
-    return {
+const createClusters = (mapOptions: MapOptions, addresses): Array<MapCluster> => {
+  if (!mapOptions.bounds || !addresses) return []
+  return getClusters(mapOptions, Object.values(addresses)).map(
+    ({wx, wy, numPoints, points}, i) => ({
       lat: wy,
       lng: wx,
       numPoints,
       id: `${i}`,
       points,
-    }
-  })
+    })
+  )
 }
 
 export const clustersSelector = createSelector(
   mapOptionsSelector,
-  entitiesSelector,
-  (mapOptions, entities) => map(createClusters(mapOptions, entities))
+  addressesSelector,
+  (mapOptions, addresses) => createClusters(mapOptions, addresses)
 )
 
 const requestParamsSelector = createSelector(
@@ -176,6 +167,15 @@ const requestParamsSelector = createSelector(
       }
     }
     return params
+  }
+)
+
+export const addressesUrlSelector = createSelector(
+  requestParamsSelector,
+  ({lat1, lng1, lat2, lng2, restrictToSlovakia, usedLevel}) => {
+    const requestPrefix = `${process.env.REACT_APP_API_URL || ''}`
+    const restrictToSlovakiaParam = restrictToSlovakia ? '&restrictToSlovakia=true' : ''
+    return `${requestPrefix}/api/v/getAddresses?level=${usedLevel}&lat1=${lat1}&lng1=${lng1}&lat2=${lat2}&lng2=${lng2}${restrictToSlovakiaParam}`
   }
 )
 

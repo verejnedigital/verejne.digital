@@ -1,6 +1,6 @@
 // @flow
 import {createSelector} from 'reselect'
-import {sortBy, last, mapValues, chunk} from 'lodash'
+import {sortBy, last, mapValues, chunk, filter} from 'lodash'
 import {normalizeName, parseQueryFromLocation} from '../utils'
 import {paramsIdSelector} from './index'
 import {CADASTRAL_PAGINATION_CHUNK_SIZE} from '../constants'
@@ -28,11 +28,6 @@ export const politicianCadastralSelector: Selector<
   paramsIdSelector,
   (state: State) => state.profile.cadastral,
   (id, data) => data[id]
-)
-
-export const politicianCadastralLengthSelector: Selector<State, *, number> = createSelector(
-  politicianCadastralSelector,
-  (cadastral) => Object.values(cadastral).length
 )
 
 export const politicianAssetDeclarationsSelector: Selector<
@@ -89,11 +84,33 @@ export const cadastralPageSelector: Selector<State, ContextRouter, number> = cre
   (page) => Number.parseInt(page, 10) || 1
 )
 
-export const paginatedCadastralInfoSelector = createSelector(
+export const cadastralSearchSelector: Selector<State, ContextRouter, string> = createSelector(
+  (_: State, props: ContextRouter): string =>
+    parseQueryFromLocation(props.location).cadastralSearch,
+  (search) => search || ''
+)
+
+export const filteredCadastralInfoSelector: Selector<State, ContextRouter, string> = createSelector(
   politicianCadastralSelector,
+  cadastralSearchSelector,
+  (cadastral, search) => {
+    // TODO: $FlowFixMe Cannot call `filter` because string is incompatible with number
+    return filter(cadastral, ({cadastralunitname}) =>
+      normalizeName(cadastralunitname).startsWith(search)
+    )
+  }
+)
+
+export const filteredCadastralInfoLengthSelector: Selector<State, *, number> = createSelector(
+  filteredCadastralInfoSelector,
+  (cadastral) => cadastral.length
+)
+
+export const paginatedCadastralInfoSelector = createSelector(
+  filteredCadastralInfoSelector,
   cadastralPageSelector,
   (cadastral, page) => {
-    return chunk(Object.values(cadastral), CADASTRAL_PAGINATION_CHUNK_SIZE)[page - 1]
+    return chunk(Object.values(cadastral), CADASTRAL_PAGINATION_CHUNK_SIZE)[page - 1] || []
   }
 )
 

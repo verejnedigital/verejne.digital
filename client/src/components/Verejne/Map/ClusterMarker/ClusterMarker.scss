@@ -12,6 +12,12 @@
     background-size: contain;
 }
 
+.selected {
+    background: white !important;
+    border-radius: 100%;
+    box-shadow: 0 4px 12px darken($shadow-color, 20%);
+}
+
 .company-marker {
     display: flex;
     svg {
@@ -20,10 +26,10 @@
         display: flex;
         margin: auto;
     }
-    &--normal svg {
+    svg {
         color: $marker-color !important;
     }
-    &--politician svg {
+    &.politician svg {
         color: $orange-color !important;
     }
 }

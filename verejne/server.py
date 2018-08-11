@@ -175,6 +175,30 @@ class GetInfos(MyServer):
 
 
 # Search entity by name
+class SearchEntityByName(MyServer):
+    def get(self):
+        try:
+            text = self.request.GET["name"].encode("utf8")
+        except:
+            self.abort(400, detail="Unable to parse input text")
+
+        # Find entities with the given name in the database.
+        # TODO: Add support for partial match and with unaccent. E.g. sth like:
+        #    SELECT DISTINCT id AS eid FROM entities
+        #    WHERE to_tsvector('unaccent', name) @@ plainto_tsquery('unaccent', %s)
+        #    LIMIT 20
+        q = """
+            SELECT DISTINCT id AS eid FROM entities
+            WHERE name=%s
+            LIMIT 20
+            """
+
+        q_data = [text]
+        response = webapp2.get_app().registry['db'].query(q, q_data)
+        self.returnJSON(response)
+
+
+# Search entity by name
 class SearchEntity(MyServer):
     def get(self):
         try:
@@ -276,6 +300,7 @@ app = webapp2.WSGIApplication([
     ('/getRelated', GetRelated),
     ('/ico', IcoRedirect),
     ('/searchEntity', SearchEntity),
+    ('/searchEntityByName', SearchEntityByName),
     ('/searchEntityByNameAndAddress', SearchEntityByNameAndAddress),
 ], debug=False)
 

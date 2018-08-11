@@ -34,7 +34,7 @@
     "whatwg-fetch": "^2.0.4"
   },
   "scripts": {
-    "start-js": "react-scripts start",
+    "start-js": "BROWSER=none react-scripts start",
     "start": "npm-run-all -p watch-css start-js",
     "build-js": "react-scripts build",
     "build": "npm-run-all build-css build-js",
@@ -42,8 +42,8 @@
     "eject": "react-scripts eject",
     "fix": "prettier-eslint --write \"src/**/*.{js,jsx,json,scss}\"",
     "build-css": "node-sass-chokidar src/ -o src/",
-    "watch-css": "npm run build-css && node-sass-chokidar src/ -o src/ --watch --recursive",
-    "flow": "python3 ./check_flow.py & flow & flow-coverage-report"
+    "watch-css": "node-sass-chokidar src/ -o src/ --watch --recursive",
+    "flow": "python3 ./check_flow.py & flow & flow-coverage-report || exit 0"
   },
   "devDependencies": {
     "babel-eslint": "^8.2.3",

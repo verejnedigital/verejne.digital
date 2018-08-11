@@ -1,0 +1,48 @@
+@import "../variables.scss";
+
+.landing {
+  min-height: calc(100vh - #{$navbar-height});
+  display: flex;
+  flex-direction: column;
+}
+
+.landing-container {
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+.landing-title {
+  font-family: Source Code Pro, monospace;
+  font-size: 1.1rem;
+  font-weight: normal;
+}
+
+.landing-lead {
+  font-family: Source Code Pro, monospace;
+  font-size: 1.3rem;
+}
+
+.landing-cards {
+  padding: 1rem 0; // Fix, without it the row will crop shadows on cards.
+
+  > * {
+    margin-bottom: 1rem;
+  }
+}
+
+.landing-footer {
+  background: $footer-background;
+  height: 100px;
+  width: 100%;
+  text-align: center;
+
+  .footer-text {
+    padding-top: 10px;
+  }
+
+  .list-inline-item-text ~ .list-inline-item-text {
+    border-left: 2px solid $card-border;
+    padding-left: 0.5rem;
+  }
+}
+

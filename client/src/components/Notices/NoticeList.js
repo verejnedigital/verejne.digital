@@ -23,7 +23,6 @@ import type {Notice, State} from '../../state'
 
 import Legend from './Legend'
 import Bulletin from './Bulletin'
-import NoticeItem from './NoticeItem'
 import {Row, Col, Container} from 'reactstrap'
 import './NoticeList.css'
 
@@ -54,56 +53,59 @@ const NoticeList = ({
   }
 
   const pagination = (
-    <div className="paginationWrapper">
-      <Pagination
-        itemClass="page-item"
-        linkClass="page-link"
-        hideNavigation
-        pageRangeDisplayed={NOTICES_PAGINATION_SIZE}
-        activePage={currentPage}
-        itemsCountPerPage={PAGINATION_CHUNK_SIZE}
-        totalItemsCount={noticesLength}
-        onChange={(page) => history.push({search: modifyQuery(query, {page})})}
-      />
-    </div>
+    <Pagination
+      itemClass="page-item"
+      linkClass="page-link"
+      className="paginationWrapper"
+      hideNavigation
+      pageRangeDisplayed={NOTICES_PAGINATION_SIZE}
+      activePage={currentPage}
+      itemsCountPerPage={PAGINATION_CHUNK_SIZE}
+      totalItemsCount={noticesLength}
+      onChange={(page) => history.push({search: modifyQuery(query, {page})})}
+    />
   )
   return (
-    <Container className="container-fluid notices">
-      <Row className="">
-        <Col tag="aside" className="sidebar col-xl-3 col-lg-12">
+    <Container fluid className="notice-list">
+      <Row>
+        <Col xl="3" tag="aside" className="notice-list-sidebar">
+          <Row>
+            <Col sm={{size: 10, offset: 2}}>
+              <h2 className="notice-list-title">Aktuálne obstarávania</h2>
+              <p>
+                Našim cieľom je identifikovať a osloviť najvhodnejších uchádzačov, ktorí by sa mali
+                zapojiť do verejných obstarávaní. <a href=".">Viac info</a>
+              </p>
+            </Col>
+          </Row>
+          <hr />
           <Legend />
-          <div className="fbfooter">
-            <Row>
-              <Col className="col-sm-offset-2 col-sm-10 col-xs-offset-2 col-xs-10">
+          <hr />
+          <Row>
+            <Col sm={{size: 10, offset: 2}}>
+              <div className="fbfooter">
                 <iframe
                   src="https://www.facebook.com/plugins/like.php?href=https%3A%2F%2Fwww.facebook.com%2Fverejne.digital&width=111&layout=button_count&action=like&size=small&show_faces=true&share=true&height=46&appId="
-                  width="151"
-                  height="23"
                   className="fbIframe"
                   title="facebook"
                   scrolling="no"
                   frameBorder="0"
                 />
-              </Col>
-            </Row>
-          </div>
-        </Col>
-        <Col tag="article" className="main col-xl-8 offset-xl-1 col-lg-12">
-          <Row>
-            <Col>
-              {pagination}
-              {map(items, (bulletin, key) => (
-                <Bulletin
-                  key={key}
-                  items={bulletin.map((item) => <NoticeItem key={item.id} item={item} />)}
-                  number={bulletin[0].bulletin_number}
-                  year={bulletin[0].bulletin_year}
-                  date={bulletin[0].bulletin_date}
-                />
-              ))}
-              {pagination}
+              </div>
             </Col>
           </Row>
+        </Col>
+        <Col xl={{size: 9, offset: 3}}>
+          {map(items, (bulletin, index) => (
+            <Bulletin
+              key={index}
+              items={bulletin}
+              number={bulletin[0].bulletin_number}
+              year={bulletin[0].bulletin_year}
+              date={bulletin[0].bulletin_date}
+            />
+          ))}
+          <div className="notice-list-pagination">{pagination}</div>
         </Col>
       </Row>
     </Container>

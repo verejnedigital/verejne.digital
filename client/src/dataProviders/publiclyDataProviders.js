@@ -1,29 +1,75 @@
 // @flow
 import React from 'react'
-import {setEntities, setEntitySearchEids} from '../actions/verejneActions'
+import {
+  setEntitySearchEids,
+  setAddresses,
+  setNewEntities,
+  setNewEntityDetail,
+} from '../actions/verejneActions'
 
-import type {Entity} from '../state'
+import type {Address, NewEntity, EntityDetails} from '../state'
 import type {Dispatch} from '../types/reduxTypes'
-
-const dispatchEntities = () => (ref: string, data: Array<Entity>, dispatch: Dispatch) =>
-  dispatch(setEntities(data))
 
 const dispatchSearchEids = () => (ref: string, data: Array<{eid: string}>, dispatch: Dispatch) =>
   dispatch(setEntitySearchEids(data))
 
-export const entitiesProvider = (entitiesUrl: string) => {
+const dispatchAddresses = () => (ref: string, data: Address[], dispatch: Dispatch) => {
+  dispatch(setAddresses(data))
+}
+
+const dispatchnewEntities = () => (ref: number[], data: NewEntity[], dispatch: Dispatch) => {
+  dispatch(setNewEntities(data, ref[1]))
+}
+
+const dispatchEntityDetails = () => (ref: number[], data: EntityDetails, dispatch: Dispatch) => {
+  dispatch(setNewEntityDetail(data[ref[1]], ref[1]))
+}
+
+export const addressesProvider = (addressesUrl: string) => {
   return {
-    ref: entitiesUrl,
+    ref: addressesUrl,
     getData: [
       fetch,
-      entitiesUrl,
+      addressesUrl,
       {
         accept: 'application/json',
       },
     ],
-    onData: [dispatchEntities],
+    onData: [dispatchAddresses],
     keepAliveFor: 60 * 60 * 1000,
     needed: false,
+  }
+}
+
+export const entityDetailProvider = (entityId: string) => {
+  const requestPrefix = `${process.env.REACT_APP_API_URL || ''}`
+  return {
+    ref: ['entityDetail', entityId],
+    getData: [
+      fetch,
+      `${requestPrefix}/api/v/getInfos?eids=${entityId}`,
+      {
+        accept: 'application/json',
+      },
+    ],
+    onData: [dispatchEntityDetails],
+    keepAliveFor: 60 * 60 * 1000,
+  }
+}
+
+export const addressEntitiesProvider = (addressId: string) => {
+  const requestPrefix = `${process.env.REACT_APP_API_URL || ''}`
+  return {
+    ref: ['addressEntities', addressId],
+    getData: [
+      fetch,
+      `${requestPrefix}/api/v/getEntitiesAtAddressId?address_id=${addressId}`,
+      {
+        accept: 'application/json',
+      },
+    ],
+    onData: [dispatchnewEntities],
+    keepAliveFor: 60 * 60 * 1000,
   }
 }
 

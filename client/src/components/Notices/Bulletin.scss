@@ -1,0 +1,37 @@
+@import "../variables.scss";
+
+.bulletin {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+.bulletin-title {
+  padding-left: 70px;
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+
+  small {
+    font-size: 0.9em;
+    margin-left: .5em;
+    span {
+      color: $secondary;
+    }
+  }
+}
+
+.bulletin-table {
+  margin-bottom: 0;
+}
+
+.bulletin-table tr th {
+  color: $secondary;
+  font-weight: normal;
+  border-top: 0;
+  border-bottom: 1px solid $border-color;
+  white-space: nowrap;
+  background-color: $component-background;
+}
+
+.bulletin-table td {
+  background-color: $component-background;
+}
