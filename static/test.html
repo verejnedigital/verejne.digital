@@ -116,7 +116,7 @@
         // production version test
         var status_id = test_name + "status";
         var response_id = test_name + "resp";
-        
+
         // cache-breaking version test
         var milliseconds = new Date().getTime();
         var url_fresh = url + ((url.indexOf('?') < 0) ? '?' : '&') + 'milliseconds=' + milliseconds;
@@ -148,10 +148,11 @@
         <th>URL</th>
         <th>Status (prod)</th>
         <th>Status (fresh)</th>
-    </tr>    
+    </tr>
     <script> test_case('verejne', 'getAddresses', 'https://verejne.digital/api/v/getAddresses?level=0&lat1=48.31306363500883&lng1=17.25013026130364&lat2=48.31751977226477&lng2=17.257496582309614'); </script>
     <script> test_case('verejne', 'getEntitiesAtAddressId', 'https://verejne.digital/api/v/getEntitiesAtAddressId?address_id=613'); </script>
     <script> test_case('verejne', 'getInfos', 'https://verejne.digital/api/v/getInfos?eids=103,82680,293097,389093,389094'); </script>
+    <script> test_case('prepojenia', 'a_shortest_path', 'https://verejne.digital/prepojenia/api/p/a_shortest_path?eid1=3264887&eid2=706143,1184394,1662599,1703776,2349437,3135421'); </script>
     <script> test_case('data', 'source_data_info','https://verejne.digital/api/d/source_data_info'); </script>
     <script> test_case('data', 'prod_data_info','https://verejne.digital/api/d/prod_data_info'); </script>
     <script> test_case('data', 'public_dumps_info','https://verejne.digital/api/d/public_dumps_info'); </script>
@@ -166,7 +167,7 @@
         <th>URL</th>
         <th>Status (prod)</th>
         <th>Status (fresh)</th>
-    </tr>    
+    </tr>
     <script> test_case('verejne', 'getInfo', 'https://verejne.digital/api/v/getInfo?eid=389093'); </script>
     <script> test_case('verejne', 'getInfo for company', 'https://verejne.digital/api/v/getInfo?eid=317924'); </script>
     <script> test_case('verejne', 'getEntities', 'https://verejne.digital/api/v/getEntities?level=0&lat1=48.31306363500883&lng1=17.25013026130364&lat2=48.31751977226477&lng2=17.257496582309614'); </script>
