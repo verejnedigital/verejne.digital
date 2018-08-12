@@ -71,6 +71,8 @@ def CreateAndSetProdSchema(db, prod_schema_name):
         """)
         
 
+# TODO(rasto): refactor this method: split it into individual parts, so that
+# the main ProcessSource is short without deep nesting
 def ProcessSource(db_prod, geocoder, entities, config, test_mode):
     """ Process one source table (read from db_source) using the config and
     performing normalization using the given geocoder and entities lookup.
