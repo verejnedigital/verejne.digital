@@ -211,7 +211,7 @@ class Geocoder:
         #print "Geocoding", address
         def LookupKeysInCache(keys):
             """ Check whether some key is in the cache. If so, return the
-            Address.id for the matching lat, lng. If no entry in Address
+            (Address.id, matching_key) for the matching lat, lng. If no entry in Address
             exists with the matching lat, lng, create one.
             """
             for key in keys:
@@ -229,16 +229,40 @@ class Geocoder:
                     row_id = cur_id.fetchone()
                     if (row_id is None):
                         return self.db_address_id.add_values(
-                                "Address", [lat, lng, formatted_address])
-                    return row_id["id"]
-            return None
+                                "Address", [lat, lng, formatted_address]), key
+                    return row_id["id"], key
+            return None, None
 
-        keys, keys_backup = itertools.tee(self.GetKeysForAddress(address))
-        address_id = LookupKeysInCache(keys)
-        if address_id is not None: return address_id
+        # Yields key_hint if address in the AddressHint table.
+        def KeyHint():
+            with self.db_address_cache.dict_cursor() as cur:
+                cur.execute(
+                        "SELECT key_hint FROM AddressHints WHERE address=%s",
+                        [address]
+                )
+                row = cur.fetchone()
+                if row is not None: return row["key_hint"]
+                return None
+
+
+        # See if there is a key_hint int the table. If so, add it as the firts key
+        # to try the cache lookup on.
+        key_hint = KeyHint()
+        key_iterator = self.GetKeysForAddress(address)
+        if key_hint is not None: key_iterator = itertools.chain([key_hint], key_iterator)
+        keys, keys_backup = itertools.tee(key_iterator)
+
+        address_id, matched_key = LookupKeysInCache(keys)
+        if address_id is not None:
+            # If the address does not have key_hint, add the matched key
+            # into the hints table:
+            if key_hint is None:
+                self.db_address_cache.add_values("AddressHints", [address, matched_key])
+            return address_id
         # Did not find address id, do geocoding lookup, which add data into cache.
         self.UpdateGeocodingAPILookup(address)
-        return LookupKeysInCache(keys_backup)
+        address_id, _ = LookupKeysInCache(keys_backup)
+        return address_id
 
     
     def PrintStats(self):
