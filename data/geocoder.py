@@ -58,9 +58,9 @@ class Geocoder:
                     "SELECT address, key_hint FROM AddressHints" +
                     suffix_for_testing
             )
-            print "Processign database output"
+            print "Processing database output"
             for row in cur:
-                self.cache_key_hints[row["address"]] = row["key_hint"]
+                self.cache_key_hints[row["address"].encode("utf8")] = row["key_hint"].encode("utf8")
             print "Finished reading key hints, size = ", len(self.cache_key_hints)
  
 
