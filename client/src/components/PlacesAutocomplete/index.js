@@ -44,12 +44,12 @@ const PlacesAutocomplete = (props: Props) => {
           />
           <div className="autocomplete__suggestions">
             {suggestions.map((suggestion, i) => {
-              const suggestionClassName = classnames(
+              const className = classnames(
                 'autocomplete__suggestions__item',
                 suggestion.active && 'autocomplete__suggestions__item--active'
               )
               return (
-                <div {...getSuggestionItemProps(suggestion, {suggestionClassName})} key={i}>
+                <div {...getSuggestionItemProps(suggestion, {className})} key={i}>
                   <strong>{suggestion.formattedSuggestion.mainText}</strong>{' '}
                   <small>{suggestion.formattedSuggestion.secondaryText}</small>
                 </div>
