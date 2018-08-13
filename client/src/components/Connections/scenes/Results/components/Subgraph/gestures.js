@@ -8,7 +8,7 @@ const MIN_STROKE_LENGTH = 20 // px
 let shakes = 0
 let lastX = null
 let lastY = null
-let firstXInDir = null
+let firstXInDir = 0
 let lastDir = null
 let gestureTimeout = null
 
@@ -21,18 +21,20 @@ export const resetGesture = () => {
 }
 
 export const checkShaking = ({x, y}: Point) => {
-  // TODO document this, too much magic
-  if (lastX == null || lastX === x) {
-    lastX = x
+  if (lastX == null || lastY == null || lastX === x) {
+    // start gesture
+    lastX = firstXInDir = x
     lastY = y
     gestureTimeout = setTimeout(() => {
-      resetGesture()
+      resetGesture() // gesture must be finished before GESTURE_INTERVAL ends
     }, GESTURE_INTERVAL)
     return false
   }
   const dir = x - lastX > 0 ? 1 : -1
   if (dir !== lastDir && Math.abs(y - lastY) < 2 * MIN_STROKE_LENGTH) {
+    // if x direction changed, while y movement is small enough:
     if (Math.abs(x - firstXInDir) > MIN_STROKE_LENGTH) {
+      // if x movement is big enough, consider this a 'shake' stroke
       shakes++
     }
     lastDir = dir
@@ -40,6 +42,7 @@ export const checkShaking = ({x, y}: Point) => {
   }
   lastX = x
   if (shakes >= STROKES_TO_SHAKE) {
+    // if enough shakes, consider this a shaking gesture
     resetGesture()
     return true
   }
