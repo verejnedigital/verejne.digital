@@ -16,17 +16,17 @@ import {
   addEdgeIfMissing,
 } from './utils'
 import {checkShaking, resetGesture} from './gestures'
-import Graph from 'react-graph-vis'
+import GraphCompnent from 'react-graph-vis'
 import {Col, Row} from 'reactstrap'
 
-import type {Company, SearchedEntity} from '../../../../../../state'
-import type {Id, Graph as GraphType, Node, Point} from './utils'
+import type {Company, SearchedEntity, GraphId, Graph, Node} from '../../../../../../state'
+import type {Point} from './utils'
 
 import './Subgraph.css'
 
 export type GraphEvent = {|
   nodes: Array<Node>,
-  edges: Array<Array<Id>>,
+  edges: Array<Array<GraphId>>,
   event: Event,
   pointer: {
     DOM: Point,
@@ -34,7 +34,7 @@ export type GraphEvent = {|
   },
   previousSelection: {
     nodes: Array<Node>,
-    edges: Array<Array<Id>>,
+    edges: Array<Array<GraphId>>,
   },
 |}
 
@@ -46,20 +46,27 @@ type EntityDetails = {
   },
 }
 
-export type SubgraphProps = {
-  subgraph: GraphType,
-  selectedEids: Array<number>,
+export type OwnProps = {
   connections: Array<number>,
-  entityDetails: EntityDetails,
   entity1: SearchedEntity,
   entity2: SearchedEntity,
-  updateValue: Function,
   preloadNodes: boolean,
+}
+
+type StateProps = {
+  subgraph: Graph,
+  selectedEids: Array<string>,
+  entityDetails: EntityDetails,
+  updateValue: Function,
+}
+type Handlers = {
   handleSelect: (e: GraphEvent) => void,
   handleDoubleClick: (e: GraphEvent) => void,
   handleDrag: (e: GraphEvent) => void,
   handleDragEnd: (e: GraphEvent) => void,
 }
+
+type Props = OwnProps & StateProps & Handlers
 
 const legendStyle = {
   width: '100%',
@@ -151,7 +158,7 @@ function bold(makeBold: boolean, str: string) {
 }
 
 function enhanceGraph( // TODO move to SubgraphWrapper?
-  {nodes: oldNodes, edges: oldEdges, nodeIds}: GraphType,
+  {nodes: oldNodes, edges: oldEdges, nodeIds}: Graph,
   entityDetails: EntityDetails,
   primaryConnEids: Array<number>
 ) {
@@ -211,12 +218,9 @@ const Subgraph = ({
   handleDoubleClick,
   handleDrag,
   handleDragEnd,
-}: SubgraphProps) => {
+}: Props) => {
   return (
     <div className="subgraph">
-      {/*loading ? (
-        'Prebieha načítavanie grafu ...'
-      ) :*/}
       {
         <div>
           <Row>
@@ -229,17 +233,17 @@ const Subgraph = ({
                   grafom)
                 </li>
                 <li>Dvojklik na vrchol: pridať do grafu nezobrazených susedov</li>
-                <li>Potrasenie vrcholom: odobrať vrchol z grafu</li>
+                <li>Potrasenie vrcholom: odobrať vrchol z grafu (aj jeho výlučných susedov)</li>
               </ul>
             </Col>
             <Col lg="7" md="12">
               <div className="graph graph-legend">
-                <Graph graph={legendGraph} options={graphOptions} style={legendStyle} />
+                <GraphCompnent graph={legendGraph} options={graphOptions} style={legendStyle} />
               </div>
             </Col>
           </Row>
           <div className="graph">
-            <Graph
+            <GraphCompnent
               graph={subgraph}
               options={graphOptions}
               events={{
@@ -264,12 +268,12 @@ export default compose(
   connect(() => ({enhanceGraph}), {updateValue}),
   SubgraphWrapper,
   withHandlers({
-    handleSelect: (props: SubgraphProps) => ({nodes}: GraphEvent) => {
+    handleSelect: (props: OwnProps & StateProps) => ({nodes}: GraphEvent) => {
       props.updateValue(['connections', 'selectedEids'], nodes.map(getNodeEid))
     },
-    handleDoubleClick: (props: SubgraphProps) => ({nodes, pointer}: GraphEvent) => {
+    handleDoubleClick: (props: OwnProps & StateProps) => ({nodes, pointer}: GraphEvent) => {
       const subgraphId = `${props.entity1.eids.join()}-${props.entity2.eids.join()}`
-      const clickedEid = getNodeEid(nodes) // TODO can double click more nodes?
+      const clickedEid = getNodeEid(nodes[0]) // TODO can double click more nodes?
 
       if (props.entityDetails[clickedEid]) {
         const related = props.entityDetails[clickedEid].data.related
@@ -279,7 +283,7 @@ export default compose(
         )
       }
     },
-    handleDrag: (props: SubgraphProps) => ({nodes, pointer}: GraphEvent) => {
+    handleDrag: (props: OwnProps & StateProps) => ({nodes, pointer}: GraphEvent) => {
       if (!nodes.length) {
         return
       }
@@ -292,7 +296,7 @@ export default compose(
         props.updateValue(['connections', 'selectedEids'], [])
       }
     },
-    handleDragEnd: (props) => () => {
+    handleDragEnd: (props: OwnProps & StateProps) => () => {
       resetGesture()
     },
   })

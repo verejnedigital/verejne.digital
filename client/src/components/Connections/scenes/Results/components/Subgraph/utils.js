@@ -1,20 +1,6 @@
 // @flow
+import type {GraphId, Node, Edge, Graph} from '../../../../../../state'
 
-export type Id = number | string
-
-export type Node = {
-  id: Id,
-  label: string,
-}
-export type Edge = {
-  from: Id,
-  to: Id,
-}
-export type Graph = {|
-  nodes: Array<Node>,
-  edges: Array<Edge>,
-  nodeIds: {[Id]: boolean},
-|}
 export type Point = {|
   x: number,
   y: number,
@@ -109,7 +95,7 @@ export const options = {
     chosen: {
       // selected nodes have shadow
       label: false,
-      node: (values: {}, id: Id, selected: boolean, hovering: boolean) => {
+      node: (values: {[string]: any}, id: GraphId, selected: boolean, hovering: boolean) => {
         values.shadow = true
       },
     },
@@ -127,18 +113,18 @@ export const options = {
   },
 }
 
-const randomInt = (min, max) => {
+const randomInt = (min: number, max: number) => {
   // returns int in (-max, -min) + (min, max)
   return (min + Math.floor(Math.random() * (max - min))) * (Math.random() < 0.5 ? -1 : 1)
 }
 
-// hack: extract eID (id) of a given node via converting it to a string
-export const getNodeEid = (node: Node) => {
-  return parseInt(node.toString(), 10)
+export const getNodeEid = (node: Node): GraphId => {
+  // hack: extract eID (id) of a given node via converting it to a string
+  return node.toString()
 }
 
-// add (undirected) edge a<->b to edges if not yet present
-export const addEdgeIfMissing = (a: Id, b: Id, edges: Array<Edge>) => {
+export const addEdgeIfMissing = (a: GraphId, b: GraphId, edges: Array<Edge>) => {
+  // Add (undirected) edge a<->b to edges if not yet present
   if (a === b) {
     return
   }
@@ -150,7 +136,7 @@ export const addEdgeIfMissing = (a: Id, b: Id, edges: Array<Edge>) => {
 
 export const addNeighbours = (
   graph: Graph,
-  sourceEid: number,
+  sourceEid: string,
   sourcePoint: Point,
   neighbours: Array<{eid: number, name: string}>
 ) => {
@@ -161,22 +147,28 @@ export const addNeighbours = (
   neighbours.forEach(({eid, name}) => {
     if (!nodeIds[eid]) {
       nodes.push({
-        id: eid,
+        id: eid.toString(),
         label: name,
         leaf: true,
+        // spawn new nodes around the source
+        // they would otherwise appear in the middle of the viewport which disturbs the layout
         x: sourcePoint.x + randomInt(20, 100),
         y: sourcePoint.y + randomInt(20, 100),
       })
-      nodeIds[eid] = true
+      nodeIds[eid.toString()] = true
     }
-    addEdgeIfMissing(eid, sourceEid, edges)
+    addEdgeIfMissing(eid.toString(), sourceEid, edges)
   })
   return {nodes, edges, nodeIds}
 }
 
-export const removeNodes = (graph: Graph, idsToRemove: Array<Id>, alsoRemoveOrphans: boolean) => {
+export const removeNodes = (
+  graph: Graph,
+  idsToRemove: Array<GraphId>,
+  alsoRemoveOrphans: boolean
+) => {
   // Update graph by removing nodes
-  const possibleOrphans: {[Id]: boolean} = {} // siblings of removed nodes
+  const possibleOrphans: {[GraphId]: boolean} = {} // siblings of removed nodes
   const edges = graph.edges.filter(({from, to}) => {
     if (idsToRemove.indexOf(from) !== -1) {
       possibleOrphans[to] = true
@@ -199,7 +191,7 @@ export const removeNodes = (graph: Graph, idsToRemove: Array<Id>, alsoRemoveOrph
       }
     })
     // duplicates are not a problem
-    idsToRemove = idsToRemove.concat(Object.keys(possibleOrphans).map((id) => parseInt(id, 10)))
+    idsToRemove = idsToRemove.concat(Object.keys(possibleOrphans))
   }
 
   const nodes = graph.nodes.filter(({id}) => idsToRemove.indexOf(id) === -1)

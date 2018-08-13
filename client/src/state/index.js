@@ -158,10 +158,38 @@ export type SearchedEntity = {
   eids: number[],
   id: string,
 }
+export type GraphId = string
+
+export type Node = {
+  id: GraphId,
+  label: string,
+  x?: number,
+  y?: number,
+  distA?: number,
+  distB?: number,
+  leaf?: boolean,
+}
+export type Edge = {
+  from: GraphId,
+  to: GraphId,
+}
+export type Graph = {|
+  nodes: Array<Node>,
+  edges: Array<Edge>,
+  nodeIds: {[GraphId]: boolean},
+|}
 
 export type Connections = {
-  detail: {[string]: {ids: number[]}},
   entities: {[string]: CompanyEntity},
+  detail: {[string]: {ids: string[]}},
+  entityDetails: {
+    [string]: {
+      name: string,
+      data: any, //TODO: TBD
+    },
+  },
+  subgraph: {[string]: {data: Graph}},
+  selectedEids: Array<string>,
 }
 
 export type Address = {
