@@ -8,14 +8,14 @@ import Info from './../../shared/Info/Info'
 import type {State} from './../../../state'
 import './InfoLoader.css'
 
-type OwnProps = {
+export type OwnProps = {
   eid: string,
   hasConnectLine?: boolean,
 }
-type DispatchProps = {
+type StateProps = {
   data: any, // TODO: TBD, see status/index.js
 }
-type Props = OwnProps & DispatchProps
+type Props = OwnProps & StateProps
 
 const InfoLoader = ({data, hasConnectLine}: Props) => (
   <div className="info-loader">

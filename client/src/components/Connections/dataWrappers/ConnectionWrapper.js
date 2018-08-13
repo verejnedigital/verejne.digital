@@ -10,30 +10,27 @@ import {receiveData} from './../../../actions/sharedActions'
 import type {ComponentType} from 'react'
 import type {EntityProps} from './EntityWrapper'
 import type {State} from '../../../state'
-import type {Dispatch} from '../../../types/reduxTypes'
 
-export type DispatchProps = {
-  // TODO dispatch should be in all the props, create Props base?
-  dispatch: Dispatch,
-}
 export type ConnectionProps = {
   connections: Array<string>,
 }
+type DispatchProps = {
+  receiveData: typeof receiveData,
+}
 
 const EmptyEidsWrapper = (WrappedComponent: ComponentType<*>) => {
-  return (props: DispatchProps & EntityProps) => {
+  const wrapped = ({receiveData, ...props}: EntityProps & DispatchProps) => {
     const eid1 = props.entity1.eids.join()
     const eid2 = props.entity2.eids.join()
-    // dispatch empty connection ids list
-    props.dispatch(
-      receiveData(
-        ['connections', 'detail'],
-        {id: `${eid1}-${eid2}`, ids: []},
-        `connection-${eid1}-${eid2}`
-      )
+    // simulate receiving empty connection ids list
+    receiveData(
+      ['connections', 'detail'],
+      {id: `${eid1}-${eid2}`, ids: []},
+      `connection-${eid1}-${eid2}`
     )
     return <WrappedComponent {...props} />
   }
+  return connect(null, {receiveData})(wrapped)
 }
 
 const ConnectionWrapper = (WrappedComponent: ComponentType<*>) => {
