@@ -6,7 +6,7 @@ import {
   setNewEntities,
   setNewEntityDetail,
 } from '../actions/verejneActions'
-
+import {EntityDetailLoading} from '../components/Loading/'
 import type {Address, NewEntity, EntityDetails} from '../state'
 import type {Dispatch} from '../types/reduxTypes'
 
@@ -54,6 +54,7 @@ export const entityDetailProvider = (entityId: string) => {
     ],
     onData: [dispatchEntityDetails],
     keepAliveFor: 60 * 60 * 1000,
+    loadingComponent: <EntityDetailLoading />,
   }
 }
 
