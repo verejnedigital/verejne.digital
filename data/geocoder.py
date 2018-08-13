@@ -11,6 +11,7 @@ class Geocoder:
     db_address_cache = None
     db_address_id = None
     cache = {}
+    cache_key_hints = {}
     cache_miss = 0
     cache_hit = 0
     api_lookups = 0
@@ -34,24 +35,34 @@ class Geocoder:
         # Match Bratislava/Kosice - xxx
         self.city_part = re.compile("(bratislava|košice) ?-(.*)")
 
+        suffix_for_testing = ""
+        if self.test_mode: suffix_for_testing = " LIMIT 200000"
         with db_address_cache.dict_cursor() as cur:
             print "Reading cache of geocoded addresses"
-            suffix_for_testing = ""
-            if self.test_mode:
-                suffix_for_testing = " LIMIT 200000"
             cur.execute(
                     "SELECT address, formatted_address, lat, lng FROM Cache " +
                     suffix_for_testing,
             )
-            print "Geocoder cache ready"
+            print "Processing database output"
             for row in cur:
                 self.AddToCache(
                         row["address"].encode("utf8"),
                         row["formatted_address"].encode("utf8"), 
                         row["lat"], row["lng"]
                 )
-            print "Finished pre-processing geocoder input cache"
+            print "Finished pre-processing geocoder input cache, size = ", len(self.cache)
 
+        with self.db_address_cache.dict_cursor() as cur:
+            print "KeyHints cache"
+            cur.execute(
+                    "SELECT address, key_hint FROM AddressHints" +
+                    suffix_for_testing
+            )
+            print "Processign database output"
+            for row in cur:
+                self.cache_key_hints[row["address"]] = row["key_hint"]
+            print "Finished reading key hints, size = ", len(self.cache_key_hints)
+ 
 
     def AddToCache(self, address, formatted_address, lat, lng):
         " Add one entry to the cache. The function takes care of generating proper keys"
@@ -233,21 +244,9 @@ class Geocoder:
                     return row_id["id"], key
             return None, None
 
-        # Yields key_hint if address in the AddressHint table.
-        def KeyHint():
-            with self.db_address_cache.dict_cursor() as cur:
-                cur.execute(
-                        "SELECT key_hint FROM AddressHints WHERE address=%s",
-                        [address]
-                )
-                row = cur.fetchone()
-                if row is not None: return row["key_hint"]
-                return None
-
-
         # See if there is a key_hint int the table. If so, add it as the firts key
         # to try the cache lookup on.
-        key_hint = KeyHint()
+        key_hint = self.cache_key_hints.get(address, None)
         key_iterator = self.GetKeysForAddress(address)
         if key_hint is not None: key_iterator = itertools.chain([key_hint], key_iterator)
         keys, keys_backup = itertools.tee(key_iterator)
@@ -258,6 +257,7 @@ class Geocoder:
             # into the hints table:
             if key_hint is None:
                 self.db_address_cache.add_values("AddressHints", [address, matched_key])
+                self.cache_key_hints[address] = matched_key
             return address_id
         # Did not find address id, do geocoding lookup, which add data into cache.
         self.UpdateGeocodingAPILookup(address)
