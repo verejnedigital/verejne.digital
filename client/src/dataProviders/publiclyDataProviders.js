@@ -6,7 +6,7 @@ import {
   setNewEntities,
   setNewEntityDetail,
 } from '../actions/verejneActions'
-import {EntityDetailLoading} from '../components/Loading/'
+import {EntityDetailLoading, ModalLoading} from '../components/Loading/'
 import type {Address, NewEntity, EntityDetails} from '../state'
 import type {Dispatch} from '../types/reduxTypes'
 
@@ -85,6 +85,7 @@ export const entitiesSearchResultEidsProvider = (searchFor: string) => {
       },
     ],
     onData: [dispatchSearchEids],
+    loadingComponent: <ModalLoading />,
   }
 }
 

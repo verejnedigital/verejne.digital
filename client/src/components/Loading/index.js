@@ -22,6 +22,11 @@ export const EntityDetailLoading = () => (
     </div>
   </ListGroupItem>
 )
+export const ModalLoading = () => (
+  <div className="loading-modal">
+    <LoadingComponent type="tail_spin" width={250} height={250} fill="#0062db" />
+  </div>
+)
 export default defaultProps({
   width: 250,
   height: 250,
