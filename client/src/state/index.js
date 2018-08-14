@@ -228,6 +228,7 @@ export type State = {|
   +publicly: {|
     +currentPage: number,
     +autocompleteValue: string,
+    +entitySearchValue: string,
     +entitySearchModalOpen: boolean,
     +entitySearchFor: string,
     +entitySearchEids: ?Array<string>,
@@ -258,6 +259,7 @@ const getInitialState = (): State => ({
   publicly: {
     currentPage: 1,
     autocompleteValue: '',
+    entitySearchValue: '',
     entitySearchModalOpen: false,
     entitySearchFor: '',
     entitySearchEids: undefined,

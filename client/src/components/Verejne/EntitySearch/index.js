@@ -16,11 +16,12 @@ import {connect} from 'react-redux'
 import {compose, withState, withHandlers} from 'recompose'
 import EntitySearchResult from '../EntitySearchResult'
 import {
+  entitySearchValueSelector,
   entitySearchModalOpenSelector,
   entitySearchEidsSelector,
   entitySearchForSelector,
 } from '../../../selectors'
-import {toggleModalOpen, setEntitySearchFor} from '../../../actions/verejneActions'
+import {setEntitySearchValue, toggleModalOpen, setEntitySearchFor} from '../../../actions/verejneActions'
 import {FIND_ENTITY_TITLE} from '../../../constants'
 import './EntitySearch.css'
 
@@ -28,8 +29,8 @@ const EntitySearch = ({
   entitySearchModalOpen,
   toggleModalOpen,
   className,
-  searchEntityValue,
-  setSearchEntityValue,
+  entitySearchValue,
+  setEntitySearchValue,
   findEntities,
   entitySearchEids,
   entitySearchFor,
@@ -64,8 +65,8 @@ const EntitySearch = ({
               type="text"
               className="form-control"
               placeholder={FIND_ENTITY_TITLE}
-              value={searchEntityValue}
-              onChange={(e) => setSearchEntityValue(e.target.value)}
+              value={entitySearchValue}
+              onChange={(e) => setEntitySearchValue(e.target.value)}
               ref={input => input && ReactDOM.findDOMNode(input).focus()}
             />
             <FormText>
@@ -90,15 +91,16 @@ const EntitySearch = ({
 export default compose(
   connect(
     (state) => ({
+      entitySearchValue: entitySearchValueSelector(state),
       entitySearchModalOpen: entitySearchModalOpenSelector(state),
       entitySearchEids: entitySearchEidsSelector(state),
       entitySearchFor: entitySearchForSelector(state),
     }),
-    {toggleModalOpen, setEntitySearchFor}
+    {setEntitySearchValue, toggleModalOpen, setEntitySearchFor}
   ),
-  withState('searchEntityValue', 'setSearchEntityValue', ''),
+  withState(''),
   withHandlers({
-    findEntities: ({setEntitySearchFor, searchEntityValue}) => () =>
-      setEntitySearchFor(searchEntityValue),
+    findEntities: ({setEntitySearchFor, entitySearchValue}) => () =>
+      setEntitySearchFor(entitySearchValue),
   })
 )(EntitySearch)
