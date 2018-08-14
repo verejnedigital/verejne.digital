@@ -22,7 +22,7 @@ import qs from 'qs'
 import {DEFAULT_MAP_CENTER, COUNTRY_ZOOM} from '../../../constants'
 import {withSideEffects} from '../../../utils'
 
-import type {MapOptions, Entity} from '../../../state'
+import type {MapOptions, CompanyEntity} from '../../../state'
 import type {MapCluster} from '../../../selectors'
 import type {GenericAction} from '../../../types/reduxTypes'
 import type {RouterHistory} from 'react-router'
@@ -30,7 +30,7 @@ import type {RouterHistory} from 'react-router'
 type Props = {
   zoom: number,
   center: [number, number],
-  entities: Array<Entity>,
+  entities: Array<CompanyEntity>,
   setMapOptions: (mapOptions: MapOptions) => GenericAction<MapOptions, MapOptions>,
   clusters: Array<MapCluster>,
   onChange: (options: MapOptions) => any,

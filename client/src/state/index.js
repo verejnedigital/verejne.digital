@@ -84,7 +84,7 @@ export type AssetDeclaration = {|
   unmovable_assets: string,
 |}
 
-export type Entity = {
+export type CompanyEntity = {
   eid: string,
   lng: string,
   lat: string,
@@ -122,7 +122,7 @@ export type Company = {
   related: Array<any>,
   auditori_data: Array<any>,
   audiovizfond_data: Array<any>,
-  entities: Array<Entity>,
+  entities: Array<CompanyEntity>,
   firmy_data: Array<any>,
   total_contracts: number,
   advokati_data: Array<any>,
@@ -134,8 +134,6 @@ export type Company = {
 }
 
 export type NoticeMap = {[string]: Notice}
-
-export type CompanyMap = {[string]: Company}
 
 export type GeolocationPoint = {
   lat: number,
@@ -163,7 +161,7 @@ export type SearchedEntity = {
 }
 
 export type Connections = {
-  entities: {[string]: Entity},
+  entities: {[string]: CompanyEntity},
   detail: {[string]: {ids: string[]}},
   entityDetails: {
     [string]: {
@@ -243,7 +241,7 @@ export type RelatedEntity = {
   address: string,
 }
 
-export type EntityDetails = {
+export type NewEntityDetails = {
   eid: number,
   name: string,
   lat: number,
@@ -281,7 +279,7 @@ export type EntityDetails = {
 // must be enclosed in '|' so no properties can be added to state at runtime
 export type State = {|
   +count: number,
-  +companies: CompanyMap,
+  +companies: ObjectMap<Company>,
   +notices: {|
     +list: ObjectMap<Notice>,
     +details: ObjectMap<Notice>,
@@ -307,8 +305,8 @@ export type State = {|
   +mapOptions: MapOptions,
   +connections: Connections,
   +addresses: ObjectMap<Address>,
-  +newEntities: ObjectMap<NewEntityState>,
-  +entityDetails: ObjectMap<EntityDetails>,
+  +entities: ObjectMap<NewEntityState>,
+  +entityDetails: ObjectMap<NewEntityDetails>,
 |}
 
 const getInitialState = (): State => ({
@@ -341,14 +339,14 @@ const getInitialState = (): State => ({
     zoom: 8,
     bounds: undefined,
   },
-  newEntities: {},
-  entityDetails: {},
-  addresses: {},
   connections: {
     entities: {},
     detail: {},
     entityDetails: {},
   },
+  addresses: {},
+  entities: {},
+  entityDetails: {},
 })
 
 export default getInitialState

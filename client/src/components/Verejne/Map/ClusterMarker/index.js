@@ -10,13 +10,13 @@ import {openedAddressDetailSelector} from '../../../../selectors'
 import Marker from '../Marker'
 import './ClusterMarker.css'
 
-import type {Entity} from '../../../../state'
+import type {CompanyEntity} from '../../../../state'
 import type {MapCluster} from '../../../../selectors'
 import type {Thunk} from '../../../../types/reduxTypes'
 
 type ClusterMarkerProps = {
   zoom: number,
-  selectEntity: (entity: Entity) => Thunk,
+  selectEntity: (entity: CompanyEntity) => Thunk,
   zoomToLocation: ({lat: number, lng: number}) => Thunk,
   cluster: MapCluster,
   onClick: () => void,
