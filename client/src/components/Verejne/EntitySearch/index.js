@@ -75,7 +75,7 @@ const EntitySearch = ({
               </InputGroupAddon>
             </InputGroup>
             <FormText>
-              {entitySearchFor && `${plurality(entitySearchEids.length)} pre "${entitySearchFor}".`}
+              {entitySearchFor && entitySearchEids && `${plurality(entitySearchEids.length)} pre "${entitySearchFor}".`}
             </FormText>
           </FormGroup>
         </Form>

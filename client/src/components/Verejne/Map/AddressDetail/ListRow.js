@@ -1,12 +1,14 @@
 import React from 'react'
 import {connect} from 'react-redux'
-import {compose} from 'recompose'
+import {compose, withHandlers} from 'recompose'
 import {withDataProviders} from 'data-provider'
 import CircleIcon from 'react-icons/lib/fa/circle-o'
+import SearchIcon from 'react-icons/lib/fa/search'
 import {ListGroupItem} from 'reactstrap'
-import { icoUrl, showDate, } from '../../../Notices/utilities'
+import { icoUrl, showDate, } from '../../../../services/utilities'
 import ExternalLink from '../../../shared/ExternalLink'
-import {toggleEntityInfo} from '../../../../actions/verejneActions'
+import {toggleEntityInfo, toggleModalOpen, setEntitySearchFor} from '../../../../actions/verejneActions'
+import {updateValue} from '../../../../actions/sharedActions'
 import {entityDetailProvider} from '../../../../dataProviders/publiclyDataProviders'
 import {entityDetailSelector} from '../../../../selectors'
 import './ListRow.css'
@@ -23,11 +25,12 @@ const Item = ({children, label, url, linkText}) => (
   </li>
 )
 
-const _DetailedInfo = ({id, toggleEntityInfo, data}) => (
+const _DetailedInfo = ({id, toggleEntityInfo, openModalSearch, data}) => (
   <ListGroupItem className="list-row">
-    <div action className={data.companyinfo ? "info-header list-group-item-action" : "list-group-item-action"} onClick={() => toggleEntityInfo(id)}>
+    <div className={data.companyinfo ? "info-header list-group-item-action" : "list-group-item-action"} onClick={() => toggleEntityInfo(id)}>
       {!data.companyinfo && <CircleIcon size="15" className="list-row-icon" />}
       {data.name}
+      <SearchIcon size="20" className="search-icon float-right" onClick={openModalSearch}/>
     </div>
     {data.companyinfo &&
     <div className="info-main">
@@ -54,24 +57,42 @@ const DetailedInfo = compose(
     (state, {id}) => ({
       data: entityDetailSelector(state, id),
     }),
-    {toggleEntityInfo}
+    {toggleEntityInfo, toggleModalOpen, setEntitySearchFor},
   ),
-  withDataProviders(({id}) => [entityDetailProvider(id)])
+  withDataProviders(({id}) => [entityDetailProvider(id)]),
+  withHandlers({
+    openModalSearch: ({toggleModalOpen, setEntitySearchFor, data}) => (e) =>{
+      if (e.stopPropagation) e.stopPropagation()
+      setEntitySearchFor(data.name)
+      toggleModalOpen()
+    }
+  })
 )(_DetailedInfo)
 
-const ListRow = ({entity, toggleEntityInfo, showInfo}) =>
+const ListRow = ({entity, toggleEntityInfo, showInfo, openModalSearch}) =>
   showInfo ? (
     <DetailedInfo id={entity.id} />
   ) : (
     <ListGroupItem action className="list-row" onClick={() => toggleEntityInfo(entity.id)}>
       <CircleIcon size="10" className="list-row-icon" />
       <span>{entity.name}</span>
+      <SearchIcon size="20" className="search-icon float-right mr-3" onClick={openModalSearch}/>
     </ListGroupItem>
   )
 
-export default connect(
-  (state, {entity}) => ({
-    showInfo: state.publicly.showInfo[entity.id],
-  }),
-  {toggleEntityInfo}
-)(ListRow)
+export default compose(
+  connect(
+    (state, {entity}) => ({
+      showInfo: state.publicly.showInfo[entity.id],
+    }),
+    {toggleEntityInfo, toggleModalOpen, setEntitySearchFor, updateValue},
+  ),
+  withHandlers({
+    openModalSearch: ({toggleModalOpen, setEntitySearchFor, entity, updateValue}) => (e) =>{
+      if (e.stopPropagation) e.stopPropagation()
+      setEntitySearchFor(entity.name)
+      updateValue(['publicly', 'entitySearchValue'], entity.name, 'Set entity search field value'),
+      toggleModalOpen()
+    }
+  })
+) (ListRow)
