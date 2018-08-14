@@ -4,10 +4,9 @@ import {withRouter} from 'react-router-dom'
 import {withHandlers, withState} from 'recompose'
 import {compose} from 'redux'
 import {connect} from 'react-redux'
-import {updateValue} from '../../../actions/sharedActions'
 import {Form, FormGroup, Label, Input, Button} from 'reactstrap'
 import type {ContextRouter} from 'react-router'
-
+import {updateValue} from '../../../actions/sharedActions'
 import EntitySearchWrapper, {type EntitySearchProps} from '../dataWrappers/EntitySearchWrapper'
 import './Search.css'
 
