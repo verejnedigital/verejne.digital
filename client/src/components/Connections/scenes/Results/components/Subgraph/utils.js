@@ -1,5 +1,5 @@
 // @flow
-import type {GraphId, Node, Edge, Graph} from '../../../../../../state'
+import type {GraphId, Node, Edge, Graph, RelatedEntity} from '../../../../state'
 
 export type Point = {|
   x: number,
@@ -138,13 +138,13 @@ export const addNeighbours = (
   graph: Graph,
   sourceEid: string,
   sourcePoint: Point,
-  neighbours: Array<{eid: number, name: string}>
+  neighbours: Array<RelatedEntity>
 ) => {
   // Update graph with new neighbours
   const nodes = graph.nodes.slice()
   const edges = graph.edges.slice()
   const {...nodeIds} = graph.nodeIds
-  neighbours.forEach(({eid, name}) => {
+  neighbours.forEach(({eid, name}: RelatedEntity) => {
     if (!nodeIds[eid]) {
       nodes.push({
         id: eid.toString(),

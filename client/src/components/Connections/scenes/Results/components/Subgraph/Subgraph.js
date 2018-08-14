@@ -9,17 +9,16 @@ import GraphCompnent from 'react-graph-vis'
 import {Col, Row} from 'reactstrap'
 import InfoLoader from './InfoLoader'
 import NodeLoader from './NodeLoader'
-import {isPolitician} from '../../Notices/utilities'
-import {
-  options as graphOptions,
-  getNodeEid,
-  addNeighbours,
-  removeNodes,
-  addEdgeIfMissing,
-} from './utils'
-import {checkShaking, resetGesture} from './gestures'
-import type {Company, SearchedEntity, GraphId, Graph, Node} from '../../../../../../state'
-import type {Point} from './utils'
+import {updateValue} from '../../../actions/sharedActions'
+import SubgraphWrapper from '../dataWrappers/SubgraphWrapper'
+import {options as graphOptions, getNodeEid, addNeighbours, removeNodes} from './graph/utils'
+import {checkShaking, resetGesture} from './graph/gestures'
+import type {SubgraphProps} from '../dataWrappers/SubgraphWrapper'
+import type {EntityProps} from '../dataWrappers/EntityWrapper'
+import type {ConnectionProps} from '../dataWrappers/ConnectionWrapper'
+import type {GraphId, Node} from '../../../state'
+import type {Point} from './graph/utils'
+
 import './Subgraph.css'
 
 export type GraphEvent = {|
@@ -36,25 +35,12 @@ export type GraphEvent = {|
   },
 |}
 
-type EntityDetails = {
-  // TODO import from state probably
-  [string]: {
-    name: string,
-    data: Company,
-  },
-}
-
 export type OwnProps = {
-  connections: Array<number>,
-  entity1: SearchedEntity,
-  entity2: SearchedEntity,
   preloadNodes: boolean,
-}
+} & EntityProps &
+  ConnectionProps
 
-type StateProps = {
-  subgraph: Graph,
-  selectedEids: Array<string>,
-  entityDetails: EntityDetails,
+type DispatchProps = {
   updateValue: Function,
 }
 type Handlers = {
@@ -64,7 +50,7 @@ type Handlers = {
   handleDragEnd: (e: GraphEvent) => void,
 }
 
-type Props = OwnProps & StateProps & Handlers
+type Props = OwnProps & SubgraphProps & DispatchProps & Handlers
 
 const legendStyle = {
   width: '100%',
@@ -139,63 +125,6 @@ const legendGraph = (() => {
   }
 })()
 
-function findGroup(data: Company) {
-  const politician = isPolitician(data)
-  const withContracts = data.total_contracts && data.total_contracts > 0
-  return politician && withContracts
-    ? 'politContracts'
-    : politician
-      ? 'politician'
-      : withContracts
-        ? 'contracts'
-        : 'normal'
-}
-
-function bold(makeBold: boolean, str: string) {
-  return makeBold ? `*${str}*` : str
-}
-
-function enhanceGraph( // TODO move to SubgraphWrapper?
-  {nodes: oldNodes, edges: oldEdges, nodeIds}: Graph,
-  entityDetails: EntityDetails,
-  primaryConnEids: Array<number>
-) {
-  const edges = oldEdges.map(({from, to}) => ({
-    from,
-    to,
-    width: primaryConnEids.indexOf(from) !== -1 && primaryConnEids.indexOf(to) !== -1 ? 5 : 1,
-  }))
-
-  // adds entity info to graph
-  const nodes = oldNodes.map(({id, label, x, y, ...props}) => {
-    if (!entityDetails[id]) {
-      return {id, label, group: 'notLoaded', x, y, ...props}
-    }
-    const data = entityDetails[id].data
-    const entity = data.entities[0]
-    const poi = props.distA === 0 || props.distB === 0
-    if (props.leaf && data.related.length) {
-      // add more edges to this leaf if available, then mark as non-leaf
-      data.related.forEach(({eid: relatedId}) => {
-        if (nodeIds[relatedId]) {
-          addEdgeIfMissing(id, relatedId, edges)
-        }
-      })
-    }
-    return {
-      // delete x, y to prevent jumping on node load
-      ...props,
-      id,
-      label: bold(poi, `${entity.entity_name} (${data.related.length})`),
-      value: data.related.length,
-      group: findGroup(data),
-      shape: poi ? 'box' : (data.company_stats[0] || {}).datum_zaniku ? 'diamond' : 'dot',
-      leaf: false,
-    }
-  })
-  return {nodes, edges, nodeIds}
-}
-
 function enhanceDrawing(/*ctx*/) {
   // const nodeId = 616705//subgraph.nodes[0].id
   // const nodePosition = this.getPositions([nodeId])
@@ -263,13 +192,19 @@ const Subgraph = ({
 }
 
 export default compose(
-  connect(() => ({enhanceGraph}), {updateValue}),
+  connect(null, {updateValue}),
   SubgraphWrapper,
   withHandlers({
-    handleSelect: (props: OwnProps & StateProps) => ({nodes}: GraphEvent) => {
+    handleSelect: (props: OwnProps & DispatchProps & SubgraphProps) => ({nodes}: GraphEvent) => {
       props.updateValue(['connections', 'selectedEids'], nodes.map(getNodeEid))
     },
-    handleDoubleClick: (props: OwnProps & StateProps) => ({nodes, pointer}: GraphEvent) => {
+    handleDoubleClick: (props: OwnProps & DispatchProps & SubgraphProps) => ({
+      nodes,
+      pointer,
+    }: GraphEvent) => {
+      if (!nodes.length) {
+        return
+      }
       const subgraphId = `${props.entity1.eids.join()}-${props.entity2.eids.join()}`
       const clickedEid = getNodeEid(nodes[0]) // TODO can double click more nodes?
 
@@ -281,7 +216,10 @@ export default compose(
         )
       }
     },
-    handleDrag: (props: OwnProps & StateProps) => ({nodes, pointer}: GraphEvent) => {
+    handleDrag: (props: OwnProps & DispatchProps & SubgraphProps) => ({
+      nodes,
+      pointer,
+    }: GraphEvent) => {
       if (!nodes.length) {
         return
       }
@@ -294,7 +232,7 @@ export default compose(
         props.updateValue(['connections', 'selectedEids'], [])
       }
     },
-    handleDragEnd: (props: OwnProps & StateProps) => () => {
+    handleDragEnd: () => () => {
       resetGesture()
     },
   })
