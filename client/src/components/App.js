@@ -14,7 +14,7 @@ import './App.css'
 
 export default (props) => (
   <Fragment>
-    <Route exact path="/:something" component={Navigation} />
+    <Route path="/:something" component={Navigation} />
     <div className="application-container">
       <Switch>
         <Route exact path="/" component={Landing} />

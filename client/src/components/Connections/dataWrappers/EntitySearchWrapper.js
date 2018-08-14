@@ -1,11 +1,16 @@
 // @flow
 import React from 'react'
 import {parse} from 'qs'
-import {withRouter} from 'react-router-dom'
+import {withRouter, type ContextRouter} from 'react-router-dom'
 import type {ComponentType} from 'react'
 
+export type EntitySearchProps = {
+  entitySearch1: string,
+  entitySearch2: string,
+}
+
 const EntitySearchWrapper = (WrappedComponent: ComponentType<*>) => {
-  const wrapped = (props) => {
+  const wrapped = (props: ContextRouter) => {
     const query = parse(props.location.search.substring(1))
     return (
       <WrappedComponent

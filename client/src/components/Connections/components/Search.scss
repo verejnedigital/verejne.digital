@@ -1,6 +1,7 @@
-@import "../../../variables.scss";
+@import "../../variables.scss";
 
-.form-control { // TODO: Refactor
+.form-control {
+  // TODO: Refactor
   border-radius: 2px;
   border-width: 2px;
   border-color: $border-color;
@@ -9,7 +10,8 @@
   box-shadow: 0 4px 12px 0 $shadow-color;
 }
 
-h2 { // TODO: Refactor
+h2 {
+  // TODO: Refactor
   font-family: "Source Code Pro", monospace;
   font-weight: 200;
 }
