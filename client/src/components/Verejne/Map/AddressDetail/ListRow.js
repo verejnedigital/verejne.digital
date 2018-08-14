@@ -25,7 +25,6 @@ const Item = ({children, label, url, linkText}) => (
 
 const _DetailedInfo = ({id, toggleEntityInfo, data}) => (
   <ListGroupItem className="list-row">
-    {console.log(data)}
     <div action className={data.companyinfo ? "info-header list-group-item-action" : "list-group-item-action"} onClick={() => toggleEntityInfo(id)}>
       {!data.companyinfo && <CircleIcon size="15" className="list-row-icon" />}
       {data.name}
