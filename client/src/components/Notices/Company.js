@@ -3,7 +3,7 @@ import {Link} from 'react-router-dom'
 import {compose, withState, withHandlers} from 'recompose'
 import {formatSimilarPercent} from './LegendSymbols'
 import CompanyDetails from '../shared/CompanyDetails'
-import {localeNumber} from './utilities'
+import {localeNumber} from '../../services/utilities'
 import './Company.css'
 
 const _Company = ({item, toggledOn, toggle}) => {
@@ -22,7 +22,9 @@ const _Company = ({item, toggledOn, toggle}) => {
           </Link>
         </td>
         <td className="company-customer">
-          <span className="nowrap-ellipsis" title={item.customer}>{item.customer}</span>
+          <span className="nowrap-ellipsis" title={item.customer}>
+            {item.customer}
+          </span>
         </td>
         <td className="text-nowrap text-right">
           <strong>{localeNumber(item.price)}</strong>
