@@ -6,7 +6,6 @@ import {withDataProviders} from 'data-provider'
 import {isNil} from 'lodash'
 import type {ComponentType} from 'react'
 import {connectionSubgraphProvider} from '../../../dataProviders/connectionsDataProviders'
-
 import type {State, Graph, GraphId, Node, Edge} from '../../../state'
 
 type RawNode = {
