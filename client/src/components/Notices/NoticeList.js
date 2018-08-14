@@ -121,7 +121,7 @@ const NoticeList = ({
           <Input
             type="text"
             className="form-control mt-2"
-            placeholder="Obstarávanie alebo Objednávateľ"
+            placeholder="Vyhľadávanie"
             value={searchValue}
             onChange={updateSearchValue}
           />

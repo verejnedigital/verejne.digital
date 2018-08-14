@@ -37,9 +37,13 @@ export const searchFilteredNoticesSelector = createSelector(
   noticesSelector,
   noticesSearchQuerySelector,
   (notices, query) => {
-    const filteredNotices = filter(notices, (notice) =>
-      normalizeName(notice.title).indexOf(query) > -1 ||
-      normalizeName(notice.customer).indexOf(query) > -1)
+    const filteredNotices = filter(notices, (notice) =>{
+      const similarity = notice.kandidati.length > 0 ?
+        Math.round(notice.kandidati[0].score * 100) : '?'
+      return   normalizeName(notice.customer.concat(notice.price_num)
+        .concat(notice.title).concat(notice.kandidati[0].name)
+        .concat(similarity)).indexOf(query) > -1
+    })
     return filteredNotices.length>0 ? filteredNotices : []
   }
 )
@@ -84,14 +88,8 @@ export const newestBulletinDateSelector = createSelector(
   (notices) => notices[0] ? notices[0].bulletin_date : ''
 )
 
-// will make more sense once we allow searching on notices
-// (filtered notices will then be the input selector)
 export const noticesLengthSelector = createSelector(
-  dateSortedNoticesSelector,
-  nameSortedNoticesSelector,
-  noticesOrderingSelector,
-  (dateSorted, nameSorted, orderBy, page) => {
-    const notices = orderBy === 'title' ? nameSorted : dateSorted
+  searchFilteredNoticesSelector, (notices) => {
     return notices.length
   }
 )
