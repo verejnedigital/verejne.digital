@@ -3,11 +3,11 @@ import React from 'react'
 import {
   setEntitySearchEids,
   setAddresses,
-  setNewEntities,
-  setNewEntityDetail,
+  setEntities,
+  setEntityDetail,
 } from '../actions/verejneActions'
 import {EntityDetailLoading, ModalLoading} from '../components/Loading/'
-import type {Address, NewEntity, EntityDetails} from '../state'
+import type {Address, NewEntity, NewEntityDetails} from '../state'
 import type {Dispatch} from '../types/reduxTypes'
 
 const dispatchSearchEids = () => (ref: string, data: Array<{eid: string}>, dispatch: Dispatch) =>
@@ -17,12 +17,12 @@ const dispatchAddresses = () => (ref: string, data: Address[], dispatch: Dispatc
   dispatch(setAddresses(data))
 }
 
-const dispatchnewEntities = () => (ref: number[], data: NewEntity[], dispatch: Dispatch) => {
-  dispatch(setNewEntities(data, ref[1]))
+const dispatchEntities = () => (ref: number[], data: NewEntity[], dispatch: Dispatch) => {
+  dispatch(setEntities(data, ref[1]))
 }
 
-const dispatchEntityDetails = () => (ref: number[], data: EntityDetails, dispatch: Dispatch) => {
-  dispatch(setNewEntityDetail(data[ref[1]], ref[1]))
+const dispatchEntityDetails = () => (ref: number[], data: NewEntityDetails, dispatch: Dispatch) => {
+  dispatch(setEntityDetail(data[ref[1]], ref[1]))
 }
 
 export const addressesProvider = (addressesUrl: string) => {
@@ -69,7 +69,7 @@ export const addressEntitiesProvider = (addressId: string) => {
         accept: 'application/json',
       },
     ],
-    onData: [dispatchnewEntities],
+    onData: [dispatchEntities],
     keepAliveFor: 60 * 60 * 1000,
   }
 }

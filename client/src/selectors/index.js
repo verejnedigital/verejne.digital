@@ -18,7 +18,7 @@ import type {NoticesOrdering} from '../components/Notices/NoticeList'
 import type {NoticeDetailProps} from '../components/Notices/NoticeDetail'
 
 import type {CompanyDetailsProps} from '../components/shared/CompanyDetails'
-import type {State, MapOptions, Entity, MapBounds, EntityDetails} from '../state'
+import type {State, MapOptions, CompanyEntity, MapBounds, NewEntityDetails} from '../state'
 
 export const paramsIdSelector = (_: State, props: ContextRouter): string =>
   props.match.params.id || '0'
@@ -101,19 +101,19 @@ export const boundsSelector = (state: State): ?MapBounds => state.mapOptions.bou
 export const addressesSelector = (state: State) => state.addresses
 export const showInfoSelector = (state: State) => state.publicly.showInfo
 export const openedAddressDetailSelector = (state: State) => state.publicly.openedAddressDetail
-export const newEntitiesSelector = (state: State) => state.newEntities
-export const entityDetailSelector = (state: State, entityId: string): EntityDetails =>
+export const entitiesSelector = (state: State) => state.entities
+export const entityDetailSelector = (state: State, entityId: string): NewEntityDetails =>
   state.entityDetails[entityId]
 
 export const addressEntitiesSelector = createSelector(
-  newEntitiesSelector,
+  entitiesSelector,
   openedAddressDetailSelector,
   (entities, addressId) => filter(entities, (entity) => entity.addressId === addressId)
 )
 
 type SuperCluster = {
   numPoints: number,
-  points: Array<Entity>,
+  points: Array<CompanyEntity>,
   wx: number, // weighted cluster center
   wy: number,
   x: number, // cluster center
