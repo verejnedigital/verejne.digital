@@ -4,10 +4,12 @@ import {compose} from 'redux'
 import {connect} from 'react-redux'
 import {withHandlers} from 'recompose'
 import {updateValue} from '../../../../../../actions/sharedActions'
-import InfoLoader from '../InfoLoader/InfoLoader'
-import NodeLoader from './NodeLoader'
-import {isPolitician} from '../../../../../Notices/utilities'
 import SubgraphWrapper from '../../../../dataWrappers/SubgraphWrapper'
+import GraphCompnent from 'react-graph-vis'
+import {Col, Row} from 'reactstrap'
+import InfoLoader from './InfoLoader'
+import NodeLoader from './NodeLoader'
+import {isPolitician} from '../../Notices/utilities'
 import {
   options as graphOptions,
   getNodeEid,
@@ -16,12 +18,8 @@ import {
   addEdgeIfMissing,
 } from './utils'
 import {checkShaking, resetGesture} from './gestures'
-import GraphCompnent from 'react-graph-vis'
-import {Col, Row} from 'reactstrap'
-
 import type {Company, SearchedEntity, GraphId, Graph, Node} from '../../../../../../state'
 import type {Point} from './utils'
-
 import './Subgraph.css'
 
 export type GraphEvent = {|
