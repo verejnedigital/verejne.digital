@@ -69,17 +69,17 @@ export const setEntitySearchFor = (searchFor: string) => ({
   reducer: () => searchFor,
 })
 
-export const setEntitySearchEids = (entity: Array<{eid: string}>) => ({
+export const setEntitySearchEids = (eids: Array<{eid: number}>) => ({
   type: 'Set entity search eids',
   path: ['publicly', 'entitySearchEids'],
-  payload: entity,
-  reducer: (): Array<string> => entity.map((e) => e.eid),
+  payload: eids,
+  reducer: (): Array<number> => eids.map((e) => e.eid),
 })
 
 export const toggleEntityInfo = (eid: number) => ({
   type: 'Toggle entity info',
   path: ['publicly', 'showInfo', eid],
-  reducer: (open: boolean) => !open,
+  reducer: (open: boolean): boolean => !open,
 })
 
 export const openAddressDetail = (addressId: number) => ({

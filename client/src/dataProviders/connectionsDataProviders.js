@@ -3,15 +3,19 @@ import type {Dispatch} from '../types/reduxTypes'
 import {dispatchReceivedData} from './dataProvidersUtils'
 import {receiveData} from '../actions/sharedActions'
 
-const dispatchEntitiesData = (query: string) => (ref: string, data: any, dispatch: Dispatch) => {
+const dispatchEntitiesData = (query: string) => (
+  ref: string,
+  data: Array<{eid: number}>,
+  dispatch: Dispatch
+) => {
   dispatch(
     receiveData(['connections', 'entities'], {id: query, eids: data.map(({eid}) => eid)}, ref)
   )
 }
 
-const dispatchConnectionData = (eid1: string, eid2: string) => (
+const dispatchConnectionData = (eid1: number | number[], eid2: number | number[]) => (
   ref: string,
-  data: any,
+  data: number[],
   dispatch: Dispatch
 ) => {
   dispatch(receiveData(['connections', 'detail'], {id: `${eid1}-${eid2}`, ids: data}, ref))
@@ -43,7 +47,7 @@ export const connectionDetailProvider = (eid1: string, eid2: string) => ({
   keepAliveFor: 60 * 60 * 1000,
 })
 
-export const connectionSubgraphProvider = (eid1: string, eid2: string) => ({
+export const connectionSubgraphProvider = (eid1: number | number[], eid2: number | number[]) => ({
   ref: `connextion-${eid1}-${eid2}`,
   getData: [
     fetch,
