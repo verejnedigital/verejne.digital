@@ -231,7 +231,7 @@ export type State = {|
     +entitySearchValue: string,
     +entitySearchModalOpen: boolean,
     +entitySearchFor: string,
-    +entitySearchEids: ?Array<string>,
+    +entitySearchEids: Array<string>,
     +showInfo: any, //TODO: TBD
     +openedAddressDetail: ?number,
   |},
@@ -262,7 +262,7 @@ const getInitialState = (): State => ({
     entitySearchValue: '',
     entitySearchModalOpen: false,
     entitySearchFor: '',
-    entitySearchEids: undefined,
+    entitySearchEids: [],
     showInfo: {},
     openedAddressDetail: undefined,
   },
