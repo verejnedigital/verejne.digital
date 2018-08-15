@@ -66,7 +66,7 @@ const EntitySearch = ({
                 placeholder={FIND_ENTITY_TITLE}
                 value={entitySearchValue}
                 onChange={setEntitySearchValue}
-                ref={input => input && ReactDOM.findDOMNode(input).focus()}
+                ref={(input) => input && ReactDOM.findDOMNode(input).focus()}
               />
               <InputGroupAddon addonType="append">
                 <Button color="primary" onClick={findEntities}>
@@ -107,6 +107,10 @@ export default compose(
       toggleDrawer()
     },
     setEntitySearchValue: ({updateValue}) => (e) =>
-      updateValue(['publicly', 'entitySearchValue'], (e.target.value), 'Set entity search field value'),
+      updateValue(
+        ['publicly', 'entitySearchValue'],
+        e.target.value,
+        'Set entity search field value'
+      ),
   })
 )(EntitySearch)

@@ -14,7 +14,9 @@ import './AddressDetail.css'
 const AddressDetail = ({entities, addressId, onClick}) => (
   <div className="address-detail">
     <div className="address-detail-header">
-      <Button color="link" onClick={onClick}>Close detail</Button>
+      <Button color="link" onClick={onClick}>
+        Close detail
+      </Button>
     </div>
     <ListGroup className="address-detail-list">
       {map(entities, (e) => <ListRow entity={e} key={e.id} />)}
@@ -23,17 +25,18 @@ const AddressDetail = ({entities, addressId, onClick}) => (
 )
 
 export default compose(
-  connect((state, {addressId}) => ({
-    entities: addressEntitiesSelector(state),
-  }),
-  {
-    closeAddressDetail,
-  },
+  connect(
+    (state) => ({
+      entities: addressEntitiesSelector(state),
+    }),
+    {
+      closeAddressDetail,
+    }
   ),
   withDataProviders(({addressId}) => [addressEntitiesProvider(addressId)]),
   withHandlers({
     onClick: ({closeAddressDetail}) => (event) => {
       closeAddressDetail()
-    }
+    },
   })
 )(AddressDetail)
