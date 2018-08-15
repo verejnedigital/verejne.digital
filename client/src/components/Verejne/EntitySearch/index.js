@@ -21,7 +21,8 @@ import {
   entitySearchEidsSelector,
   entitySearchForSelector,
 } from '../../../selectors'
-import {setEntitySearchValue, toggleModalOpen, setEntitySearchFor} from '../../../actions/verejneActions'
+import {toggleModalOpen, setEntitySearchFor} from '../../../actions/verejneActions'
+import {updateValue} from '../../../actions/sharedActions'
 import {FIND_ENTITY_TITLE} from '../../../constants'
 import './EntitySearch.css'
 
@@ -54,19 +55,14 @@ const EntitySearch = ({
     >
       <ModalHeader toggle={toggleModalOpen}>{FIND_ENTITY_TITLE}</ModalHeader>
       <ModalBody>
-        <Form
-          onSubmit={(e) => {
-            e.preventDefault()
-            findEntities()
-          }}
-        >
+        <Form onSubmit={findEntities}>
           <FormGroup>
             <Input
               type="text"
               className="form-control"
               placeholder={FIND_ENTITY_TITLE}
               value={entitySearchValue}
-              onChange={(e) => setEntitySearchValue(e.target.value)}
+              onChange={setEntitySearchValue}
               ref={input => input && ReactDOM.findDOMNode(input).focus()}
             />
             <FormText>
@@ -96,11 +92,15 @@ export default compose(
       entitySearchEids: entitySearchEidsSelector(state),
       entitySearchFor: entitySearchForSelector(state),
     }),
-    {setEntitySearchValue, toggleModalOpen, setEntitySearchFor}
+    {toggleModalOpen, setEntitySearchFor, updateValue}
   ),
   withState(''),
   withHandlers({
-    findEntities: ({setEntitySearchFor, entitySearchValue}) => () =>
-      setEntitySearchFor(entitySearchValue),
+    findEntities: ({setEntitySearchFor, entitySearchValue}) => (e) => {
+      e.preventDefault()
+      setEntitySearchFor(entitySearchValue)
+    },
+    setEntitySearchValue: ({updateValue}) => (e) =>
+      updateValue(['publicly', 'entitySearchValue'], (e.target.value), 'Set entity search field value'),
   })
 )(EntitySearch)

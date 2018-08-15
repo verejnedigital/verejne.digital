@@ -9,7 +9,6 @@ import {
   zoomToLocation,
   toggleModalOpen,
   setEntitySearchFor,
-  setEntitySearchValue,
 } from '../../actions/verejneActions'
 import {updateValue} from '../../actions/sharedActions'
 import {
@@ -45,7 +44,7 @@ const Verejne = ({
             type="text"
             placeholder={FIND_ENTITY_TITLE}
             value={entitySearchValue}
-            onChange={(e) => setEntitySearchValue(e.target.value)}
+            onChange={setEntitySearchValue}
           />
         </FormGroup>
       </Form>
@@ -78,7 +77,7 @@ export default compose(
       openedAddressId: openedAddressDetailSelector(state),
       entitySearchValue: entitySearchValueSelector(state),
     }),
-    {updateValue, zoomToLocation, toggleModalOpen, setEntitySearchFor, setEntitySearchValue}
+    {updateValue, zoomToLocation, toggleModalOpen, setEntitySearchFor}
   ),
   withHandlers({
     findEntities: ({toggleModalOpen, setEntitySearchFor, entitySearchValue}) => (e) => {
@@ -88,5 +87,7 @@ export default compose(
     },
     setAutocompleteValue: ({updateValue}) => (value) =>
       updateValue(['publicly', 'autocompleteValue'], value, 'Set autocomplete value'),
+    setEntitySearchValue: ({updateValue}) => (e) =>
+      updateValue(['publicly', 'entitySearchValue'], (e.target.value), 'Set entity search field value'),
   })
 )(Verejne)

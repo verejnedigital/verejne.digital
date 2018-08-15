@@ -49,13 +49,6 @@ export const zoomToLocation = (center: Center, withZoom?: number): Thunk => (
   dispatch(setMapOptions({...mapOptionsSelector(state), zoom, center: [center.lat, center.lng]}))
 }
 
-export const setEntitySearchValue = (searchValue: string) => ({
-  type: 'Set entity search field value',
-  path: ['publicly', 'entitySearchValue'],
-  payload: searchValue,
-  reducer: () => searchValue,
-})
-
 export const toggleModalOpen = () => ({
   type: 'Toggle modal open',
   path: ['publicly', 'entitySearchModalOpen'],
