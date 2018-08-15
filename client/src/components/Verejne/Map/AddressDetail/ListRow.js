@@ -30,7 +30,7 @@ const _DetailedInfo = ({id, toggleEntityInfo, openModalSearch, data}) => (
     <div className={data.companyinfo ? "info-header list-group-item-action" : "list-group-item-action"} onClick={() => toggleEntityInfo(id)}>
       {!data.companyinfo && <CircleIcon size="15" className="list-row-icon" />}
       {data.name}
-      <SearchIcon size="20" className="search-icon float-right" onClick={openModalSearch}/>
+      <SearchIcon size="20" className={!data.companyinfo ? "search-icon float-right mr-3" : "search-icon float-right"} onClick={openModalSearch}/>
     </div>
     {data.companyinfo &&
     <div className="info-main">
