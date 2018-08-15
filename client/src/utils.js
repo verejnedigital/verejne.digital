@@ -80,13 +80,14 @@ export const loadImageAsync = (url: string) => {
 }
 
 export type SideEffectsFunc<P> = (props: P) => any[]
+
 type SideEffectsState = {
   done: boolean,
 }
 
 // run side-effects before rendering component
-export const withSideEffects = <P>(sideEffectsFunc: SideEffectsFunc<P>) => (
-  WrappedComponent: ComponentType<*>
+export const withSideEffects = <P: Object>(sideEffectsFunc: SideEffectsFunc<P>) => (
+  WrappedComponent: ComponentType<P>
 ) => {
   return class extends React.Component<P, SideEffectsState> {
     constructor(props: P) {
