@@ -1,24 +1,10 @@
 // @flow
 import React from 'react'
-import {compose} from 'redux'
-import {connect} from 'react-redux'
-import {withDataProviders} from 'data-provider'
-import {connectionEntityDetailProvider} from '../../../dataProviders/connectionsDataProviders'
-import type {State} from '../../../state'
+import CompanyDetailWrapper from './../../../dataWrappers/CompanyDetailWrapper'
+import type {CompanyDetailProps} from '../../../dataWrappers/CompanyDetailWrapper'
 
-type OwnProps = {
-  eid: string,
-}
-type DispatchProps = {
-  name: string,
-}
-type Props = OwnProps & DispatchProps
+type Props = CompanyDetailProps
 
-const Alternative = ({name}: Props) => <span>{name}</span>
+const Alternative = ({company}: Props) => <span>{company.entities[0].entity_name}</span>
 
-export default compose(
-  withDataProviders((props: OwnProps) => [connectionEntityDetailProvider(props.eid)]),
-  connect((state: State, props: OwnProps) => ({
-    name: state.connections.entityDetails[props.eid].name,
-  }))
-)(Alternative)
+export default CompanyDetailWrapper(Alternative)

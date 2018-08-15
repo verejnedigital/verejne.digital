@@ -86,6 +86,7 @@ export type AssetDeclaration = {|
 
 export type CompanyEntity = {
   eid: string,
+  entity_name: string,
   lng: string,
   lat: string,
   selected: string,
@@ -161,14 +162,8 @@ export type SearchedEntity = {
 }
 
 export type Connections = {
-  entities: {[string]: CompanyEntity},
   detail: {[string]: {ids: string[]}},
-  entityDetails: {
-    [string]: {
-      name: string,
-      data: any, //TODO: TBD
-    },
-  },
+  entities: {[string]: CompanyEntity},
 }
 
 export type Address = {
@@ -241,7 +236,7 @@ export type RelatedEntity = {
   address: string,
 }
 
-export type NewEntityDetails = {
+export type NewEntityDetail = {
   eid: number,
   name: string,
   lat: number,
@@ -306,7 +301,7 @@ export type State = {|
   +connections: Connections,
   +addresses: ObjectMap<Address>,
   +entities: ObjectMap<NewEntityState>,
-  +entityDetails: ObjectMap<NewEntityDetails>,
+  +entityDetails: ObjectMap<NewEntityDetail>,
 |}
 
 const getInitialState = (): State => ({
@@ -342,7 +337,6 @@ const getInitialState = (): State => ({
   connections: {
     entities: {},
     detail: {},
-    entityDetails: {},
   },
   addresses: {},
   entities: {},

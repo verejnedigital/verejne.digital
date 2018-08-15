@@ -1,25 +1,16 @@
 // @flow
 import React from 'react'
-import {compose} from 'redux'
-import {connect} from 'react-redux'
-import {withDataProviders} from 'data-provider'
-import {connectionEntityDetailProvider} from './../../../dataProviders/connectionsDataProviders'
-import Info from './../../shared/Info/Info'
-import type {State} from './../../../state'
+import CompanyDetails from './../../shared/CompanyDetails'
 import './InfoLoader.css'
 
-export type OwnProps = {
+type Props = {
   eid: string,
   hasConnectLine?: boolean,
 }
-type StateProps = {
-  data: any, // TODO: TBD, see status/index.js
-}
-type Props = OwnProps & StateProps
 
-const InfoLoader = ({data, hasConnectLine}: Props) => (
+const InfoLoader = ({eid, hasConnectLine}: Props) => (
   <div className="info-loader">
-    <Info data={data} />
+    <CompanyDetails eid={eid} />
     {hasConnectLine && (
       <div className="container">
         <div className="info-loader-connection-line" />
@@ -28,9 +19,4 @@ const InfoLoader = ({data, hasConnectLine}: Props) => (
   </div>
 )
 
-export default compose(
-  withDataProviders((props: OwnProps) => [connectionEntityDetailProvider(props.eid)]),
-  connect((state: State, props: OwnProps) => ({
-    data: state.connections.entityDetails[props.eid].data,
-  }))
-)(InfoLoader)
+export default InfoLoader

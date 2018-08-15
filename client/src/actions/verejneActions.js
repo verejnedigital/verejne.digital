@@ -8,7 +8,7 @@ import type {
   Address,
   NewEntityState,
   NewEntity,
-  NewEntityDetails,
+  NewEntityDetail,
 } from '../state'
 import type {GenericAction, Thunk} from '../types/reduxTypes'
 import type {ObjectMap} from '../types/commonTypes'
@@ -33,11 +33,11 @@ export const setEntities = (
   }),
 })
 
-export const setEntityDetail = (entityDetails: NewEntityDetails, entityId: number) => ({
+export const setEntityDetail = (entityDetail: NewEntityDetail, entityId: number) => ({
   type: 'Set entity detail',
   path: ['entityDetails', entityId],
-  payload: entityDetails,
-  reducer: () => entityDetails,
+  payload: entityDetail,
+  reducer: () => entityDetail,
 })
 
 export const setMapOptions = (mapOptions: MapOptions) => ({
