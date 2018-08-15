@@ -94,7 +94,6 @@ export default compose(
     }),
     {toggleModalOpen, setEntitySearchFor, updateValue}
   ),
-  withState(''),
   withHandlers({
     findEntities: ({setEntitySearchFor, entitySearchValue}) => (e) => {
       e.preventDefault()
