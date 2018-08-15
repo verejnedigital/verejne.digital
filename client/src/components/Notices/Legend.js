@@ -13,14 +13,14 @@ const Legend = () => (
       </Col>
     </Row>
     <Row tag="dl">
-      <Col tag="dt" xs="2" className="text-right">
+      <Col tag="dt" xs="2" className="text-right px-0">
         {formatSimilarCount(4)}
       </Col>
       <Col tag="dd" xs="10">
         počet podobných obstarávaní
       </Col>
 
-      <Col tag="dt" xs="2" className="text-right">
+      <Col tag="dt" xs="2" className="text-right px-0">
         {formatSimilarPercent(19)}
       </Col>
 
@@ -28,7 +28,7 @@ const Legend = () => (
         podobnosť s predchádzajúcim obstarávaním
       </Col>
 
-      <Col tag="dt" xs="2" className="text-right">
+      <Col tag="dt" xs="2" className="text-right px-0">
         {getWarningSymbol(1)}
       </Col>
 

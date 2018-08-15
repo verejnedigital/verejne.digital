@@ -72,7 +72,7 @@ const NoticeList = ({
           <Row>
             <Col sm={{size: 10, offset: 2}}>
               <h2 className="notice-list-title">Aktuálne obstarávania</h2>
-              <p>
+              <p className="notice-list-text">
                 Našim cieľom je identifikovať a osloviť najvhodnejších uchádzačov, ktorí by sa mali
                 zapojiť do verejných obstarávaní. <a href=".">Viac info</a>
               </p>
