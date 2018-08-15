@@ -10,7 +10,7 @@ import {updateValue} from '../../../actions/sharedActions'
 import EntitySearchWrapper, {type EntitySearchProps} from '../dataWrappers/EntitySearchWrapper'
 import './Search.css'
 
-type EmptyHandler = () => void // TODO extract
+type EmptyHandler = () => void
 type EventHandler = (e: Event) => void
 
 type Props = {

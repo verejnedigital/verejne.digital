@@ -125,16 +125,6 @@ const legendGraph = (() => {
   }
 })()
 
-function enhanceDrawing(/*ctx*/) {
-  // const nodeId = 616705//subgraph.nodes[0].id
-  // const nodePosition = this.getPositions([nodeId])
-  // ctx.strokeStyle = '#A6D5F7'
-  // ctx.fillStyle = '#294475'
-  // ctx.circle(nodePosition[nodeId].x, nodePosition[nodeId].y, 5)
-  // ctx.fill()
-  // ctx.stroke()
-}
-
 const Subgraph = ({
   subgraph,
   selectedEids,
@@ -145,51 +135,43 @@ const Subgraph = ({
   handleDoubleClick,
   handleDrag,
   handleDragEnd,
-}: Props) => {
-  return (
-    <div className="subgraph">
-      {
-        <div>
-          <Row>
-            <Col lg="5" md="12">
-              Ovládanie:
-              <ul>
-                <li>Ťahanie vrchola: premiestnenie vrchola v grafe</li>
-                <li>
-                  Klik na vrchol: načítať a zobraziť detailné informácie o vrchole (v boxe pod
-                  grafom)
-                </li>
-                <li>Dvojklik na vrchol: pridať do grafu nezobrazených susedov</li>
-                <li>Potrasenie vrcholom: odobrať vrchol z grafu (aj jeho výlučných susedov)</li>
-              </ul>
-            </Col>
-            <Col lg="7" md="12">
-              <div className="graph graph-legend">
-                <GraphCompnent graph={legendGraph} options={graphOptions} style={legendStyle} />
-              </div>
-            </Col>
-          </Row>
-          <div className="graph">
-            <GraphCompnent
-              graph={subgraph}
-              options={graphOptions}
-              events={{
-                select: handleSelect,
-                doubleClick: handleDoubleClick,
-                dragging: handleDrag,
-                dragEnd: handleDragEnd,
-                afterDrawing: enhanceDrawing,
-              }}
-              style={graphStyle}
-            />
-          </div>
-          {preloadNodes && subgraph.nodes.map(({id}) => <NodeLoader key={id} eid={id} />)}
-          {selectedEids.map((eid) => <InfoLoader key={eid} eid={eid} />)}
+}: Props) => (
+  <div className="subgraph">
+    <Row>
+      <Col lg="5" md="12">
+        Ovládanie:
+        <ul>
+          <li>Ťahanie vrchola: premiestnenie vrchola v grafe</li>
+          <li>
+            Klik na vrchol: načítať a zobraziť detailné informácie o vrchole (v boxe pod grafom)
+          </li>
+          <li>Dvojklik na vrchol: pridať do grafu nezobrazených susedov</li>
+          <li>Potrasenie vrcholom: odobrať vrchol z grafu (aj jeho výlučných susedov)</li>
+        </ul>
+      </Col>
+      <Col lg="7" md="12">
+        <div className="graph graph-legend">
+          <GraphCompnent graph={legendGraph} options={graphOptions} style={legendStyle} />
         </div>
-      }
+      </Col>
+    </Row>
+    <div className="graph">
+      <GraphCompnent
+        graph={subgraph}
+        options={graphOptions}
+        events={{
+          select: handleSelect,
+          doubleClick: handleDoubleClick,
+          dragging: handleDrag,
+          dragEnd: handleDragEnd,
+        }}
+        style={graphStyle}
+      />
     </div>
-  )
-}
+    {preloadNodes && subgraph.nodes.map(({id}) => <NodeLoader key={id} eid={id} />)}
+    {selectedEids.map((eid) => <InfoLoader key={eid} eid={eid} />)}
+  </div>
+)
 
 export default compose(
   connect(null, {updateValue}),
@@ -206,7 +188,7 @@ export default compose(
         return
       }
       const subgraphId = `${props.entity1.eids.join()}-${props.entity2.eids.join()}`
-      const clickedEid = getNodeEid(nodes[0]) // TODO can double click more nodes?
+      const clickedEid = getNodeEid(nodes[0])
 
       if (props.entityDetails[clickedEid]) {
         const related = props.entityDetails[clickedEid].data.related
@@ -232,8 +214,6 @@ export default compose(
         props.updateValue(['connections', 'selectedEids'], [])
       }
     },
-    handleDragEnd: () => () => {
-      resetGesture()
-    },
+    handleDragEnd: () => resetGesture,
   })
 )(Subgraph)

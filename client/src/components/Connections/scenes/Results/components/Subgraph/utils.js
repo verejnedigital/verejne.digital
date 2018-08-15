@@ -22,7 +22,6 @@ export const options = {
     color: {color: variables.grayColor},
     hoverWidth: 0,
     width: 1,
-    // smooth: {type: 'continuous'},
   },
   groups: {
     notLoaded: {
@@ -41,11 +40,6 @@ export const options = {
       font: {color: variables.orangeColor},
       borderWidth: 5,
       shapeProperties: {borderDashes: false},
-      // shape: 'icon',
-      //           icon: {
-      //               face: 'FontAwesome',
-      //               code: '\uf1ad',
-      //           }
     },
     politContracts: {
       color: {
@@ -86,9 +80,6 @@ export const options = {
       y: 0,
     },
     scaling: {
-      // customScalingFunction: (min, max, total, value) => {
-      //   return value / total
-      // },
       min: 10,
       max: 50,
     },

@@ -8,7 +8,7 @@ import ConnectionWrapper, {type ConnectionProps} from '../dataWrappers/Connectio
 import Alternative from './Alternative'
 import './Statuses.css'
 
-type EmptyHandler = () => void // TODO extract
+type EmptyHandler = () => void
 
 const translateZaznam = (count: number, onClickMethod) => {
   const button = <strong onClick={onClickMethod}>{count}</strong>
