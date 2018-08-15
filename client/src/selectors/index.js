@@ -17,8 +17,8 @@ import type {ContextRouter} from 'react-router-dom'
 import type {NoticesOrdering} from '../components/Notices/NoticeList'
 import type {NoticeDetailProps} from '../components/Notices/NoticeDetail'
 
-import type {CompanyDetailsProps} from '../components/shared/CompanyDetails'
-import type {State, MapOptions, CompanyEntity, MapBounds, NewEntityDetails} from '../state'
+import type {CompanyDetailProps} from '../dataWrappers/CompanyDetailWrapper'
+import type {State, MapOptions, CompanyEntity, MapBounds, NewEntityDetail} from '../state'
 
 export const paramsIdSelector = (_: State, props: ContextRouter): string =>
   props.match.params.id || '0'
@@ -26,7 +26,7 @@ export const paramsIdSelector = (_: State, props: ContextRouter): string =>
 export const noticeDetailSelector = (state: State, props: NoticeDetailProps) =>
   props.match.params.id && state.notices.details[props.match.params.id]
 
-export const companyDetailsSelector = (state: State, props: CompanyDetailsProps) => {
+export const companyDetailSelector = (state: State, props: CompanyDetailProps) => {
   return props.eid && state.companies[props.eid]
 }
 
@@ -102,7 +102,7 @@ export const addressesSelector = (state: State) => state.addresses
 export const showInfoSelector = (state: State) => state.publicly.showInfo
 export const openedAddressDetailSelector = (state: State) => state.publicly.openedAddressDetail
 export const entitiesSelector = (state: State) => state.entities
-export const entityDetailSelector = (state: State, entityId: string): NewEntityDetails =>
+export const entityDetailSelector = (state: State, entityId: string): NewEntityDetail =>
   state.entityDetails[entityId]
 
 export const addressEntitiesSelector = createSelector(
