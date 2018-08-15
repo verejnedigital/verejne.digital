@@ -8,7 +8,6 @@ import SubgraphWrapper from '../../../../dataWrappers/SubgraphWrapper'
 import GraphCompnent from 'react-graph-vis'
 import {Col, Row} from 'reactstrap'
 import InfoLoader from './InfoLoader'
-import NodeLoader from './NodeLoader'
 import {updateValue} from '../../../actions/sharedActions'
 import SubgraphWrapper from '../dataWrappers/SubgraphWrapper'
 import {options as graphOptions, getNodeEid, addNeighbours, removeNodes} from './graph/utils'
@@ -168,7 +167,6 @@ const Subgraph = ({
         style={graphStyle}
       />
     </div>
-    {preloadNodes && subgraph.nodes.map(({id}) => <NodeLoader key={id} eid={id} />)}
     {selectedEids.map((eid) => <InfoLoader key={eid} eid={eid} />)}
   </div>
 )

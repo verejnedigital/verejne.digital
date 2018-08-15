@@ -7,7 +7,10 @@ import {withDataProviders} from 'data-provider'
 import {isNil} from 'lodash'
 import type {ComponentType} from 'react'
 import {isPolitician} from '../../Notices/utilities'
-import {connectionSubgraphProvider} from '../../../dataProviders/connectionsDataProviders'
+import {
+  connectionSubgraphProvider,
+  connectionEntityDetailProvider,
+} from '../../../dataProviders/connectionsDataProviders'
 import {addEdgeIfMissing} from '../components/graph/utils'
 import type {State, Company, RelatedEntity, Graph, GraphId, Node, Edge} from '../../../state'
 import type {EntityProps} from './EntityWrapper'
@@ -22,6 +25,10 @@ type EntityDetails = {
       entities: Array<{entity_name: string}>,
     } & Company,
   },
+}
+
+export type OwnProps = {
+  preloadNodes: boolean,
 }
 
 export type SubgraphProps = {
@@ -143,7 +150,13 @@ const ConnectionWrapper = (WrappedComponent: ComponentType<*>) => {
           props.connections
         ),
         entityDetails: state.connections.entityDetails,
-      }))
+      })),
+      branch(
+        ({preloadNodes, subgraph}: OwnProps & SubgraphProps) => subgraph != null && preloadNodes,
+        withDataProviders(({subgraph}: SubgraphProps) =>
+          subgraph.nodes.map(({id}: Node) => connectionEntityDetailProvider(id, false))
+        )
+      )
     )
   )(wrapped)
 }
