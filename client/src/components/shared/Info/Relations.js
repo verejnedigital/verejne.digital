@@ -7,7 +7,7 @@ import ChevronDown from 'react-icons/lib/fa/chevron-down'
 import RecursiveInfo from './RecursiveInfo'
 import './Relations.css'
 
-const _Relations = ({data, toggledOn, toggle}) => {
+const _Relations = ({data, toggledOn, toggle, useNewApi}) => {
   return (
     <div className="relations">
       <Button outline color="primary" onClick={toggle}>
@@ -18,7 +18,7 @@ const _Relations = ({data, toggledOn, toggle}) => {
         <ul className="list-unstyled">
           {data.map((related, i) => (
             <li className="relations-item" key={related.eid}>
-              <RecursiveInfo key={i} name={related.name} eid={related.eid} />
+              <RecursiveInfo key={i} name={related.name} eid={related.eid} useNewApi={useNewApi} />
             </li>
           ))}
         </ul>

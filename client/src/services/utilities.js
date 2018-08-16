@@ -1,9 +1,9 @@
 // @flow
 
 import React from 'react'
-import {isFinite} from 'lodash'
+import {reduce, pickBy, isEmpty, orderBy, isFinite} from 'lodash'
 
-import type {Company} from '../state'
+import type {Company, NewEntityDetail} from '../state'
 
 const monthNames = [
   'január',
@@ -56,7 +56,7 @@ function isValidValue(value) {
     value === 'null' ||
     value === 'NULL' ||
     value === 'None' ||
-    value === 'nezisten'
+    (typeof value === 'string' && value.indexOf('nezisten') === 0)
   )
 }
 
@@ -94,6 +94,29 @@ export function getFinancialData(data: Company, ico: string) {
     }
   }
   return findata
+}
+
+export function getNewFinancialData(data: NewEntityDetail) {
+  const finances = reduce(
+    data.companyfinancials || {},
+    (items, origItem, year, origObj) => {
+      const item = pickBy(origItem, isValidValue)
+      if (!isEmpty(item)) {
+        item.year = year
+        if (origObj[year - 1]) {
+          item.revenueTrend = computeTrend(item.revenue, origObj[year - 1].revenue)
+          item.profitTrend = computeTrend(item.profit, origObj[year - 1].profit)
+        }
+        items.push(item)
+      }
+      return items
+    },
+    []
+  )
+  return {
+    ...pickBy(data.companyinfo, isValidValue),
+    finances: orderBy(finances, ['year'], ['desc']),
+  }
 }
 
 export function showDate(dateString: string) {

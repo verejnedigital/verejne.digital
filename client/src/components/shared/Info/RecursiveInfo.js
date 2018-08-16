@@ -3,11 +3,12 @@ import CompanyDetails from '../CompanyDetails'
 import {compose, withState, withHandlers} from 'recompose'
 import './RecursiveInfo.css'
 
-const _RecursiveInfo = ({name, eid, toggledOn, toggle}) => {
+const _RecursiveInfo = ({name, eid, useNewApi, toggledOn, toggle}) => {
   if (toggledOn) {
-    return <CompanyDetails eid={eid} />
+    return <CompanyDetails useNewApi={useNewApi} eid={eid} />
   } else {
     return (
+      //
       <button onClick={toggle} className="recursive-info-btn btn btn-link">
         {name}
       </button>
