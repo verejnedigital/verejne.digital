@@ -9,7 +9,7 @@ import {
   CITY_ZOOM,
   DEFAULT_ENTITIES_REQUEST_PARAMS,
 } from '../constants'
-import {values} from '../utils'
+import {values, normalizeName} from '../utils'
 import {sortBy, chunk, filter} from 'lodash'
 import supercluster from 'points-cluster'
 
@@ -30,13 +30,30 @@ export const companyDetailsSelector = (state: State, props: CompanyDetailsProps)
   return props.eid && state.companies[props.eid]
 }
 
+export const noticesSelector = (state: State) => state.notices.list
+export const noticesSearchQuerySelector = (state: State) => normalizeName(state.notices.searchQuery)
+
+export const searchFilteredNoticesSelector = createSelector(
+  noticesSelector,
+  noticesSearchQuerySelector,
+  (notices, query) => {
+    const filteredNotices = filter(notices, (notice) =>{
+      const similarity = notice.kandidati.length > 0 ?
+        Math.round(notice.kandidati[0].score * 100) : '?'
+      return   normalizeName(notice.customer.concat(notice.price_num)
+        .concat(notice.title).concat(notice.kandidati[0].name)
+        .concat(similarity)).indexOf(query) > -1
+    })
+    return filteredNotices.length>0 ? filteredNotices : []
+  }
+)
 export const dateSortedNoticesSelector = createSelector(
-  (state: State) => state.notices.list,
+  searchFilteredNoticesSelector,
   (data) => sortBy(values(data), ['bulletin_year', 'bulletin_month', 'bulletin_day'])
 )
 
 export const nameSortedNoticesSelector = createSelector(
-  (state: State) => state.notices.list,
+  searchFilteredNoticesSelector,
   (data) => sortBy(values(data), ['title'])
 )
 
@@ -60,7 +77,7 @@ export const paginatedNoticesSelector = createSelector(
   paginationSelector,
   (dateSorted, nameSorted, orderBy, page) => {
     const notices = orderBy === 'title' ? nameSorted : dateSorted
-    return chunk(notices, PAGINATION_CHUNK_SIZE)[page - 1]
+    return chunk(notices, PAGINATION_CHUNK_SIZE)[page - 1] || []
   }
 )
 
@@ -68,17 +85,11 @@ export const paginatedNoticesSelector = createSelector(
 // sorted by date anyway
 export const newestBulletinDateSelector = createSelector(
   dateSortedNoticesSelector,
-  (notices) => notices[0].bulletin_date
+  (notices) => notices[0] ? notices[0].bulletin_date : ''
 )
 
-// will make more sense once we allow searching on notices
-// (filtered notices will then be the input selector)
 export const noticesLengthSelector = createSelector(
-  dateSortedNoticesSelector,
-  nameSortedNoticesSelector,
-  noticesOrderingSelector,
-  (dateSorted, nameSorted, orderBy, page) => {
-    const notices = orderBy === 'title' ? nameSorted : dateSorted
+  searchFilteredNoticesSelector, (notices) => {
     return notices.length
   }
 )
