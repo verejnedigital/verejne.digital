@@ -57,7 +57,7 @@ class DetailCadastralTable extends Component {
             {cadastral.map((lv, key) => (
               <DetailCadastralLV
                 key={key}
-                num={key + 1}
+                num={key + 1 + (currentPage - 1) * CADASTRAL_PAGINATION_CHUNK_SIZE}
                 lv={lv}
                 onParcelShow={() => this.onParcelShow(lv)}
               />
