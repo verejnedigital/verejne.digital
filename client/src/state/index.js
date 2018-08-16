@@ -217,6 +217,7 @@ export type State = {|
   +notices: {|
     +list: ObjectMap<Notice>,
     +details: ObjectMap<Notice>,
+    +searchQuery: string,
   |},
   +profile: {|
     +list: ObjectMap<Politician>,
@@ -248,6 +249,7 @@ const getInitialState = (): State => ({
   notices: {
     list: {},
     details: {},
+    searchQuery: '',
   },
   profile: {
     list: {},

@@ -8,6 +8,8 @@ import {
   ModalBody,
   ModalFooter,
   Input,
+  InputGroup,
+  InputGroupAddon,
   Form,
   FormGroup,
   FormText,
@@ -57,14 +59,21 @@ const EntitySearch = ({
       <ModalBody>
         <Form onSubmit={findEntities}>
           <FormGroup>
-            <Input
-              type="text"
-              className="form-control"
-              placeholder={FIND_ENTITY_TITLE}
-              value={entitySearchValue}
-              onChange={setEntitySearchValue}
-              ref={input => input && ReactDOM.findDOMNode(input).focus()}
-            />
+            <InputGroup>
+              <Input
+                type="text"
+                className="form-control"
+                placeholder={FIND_ENTITY_TITLE}
+                value={searchEntityValue}
+                onChange={setEntitySearchValue}
+                ref={input => input && ReactDOM.findDOMNode(input).focus()}
+              />
+              <InputGroupAddon addonType="append">
+                <Button color="primary" onClick={findEntities}>
+                  {FIND_ENTITY_TITLE}
+                </Button>
+              </InputGroupAddon>
+            </InputGroup>
             <FormText>
               {entitySearchFor && `${plurality(entitySearchEids.length)} pre "${entitySearchFor}".`}
             </FormText>
@@ -75,9 +84,6 @@ const EntitySearch = ({
       <ModalFooter>
         <Button color="secondary" onClick={toggleModalOpen}>
           Zavrieť
-        </Button>
-        <Button color="primary" onClick={findEntities}>
-          {FIND_ENTITY_TITLE}
         </Button>
       </ModalFooter>
     </Modal>

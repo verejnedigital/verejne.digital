@@ -28,6 +28,7 @@ import './Verejne.css'
 const Verejne = ({
   autocompleteValue,
   setAutocompleteValue,
+  setZoomToLocation,
   autocompleteOptions,
   toggleModalOpen,
   openedAddressId,
@@ -51,11 +52,7 @@ const Verejne = ({
       <FormGroup>
         <PlacesAutocomplete
           value={autocompleteValue}
-          onSelect={(value, id) =>
-            geocodeByAddress(value)
-              .then((results) => getLatLng(results[0]))
-              .then((location) => zoomToLocation(location, ENTITY_CLOSE_ZOOM))
-          }
+          onSelect={setZoomToLocation}
           onChange={setAutocompleteValue}
           onError={(status, clearSuggestions) => clearSuggestions()}
           searchOptions={autocompleteOptions}
@@ -89,5 +86,9 @@ export default compose(
       updateValue(['publicly', 'autocompleteValue'], value, 'Set autocomplete value'),
     setEntitySearchValue: ({updateValue}) => (e) =>
       updateValue(['publicly', 'entitySearchValue'], (e.target.value), 'Set entity search field value'),
+    setZoomToLocation: ({zoomToLocation}) => (value, id) =>
+      geocodeByAddress(value)
+        .then((results) => getLatLng(results[0]))
+        .then((location) => zoomToLocation(location, ENTITY_CLOSE_ZOOM)),
   })
 )(Verejne)
