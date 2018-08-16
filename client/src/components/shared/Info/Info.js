@@ -9,7 +9,7 @@ import {
   ShowNumberCurrency,
   showDate,
   isPolitician,
-} from '../../Notices/utilities'
+} from '../../../services/utilities'
 import DonationsToParties from './DonationsToParties'
 import SponsorshipsOfParties from './SponsorshipsOfParties'
 import Relations from './Relations'
