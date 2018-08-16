@@ -15,7 +15,7 @@ import {
   FormText,
 } from 'reactstrap'
 import {connect} from 'react-redux'
-import {compose, withState, withHandlers} from 'recompose'
+import {compose, withHandlers} from 'recompose'
 import EntitySearchResult from '../EntitySearchResult'
 import {
   entitySearchValueSelector,
@@ -64,7 +64,7 @@ const EntitySearch = ({
                 type="text"
                 className="form-control"
                 placeholder={FIND_ENTITY_TITLE}
-                value={searchEntityValue}
+                value={entitySearchValue}
                 onChange={setEntitySearchValue}
                 ref={input => input && ReactDOM.findDOMNode(input).focus()}
               />
