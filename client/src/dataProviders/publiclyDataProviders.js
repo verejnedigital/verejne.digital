@@ -6,7 +6,7 @@ import {
   setNewEntities,
   setNewEntityDetail,
 } from '../actions/verejneActions'
-
+import {EntityDetailLoading, ModalLoading} from '../components/Loading/'
 import type {Address, NewEntity, EntityDetails} from '../state'
 import type {Dispatch} from '../types/reduxTypes'
 
@@ -54,6 +54,7 @@ export const entityDetailProvider = (entityId: string) => {
     ],
     onData: [dispatchEntityDetails],
     keepAliveFor: 60 * 60 * 1000,
+    loadingComponent: <EntityDetailLoading />,
   }
 }
 
@@ -84,6 +85,7 @@ export const entitiesSearchResultEidsProvider = (searchFor: string) => {
       },
     ],
     onData: [dispatchSearchEids],
+    loadingComponent: <ModalLoading />,
   }
 }
 
