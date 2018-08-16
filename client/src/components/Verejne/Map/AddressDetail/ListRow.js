@@ -11,7 +11,7 @@ import './ListRow.css'
 import NewInfo from '../../../shared/NewInfo/Info'
 
 const _DetailedInfo = ({id, toggleEntityInfo, data}) => (
-  <ListGroupItem action className="list-row list-row-open">
+  <ListGroupItem action className="list-row">
     <NewInfo data={data} canClose onClose={() => toggleEntityInfo(id)} />
   </ListGroupItem>
 )

@@ -5,7 +5,7 @@ import ChevronDown from 'react-icons/lib/fa/chevron-down'
 import {Badge, Button} from 'reactstrap'
 
 import {ShowNumberCurrency} from '../../../services/utilities'
-import './Contracts.css'
+import '../Info/Contracts.css'
 
 const Contracts = ({data, toggledOn, toggle}) => {
   return (
