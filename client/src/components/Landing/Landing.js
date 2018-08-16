@@ -57,8 +57,8 @@ class Landing extends Component {
           <div className="container">
             <ul className="float-md-right list-inline">
               <li className="list-inline-item">
-                <a href="http://transparency.sk/sk/">
-                  <img src="/tis.png" alt="Transparency international slovakia" />
+                <a href="https://www.zastavmekorupciu.sk/">
+                  <img src="/nzk.png" alt="Nadácia Zastavme Korupciu" />
                 </a>
               </li>
               <li className="list-inline-item">
