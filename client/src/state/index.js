@@ -187,26 +187,94 @@ export type NewEntity = {
 
 export type NewEntityState = NewEntity & {addressId: number}
 
+export type EuFund = {
+  title: string,
+  link: string,
+  price: number,
+  state: string,
+  call_state: string,
+  call_title: string,
+}
+
+export type CompanyFinancial = {
+  revenue: number,
+  profit: number,
+  employees: string,
+}
+
+export type Contract = {
+  client_eid: number,
+  client_name: string,
+  id: number,
+  contract_price_amount: number,
+  contract_price_total_amount: number,
+  signed_on: string,
+  effective_from: string,
+  effective_to: string,
+  status_id: number,
+  contract_id: number,
+  contract_identifier: string,
+}
+
+// TODO rename to Notice when old one is gone
+export type NoticeNew = {
+  client_eid: number,
+  client_name: string,
+  id: number,
+  notice_id: number,
+  contract_id: number,
+  title: string,
+  estimated_value_amount: number,
+  estimated_value_currency: string,
+  bulletin_issue_id: number,
+  notice_type_id: number,
+  short_description: string,
+  total_final_value_amount: number,
+  total_final_value_currency: string,
+  body: string,
+}
+
 export type RelatedEntity = {
+  eid: number,
   name: string,
   stakeholder_type_id: number,
-  eid: number,
-  address: string,
   lat: number,
   lng: number,
+  address: string,
 }
 
 export type EntityDetails = {
+  eid: number,
   name: string,
-  related: RelatedEntity[],
-  address: string,
   lat: number,
   lng: number,
+  address: string,
+  eufunds: {
+    eufunds_count: number,
+    eufunds_price_sum: number,
+    largest: Array<EuFund>,
+  },
+  companyfinancials: {
+    [year: number]: CompanyFinancial,
+  },
   companyinfo: {
-    established_on: string,
     ico: number,
+    established_on: string,
     terminated_on: string,
   },
+  contracts: {
+    count: number,
+    price_amount_sum: number,
+    most_recent: Array<Contract>,
+    largest: Array<Contract>,
+  },
+  notices: {
+    count: number,
+    total_final_value_amount_eur_sum: number,
+    most_recent: Array<NoticeNew>,
+    largest: Array<NoticeNew>,
+  },
+  related: RelatedEntity[],
 }
 
 // Each property must begin with '+' to be made read only and each object
