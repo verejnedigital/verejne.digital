@@ -14,7 +14,7 @@ import Relations from '../Info/Relations'
 import Trend from '../Info/Trend'
 import ExternalLink from '../ExternalLink'
 import mapIcon from '../../../assets/mapIcon.svg'
-import './Info.css'
+import '../Info/Info.css'
 
 const Item = ({children, label, url, linkText}) => (
   <li className="info-item">
