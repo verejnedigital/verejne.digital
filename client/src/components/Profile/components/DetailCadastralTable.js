@@ -4,6 +4,7 @@ import {CADASTRAL_PAGINATION_SIZE, CADASTRAL_PAGINATION_CHUNK_SIZE} from '../../
 import {modifyQuery} from '../../../utils'
 import Pagination from 'react-js-pagination'
 import {Table} from 'reactstrap'
+import './DetailCadastralTable.css'
 
 class DetailCadastralTable extends Component {
   onParcelShow = (lv) => {
@@ -14,17 +15,19 @@ class DetailCadastralTable extends Component {
     const {cadastral, cadastralLength, currentPage, search, query, history} = this.props
 
     const pagination = (
-      <div>
-        <Pagination
-          itemClass="page-item"
-          linkClass="page-link"
-          hideNavigation
-          pageRangeDisplayed={CADASTRAL_PAGINATION_SIZE}
-          activePage={currentPage}
-          itemsCountPerPage={CADASTRAL_PAGINATION_CHUNK_SIZE}
-          totalItemsCount={cadastralLength}
-          onChange={(page) => history.push({search: modifyQuery(query, {cadastralPage: page})})}
-        />
+      <div className="pagination-wrapper">
+        <div className="scroll-container">
+          <Pagination
+            itemClass="page-item"
+            linkClass="page-link"
+            hideNavigation
+            pageRangeDisplayed={CADASTRAL_PAGINATION_SIZE}
+            activePage={currentPage}
+            itemsCountPerPage={CADASTRAL_PAGINATION_CHUNK_SIZE}
+            totalItemsCount={cadastralLength}
+            onChange={(page) => history.push({search: modifyQuery(query, {cadastralPage: page})})}
+          />
+        </div>
       </div>
     )
 
