@@ -23,6 +23,7 @@ import './Verejne.css'
 const Verejne = ({
   autocompleteValue,
   setAutocompleteValue,
+  setZoomToLocation,
   autocompleteOptions,
   toggleModalOpen,
   openedAddressId,
@@ -36,11 +37,7 @@ const Verejne = ({
       <FormGroup>
         <PlacesAutocomplete
           value={autocompleteValue}
-          onSelect={(value, id) =>
-            geocodeByAddress(value)
-              .then((results) => getLatLng(results[0]))
-              .then((location) => zoomToLocation(location, ENTITY_CLOSE_ZOOM))
-          }
+          onSelect={setZoomToLocation}
           onChange={setAutocompleteValue}
           onError={(status, clearSuggestions) => clearSuggestions()}
           searchOptions={autocompleteOptions}
@@ -66,5 +63,9 @@ export default compose(
   withHandlers({
     setAutocompleteValue: ({updateValue}) => (value) =>
       updateValue(['publicly', 'autocompleteValue'], value, 'Set autocomplete value'),
+    setZoomToLocation: ({zoomToLocation}) => (value, id) =>
+      geocodeByAddress(value)
+        .then((results) => getLatLng(results[0]))
+        .then((location) => zoomToLocation(location, ENTITY_CLOSE_ZOOM)),
   })
 )(Verejne)
