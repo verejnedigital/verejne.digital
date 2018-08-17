@@ -17,9 +17,9 @@ import {entityDetailSelector} from '../../../../selectors'
 import NewInfo from '../../../shared/NewInfo/Info'
 import './ListRow.css'
 
-const _DetailedInfo = ({id, toggleEntityInfo, data}) => (
+const _DetailedInfo = ({toggleEntityInfo, data}) => (
   <ListGroupItem action className="list-row">
-    <NewInfo data={data} canClose onClose={() => toggleEntityInfo(id)} />
+    <NewInfo data={data} canClose onClose={toggleEntityInfo} />
   </ListGroupItem>
 )
 
@@ -30,7 +30,12 @@ const DetailedInfo = compose(
     }),
     {toggleEntityInfo}
   ),
-  withDataProviders(({id}) => [entityDetailProvider(id)])
+  withDataProviders(({id}) => [entityDetailProvider(id)]),
+  withHandlers({
+    toggleEntityInfo: ({toggleEntityInfo, id}) => () => {
+      toggleEntityInfo(id)
+    },
+  })
 )(_DetailedInfo)
 
 const ListRow = ({entity, toggleEntityInfo, showInfo, openModalSearch}) =>
@@ -38,7 +43,7 @@ const ListRow = ({entity, toggleEntityInfo, showInfo, openModalSearch}) =>
     <DetailedInfo id={entity.id} />
   ) : (
     <ListGroupItem action className="list-row">
-      <span className="list-row-toggler" onClick={() => toggleEntityInfo(entity.id)}>
+      <span className="list-row-toggler" onClick={toggleEntityInfo}>
         <CircleIcon size="10" className="list-row-icon" />
         <span>{entity.name}</span>
       </span>
@@ -54,6 +59,9 @@ export default compose(
     {toggleEntityInfo, toggleModalOpen, setEntitySearchFor, updateValue}
   ),
   withHandlers({
+    toggleEntityInfo: ({toggleEntityInfo, entity}) => () => {
+      toggleEntityInfo(entity.id)
+    },
     openModalSearch: ({entity, toggleModalOpen, setEntitySearchFor, updateValue}) => () => {
       setEntitySearchFor(entity.name)
       updateValue(['publicly', 'entitySearchValue'], entity.name, 'Set entity search field value')

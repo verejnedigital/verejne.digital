@@ -1,7 +1,7 @@
 // @flow
 import React from 'react'
 import {connect} from 'react-redux'
-import {compose} from 'recompose'
+import {compose} from 'redux'
 import {withDataProviders} from 'data-provider'
 import {entitySearchForSelector, entitySearchEidsSelector} from '../../../selectors'
 import {entitiesSearchResultEidsProvider} from '../../../dataProviders/publiclyDataProviders'
