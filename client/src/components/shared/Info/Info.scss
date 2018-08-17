@@ -8,6 +8,10 @@
   border-radius: 4px;
   border: 2px solid $border-color;
   box-shadow: 0 4px 12px 0 $shadow-color;
+
+  &.closable .info-header > h3 {
+    cursor: pointer;
+  }
 }
 
 .info-header {
