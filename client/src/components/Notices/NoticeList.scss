@@ -52,7 +52,14 @@
   }
 }
 
-.notice-list-pagination {
+.pagination-wrapper {
   display: flex;
   justify-content: center;
+  align-items: center;
+}
+
+.scroll-container {
+  margin: auto;
+  max-height: 100%;
+  overflow: auto;
 }

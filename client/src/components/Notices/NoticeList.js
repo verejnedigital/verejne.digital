@@ -78,7 +78,6 @@ const NoticeList = ({
     <Pagination
       itemClass="page-item"
       linkClass="page-link"
-      className="paginationWrapper"
       hideNavigation
       pageRangeDisplayed={NOTICES_PAGINATION_SIZE}
       activePage={currentPage}
@@ -139,7 +138,13 @@ const NoticeList = ({
                 />
               ))
           }
-          {noticesLength > 10 && <div className="notice-list-pagination">{pagination}</div>}
+          {noticesLength > 10 &&
+              <div className="pagination-wrapper">
+                <div className="scroll-container">
+                  {pagination}
+                </div>
+              </div>}
+
         </Col>
       </Row>
     </Container>
