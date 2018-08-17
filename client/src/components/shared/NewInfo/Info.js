@@ -37,6 +37,7 @@ const Findata = ({data}) => {
       <Item
         label="IČO"
         url={`http://www.orsr.sk/hladaj_ico.asp?ICO=${data.ico}&SID=0`}
+        // TODO link to zrsr when there is a way to tell companies and persons apart
         linkText={data.ico}
       >
         &nbsp;(<ExternalLink isMapView={false} url={icoUrl(data.ico)}>

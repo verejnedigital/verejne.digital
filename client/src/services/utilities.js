@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react'
-import {reduce, pickBy, isEmpty, orderBy, isFinite} from 'lodash'
+import {reduce, pickBy, isEmpty, orderBy, padStart, isFinite} from 'lodash'
 
 import type {Company, NewEntityDetail} from '../state'
 
@@ -124,6 +124,7 @@ export function getNewFinancialData(data: NewEntityDetail) {
   )
   return {
     ...pickBy(data.companyinfo, isValidValue),
+    ico: padIco(data.companyinfo.ico),
     finances: orderBy(finances, ['year'], ['desc']),
   }
 }
@@ -141,15 +142,14 @@ export function showContractStatus(statusId: number) {
   return contractStatuses[statusId] || ''
 }
 
+function padIco(ico: number | string) {
+  return ico != null ? padStart(ico.toString(), 8, '0') : null
+}
+
 export function extractIco(data: Company) {
   const icoSource = ['new_orsr_data', 'orsresd_data', 'firmy_data'].find(
     (src) => data[src].length >= 1
   )
-  let ico = icoSource ? data[icoSource][0].ico : null
-  if (ico != null) {
-    while (ico.length < 8) {
-      ico = `0${ico}`
-    }
-  }
-  return ico
+  const ico = icoSource ? data[icoSource][0].ico : null
+  return padIco(ico)
 }
