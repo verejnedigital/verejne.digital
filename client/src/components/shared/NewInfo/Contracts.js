@@ -5,17 +5,17 @@ import ChevronDown from 'react-icons/lib/fa/chevron-down'
 import {Badge, Button} from 'reactstrap'
 
 import {ShowNumberCurrency} from '../../../services/utilities'
-import '../Info/Contracts.css'
+import '../Info/InfoButton.css'
 
 const Contracts = ({data, toggledOn, toggle}) => {
   return (
-    <div className="contracts">
+    <div className="contracts info-button">
       <Button outline color="primary" onClick={toggle}>
         {toggledOn ? <ChevronUp aria-hidden="true" /> : <ChevronDown aria-hidden="true" />} Zmluvy{' '}
         <Badge color="primary">{data.count}</Badge>
       </Button>
       {toggledOn && (
-        <ul className="list-unstyled contracts-list">
+        <ul className="list-unstyled info-button-list">
           {data.most_recent.map((contract, i) => (
             <li key={i}>
               {`${contract.client_name}, `}
