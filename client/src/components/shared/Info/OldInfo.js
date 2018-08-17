@@ -13,7 +13,7 @@ import {
 import DonationsToParties from './DonationsToParties'
 import SponsorshipsOfParties from './SponsorshipsOfParties'
 import Relations from './Relations'
-import Contracts from './Contracts'
+import OldContracts from './OldContracts'
 import Trend from './Trend'
 import ExternalLink from '../ExternalLink'
 import './Info.css'
@@ -74,7 +74,7 @@ const Findata = ({data}) => {
   )
 }
 
-const Info = ({data, canClose, onClose}) => {
+const OldInfo = ({data, canClose, onClose}) => {
   const entity = data.entities[0]
   const findata = getFinancialData(data, extractIco(data))
 
@@ -173,11 +173,11 @@ const Info = ({data, canClose, onClose}) => {
             </Badge>
           )}
         </div>
-        {data.contracts.length >= 1 && <Contracts data={data.contracts} />}
+        {data.contracts.length >= 1 && <OldContracts data={data.contracts} />}
         {data.related.length >= 1 && <Relations data={data.related} />}
       </div>
     </Container>
   )
 }
 
-export default Info
+export default OldInfo

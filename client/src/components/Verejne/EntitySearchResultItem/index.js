@@ -5,7 +5,7 @@ import {connect} from 'react-redux'
 import CompanyDetailWrapper from '../../../dataWrappers/CompanyDetailWrapper'
 import {toggleModalOpen, zoomToLocation} from '../../../actions/verejneActions'
 import './EntitySearchResultItem.css'
-import Info from '../../shared/Info/Info'
+import OldInfo from '../../shared/Info/OldInfo'
 
 import type {CompanyDetailProps} from '../../../dataWrappers/CompanyDetailWrapper'
 
@@ -15,7 +15,7 @@ type Props = {
 
 const EntitySearchResultItem = ({company, showOnMap}: Props) => (
   <div style={{marginBottom: '1rem'}}>
-    <Info data={company} eid={company.eid} />
+    <OldInfo data={company} eid={company.eid} />
   </div>
 )
 
