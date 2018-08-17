@@ -4,26 +4,24 @@ import ChevronUp from 'react-icons/lib/fa/chevron-up'
 import ChevronDown from 'react-icons/lib/fa/chevron-down'
 import {Badge, Button} from 'reactstrap'
 
-import ExternalLink from '../ExternalLink'
 import {ShowNumberCurrency} from '../../../services/utilities'
-import '../Info/InfoButton.css'
+import './InfoButton.css'
 
-const EuroFunds = ({data, toggledOn, toggle}) => (
-  <div className="eurofunds info-button">
+const Notices = ({data, toggledOn, toggle}) => (
+  <div className="notices info-button">
     <Button outline color="primary" onClick={toggle}>
       {toggledOn ? <ChevronUp aria-hidden="true" /> : <ChevronDown aria-hidden="true" />}
-      &nbsp;Eurofondy:&nbsp;<ShowNumberCurrency num={data.eufunds_price_sum} />&nbsp;
-      <Badge color="primary">{data.eufunds_count}</Badge>
+      &nbsp;Zmluvy so štátom:&nbsp;<ShowNumberCurrency
+        num={data.total_final_value_amount_eur_sum}
+      />&nbsp;
+      <Badge color="primary">{data.count}</Badge>
     </Button>
     {toggledOn && (
       <ul className="list-unstyled info-button-list">
-        {data.largest.map((eufund, i) => (
-          // no proper ID available
-          <li key={i}>
-            <ExternalLink url={eufund.link}>
-              {`${eufund.title}, `}
-              <ShowNumberCurrency num={eufund.price} />
-            </ExternalLink>
+        {data.most_recent.map((notice) => (
+          <li key={notice.id} title={notice.title}>
+            {`${notice.client_name}, `}
+            <ShowNumberCurrency num={notice.total_final_value_amount} />
           </li>
         ))}
       </ul>
@@ -36,4 +34,4 @@ export default compose(
   withHandlers({
     toggle: ({toggle}) => () => toggle((current) => !current),
   })
-)(EuroFunds)
+)(Notices)

@@ -14,12 +14,12 @@ import {
 import {updateValue} from '../../../../actions/sharedActions'
 import {entityDetailProvider} from '../../../../dataProviders/publiclyDataProviders'
 import {entityDetailSelector} from '../../../../selectors'
-import NewInfo from '../../../shared/NewInfo/Info'
+import Info from '../../../shared/Info/Info'
 import './ListRow.css'
 
 const _DetailedInfo = ({toggleEntityInfo, data}) => (
   <ListGroupItem action className="list-row">
-    <NewInfo data={data} canClose onClose={toggleEntityInfo} />
+    <Info data={data} canClose onClose={toggleEntityInfo} />
   </ListGroupItem>
 )
 
