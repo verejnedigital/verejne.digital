@@ -7,6 +7,7 @@ import {
   addressesSelector,
   clustersSelector,
   addressesUrlSelector,
+  slovakiaBorderSelector,
 } from '../../../selectors'
 import {setMapOptions} from '../../../actions/verejneActions'
 import './GoogleMap.css'
@@ -27,6 +28,8 @@ import type {MapCluster} from '../../../selectors'
 import type {GenericAction} from '../../../types/reduxTypes'
 import type {RouterHistory} from 'react-router'
 
+import booleanContains from '@turf/boolean-contains'
+import {point} from '@turf/helpers'
 type Props = {
   zoom: number,
   center: [number, number],
@@ -81,11 +84,24 @@ export default compose(
     addresses: addressesSelector(state),
     clusters: clustersSelector(state),
     addressesUrl: addressesUrlSelector(state),
+    slovakia: slovakiaBorderSelector(state),
   })),
-  withDataProviders(({addressesUrl}) => [addressesProvider(addressesUrl)]),
+  branch(
+    (props) => (props.zoom > 10)
+    || (props.zoom < 8)
+    || !booleanContains(props.slovakia.features[0], point([props.center[1], props.center[0]])),
+    withDataProviders(({slovakia, addressesUrl, center}) => {
+      console.log(slovakia.features[0])
+      return [addressesProvider(addressesUrl)]
+    })
+  ),
   withHandlers({
     onChange: (props) => (options) => {
-      props.setMapOptions(options)
+      const newOptions = {zoom: options.zoom,
+        center: [options.center.lat, options.center.lng],
+        bounds: options.bounds,
+      }
+      props.setMapOptions(newOptions)
       props.history.replace(
         `?lat=${+options.center.lat.toFixed(6)}&lng=${+options.center.lng.toFixed(6)}&zoom=${
           options.zoom
