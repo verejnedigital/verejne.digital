@@ -90,8 +90,9 @@ export default compose(
   withHandlers({
     openModalSearch: ({toggleModalOpen, setEntitySearchFor, entity, updateValue}) => (e) =>{
       if (e.stopPropagation) e.stopPropagation()
+      updateValue(['publicly', 'entitySearchValue'], entity.name, 'Set entity search field value')
       setEntitySearchFor(entity.name)
-      updateValue(['publicly', 'entitySearchValue'], entity.name, 'Set entity search field value'),
+      updateValue(['publicly', 'entitySearchValue'], entity.name, 'Set entity search field value')
       toggleModalOpen()
     }
   })
