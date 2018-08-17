@@ -10,6 +10,8 @@ import {
   showDate,
 } from '../../../services/utilities'
 import Contracts from './Contracts'
+import Notices from './Notices'
+import Eurofunds from './Eurofunds'
 import Relations from '../Info/Relations'
 import Trend from '../Info/Trend'
 import ExternalLink from '../ExternalLink'
@@ -37,7 +39,7 @@ const Findata = ({data}) => {
         url={`http://www.orsr.sk/hladaj_ico.asp?ICO=${data.ico}&SID=0`}
         linkText={data.ico}
       >
-        (<ExternalLink isMapView={false} url={icoUrl(data.ico)}>
+        &nbsp;(<ExternalLink isMapView={false} url={icoUrl(data.ico)}>
           Detaily o firme
         </ExternalLink>)
       </Item>
@@ -97,6 +99,8 @@ const Info = ({data, canClose, onClose}) => (
         )}
       </ul>
       {data.contracts && data.contracts.count > 0 && <Contracts data={data.contracts} />}
+      {data.notices && data.notices.count > 0 && <Notices data={data.notices} />}
+      {data.eufunds && data.eufunds.eufunds_count > 0 && <Eurofunds data={data.eufunds} />}
       {data.related.length > 0 && <Relations data={data.related} useNewApi />}
     </div>
   </Container>
