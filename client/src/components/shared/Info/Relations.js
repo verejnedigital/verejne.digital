@@ -30,6 +30,6 @@ const _Relations = ({data, toggledOn, toggle, useNewApi}) => {
 export default compose(
   withState('toggledOn', 'toggle', false),
   withHandlers({
-    toggle: ({toggle}) => (e) => toggle((current) => !current),
+    toggle: ({toggle}) => () => toggle((current) => !current),
   })
 )(_Relations)
