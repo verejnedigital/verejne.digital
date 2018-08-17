@@ -18,6 +18,7 @@ const _Contracts = ({data, toggledOn, toggle}) => {
       {toggledOn && (
         <ul className="list-unstyled info-button-list">
           {data.map((contract, i) => (
+            // contract has no proper ID
             <li key={i}>
               <ExternalLink url={contract.source}>
                 {`${contract.customer}, `}

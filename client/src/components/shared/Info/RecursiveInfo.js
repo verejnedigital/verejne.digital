@@ -1,6 +1,7 @@
 import React from 'react'
 import CompanyDetails from '../CompanyDetails'
 import {compose, withState, withHandlers} from 'recompose'
+import {Button} from 'reactstrap'
 import './RecursiveInfo.css'
 
 const _RecursiveInfo = ({name, eid, useNewApi, toggledOn, toggle}) => {
@@ -8,10 +9,9 @@ const _RecursiveInfo = ({name, eid, useNewApi, toggledOn, toggle}) => {
     return <CompanyDetails useNewApi={useNewApi} eid={eid} />
   } else {
     return (
-      //
-      <button onClick={toggle} className="recursive-info-btn btn btn-link">
+      <Button onClick={toggle} color="link">
         {name}
-      </button>
+      </Button>
     )
   }
 }

@@ -16,8 +16,9 @@ const _Relations = ({data, toggledOn, toggle, useNewApi}) => {
       </Button>
       {toggledOn && (
         <ul className="list-unstyled info-button-list">
-          {data.map((related, i) => (
-            <li key={i}>
+          {data.map((related) => (
+            // eids are not unique, but new API provides stakeholder_type_id
+            <li key={`${related.eid}_${related.stakeholder_type_id || 0}`}>
               <RecursiveInfo name={related.name} eid={related.eid} useNewApi={useNewApi} />
             </li>
           ))}
