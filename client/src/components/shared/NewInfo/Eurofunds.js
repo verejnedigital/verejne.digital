@@ -8,21 +8,21 @@ import ExternalLink from '../ExternalLink'
 import {ShowNumberCurrency} from '../../../services/utilities'
 import '../Info/InfoButton.css'
 
-const Contracts = ({data, toggledOn, toggle}) => {
+const EuroFunds = ({data, toggledOn, toggle}) => {
   return (
-    <div className="contracts info-button">
+    <div className="eurofunds info-button">
       <Button outline color="primary" onClick={toggle}>
         {toggledOn ? <ChevronUp aria-hidden="true" /> : <ChevronDown aria-hidden="true" />}
-        &nbsp;Zmluvy:&nbsp;<ShowNumberCurrency num={data.price_amount_sum} />&nbsp;
-        <Badge color="primary">{data.count}</Badge>
+        &nbsp;Eurofondy:&nbsp;<ShowNumberCurrency num={data.eufunds_price_sum} />&nbsp;
+        <Badge color="primary">{data.eufunds_count}</Badge>
       </Button>
       {toggledOn && (
         <ul className="list-unstyled info-button-list">
-          {data.most_recent.map((contract, i) => (
+          {data.largest.map((eufund, i) => (
             <li key={i}>
-              <ExternalLink url={`https://www.crz.gov.sk/index.php?ID=${contract.contract_id}`}>
-                {`${contract.client_name}, `}
-                <ShowNumberCurrency num={contract.contract_price_total_amount} />
+              <ExternalLink url={eufund.link}>
+                {`${eufund.title}, `}
+                <ShowNumberCurrency num={eufund.price} />
               </ExternalLink>
             </li>
           ))}
@@ -37,4 +37,4 @@ export default compose(
   withHandlers({
     toggle: ({toggle}) => (e) => toggle((current) => !current),
   })
-)(Contracts)
+)(EuroFunds)
