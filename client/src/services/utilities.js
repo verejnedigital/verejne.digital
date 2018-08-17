@@ -20,6 +20,15 @@ const monthNames = [
   'december',
 ]
 
+// source: https://ekosystem.slovensko.digital/otvorene-data#crz.contracts.status_id
+const contractStatuses = {
+  1: 'rozpracovaná',
+  2: 'zverejnená',
+  3: 'doplnená',
+  4: 'zrušená',
+  5: 'stiahnutá',
+}
+
 export function localeNumber(number: number) {
   return isFinite(number)
     ? number.toLocaleString('sk-SK', {minimumFractionDigits: 2, maximumFractionDigits: 2})
@@ -126,6 +135,10 @@ export function showDate(dateString: string) {
   const year = date.getFullYear()
 
   return `${day}.${monthNames[monthIndex]} ${year}`
+}
+
+export function showContractStatus(statusId: number) {
+  return contractStatuses[statusId] || ''
 }
 
 export function extractIco(data: Company) {
