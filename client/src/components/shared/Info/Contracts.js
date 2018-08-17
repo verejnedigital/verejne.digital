@@ -6,17 +6,17 @@ import {Badge, Button} from 'reactstrap'
 
 import ExternalLink from '../ExternalLink'
 import {ShowNumberCurrency} from '../../../services/utilities'
-import './Contracts.css'
+import './InfoButton.css'
 
 const _Contracts = ({data, toggledOn, toggle}) => {
   return (
-    <div className="contracts">
+    <div className="contracts info-button">
       <Button outline color="primary" onClick={toggle}>
         {toggledOn ? <ChevronUp aria-hidden="true" /> : <ChevronDown aria-hidden="true" />} Zmluvy{' '}
         <Badge color="primary">{data.length}</Badge>
       </Button>
       {toggledOn && (
-        <ul className="list-unstyled contracts-list">
+        <ul className="list-unstyled info-button-list">
           {data.map((contract, i) => (
             <li key={i}>
               <ExternalLink url={contract.source}>
