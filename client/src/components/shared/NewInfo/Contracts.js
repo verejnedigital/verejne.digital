@@ -5,7 +5,7 @@ import ChevronDown from 'react-icons/lib/fa/chevron-down'
 import {Badge, Button} from 'reactstrap'
 
 import ExternalLink from '../ExternalLink'
-import {ShowNumberCurrency} from '../../../services/utilities'
+import {ShowNumberCurrency, showContractStatus} from '../../../services/utilities'
 import '../Info/InfoButton.css'
 
 const Contracts = ({data, toggledOn, toggle}) => {
@@ -24,6 +24,7 @@ const Contracts = ({data, toggledOn, toggle}) => {
                 {`${contract.client_name}, `}
                 <ShowNumberCurrency num={contract.contract_price_total_amount} />
               </ExternalLink>
+              &nbsp;({showContractStatus(contract.status_id)})
             </li>
           ))}
         </ul>
