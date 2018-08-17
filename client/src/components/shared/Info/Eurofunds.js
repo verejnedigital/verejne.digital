@@ -5,25 +5,25 @@ import ChevronDown from 'react-icons/lib/fa/chevron-down'
 import {Badge, Button} from 'reactstrap'
 
 import ExternalLink from '../ExternalLink'
-import {ShowNumberCurrency, showContractStatus} from '../../../services/utilities'
-import '../Info/InfoButton.css'
+import {ShowNumberCurrency} from '../../../services/utilities'
+import './InfoButton.css'
 
-const Contracts = ({data, toggledOn, toggle}) => (
-  <div className="contracts info-button">
+const EuroFunds = ({data, toggledOn, toggle}) => (
+  <div className="eurofunds info-button">
     <Button outline color="primary" onClick={toggle}>
       {toggledOn ? <ChevronUp aria-hidden="true" /> : <ChevronDown aria-hidden="true" />}
-      &nbsp;Zmluvy:&nbsp;<ShowNumberCurrency num={data.price_amount_sum} />&nbsp;
-      <Badge color="primary">{data.count}</Badge>
+      &nbsp;Eurofondy:&nbsp;<ShowNumberCurrency num={data.eufunds_price_sum} />&nbsp;
+      <Badge color="primary">{data.eufunds_count}</Badge>
     </Button>
     {toggledOn && (
       <ul className="list-unstyled info-button-list">
-        {data.most_recent.map((contract) => (
-          <li key={contract.id}>
-            <ExternalLink url={`https://www.crz.gov.sk/index.php?ID=${contract.contract_id}`}>
-              {`${contract.client_name}, `}
-              <ShowNumberCurrency num={contract.contract_price_total_amount} />
+        {data.largest.map((eufund, i) => (
+          // no proper ID available
+          <li key={i}>
+            <ExternalLink url={eufund.link}>
+              {`${eufund.title}, `}
+              <ShowNumberCurrency num={eufund.price} />
             </ExternalLink>
-            &nbsp;({showContractStatus(contract.status_id)})
           </li>
         ))}
       </ul>
@@ -36,4 +36,4 @@ export default compose(
   withHandlers({
     toggle: ({toggle}) => () => toggle((current) => !current),
   })
-)(Contracts)
+)(EuroFunds)

@@ -12,11 +12,11 @@ import {
 import Contracts from './Contracts'
 import Notices from './Notices'
 import Eurofunds from './Eurofunds'
-import Relations from '../Info/Relations'
-import Trend from '../Info/Trend'
+import Relations from './Relations'
+import Trend from './Trend'
 import ExternalLink from '../ExternalLink'
 import mapIcon from '../../../assets/mapIcon.svg'
-import '../Info/Info.css'
+import './Info.css'
 
 const Item = ({children, label, url, linkText}) => (
   <li className="info-item">
