@@ -2,7 +2,7 @@ import React from 'react'
 import {connect} from 'react-redux'
 import {compose, withHandlers, withStateHandlers} from 'recompose'
 import {withDataProviders} from 'data-provider'
-import Info from '../shared/Info/Info'
+import OldInfo from '../shared/Info/OldInfo'
 import {singleEntityProvider} from '../../dataProviders/publiclyDataProviders'
 import FilledCircleIcon from 'react-icons/lib/fa/circle'
 import CircleIcon from 'react-icons/lib/fa/circle-o'
@@ -10,10 +10,7 @@ import MapIcon from '../../assets/mapIcon.svg'
 import {isPolitician, hasContractsWithState} from './entityHelpers'
 import classnames from 'classnames'
 import {ListGroupItem, Badge} from 'reactstrap'
-import {
-  selectEntity,
-  toggleEntityInfo,
-} from '../../actions/verejneActions'
+import {selectEntity, toggleEntityInfo} from '../../actions/verejneActions'
 
 const renderListItemIcon = (entity) => {
   if (entity.size > 1) {
@@ -27,7 +24,7 @@ const renderListItemIcon = (entity) => {
 }
 
 const _DetailedInfo = ({eid, data, toggleEntityInfo}) => (
-  <Info data={data} canClose onClose={() => toggleEntityInfo(eid)} />
+  <OldInfo data={data} canClose onClose={() => toggleEntityInfo(eid)} />
 )
 
 const DetailedInfo = compose(
@@ -40,7 +37,9 @@ const DetailedInfo = compose(
 )(_DetailedInfo)
 
 const PanelRow = ({entity, selectEntity, toggleEntityInfo, showInfo, data}) =>
-  showInfo ? <DetailedInfo eid={entity.eid} /> : (
+  showInfo ? (
+    <DetailedInfo eid={entity.eid} />
+  ) : (
     <ListGroupItem
       className="side-panel__list__item"
       onClick={() => {
