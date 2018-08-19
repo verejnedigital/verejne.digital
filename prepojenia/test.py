@@ -36,7 +36,7 @@ class TestHandlers(unittest.TestCase):
     print('AShortestPath:\n%s' % (content))
 
   def test_subgraph(self):
-    url = '/subgraph?eid1=39541,78864,94764,229752&eid2=136671,229753'
+    url = '/subgraph?eid1=3264887&eid2=706143,1184394,1662599,1703776,2349437,3135421'
     content = _request_json(url, self)
     print('Subgraph:\n%s' % (content))
     self.assertTrue(content)
