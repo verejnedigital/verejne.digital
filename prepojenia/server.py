@@ -70,22 +70,24 @@ class Subgraph(MyServer):
   def get(self):
     # Compute the subgraph to return:
     start, end = self.parse_start_end()
-    relations_old = webapp2.get_app().registry['relations_old']
-    response = relations_old.subgraph(start, end)
+    relations = webapp2.get_app().registry['relations']
+    max_distance = 4
+    tolerance = 1
+    response = relations.subgraph(start, end, max_distance, tolerance)
 
     # Endow returning vertices with corresponding entity names:
     if len(response['vertices']) >= 1:
-      db_old = webapp2.get_app().registry['db_old']
+      db = webapp2.get_app().registry['db']
       vertices_eids = [v['eid'] for v in response['vertices']]
       q = """
-          SELECT eid, entity_name FROM entities
-          WHERE entities.eid IN %s;
+          SELECT id AS eid, name FROM entities
+          WHERE entities.id IN %s;
           """
-      q_data = (tuple(vertices_eids),)
-      rows = db_old.query(q, q_data)
-      eid_to_name = {row['eid']: row['entity_name'] for row in rows}
+      q_data = [tuple(vertices_eids)]
+      rows = db.query(q, q_data)
+      eid_to_name = {row['eid']: row['name'] for row in rows}
       for vertex in response['vertices']:
-          vertex['entity_name'] = eid_to_name[vertex['eid']]
+        vertex['entity_name'] = eid_to_name[vertex['eid']]
 
     self.returnJSON(response)
 
@@ -121,8 +123,11 @@ def initialise_app(max_relations_to_load):
   q_data = [max_relations_to_load]
   edge_list = []
   for row in db.query(q, q_data):
-    edge_list.append((row['eid'], row['eid_relation'], 1.0))
-    edge_list.append((row['eid_relation'], row['eid'], 1.0))
+    edge_type = row['stakeholder_type_id'] or 0
+    edge_list.append(
+      (row['eid'], row['eid_relation'], +1 * edge_type))
+    edge_list.append(
+      (row['eid_relation'], row['eid'], -1 * edge_type))
 
   # Construct Relations object from the edge list:
   relations = Relations(edge_list)
@@ -135,8 +140,10 @@ def initialise_app(max_relations_to_load):
   q_data = [max_relations_to_load]
   edge_list_old = []
   for row in db_old.query(q, q_data):
-    edge_list_old.append((row['eid1'], row['eid2'], float(row['length'])))
-    edge_list_old.append((row['eid2'], row['eid1'], float(row['length'])))
+    edge_list_old.append(
+      (row['eid1'], row['eid2'], float(row['length'])))
+    edge_list_old.append(
+      (row['eid2'], row['eid1'], float(row['length'])))
   relations_old = Relations(edge_list_old)
   app.registry['relations_old'] = relations_old
 

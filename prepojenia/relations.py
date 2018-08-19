@@ -1,3 +1,4 @@
+import collections
 import heapq
 import Queue
 import random
@@ -116,20 +117,64 @@ class Relations:
     path.reverse()
     return path
 
-  def subgraph(self, set_A, set_B):
-    # Compute distance of each vertex from A and from B
-    dists_A = self.dijkstra(set_A, set_B, return_all=True)
-    dists_B = self.dijkstra(set_B, set_A, return_all=True)
+  def _outgoing_edges(self, vertex):
+    """Returns an iterator over edges leaving from vertex."""
+    if vertex not in self.start_index:
+      return
+    from_index = self.start_index[vertex]
+    for edge_index in xrange(from_index, len(self.edges)):
+      edge = self.edges[edge_index]
+      # If outside of edges from the 'vertex'; stop
+      if (edge[0] != vertex):
+        return
+      yield edge
+
+  def _neighbourhood_bfs(self, start, radius):
+    """Returns all vertices within radius steps from start."""
+    queue = collections.deque((vertex, 0) for vertex in set(start))
+    neighbourhood = {vertex: 0 for vertex in start}
+    while len(queue) >= 1:
+      vertex, distance = queue.pop()
+      for _, target, _ in self._outgoing_edges(vertex):
+        if (target not in neighbourhood) and (distance + 1 <= radius):
+          neighbourhood[target] = distance + 1
+          queue.appendleft((target, distance + 1))
+    return neighbourhood
+
+  def subgraph(self, set_A, set_B, max_distance, tolerance):
+    """Returns a subgraph containing connections between A and B.
+
+    Args:
+      set_A: List of eids specifying the first set of vertices.
+      set_B: List of eids specifying the second set of vertices.
+      max_distance: Maximum length of A-B connections to consider.
+      tolerance: Integer specifying how much longer a path can be
+          than a shortest path for it to be considered.
+    Returns:
+      Subgraph spanned by all vertices that lie on a path between A
+      and B that is at most `tolerance` longer than a shortest path
+      between A and B. An empty subgraph is returned if no shortest
+      path of length at most `max_distance` exists.
+    """
+    # TODO: Implement a faster algorithm.
+
+    # Explore neighbourhoods of the set A and the set B:
+    print("Starting neighbourhood searches...")
+    dists_A = self._neighbourhood_bfs(set_A, max_distance + tolerance)
+    dists_B = self._neighbourhood_bfs(set_B, max_distance + tolerance)
     dists_AB = [dists_A[v] for v in set_B if v in dists_A]
+
+    # Return empty subgraph if no connection of length `max_distance`:
     if len(dists_AB) == 0:
       return {'vertices': [], 'edges': []}
-    dist_AB = min([dists_A[v] for v in set_B if v in dists_A])
+    dist_AB = min(dists_AB)
+    if dist_AB > max_distance:
+      return {'vertices': [], 'edges': []}
 
     # Determine subgraph's vertices (eIDs)
     vertices_eids = set()
     vertices_eids.update(set_A)
     vertices_eids.update(set_B)
-    tolerance = 1
     for v in dists_A:
       if (v in dists_B) and (dists_A[v] + dists_B[v] <= dist_AB + tolerance):
         vertices_eids.add(v)
