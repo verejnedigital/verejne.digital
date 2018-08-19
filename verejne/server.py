@@ -42,14 +42,21 @@ class GetAddresses(MyServer):
             lng1 = float(self.request.GET['lng1'])
             lng2 = float(self.request.GET['lng2'])
             restrictToSlovakia = bool(
-                    self.request.GET.get('restrictToSlovakia', False))
+                self.request.GET.get('restrictToSlovakia', False))
             level = int(self.request.GET.get('level', 3))
         except:
             self.abort(400, detail='Could not parse parameters')
 
-        # Find addresses within the specified rectangle by querying the database
+        # Find addresses within the specified rectangle
         q = """
-            SELECT id AS address_id, lat, lng FROM address
+            SELECT
+              id AS address_id,
+              lat,
+              lng,
+              EXISTS (SELECT 1 FROM tradewithgovernment
+                      WHERE address_id=id LIMIT 1)
+              AS tradewithgovernment
+            FROM address
             WHERE  '(%s, %s), (%s, %s)'::box @> point(lat, lng)
             LIMIT 1500;
             """
@@ -94,7 +101,7 @@ class GetEntities(MyServer):
         self.response.headers['Content-Type'] = 'application/json'
         entities.getEntities(
                 self.response, lat1, lng1, lat2, lng2, level, restrictToSlovakia)
-  
+
 
 class GetRelated(MyServer):
     def get(self):
@@ -304,6 +311,7 @@ app = webapp2.WSGIApplication([
     ('/searchEntityByNameAndAddress', SearchEntityByNameAndAddress),
 ], debug=False)
 
+
 def initialise_app(serving_directory):
     """ Procedure for initialising the app with precomputed values that
         are shared across different requests. The registry property is
@@ -325,6 +333,7 @@ def initialise_app(serving_directory):
     entities.loadFromDirectory(serving_directory)
     app.registry['entities'] = entities
 
+
 def main(args_dict):
     initialise_app(args_dict['serving_directory'])
 
@@ -337,7 +346,8 @@ def main(args_dict):
         use_threadpool=True,
         threadpool_workers=32,
     )
-  
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--listen',
