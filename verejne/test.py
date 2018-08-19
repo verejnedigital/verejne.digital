@@ -49,7 +49,7 @@ class TestHandlers(unittest.TestCase):
         print(content)
 
     def test_getInfos(self):
-        content = _request_json('/getInfos?eids=103,82680,293097,389093,389094', self)
+        content = _request_json('/getInfos?eids=103,215521,82680,293097,389093,389094', self)
         self.assertTrue(content)
         print('===== getInfos response =====')
         print(json.dumps(content, indent=2))
