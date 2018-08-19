@@ -8,19 +8,23 @@ import {
   ModalBody,
   ModalFooter,
   Input,
+  InputGroup,
+  InputGroupAddon,
   Form,
   FormGroup,
   FormText,
 } from 'reactstrap'
 import {connect} from 'react-redux'
-import {compose, withState, withHandlers} from 'recompose'
+import {compose, withHandlers} from 'recompose'
 import EntitySearchResult from '../EntitySearchResult'
 import {
+  entitySearchValueSelector,
   entitySearchModalOpenSelector,
   entitySearchEidsSelector,
   entitySearchForSelector,
 } from '../../../selectors'
 import {toggleModalOpen, setEntitySearchFor} from '../../../actions/verejneActions'
+import {updateValue} from '../../../actions/sharedActions'
 import {FIND_ENTITY_TITLE} from '../../../constants'
 import './EntitySearch.css'
 
@@ -28,8 +32,8 @@ const EntitySearch = ({
   entitySearchModalOpen,
   toggleModalOpen,
   className,
-  searchEntityValue,
-  setSearchEntityValue,
+  entitySearchValue,
+  setEntitySearchValue,
   findEntities,
   entitySearchEids,
   entitySearchFor,
@@ -53,21 +57,23 @@ const EntitySearch = ({
     >
       <ModalHeader toggle={toggleModalOpen}>{FIND_ENTITY_TITLE}</ModalHeader>
       <ModalBody>
-        <Form
-          onSubmit={(e) => {
-            e.preventDefault()
-            findEntities()
-          }}
-        >
+        <Form onSubmit={findEntities}>
           <FormGroup>
-            <Input
-              type="text"
-              className="form-control"
-              placeholder={FIND_ENTITY_TITLE}
-              value={searchEntityValue}
-              onChange={(e) => setSearchEntityValue(e.target.value)}
-              ref={input => input && ReactDOM.findDOMNode(input).focus()}
-            />
+            <InputGroup>
+              <Input
+                type="text"
+                className="form-control"
+                placeholder={FIND_ENTITY_TITLE}
+                value={entitySearchValue}
+                onChange={setEntitySearchValue}
+                ref={input => input && ReactDOM.findDOMNode(input).focus()}
+              />
+              <InputGroupAddon addonType="append">
+                <Button color="primary" onClick={findEntities}>
+                  {FIND_ENTITY_TITLE}
+                </Button>
+              </InputGroupAddon>
+            </InputGroup>
             <FormText>
               {entitySearchFor && `${plurality(entitySearchEids.length)} pre "${entitySearchFor}".`}
             </FormText>
@@ -79,9 +85,6 @@ const EntitySearch = ({
         <Button color="secondary" onClick={toggleModalOpen}>
           Zavrieť
         </Button>
-        <Button color="primary" onClick={findEntities}>
-          {FIND_ENTITY_TITLE}
-        </Button>
       </ModalFooter>
     </Modal>
   )
@@ -90,15 +93,19 @@ const EntitySearch = ({
 export default compose(
   connect(
     (state) => ({
+      entitySearchValue: entitySearchValueSelector(state),
       entitySearchModalOpen: entitySearchModalOpenSelector(state),
       entitySearchEids: entitySearchEidsSelector(state),
       entitySearchFor: entitySearchForSelector(state),
     }),
-    {toggleModalOpen, setEntitySearchFor}
+    {toggleModalOpen, setEntitySearchFor, updateValue}
   ),
-  withState('searchEntityValue', 'setSearchEntityValue', ''),
   withHandlers({
-    findEntities: ({setEntitySearchFor, searchEntityValue}) => () =>
-      setEntitySearchFor(searchEntityValue),
+    findEntities: ({setEntitySearchFor, entitySearchValue}) => (e) => {
+      e.preventDefault()
+      setEntitySearchFor(entitySearchValue)
+    },
+    setEntitySearchValue: ({updateValue}) => (e) =>
+      updateValue(['publicly', 'entitySearchValue'], (e.target.value), 'Set entity search field value'),
   })
 )(EntitySearch)

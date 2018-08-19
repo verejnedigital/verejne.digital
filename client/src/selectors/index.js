@@ -9,7 +9,7 @@ import {
   CITY_ZOOM,
   DEFAULT_ENTITIES_REQUEST_PARAMS,
 } from '../constants'
-import {values} from '../utils'
+import {values, normalizeName} from '../utils'
 import {sortBy, chunk, filter} from 'lodash'
 import supercluster from 'points-cluster'
 
@@ -17,8 +17,8 @@ import type {ContextRouter} from 'react-router-dom'
 import type {NoticesOrdering} from '../components/Notices/NoticeList'
 import type {NoticeDetailProps} from '../components/Notices/NoticeDetail'
 
-import type {CompanyDetailsProps} from '../components/shared/CompanyDetails'
-import type {State, MapOptions, Entity, MapBounds, EntityDetails} from '../state'
+import type {CompanyDetailProps} from '../dataWrappers/CompanyDetailWrapper'
+import type {State, MapOptions, CompanyEntity, MapBounds, NewEntityDetail} from '../state'
 
 export const paramsIdSelector = (_: State, props: ContextRouter): string =>
   props.match.params.id || '0'
@@ -26,17 +26,34 @@ export const paramsIdSelector = (_: State, props: ContextRouter): string =>
 export const noticeDetailSelector = (state: State, props: NoticeDetailProps) =>
   props.match.params.id && state.notices.details[props.match.params.id]
 
-export const companyDetailsSelector = (state: State, props: CompanyDetailsProps) => {
+export const companyDetailSelector = (state: State, props: CompanyDetailProps) => {
   return props.eid && state.companies[props.eid]
 }
 
+export const noticesSelector = (state: State) => state.notices.list
+export const noticesSearchQuerySelector = (state: State) => normalizeName(state.notices.searchQuery)
+
+export const searchFilteredNoticesSelector = createSelector(
+  noticesSelector,
+  noticesSearchQuerySelector,
+  (notices, query) => {
+    const filteredNotices = filter(notices, (notice) =>{
+      const similarity = notice.kandidati.length > 0 ?
+        Math.round(notice.kandidati[0].score * 100) : '?'
+      return   normalizeName(notice.customer.concat(notice.price_num)
+        .concat(notice.title).concat(notice.kandidati[0].name)
+        .concat(similarity)).indexOf(query) > -1
+    })
+    return filteredNotices.length>0 ? filteredNotices : []
+  }
+)
 export const dateSortedNoticesSelector = createSelector(
-  (state: State) => state.notices.list,
+  searchFilteredNoticesSelector,
   (data) => sortBy(values(data), ['bulletin_year', 'bulletin_month', 'bulletin_day'])
 )
 
 export const nameSortedNoticesSelector = createSelector(
-  (state: State) => state.notices.list,
+  searchFilteredNoticesSelector,
   (data) => sortBy(values(data), ['title'])
 )
 
@@ -60,7 +77,7 @@ export const paginatedNoticesSelector = createSelector(
   paginationSelector,
   (dateSorted, nameSorted, orderBy, page) => {
     const notices = orderBy === 'title' ? nameSorted : dateSorted
-    return chunk(notices, PAGINATION_CHUNK_SIZE)[page - 1]
+    return chunk(notices, PAGINATION_CHUNK_SIZE)[page - 1] || []
   }
 )
 
@@ -68,17 +85,11 @@ export const paginatedNoticesSelector = createSelector(
 // sorted by date anyway
 export const newestBulletinDateSelector = createSelector(
   dateSortedNoticesSelector,
-  (notices) => notices[0].bulletin_date
+  (notices) => notices[0] ? notices[0].bulletin_date : ''
 )
 
-// will make more sense once we allow searching on notices
-// (filtered notices will then be the input selector)
 export const noticesLengthSelector = createSelector(
-  dateSortedNoticesSelector,
-  nameSortedNoticesSelector,
-  noticesOrderingSelector,
-  (dateSorted, nameSorted, orderBy, page) => {
-    const notices = orderBy === 'title' ? nameSorted : dateSorted
+  searchFilteredNoticesSelector, (notices) => {
     return notices.length
   }
 )
@@ -90,19 +101,19 @@ export const boundsSelector = (state: State): ?MapBounds => state.mapOptions.bou
 export const addressesSelector = (state: State) => state.addresses
 export const showInfoSelector = (state: State) => state.publicly.showInfo
 export const openedAddressDetailSelector = (state: State) => state.publicly.openedAddressDetail
-export const newEntitiesSelector = (state: State) => state.newEntities
-export const entityDetailSelector = (state: State, entityId: string): EntityDetails =>
+export const entitiesSelector = (state: State) => state.entities
+export const entityDetailSelector = (state: State, entityId: string): NewEntityDetail =>
   state.entityDetails[entityId]
 
 export const addressEntitiesSelector = createSelector(
-  newEntitiesSelector,
+  entitiesSelector,
   openedAddressDetailSelector,
   (entities, addressId) => filter(entities, (entity) => entity.addressId === addressId)
 )
 
 type SuperCluster = {
   numPoints: number,
-  points: Array<Entity>,
+  points: Array<CompanyEntity>,
   wx: number, // weighted cluster center
   wy: number,
   x: number, // cluster center
@@ -200,6 +211,7 @@ export const autocompleteOptionsSelector = createSelector(boundsSelector, (bound
   }
 })
 
+export const entitySearchValueSelector = (state: State) => state.publicly.entitySearchValue
 export const entitySearchModalOpenSelector = (state: State) => state.publicly.entitySearchModalOpen
 export const entitySearchForSelector = (state: State) => state.publicly.entitySearchFor
 export const entitySearchEidsSelector = (state: State) => state.publicly.entitySearchEids

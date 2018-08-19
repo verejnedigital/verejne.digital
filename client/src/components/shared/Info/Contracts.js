@@ -5,7 +5,7 @@ import ChevronDown from 'react-icons/lib/fa/chevron-down'
 import {Badge, Button} from 'reactstrap'
 
 import ExternalLink from '../ExternalLink'
-import {ShowNumberCurrency} from '../../Notices/utilities'
+import {ShowNumberCurrency} from '../../../services/utilities'
 import './Contracts.css'
 
 const _Contracts = ({data, toggledOn, toggle}) => {

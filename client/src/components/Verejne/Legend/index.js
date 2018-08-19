@@ -29,6 +29,9 @@ const Legend = ({legendOpen, setLegendOpen}: Props) => (
       </button>
     </div>
     <p>
+      Legenda
+    </p>
+    <p>
       <CircleIcon className="svg" />
       Firma / Osoba
     </p>
@@ -36,14 +39,14 @@ const Legend = ({legendOpen, setLegendOpen}: Props) => (
       <FilledCircleIcon className="svg" />
       Obchod so štátom
     </p>
-    <p>
+    {/*<p>
       <CircleIcon className="svg orange" />
       Kontakt s politikou
     </p>
     <p>
       <FilledCircleIcon className="svg orange" />
       Kontakt s politikou a obchod so štátom
-    </p>
+    </p>*/}
     <p>
       <img src={MapIcon} className="map-icon-image" alt="mapIconImage" />
       Okres / mestská časť

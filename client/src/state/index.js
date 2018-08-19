@@ -84,8 +84,9 @@ export type AssetDeclaration = {|
   unmovable_assets: string,
 |}
 
-export type Entity = {
+export type CompanyEntity = {
   eid: string,
+  entity_name: string,
   lng: string,
   lat: string,
   selected: string,
@@ -122,7 +123,7 @@ export type Company = {
   related: Array<any>,
   auditori_data: Array<any>,
   audiovizfond_data: Array<any>,
-  entities: Array<Entity>,
+  entities: Array<CompanyEntity>,
   firmy_data: Array<any>,
   total_contracts: number,
   advokati_data: Array<any>,
@@ -134,8 +135,6 @@ export type Company = {
 }
 
 export type NoticeMap = {[string]: Notice}
-
-export type CompanyMap = {[string]: Company}
 
 export type GeolocationPoint = {
   lat: number,
@@ -163,14 +162,8 @@ export type SearchedEntity = {
 }
 
 export type Connections = {
-  entities: {[string]: Entity},
   detail: {[string]: {ids: string[]}},
-  entityDetails: {
-    [string]: {
-      name: string,
-      data: any, //TODO: TBD
-    },
-  },
+  entities: {[string]: CompanyEntity},
 }
 
 export type Address = {
@@ -187,36 +180,105 @@ export type NewEntity = {
 
 export type NewEntityState = NewEntity & {addressId: number}
 
-export type RelatedEntity = {
-  name: string,
-  stakeholder_type_id: number,
-  eid: number,
-  address: string,
-  lat: number,
-  lng: number,
+export type EuFund = {
+  title: string,
+  link: string,
+  price: number,
+  state: string,
+  call_state: string,
+  call_title: string,
 }
 
-export type EntityDetails = {
+export type CompanyFinancial = {
+  revenue: number,
+  profit: number,
+  employees: string,
+}
+
+export type Contract = {
+  client_eid: number,
+  client_name: string,
+  id: number,
+  contract_price_amount: number,
+  contract_price_total_amount: number,
+  signed_on: string,
+  effective_from: string,
+  effective_to: string,
+  status_id: number,
+  contract_id: number,
+  contract_identifier: string,
+}
+
+// TODO rename to Notice when old one is gone
+export type NoticeNew = {
+  client_eid: number,
+  client_name: string,
+  id: number,
+  notice_id: number,
+  contract_id: number,
+  title: string,
+  estimated_value_amount: number,
+  estimated_value_currency: string,
+  bulletin_issue_id: number,
+  notice_type_id: number,
+  short_description: string,
+  total_final_value_amount: number,
+  total_final_value_currency: string,
+  body: string,
+}
+
+export type RelatedEntity = {
+  eid: number,
   name: string,
-  related: RelatedEntity[],
-  address: string,
+  stakeholder_type_id: number,
   lat: number,
   lng: number,
+  address: string,
+}
+
+export type NewEntityDetail = {
+  eid: number,
+  name: string,
+  lat: number,
+  lng: number,
+  address: string,
+  eufunds: {
+    eufunds_count: number,
+    eufunds_price_sum: number,
+    largest: Array<EuFund>,
+  },
+  companyfinancials: {
+    [year: number]: CompanyFinancial,
+  },
   companyinfo: {
-    established_on: string,
     ico: number,
+    established_on: string,
     terminated_on: string,
   },
+  contracts: {
+    count: number,
+    price_amount_sum: number,
+    most_recent: Array<Contract>,
+    largest: Array<Contract>,
+  },
+  notices: {
+    count: number,
+    total_final_value_amount_eur_sum: number,
+    most_recent: Array<NoticeNew>,
+    largest: Array<NoticeNew>,
+  },
+  related: RelatedEntity[],
 }
 
 // Each property must begin with '+' to be made read only and each object
 // must be enclosed in '|' so no properties can be added to state at runtime
 export type State = {|
   +count: number,
-  +companies: CompanyMap,
+  +companies: ObjectMap<Company>,
   +notices: {|
     +list: ObjectMap<Notice>,
     +details: ObjectMap<Notice>,
+    +searchQuery: string,
   |},
   +profile: {|
     +list: ObjectMap<Politician>,
@@ -228,17 +290,18 @@ export type State = {|
   +publicly: {|
     +currentPage: number,
     +autocompleteValue: string,
+    +entitySearchValue: string,
     +entitySearchModalOpen: boolean,
     +entitySearchFor: string,
-    +entitySearchEids: ?Array<string>,
+    +entitySearchEids: Array<string>,
     +showInfo: any, //TODO: TBD
     +openedAddressDetail: ?number,
   |},
   +mapOptions: MapOptions,
   +connections: Connections,
   +addresses: ObjectMap<Address>,
-  +newEntities: ObjectMap<NewEntityState>,
-  +entityDetails: ObjectMap<EntityDetails>,
+  +entities: ObjectMap<NewEntityState>,
+  +entityDetails: ObjectMap<NewEntityDetail>,
 |}
 
 const getInitialState = (): State => ({
@@ -247,6 +310,7 @@ const getInitialState = (): State => ({
   notices: {
     list: {},
     details: {},
+    searchQuery: '',
   },
   profile: {
     list: {},
@@ -258,9 +322,10 @@ const getInitialState = (): State => ({
   publicly: {
     currentPage: 1,
     autocompleteValue: '',
+    entitySearchValue: '',
     entitySearchModalOpen: false,
     entitySearchFor: '',
-    entitySearchEids: undefined,
+    entitySearchEids: [],
     showInfo: {},
     openedAddressDetail: undefined,
   },
@@ -269,14 +334,13 @@ const getInitialState = (): State => ({
     zoom: 8,
     bounds: undefined,
   },
-  newEntities: {},
-  entityDetails: {},
-  addresses: {},
   connections: {
     entities: {},
     detail: {},
-    entityDetails: {},
   },
+  addresses: {},
+  entities: {},
+  entityDetails: {},
 })
 
 export default getInitialState

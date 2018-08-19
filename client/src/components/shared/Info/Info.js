@@ -1,7 +1,7 @@
 import React, {Fragment} from 'react'
 import Circle from 'react-icons/lib/fa/circle-o'
 import {Badge, Container} from 'reactstrap'
-
+import {Link} from 'react-router-dom'
 import {
   getFinancialData,
   extractIco,
@@ -9,7 +9,7 @@ import {
   ShowNumberCurrency,
   showDate,
   isPolitician,
-} from '../../Notices/utilities'
+} from '../../../services/utilities'
 import DonationsToParties from './DonationsToParties'
 import SponsorshipsOfParties from './SponsorshipsOfParties'
 import Relations from './Relations'
@@ -17,6 +17,7 @@ import Contracts from './Contracts'
 import Trend from './Trend'
 import ExternalLink from '../ExternalLink'
 import './Info.css'
+import mapIcon from '../../../assets/mapIcon.svg'
 
 const Item = ({children, label, url, linkText}) => (
   <li className="info-item">
@@ -83,6 +84,9 @@ const Info = ({data, canClose, onClose}) => {
         <h3 className={`${isPolitician(data) ? 'politician' : ''}`}>
           <Circle aria-hidden="true" />&nbsp;{entity.entity_name}&nbsp;
         </h3>
+        <Link to={`/verejne?lat=${entity.lat}&lng=${entity.lng}&zoom=18`} title="Zobraz na mape">
+          <img src={mapIcon} alt="MapMarker" style={{width: '16px', height: '25px'}} />
+        </Link>
         {canClose && (
           <span className="info-close-button" onClick={onClose}>
             &times;
@@ -90,11 +94,6 @@ const Info = ({data, canClose, onClose}) => {
         )}
       </div>
       <div className="info-main">
-        {/*TODO when verejne will be completed link has to be fixed
-          <Link to={`/verejne/${entity.lat}&${entity.lng}&${eid}&`}>
-            <MapMarker aria-hidden="true" />
-            </Link>{' '}
-          */}
         <ul className="info-list">
           <Item>{entity.address}</Item>
           {findata.ico && <Findata data={findata} />}

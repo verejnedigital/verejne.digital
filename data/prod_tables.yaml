@@ -160,6 +160,21 @@
                        CREATE INDEX ON EUFunds(eid);
                        CREATE UNIQUE INDEX ON EUFunds(eid,link,price);
                     "
+8_stakeholder_types:
+    source_schema: "ekosystem_rpo"
+    command:   "select id as stakeholder_type_id, name as stakeholder_type_text from stakeholder_types"
+    no_entity_id: true
+    tables:
+            StakeholderTypes:
+                    columns: ["stakeholder_type_id", "stakeholder_type_text"]
+                    create_command: "
+                       CREATE TABLE StakeholderTypes (
+                                id SERIAL PRIMARY KEY,
+                                stakeholder_type_id INT4,
+                                stakeholder_type_text text
+                       );
+                       CREATE INDEX ON StakeholderTypes(stakeholder_type_id)
+                    "
 
 post_processing_1_trade_with_government:
     source_schema: ""

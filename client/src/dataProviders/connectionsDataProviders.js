@@ -17,16 +17,6 @@ const dispatchConnectionData = (eid1: string, eid2: string) => (
   dispatch(receiveData(['connections', 'detail'], {id: `${eid1}-${eid2}`, ids: data}, ref))
 }
 
-const dispatchEntityDetailsData = (eid: string) => (ref: string, data: any, dispatch: Dispatch) => {
-  dispatch(
-    receiveData(
-      ['connections', 'entityDetails'],
-      {id: eid, name: data.entities[0].entity_name, data},
-      ref
-    )
-  )
-}
-
 export const connectionEntityProvider = (query: string) => ({
   ref: `connectionEntities-${query}`,
   getData: [
@@ -37,19 +27,6 @@ export const connectionEntityProvider = (query: string) => ({
     },
   ],
   onData: [dispatchEntitiesData, query],
-  keepAliveFor: 10 * 60 * 1000,
-})
-
-export const connectionEntityDetailProvider = (eid: string) => ({
-  ref: `connectionEntityDetail-${eid}`,
-  getData: [
-    fetch,
-    `${process.env.REACT_APP_API_URL || ''}/api/v/getInfo?eid=${eid}`,
-    {
-      accept: 'application/json',
-    },
-  ],
-  onData: [dispatchEntityDetailsData, eid],
   keepAliveFor: 10 * 60 * 1000,
 })
 

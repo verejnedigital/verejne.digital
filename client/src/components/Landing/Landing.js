@@ -1,6 +1,5 @@
-import React, {Component, Fragment} from 'react'
+import React, {Component} from 'react'
 import Card from './Card'
-import {NavLink} from 'react-router-dom'
 import './Landing.css'
 import {Row, Col, Container} from 'reactstrap'
 import verejneDataIcon from './icons/verejne_data.png'
