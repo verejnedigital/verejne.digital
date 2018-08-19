@@ -320,21 +320,49 @@ def get_GetInfos(db, eIDs):
 
     # Query the database for related entities
     q = """
-        SELECT
-            related.eid AS eid_source,
-            related.eid_relation AS eid,
-            related.stakeholder_type_id,
-            entities.name, address.lat, address.lng, address.address
-        FROM
+        WITH merged AS (
+          /* Add reverse edges with negative stakeholder_type_id. */
+          SELECT
+            related.eid AS source,
+            related.eid_relation AS target,
+            +1 * related.stakeholder_type_id AS edge_type
+          FROM
             related
-        JOIN
-            entities ON entities.id=related.eid_relation
-        JOIN
-            address ON address.id=entities.address_id
-        WHERE
+          WHERE
             related.eid IN %s
-        ;"""
-    q_data = [tuple(eIDs)]
+          UNION
+          SELECT
+            related.eid_relation AS source,
+            related.eid AS target,
+            -1 * related.stakeholder_type_id AS edge_type
+          FROM
+            related
+          WHERE
+            related.eid_relation IN %s
+        ),
+        grouped AS (
+          /* Group edges going from same souce to same destination. */
+          SELECT
+            merged.source,
+            merged.target,
+            array_agg(merged.edge_type) AS edge_types
+          FROM merged
+          GROUP BY (merged.source, merged.target)
+        )
+        SELECT
+          grouped.source AS eid_source,
+          grouped.target AS eid,
+          grouped.edge_types,
+          entities.name, address.lat, address.lng, address.address
+        FROM
+          grouped
+        JOIN
+          entities ON entities.id=grouped.target
+        JOIN
+          address ON address.id=entities.address_id
+        ;
+        """
+    q_data = [tuple(eIDs), tuple(eIDs)]
     for row in db.query(q, q_data):
         eID = row['eid_source']
         result[eID]['related'].append(row)

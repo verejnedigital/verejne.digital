@@ -2,7 +2,14 @@
 import {zoomSelector, mapOptionsSelector} from '../selectors'
 import {fromPairs} from 'lodash'
 
-import type {MapOptions, Center, Address, NewEntityState, NewEntity, EntityDetails} from '../state'
+import type {
+  MapOptions,
+  Center,
+  Address,
+  NewEntityState,
+  NewEntity,
+  NewEntityDetail,
+} from '../state'
 import type {GenericAction, Thunk} from '../types/reduxTypes'
 import type {ObjectMap} from '../types/commonTypes'
 
@@ -13,12 +20,12 @@ export const setAddresses = (addresses: Address[]) => ({
   reducer: () => fromPairs(addresses.map((address) => [address.address_id, address])),
 })
 
-export const setNewEntities = (
+export const setEntities = (
   entities: NewEntity[],
   addressId: number
 ): GenericAction<ObjectMap<NewEntityState>, NewEntity[]> => ({
-  type: 'Set new entities',
-  path: ['newEntities'],
+  type: 'Set entities',
+  path: ['entities'],
   payload: entities,
   reducer: (state) => ({
     ...state,
@@ -26,11 +33,11 @@ export const setNewEntities = (
   }),
 })
 
-export const setNewEntityDetail = (entityDetails: EntityDetails, entityId: number) => ({
-  type: 'Set new entity detail',
+export const setEntityDetail = (entityDetail: NewEntityDetail, entityId: number) => ({
+  type: 'Set entity detail',
   path: ['entityDetails', entityId],
-  payload: entityDetails,
-  reducer: () => entityDetails,
+  payload: entityDetail,
+  reducer: () => entityDetail,
 })
 
 export const setMapOptions = (mapOptions: MapOptions) => ({

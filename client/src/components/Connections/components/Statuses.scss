@@ -1,11 +1,11 @@
-@import "../../../variables.scss";
+@import "../../variables.scss";
 
 .statuses {
   margin-top: 2rem;
   font-size: 1rem;
 
   span {
-    color: $secondary
+    color: $secondary;
   }
 
   strong {

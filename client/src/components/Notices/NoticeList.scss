@@ -15,25 +15,35 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  padding: 0;
+  padding-left: 1rem;
+  padding-right: 3rem;
 
   @media screen and (max-width: 1200px) {
     position: relative;
     top: 0;
     margin-bottom: 2rem;
     padding-top: 2rem;
+    padding-right: 1rem;
   }
 }
 
 .notice-list-title {
   font-weight: 200;
   font-size: 2rem;
+  padding-bottom: 1rem;
+}
+
+@media screen and (max-width: 576px) {
+  .notice-list-title, .notice-list-text {
+    text-align: center;
+  }
 }
 
 .fbfooter {
   margin-top: 10px;
   padding: 0;
   height: 50px;
+  overflow: hidden;
 
   .fbIframe {
     border: none;
@@ -42,7 +52,14 @@
   }
 }
 
-.notice-list-pagination {
+.pagination-wrapper {
   display: flex;
   justify-content: center;
+  align-items: center;
+}
+
+.scroll-container {
+  margin: auto;
+  max-height: 100%;
+  overflow: auto;
 }

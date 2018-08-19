@@ -1,6 +1,6 @@
 import React from 'react'
 import ExternalLink from '../ExternalLink'
-import {ShowNumberCurrency} from '../../Notices/utilities'
+import {ShowNumberCurrency} from '../../../services/utilities'
 import './InfoList.css'
 
 const SponsorshipsOfParties = ({entityName, data}) => (
