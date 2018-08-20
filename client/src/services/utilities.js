@@ -29,6 +29,57 @@ const contractStatuses = {
   5: 'stiahnutá',
 }
 
+const relationTypes = {
+  1: 'Predstaventvo',
+  2: 'Člen dozorného orgánu',
+  3: 'Jediný akcionár a.s.',
+  4: 'Konateľ',
+  5: 'Spoločník v.o.s. / s.r.o.',
+  6: 'Neurčené',
+  7: 'Prokurista',
+  8: 'Likvidátor',
+  9: 'Správca konkurznej podstaty',
+  10: 'Správca reštrukturalizačného konania',
+  11: 'Vedúci podniku (organizačnej zložky podniku)',
+  12: 'Komplementár',
+  13: 'Komanditista',
+  14: 'Komplementár',
+  15: 'Predseda',
+  16: 'Spoločník',
+  17: 'Podnikateľ',
+  18: 'Zástupca podnikateľa',
+  19: 'Vedúci podniku zahraničnej osoby / organizačnej zložky podniku zahraničnej osoby',
+  20: 'Zriaďovateľ ZO',
+  21: 'Riaditeľ',
+  22: 'Zakladateľ štátneho podniku',
+  23: 'Zástupca riaditeľa',
+  24: 'Generálny riaditeľ',
+  25: 'Člen správnej rady',
+  26: 'Podpredseda',
+  27: 'Správca vyrovnacieho konania',
+  28: 'Člen družstva poverený členskou schôdzou',
+  29: 'Správna rada',
+  30: 'Zodpovedný zástupca',
+  31: 'Vedúci organizačnej zložky',
+  32: 'Iná zainteresovaná osoba',
+  33: 'Zakladateľ',
+  34: 'Zakladateľ',
+  35: 'Iný štatutárny orgán',
+  36: 'Správca',
+  37: 'Zriaďovateľ',
+  38: 'Člen prípravného výboru',
+  39: 'Navrhovateľ',
+  40: 'Vedúci odštepného závodu / inej organizačnej zložky podniku',
+  41: 'Prokurista zahraničnej osoby',
+  42: 'Prokurista zahraničnej osoby',
+  43: 'Prokurista zahraničnej osoby',
+  44: 'Výkonný výbor',
+  45: 'Primátor',
+  46: 'Člen EZHZ',
+  47: 'Starosta',
+  48: 'Primátor',
+}
+
 export function localeNumber(number: number) {
   return isFinite(number)
     ? number.toLocaleString('sk-SK', {minimumFractionDigits: 2, maximumFractionDigits: 2})
@@ -140,6 +191,13 @@ export function showDate(dateString: string) {
 
 export function showContractStatus(statusId: number) {
   return contractStatuses[statusId] || ''
+}
+
+export function showRelationType(relationTypeId: number) {
+  if (relationTypeId == null) {
+    return 'Neznáme'
+  }
+  return `${relationTypes[Math.abs(relationTypeId)] || 'Neznáme'} ${relationTypeId > 0 ? '>' : '<'}`
 }
 
 function padIco(ico: number | string) {

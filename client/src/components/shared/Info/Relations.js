@@ -3,8 +3,10 @@ import {compose, withState, withHandlers} from 'recompose'
 import {Badge, Button} from 'reactstrap'
 import ChevronUp from 'react-icons/lib/fa/chevron-up'
 import ChevronDown from 'react-icons/lib/fa/chevron-down'
+import {orderBy} from 'lodash'
 
 import RecursiveInfo from './RecursiveInfo'
+import {showRelationType} from '../../../services/utilities'
 import './InfoButton.css'
 
 const _Relations = ({data, toggledOn, toggle, useNewApi}) => {
@@ -16,9 +18,14 @@ const _Relations = ({data, toggledOn, toggle, useNewApi}) => {
       </Button>
       {toggledOn && (
         <ul className="list-unstyled info-button-list">
-          {data.map((related) => (
-            // eids are not unique, but new API provides stakeholder_type_id
-            <li key={`${related.eid}_${related.stakeholder_type_id || 0}`}>
+          {orderBy(data, ['edge_types']).map((related) => (
+            <li key={related.eid}>
+              {related.edge_types &&
+                related.edge_types.map((type) => (
+                  <Badge key={type} color={type > 0 ? 'dark' : 'secondary'} className="mr-1">
+                    {showRelationType(type)}
+                  </Badge>
+                ))}
               <RecursiveInfo name={related.name} eid={related.eid} useNewApi={useNewApi} />
             </li>
           ))}
