@@ -4,7 +4,7 @@ import {receiveData} from '../actions/sharedActions'
 import type {Company} from '../state'
 import type {Dispatch} from '../types/reduxTypes'
 
-const dispatchCompanyDetails = (eid: string) => (
+const dispatchCompanyDetails = (eid: number) => (
   ref: string,
   data: Company,
   dispatch: Dispatch
@@ -12,7 +12,7 @@ const dispatchCompanyDetails = (eid: string) => (
   dispatch(receiveData(['companies'], {id: eid, eid, ...data}, ref))
 }
 
-export const companyDetailProvider = (eid: string) => {
+export const companyDetailProvider = (eid: number) => {
   return {
     ref: `companyDetail-${eid}`,
     getData: [

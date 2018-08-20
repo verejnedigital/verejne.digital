@@ -83,7 +83,7 @@ export type AssetDeclaration = {|
 |}
 
 export type CompanyEntity = {
-  eid: string,
+  eid: number,
   entity_name: string,
   lng: string,
   lat: string,
