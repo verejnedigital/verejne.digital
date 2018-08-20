@@ -1,9 +1,12 @@
 // @flow
 import React from 'react'
 import {compose, withHandlers} from 'recompose'
-import {Input, Form, FormGroup} from 'reactstrap'
+import {Input, Form, FormGroup, InputGroup, InputGroupAddon, Button} from 'reactstrap'
 import {connect} from 'react-redux'
 import {geocodeByAddress, getLatLng} from 'react-places-autocomplete'
+import SearchIcon from 'react-icons/lib/fa/search'
+import ModalIcon from 'react-icons/lib/fa/clone'
+
 
 import {
   zoomToLocation,
@@ -41,12 +44,25 @@ const Verejne = ({
       <EntitySearch />
       <Form onSubmit={findEntities}>
         <FormGroup>
-          <Input
-            type="text"
-            placeholder={FIND_ENTITY_TITLE}
-            value={entitySearchValue}
-            onChange={setEntitySearchValue}
-          />
+          <InputGroup>
+            <Input
+              className="entity-input"
+              type="text"
+              placeholder={FIND_ENTITY_TITLE}
+              value={entitySearchValue}
+              onChange={setEntitySearchValue}
+            />
+            <InputGroupAddon addonType="append">
+              <Button color="primary" onClick={findEntities}>
+                <SearchIcon />
+              </Button>
+            </InputGroupAddon>
+            <InputGroupAddon addonType="append">
+              <Button color="primary" onClick={toggleModalOpen}>
+                <ModalIcon />
+              </Button>
+            </InputGroupAddon>
+          </InputGroup>
         </FormGroup>
       </Form>
       <FormGroup>
