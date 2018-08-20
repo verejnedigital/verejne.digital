@@ -31,7 +31,7 @@ type ShowNumberCurrencyProps = {
 }
 
 export const ShowNumberCurrency = ({num, cur = '€'}: ShowNumberCurrencyProps) => {
-  if (!num) return null
+  if (num == null || isNaN(num)) return null
   return (
     <span className="text-nowrap">
       {localeNumber(num)} {cur}
