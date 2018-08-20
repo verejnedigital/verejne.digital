@@ -1,4 +1,12 @@
 // @flow
+import okresyJson from './slovensko/okresy-centers.json'
+import krajeJson from './slovensko/kraje-centers.json'
+import slovakiaBordersJson from './slovensko/low-precision/slovensko-005.json'
+
+export const SLOVAKIA_OKRESY = okresyJson
+export const SLOVAKIA_KRAJE = krajeJson
+export const SLOVAKIA_BORDERS = slovakiaBordersJson
+
 export const PAGINATION_CHUNK_SIZE = 10
 export const NOTICES_PAGINATION_SIZE = 10
 export const CADASTRAL_PAGINATION_CHUNK_SIZE = 20
@@ -12,6 +20,8 @@ export const ENTITY_ZOOM = 17
 export const SUB_CITY_ZOOM = 14
 export const CITY_ZOOM = 11
 export const COUNTRY_ZOOM = 8
+export const OKRESY_ZOOM = 10
+export const WORLD_ZOOM = 6
 export const GOOGLE_MAP_API_KEY = 'AIzaSyCAXMlEL-sfzT4jVK5CQHysSPp77JnVLks'
 export const SLOVAKIA_COORDINATES = [48.6, 19.5]
 

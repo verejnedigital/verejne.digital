@@ -7,23 +7,29 @@ import {
   addressesSelector,
   clustersSelector,
   addressesUrlSelector,
-  slovakiaBorderSelector,
-  slovakiaSelector,
-  krajeSelector,
-  okresySelector,
 } from '../../../selectors'
 import {setMapOptions} from '../../../actions/verejneActions'
 import './GoogleMap.css'
 import {map} from 'lodash'
 import ClusterMarker from './ClusterMarker'
-import {branch, compose, renderComponent, withHandlers} from 'recompose'
+import {branch, compose, renderComponent, withHandlers, withProps} from 'recompose'
 import Loading from '../../Loading'
 import GoogleMap from '../../GoogleMap'
 import {withDataProviders} from 'data-provider'
 import {addressesProvider} from '../../../dataProviders/publiclyDataProviders'
 import {withRouter} from 'react-router-dom'
 import qs from 'qs'
-import {DEFAULT_MAP_CENTER, COUNTRY_ZOOM} from '../../../constants'
+import {
+  CITY_ZOOM,
+  DEFAULT_MAP_CENTER,
+  COUNTRY_ZOOM,
+  WORLD_ZOOM,
+  SLOVAKIA_BORDERS,
+  SLOVAKIA_OKRESY,
+  SLOVAKIA_KRAJE,
+  SLOVAKIA_COORDINATES,
+  OKRESY_ZOOM,
+} from '../../../constants'
 import {withSideEffects} from '../../../utils'
 
 import type {MapOptions, Entity} from '../../../state'
@@ -35,6 +41,7 @@ import booleanContains from '@turf/boolean-contains'
 import {point} from '@turf/helpers'
 
 type Props = {
+  showLabelsInstead: boolean,
   zoom: number,
   center: [number, number],
   entities: Array<Entity>,
@@ -45,19 +52,58 @@ type Props = {
 }
 
 // NOTE: there can be multiple points on the map on the same location...
-const Map = ({zoom, center, clusters, onChange}: Props) => {
+const Map = ({showLabelsInstead, zoom, center, clusters, onChange}: Props) => {
+  //9 okresy, 8 kraje
+  let finalClusters = clusters
+  if (showLabelsInstead) {
+    if (zoom <= WORLD_ZOOM) {
+      finalClusters = [{
+        lat: SLOVAKIA_COORDINATES[0],
+        lng: SLOVAKIA_COORDINATES[1],
+        numPoints: 0,
+        id: 'SLOVAKIA',
+        points: [],
+        setZoomTo: COUNTRY_ZOOM,
+      }]
+    } else {
+      if (zoom <= COUNTRY_ZOOM) {
+        finalClusters = SLOVAKIA_KRAJE.map((e) => ({
+          lat: e.centroid[1],
+          lng: e.centroid[0],
+          numPoints: 0,
+          id: e.name,
+          points: [],
+          setZoomTo: OKRESY_ZOOM,
+        })
+        )
+      } else {
+        finalClusters = SLOVAKIA_OKRESY.map((e) => ({
+          lat: e.centroid[1],
+          lng: e.centroid[0],
+          numPoints: 0,
+          id: e.name,
+          points: [],
+          setZoomTo: CITY_ZOOM,
+        })
+        )
+      }
+    }
+  }
   return (
     <div className="google-map-wrapper">
       <GoogleMap center={center} zoom={zoom} onChange={onChange}>
-        {map(clusters, (cluster, i) => (
-          <ClusterMarker
-            key={i}
-            cluster={cluster}
-            zoom={zoom}
-            lat={cluster.lat}
-            lng={cluster.lng}
-          />
-        ))}
+        {
+          map(finalClusters, (cluster, i: number) => (
+            <ClusterMarker
+              key={i}
+              cluster={cluster}
+              zoom={zoom}
+              lat={cluster.lat}
+              lng={cluster.lng}
+              useName={showLabelsInstead}
+            />
+          ))
+        }
       </GoogleMap>
     </div>
   )
@@ -85,21 +131,22 @@ export default compose(
   connect((state) => ({
     zoom: zoomSelector(state),
     center: centerSelector(state),
-    addresses: addressesSelector(state),
-    clusters: clustersSelector(state),
-    addressesUrl: addressesUrlSelector(state),
-    slovakia: slovakiaSelector(state),
-    kraje: krajeSelector(state),
-    okresy: okresySelector(state),
-    slovakiaBorders: slovakiaBorderSelector(state),
   })),
   branch(
-    (props) => (props.zoom > 10)
-    || (props.zoom < 8)
-    || !booleanContains(props.slovakiaBorders.features[0], point([props.center[1], props.center[0]])),
-    withDataProviders(({addressesUrl}) => {
-      return [addressesProvider(addressesUrl)]
-    })
+    (props) => (props.zoom >= CITY_ZOOM)
+    || !booleanContains(SLOVAKIA_BORDERS.features[0], point([props.center[1], props.center[0]])),
+    compose(
+      connect((state) => ({
+        addresses: addressesSelector(state),
+        clusters: clustersSelector(state),
+        addressesUrl: addressesUrlSelector(state),
+      })),
+      withDataProviders(({addressesUrl}) => {
+        console.log('loading daaata')
+        return [addressesProvider(addressesUrl)]
+      })
+    ),
+    withProps({showLabelsInstead: true})
   ),
   withHandlers({
     onChange: (props) => (options) => {
@@ -116,5 +163,7 @@ export default compose(
     },
   }),
   // display loading only before first fetch
-  branch((props) => !props.addresses, renderComponent(Loading))
+  branch((props) => (!props.addresses && (props.zoom >= CITY_ZOOM
+|| !booleanContains(SLOVAKIA_BORDERS.features[0], point([props.center[1], props.center[0]]))
+  )), renderComponent(Loading))
 )(Map)
