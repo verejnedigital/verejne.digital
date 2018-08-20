@@ -1,5 +1,4 @@
 // @flow
-
 import React from 'react'
 import {reduce, pickBy, isEmpty, orderBy, padStart, isFinite} from 'lodash'
 
@@ -20,64 +19,65 @@ const monthNames = [
   'december',
 ]
 
+/* eslint-disable quote-props */
 // source: https://ekosystem.slovensko.digital/otvorene-data#crz.contracts.status_id
 const contractStatuses = {
-  1: 'rozpracovaná',
-  2: 'zverejnená',
-  3: 'doplnená',
-  4: 'zrušená',
-  5: 'stiahnutá',
+  '1': 'rozpracovaná',
+  '2': 'zverejnená',
+  '3': 'doplnená',
+  '4': 'zrušená',
+  '5': 'stiahnutá',
 }
 
 const relationTypes = {
-  1: 'Predstaventvo',
-  2: 'Člen dozorného orgánu',
-  3: 'Jediný akcionár a.s.',
-  4: 'Konateľ',
-  5: 'Spoločník v.o.s. / s.r.o.',
-  6: 'Neurčené',
-  7: 'Prokurista',
-  8: 'Likvidátor',
-  9: 'Správca konkurznej podstaty',
-  10: 'Správca reštrukturalizačného konania',
-  11: 'Vedúci podniku (organizačnej zložky podniku)',
-  12: 'Komplementár',
-  13: 'Komanditista',
-  14: 'Komplementár',
-  15: 'Predseda',
-  16: 'Spoločník',
-  17: 'Podnikateľ',
-  18: 'Zástupca podnikateľa',
-  19: 'Vedúci podniku zahraničnej osoby / organizačnej zložky podniku zahraničnej osoby',
-  20: 'Zriaďovateľ ZO',
-  21: 'Riaditeľ',
-  22: 'Zakladateľ štátneho podniku',
-  23: 'Zástupca riaditeľa',
-  24: 'Generálny riaditeľ',
-  25: 'Člen správnej rady',
-  26: 'Podpredseda',
-  27: 'Správca vyrovnacieho konania',
-  28: 'Člen družstva poverený členskou schôdzou',
-  29: 'Správna rada',
-  30: 'Zodpovedný zástupca',
-  31: 'Vedúci organizačnej zložky',
-  32: 'Iná zainteresovaná osoba',
-  33: 'Zakladateľ',
-  34: 'Zakladateľ',
-  35: 'Iný štatutárny orgán',
-  36: 'Správca',
-  37: 'Zriaďovateľ',
-  38: 'Člen prípravného výboru',
-  39: 'Navrhovateľ',
-  40: 'Vedúci odštepného závodu / inej organizačnej zložky podniku',
-  41: 'Prokurista zahraničnej osoby',
-  42: 'Prokurista zahraničnej osoby',
-  43: 'Prokurista zahraničnej osoby',
-  44: 'Výkonný výbor',
-  45: 'Primátor',
-  46: 'Člen EZHZ',
-  47: 'Starosta',
-  48: 'Primátor',
+  '1': 'Predstaventvo',
+  '2': 'Člen dozorného orgánu',
+  '3': 'Jediný akcionár a.s.',
+  '4': 'Konateľ',
+  '5': 'Spoločník v.o.s. / s.r.o.',
+  '6': 'Neurčené',
+  '7': 'Prokurista',
+  '8': 'Likvidátor',
+  '9': 'Správca konkurznej podstaty',
+  '10': 'Správca reštrukturalizačného konania',
+  '11': 'Vedúci podniku (organizačnej zložky podniku)',
+  '12': 'Komplementár',
+  '13': 'Komanditista',
+  '14': 'Komplementár',
+  '15': 'Predseda',
+  '16': 'Spoločník',
+  '17': 'Podnikateľ',
+  '18': 'Zástupca podnikateľa',
+  '19': 'Vedúci podniku zahraničnej osoby / organizačnej zložky podniku zahraničnej osoby',
+  '20': 'Zriaďovateľ ZO',
+  '21': 'Riaditeľ',
+  '22': 'Zakladateľ štátneho podniku',
+  '23': 'Zástupca riaditeľa',
+  '24': 'Generálny riaditeľ',
+  '25': 'Člen správnej rady',
+  '26': 'Podpredseda',
+  '27': 'Správca vyrovnacieho konania',
+  '28': 'Člen družstva poverený členskou schôdzou',
+  '29': 'Správna rada',
+  '30': 'Zodpovedný zástupca',
+  '31': 'Vedúci organizačnej zložky',
+  '32': 'Iná zainteresovaná osoba',
+  '33': 'Zakladateľ',
+  '34': 'Zakladateľ',
+  '35': 'Iný štatutárny orgán',
+  '36': 'Správca',
+  '37': 'Zriaďovateľ',
+  '38': 'Člen prípravného výboru',
+  '39': 'Navrhovateľ',
+  '40': 'Vedúci odštepného závodu / inej organizačnej zložky podniku',
+  '41': 'Prokurista zahraničnej osoby',
+  '42': 'Prokurista zahraničnej osoby',
+  '43': 'Prokurista zahraničnej osoby',
+  '44': 'Výkonný výbor',
+  '45': 'Primátor',
+  '46': 'Člen EZHZ',
+  '47': 'Starosta',
+  '48': 'Primátor',
 }
 
 export function localeNumber(number: number) {
@@ -162,10 +162,10 @@ export function getNewFinancialData(data: NewEntityDetail) {
     (items, origItem, year, origObj) => {
       const item = pickBy(origItem, isValidValue)
       if (!isEmpty(item)) {
-        item.year = year
-        if (origObj[year - 1]) {
-          item.revenueTrend = computeTrend(item.revenue, origObj[year - 1].revenue)
-          item.profitTrend = computeTrend(item.profit, origObj[year - 1].profit)
+        item.year = parseInt(year, 10)
+        if (origObj[item.year - 1]) {
+          item.revenueTrend = computeTrend(item.revenue, origObj[item.year - 1].revenue)
+          item.profitTrend = computeTrend(item.profit, origObj[item.year - 1].profit)
         }
         items.push(item)
       }
@@ -200,7 +200,7 @@ export function showRelationType(relationTypeId: number) {
   return `${relationTypes[Math.abs(relationTypeId)] || 'Neznáme'} ${relationTypeId > 0 ? '>' : '<'}`
 }
 
-function padIco(ico: number | string) {
+function padIco(ico?: number | string) {
   return ico != null ? padStart(ico.toString(), 8, '0') : null
 }
 
@@ -208,6 +208,5 @@ export function extractIco(data: Company) {
   const icoSource = ['new_orsr_data', 'orsresd_data', 'firmy_data'].find(
     (src) => data[src].length >= 1
   )
-  const ico = icoSource ? data[icoSource][0].ico : null
-  return padIco(ico)
+  return icoSource ? padIco(data[icoSource][0].ico) : null
 }
