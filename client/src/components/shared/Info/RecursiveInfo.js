@@ -3,8 +3,11 @@ import React from 'react'
 import CompanyDetails from '../CompanyDetails'
 import {compose, withState, withHandlers} from 'recompose'
 import {Button} from 'reactstrap'
+<<<<<<< HEAD
 import type {StateUpdater} from '../../../types/commonTypes'
 import './RecursiveInfo.css'
+=======
+>>>>>>> Fix more scss errors
 
 type RecursiveInfoProps = {|
   name: string,
