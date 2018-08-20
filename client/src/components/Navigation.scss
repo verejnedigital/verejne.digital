@@ -1,4 +1,5 @@
 @import "./variables.scss";
+
 .navbar {
   box-shadow: 0 4px 12px 0 $shadow-color;
   background: $component-background;
@@ -9,26 +10,28 @@
 }
 
 .navbar-brand {
-  padding: 0.5rem 0;
+  padding: .5rem 0;
 }
 
 .nav-link {
-  padding-top: 0.8rem;
+  padding-top: .8rem;
   border-bottom: 3px solid transparent;
+
   &:hover {
     border-bottom-color: $search-border-color;
   }
+
   &.active {
     border-bottom-color: $active-tab-color;
   }
 }
 
 .navbar-toggler {
-  margin: 0.5rem 0;
+  margin: .5rem 0;
   width: 2rem;
   height: 2rem;
-  font-size: 0.8rem;
-  padding: 0.1rem;
+  font-size: .8rem;
+  padding: .1rem;
 }
 
 .navbar-brand {
