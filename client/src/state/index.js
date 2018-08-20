@@ -1,9 +1,10 @@
 // @flow
 import {DEFAULT_MAP_CENTER, SLOVAKIA_COORDINATES} from '../constants'
 import type {ObjectMap} from '../types/commonTypes'
-import slovakiaJson from '../slovensko/low-precision/slovensko-005.json'
-import okresyJson from '../slovensko/low-precision/okresy-005.json'
-import krajeJson from '../slovensko/low-precision/kraje-005.json'
+import slovakiaJson from '../slovensko/slovensko-centers.json'
+import okresyJson from '../slovensko/okresy-centers.json'
+import krajeJson from '../slovensko/kraje-centers.json'
+import slovakiaBordersJson from '../slovensko/low-precision/slovensko-005.json'
 
 export type JSON =
   | null
@@ -253,10 +254,11 @@ export type State = {|
   +addresses: ObjectMap<Address>,
   +newEntities: ObjectMap<NewEntityState>,
   +entityDetails: ObjectMap<EntityDetails>,
-  +slovakiamap: {|
+  +slovakiaMap: {|
     +okresy: JSON,
     +kraje: JSON,
     +slovakia: JSON,
+    +slovakiaBorder: JSON,
   |},
 |}
 
@@ -302,6 +304,7 @@ const getInitialState = (): State => ({
     okresy: okresyJson,
     kraje: krajeJson,
     slovakia: slovakiaJson,
+    slovakiaBorder: slovakiaBordersJson,
   },
 })
 

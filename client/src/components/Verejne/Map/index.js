@@ -8,6 +8,9 @@ import {
   clustersSelector,
   addressesUrlSelector,
   slovakiaBorderSelector,
+  slovakiaSelector,
+  krajeSelector,
+  okresySelector,
 } from '../../../selectors'
 import {setMapOptions} from '../../../actions/verejneActions'
 import './GoogleMap.css'
@@ -30,6 +33,7 @@ import type {RouterHistory} from 'react-router'
 
 import booleanContains from '@turf/boolean-contains'
 import {point} from '@turf/helpers'
+
 type Props = {
   zoom: number,
   center: [number, number],
@@ -84,14 +88,16 @@ export default compose(
     addresses: addressesSelector(state),
     clusters: clustersSelector(state),
     addressesUrl: addressesUrlSelector(state),
-    slovakia: slovakiaBorderSelector(state),
+    slovakia: slovakiaSelector(state),
+    kraje: krajeSelector(state),
+    okresy: okresySelector(state),
+    slovakiaBorders: slovakiaBorderSelector(state),
   })),
   branch(
     (props) => (props.zoom > 10)
     || (props.zoom < 8)
-    || !booleanContains(props.slovakia.features[0], point([props.center[1], props.center[0]])),
-    withDataProviders(({slovakia, addressesUrl, center}) => {
-      console.log(slovakia.features[0])
+    || !booleanContains(props.slovakiaBorders.features[0], point([props.center[1], props.center[0]])),
+    withDataProviders(({addressesUrl}) => {
       return [addressesProvider(addressesUrl)]
     })
   ),

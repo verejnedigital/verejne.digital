@@ -198,7 +198,11 @@ export const entitiesUrlSelector = createSelector(
     return `${requestPrefix}/api/v/getEntities?level=${usedLevel}&lat1=${lat1}&lng1=${lng1}&lat2=${lat2}&lng2=${lng2}${restrictToSlovakiaParam}`
   }
 )
-export const slovakiaBorderSelector = (state: State) => state.slovakiaMap.slovakia
+export const slovakiaBorderSelector = (state: State) => state.slovakiaMap.slovakiaBorder
+export const slovakiaSelector = (state: State) => state.slovakiaMap.slovakia
+export const okresySelector = (state: State) => state.slovakiaMap.okresy
+export const krajeSelector = (state: State) => state.slovakiaMap.kraje
+
 export const autocompleteValueSelector = (state: State) => state.publicly.autocompleteValue
 export const autocompleteOptionsSelector = createSelector(boundsSelector, (bounds) => {
   return {
