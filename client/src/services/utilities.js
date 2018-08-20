@@ -2,7 +2,8 @@
 import React from 'react'
 import {reduce, pickBy, isEmpty, orderBy, padStart, isFinite} from 'lodash'
 
-import type {Company, NewEntityDetail} from '../state'
+import type {ObjectMap} from '../types/commonTypes'
+import type {Company, NewEntityDetail, CompanyFinancial} from '../state'
 
 const monthNames = [
   'január',
@@ -21,7 +22,7 @@ const monthNames = [
 
 /* eslint-disable quote-props */
 // source: https://ekosystem.slovensko.digital/otvorene-data#crz.contracts.status_id
-const contractStatuses = {
+const contractStatuses: ObjectMap<string> = {
   '1': 'rozpracovaná',
   '2': 'zverejnená',
   '3': 'doplnená',
@@ -29,7 +30,8 @@ const contractStatuses = {
   '5': 'stiahnutá',
 }
 
-const relationTypes = {
+const relationTypes: ObjectMap<string> = {
+  // TODO: remove when available from API
   '1': 'Predstaventvo',
   '2': 'Člen dozorného orgánu',
   '3': 'Jediný akcionár a.s.',
@@ -156,11 +158,24 @@ export function getFinancialData(data: Company, ico: string) {
   return findata
 }
 
-export function getNewFinancialData(data: NewEntityDetail) {
+export type EnhancedCompanyFinancial = {
+  year: number,
+  revenueTrend?: number,
+  profitTrend?: number,
+} & CompanyFinancial
+
+export type FinancialData = {
+  ico: string,
+  established_on: string,
+  terminated_on: string,
+  finances: Array<EnhancedCompanyFinancial>,
+}
+
+export function getNewFinancialData(data: NewEntityDetail): FinancialData {
   const finances = reduce(
     data.companyfinancials || {},
-    (items, origItem, year, origObj) => {
-      const item = pickBy(origItem, isValidValue)
+    (items: Array<EnhancedCompanyFinancial>, origItem: CompanyFinancial, year: string, origObj) => {
+      const item = (pickBy(origItem, isValidValue): CompanyFinancial)
       if (!isEmpty(item)) {
         item.year = parseInt(year, 10)
         if (origObj[item.year - 1]) {
@@ -190,14 +205,19 @@ export function showDate(dateString: string) {
 }
 
 export function showContractStatus(statusId: number) {
-  return contractStatuses[statusId] || ''
+  if (statusId == null) {
+    return 'Neznáme'
+  }
+  return contractStatuses[statusId.toString()] || 'Neznáme'
 }
 
 export function showRelationType(relationTypeId: number) {
   if (relationTypeId == null) {
     return 'Neznáme'
   }
-  return `${relationTypes[Math.abs(relationTypeId)] || 'Neznáme'} ${relationTypeId > 0 ? '>' : '<'}`
+  return `${relationTypes[Math.abs(relationTypeId).toString()] || 'Neznáme'} ${
+    relationTypeId > 0 ? '>' : '<'
+  }`
 }
 
 function padIco(ico?: number | string) {

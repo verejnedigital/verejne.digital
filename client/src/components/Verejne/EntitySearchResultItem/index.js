@@ -13,9 +13,9 @@ type Props = {
   showOnMap: Function,
 } & CompanyDetailProps
 
-const EntitySearchResultItem = ({company, showOnMap}: Props) => (
+const EntitySearchResultItem = ({oldCompany, showOnMap}: Props) => (
   <div style={{marginBottom: '1rem'}}>
-    <OldInfo data={company} eid={company.eid} />
+    <OldInfo data={oldCompany} eid={oldCompany.eid} />
   </div>
 )
 

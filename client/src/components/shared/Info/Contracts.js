@@ -1,16 +1,22 @@
+// @flow
 import React from 'react'
 
 import InfoButton from './InfoButton'
 import ExternalLink from '../ExternalLink'
 import {ShowNumberCurrency, showContractStatus} from '../../../services/utilities'
+import type {Contracts as ContractsType, Contract} from '../../../state'
 
-const Contracts = ({data}) => (
+type ContractsProps = {
+  data: ContractsType,
+}
+
+const Contracts = ({data}: ContractsProps) => (
   <InfoButton
     label="Zmluvy"
     count={data.count}
     priceSum={data.price_amount_sum}
     list={data.most_recent}
-    buildItem={(contract) => (
+    buildItem={(contract: Contract) => (
       <li key={contract.id}>
         <ExternalLink url={`https://www.crz.gov.sk/index.php?ID=${contract.contract_id}`}>
           {`${contract.client_name}, `}

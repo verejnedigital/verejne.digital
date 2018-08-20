@@ -1,7 +1,9 @@
+// @flow
 import React, {Fragment} from 'react'
 import Circle from 'react-icons/lib/fa/circle-o'
 import {Container} from 'reactstrap'
 import {Link} from 'react-router-dom'
+import type {Node} from 'react'
 
 import {
   getNewFinancialData,
@@ -16,9 +18,24 @@ import Relations from './Relations'
 import Trend from './Trend'
 import ExternalLink from '../ExternalLink'
 import mapIcon from '../../../assets/mapIcon.svg'
+import type {NewEntityDetail} from '../../../state'
+import type {FinancialData} from '../../../services/utilities'
 import './Info.css'
 
-const Item = ({children, label, url, linkText}) => (
+type InfoProps = {
+  data: NewEntityDetail,
+  canClose?: boolean,
+  onClose?: () => void,
+}
+
+type ItemProps = {
+  children?: Node,
+  label?: string,
+  url?: string,
+  linkText?: Node,
+}
+
+const Item = ({children, label, url, linkText}: ItemProps) => (
   <li className="info-item">
     {label && <strong className="info-item-label">{label}</strong>}
     {url && (
@@ -30,7 +47,7 @@ const Item = ({children, label, url, linkText}) => (
   </li>
 )
 
-const Findata = ({data}) => {
+const Findata = ({data}: {data: FinancialData}) => {
   const finances = data.finances[0] || {} // possible feature: display finances also for older years
   return (
     <Fragment>
@@ -71,7 +88,7 @@ const Findata = ({data}) => {
   )
 }
 
-const Info = ({data, canClose, onClose}) => (
+const Info = ({data, canClose, onClose}: InfoProps) => (
   <Container className={canClose ? 'info closable' : 'info'}>
     <div className="info-header">
       <h3 onClick={onClose}>

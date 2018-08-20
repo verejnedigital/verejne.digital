@@ -12,20 +12,21 @@ import {entityDetailSelector, companyDetailSelector} from '../selectors'
 export type CompanyDetailProps = {
   useNewApi: boolean,
   eid: string,
-  company: Company | NewEntityDetail,
+  company: NewEntityDetail,
+  oldCompany: Company,
 }
 
 const CompanyDetailWrapper = (WrappedComponent: ComponentType<*>) => {
-  const wrapped = (props) => (props.company ? <WrappedComponent {...props} /> : null)
+  const wrapped = (props) =>
+    (props.useNewApi ? props.company : props.oldCompany) ? <WrappedComponent {...props} /> : null
 
   return compose(
     withDataProviders(({eid, useNewApi}: CompanyDetailProps) => [
       useNewApi ? entityDetailProvider(eid) : companyDetailProvider(eid),
     ]),
     connect((state: State, props: CompanyDetailProps) => ({
-      company: props.useNewApi
-        ? entityDetailSelector(state, props.eid)
-        : companyDetailSelector(state, props),
+      company: props.useNewApi ? entityDetailSelector(state, props.eid) : null,
+      oldCompany: !props.useNewApi ? companyDetailSelector(state, props) : null,
     }))
   )(wrapped)
 }

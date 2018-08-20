@@ -5,6 +5,6 @@ import type {CompanyDetailProps} from '../../../dataWrappers/CompanyDetailWrappe
 
 type Props = CompanyDetailProps
 
-const Alternative = ({company}: Props) => <span>{company.entities[0].entity_name}</span>
+const Alternative = ({oldCompany}: Props) => <span>{oldCompany.entities[0].entity_name}</span>
 
 export default CompanyDetailWrapper(Alternative)
