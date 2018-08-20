@@ -16,6 +16,7 @@
     "points-cluster": "^0.1.4",
     "prop-types": "^15.6.1",
     "qs": "^6.5.2",
+    "rc-drawer": "^1.7.3",
     "react": "^16.3.2",
     "react-dom": "^16.3.2",
     "react-icons": "^2.2.7",

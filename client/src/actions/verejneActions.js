@@ -93,3 +93,15 @@ export const closeAddressDetail = () => ({
   path: ['publicly', 'openedAddressDetail'],
   reducer: () => null,
 })
+
+export const toggleDrawer = () => ({
+  type: 'Toggle drawer',
+  path: ['publicly', 'drawerOpen'],
+  reducer: (open: boolean) => !open,
+})
+
+export const setDrawer = (open) => ({
+  type: 'Set drawer',
+  path: ['publicly', 'drawerOpen'],
+  reducer: () => open,
+})

@@ -1,0 +1,23 @@
+@import "../../variables.scss";
+
+.verejne-side-panel {
+  position: fixed;
+  top: $navbar-height + 40px;
+  left: 40px;
+  z-index: 1;
+
+  .form-control {
+    box-shadow: 0 4px 12px darken($shadow-color, 25%);
+    border-radius: 2px;
+    font-size: 1rem;
+    padding: 1em 1.5em;
+    width: 360px;
+  }
+}
+
+.drawer.drawer-left{
+    z-index: 1030;
+}
+.drawer-content {
+  padding: 1rem 0.5rem;
+}
