@@ -49,7 +49,8 @@
       }
 
       &:focus {
-        box-shadow: inset 0 1px 1px $input-inset-shadow-color,
+        box-shadow:
+          inset 0 1px 1px $input-inset-shadow-color,
           0 0 8px $input-shadow-color;
       }
     }

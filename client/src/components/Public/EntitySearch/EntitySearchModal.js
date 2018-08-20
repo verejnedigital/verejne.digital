@@ -26,7 +26,6 @@ import {
 import {toggleModalOpen, setEntitySearchFor, toggleDrawer} from '../../../actions/publicActions'
 import {updateValue} from '../../../actions/sharedActions'
 import {FIND_ENTITY_TITLE} from '../../../constants'
-import './EntitySearch.css'
 
 type EntitySearchProps = {|
   entitySearchModalOpen: boolean,
