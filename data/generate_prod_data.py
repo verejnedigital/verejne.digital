@@ -67,7 +67,9 @@ def CreateAndSetProdSchema(db, prod_schema_name):
                 id SERIAL PRIMARY KEY,
                 name TEXT,
                 address_id INTEGER REFERENCES Address(id)
-            )
+            );
+            CREATE INDEX ON Entities(name);
+            CREATE INDEX ON Entities(address_id);
         """)
         
 
