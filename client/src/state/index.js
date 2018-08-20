@@ -178,13 +178,19 @@ export type NewEntity = {
 
 export type NewEntityState = NewEntity & {addressId: number}
 
-export type EuFund = {
+export type Eufund = {
   title: string,
   link: string,
   price: number,
   state: string,
   call_state: string,
   call_title: string,
+}
+
+export type Eufunds = {
+  eufunds_count: number,
+  eufunds_price_sum: number,
+  largest: Array<Eufund>,
 }
 
 export type CompanyFinancial = {
@@ -207,6 +213,13 @@ export type Contract = {
   contract_identifier: string,
 }
 
+export type Contracts = {
+  count: number,
+  price_amount_sum: number,
+  most_recent: Array<Contract>,
+  largest: Array<Contract>,
+}
+
 // TODO rename to Notice when old one is gone
 export type NoticeNew = {
   client_eid: number,
@@ -225,6 +238,13 @@ export type NoticeNew = {
   body: string,
 }
 
+export type Notices = {
+  count: number,
+  total_final_value_amount_eur_sum: number,
+  most_recent: Array<NoticeNew>,
+  largest: Array<NoticeNew>,
+}
+
 export type RelatedEntity = {
   eid: number,
   name: string,
@@ -240,11 +260,7 @@ export type NewEntityDetail = {
   lat: number,
   lng: number,
   address: string,
-  eufunds: {
-    eufunds_count: number,
-    eufunds_price_sum: number,
-    largest: Array<EuFund>,
-  },
+  eufunds: Eufunds,
   companyfinancials: {
     [year: number]: CompanyFinancial,
   },
@@ -253,18 +269,8 @@ export type NewEntityDetail = {
     established_on: string,
     terminated_on: string,
   },
-  contracts: {
-    count: number,
-    price_amount_sum: number,
-    most_recent: Array<Contract>,
-    largest: Array<Contract>,
-  },
-  notices: {
-    count: number,
-    total_final_value_amount_eur_sum: number,
-    most_recent: Array<NoticeNew>,
-    largest: Array<NoticeNew>,
-  },
+  contracts: Contracts,
+  notices: Notices,
   related: RelatedEntity[],
 }
 
