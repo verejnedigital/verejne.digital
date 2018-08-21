@@ -26,7 +26,7 @@ export type Notice = {|
   bulletin_month: number,
   bulletin_year: number,
   bulletin_date: string, // string representation of day/month/year
-  kandidati: Array<Candidate | []>,
+  kandidati: Array<Candidate>,
   price_num: number,
   price_avg: number,
 |}

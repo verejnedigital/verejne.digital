@@ -18,7 +18,8 @@ import type {NoticesOrdering} from '../components/Notices/NoticeList'
 import type {NoticeDetailProps} from '../components/Notices/NoticeDetail'
 
 import type {CompanyDetailProps} from '../dataWrappers/CompanyDetailWrapper'
-import type {State, MapOptions, CompanyEntity, MapBounds, Company, NewEntityDetail} from '../state'
+import type {State, MapOptions, CompanyEntity, MapBounds, Company, NewEntityDetail, Notice} from '../state'
+import type {ObjectMap} from '../types/commonTypes'
 
 export const paramsIdSelector = (_: State, props: ContextRouter): string =>
   props.match.params.id || '0'
@@ -35,15 +36,23 @@ export const noticesSearchQuerySelector = (state: State) => normalizeName(state.
 export const searchFilteredNoticesSelector = createSelector(
   noticesSelector,
   noticesSearchQuerySelector,
-  (notices, query) => {
-    const filteredNotices = filter(notices, (notice) =>{
-      const similarity = notice.kandidati.length > 0 ?
-        Math.round(notice.kandidati[0].score * 100) : '?'
-      return   normalizeName(notice.customer.concat(notice.price_num)
-        .concat(notice.title).concat(notice.kandidati[0].name)
-        .concat(similarity)).indexOf(query) > -1
+  (notices: ObjectMap<Notice>, query) => {
+    const filteredNotices = filter(notices, notice => {
+      const similarity =
+        notice.kandidati.length > 0
+          ? Math.round(notice.kandidati[0].score * 100)
+          : '?'
+      return (
+        normalizeName(
+          notice.customer
+            .concat(notice.price_num.toString())
+            .concat(notice.title)
+            .concat(notice.kandidati[0].name)
+            .concat(similarity.toString())
+        ).indexOf(query) > -1
+      )
     })
-    return filteredNotices.length>0 ? filteredNotices : []
+    return filteredNotices.length > 0 ? filteredNotices : []
   }
 )
 export const dateSortedNoticesSelector = createSelector(

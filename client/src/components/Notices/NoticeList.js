@@ -46,6 +46,7 @@ export type NoticeListProps = {
   noticesLength: number,
   query: Object,
   searchValue: string,
+  updateSearchValue: () => void,
 } & ContextRouter
 
 const NoticeList = ({
@@ -159,7 +160,7 @@ export default compose(
     noticesLength: noticesLengthSelector(state, props),
     newestBulletinDate: newestBulletinDateSelector(state, props),
     query: locationSearchSelector(state, props),
-    searchValue: noticesSearchQuerySelector(state, props),
+    searchValue: noticesSearchQuerySelector(state),
   }),
     {updateValue}
   ),
