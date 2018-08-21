@@ -1,6 +1,7 @@
 // @flow
 
 import React from 'react'
+import {isFinite} from 'lodash'
 
 import type {Company} from '../state'
 
@@ -20,7 +21,7 @@ const monthNames = [
 ]
 
 export function localeNumber(number: number) {
-  return number
+  return isFinite(number)
     ? number.toLocaleString('sk-SK', {minimumFractionDigits: 2, maximumFractionDigits: 2})
     : null
 }
@@ -31,12 +32,11 @@ type ShowNumberCurrencyProps = {
 }
 
 export const ShowNumberCurrency = ({num, cur = '€'}: ShowNumberCurrencyProps) => {
-  if (num == null || isNaN(num)) return null
-  return (
+  return isFinite(num) ? (
     <span className="text-nowrap">
       {localeNumber(num)} {cur}
     </span>
-  )
+  ) : null
 }
 
 export function icoUrl(ico: string) {
