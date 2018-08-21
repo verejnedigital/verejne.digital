@@ -37,7 +37,7 @@ export const searchFilteredNoticesSelector = createSelector(
   noticesSelector,
   noticesSearchQuerySelector,
   (notices: ObjectMap<Notice>, query) => {
-    const filteredNotices = filter(notices, notice => {
+    const filteredNotices = filter(notices, (notice) => {
       const similarity =
         notice.kandidati.length > 0
           ? Math.round(notice.kandidati[0].score * 100)
