@@ -13,7 +13,7 @@ import {
 } from '../../../services/utilities'
 import {compose, withHandlers} from 'recompose'
 import {connect} from 'react-redux'
-import {zoomToLocation} from '../../../actions/verejneActions'
+import {zoomToLocation, toggleModalOpen} from '../../../actions/verejneActions'
 import {ENTITY_CLOSE_ZOOM} from '../../../constants'
 import Contracts from './Contracts'
 import Notices from './Notices'
@@ -28,6 +28,7 @@ import './Info.css'
 
 type InfoProps = {
   data: NewEntityDetail,
+  inModal?: boolean,
   canClose?: boolean,
   onClose?: () => void,
 }
@@ -133,10 +134,10 @@ const Info = ({data, canClose, onClose, showOnMap}: InfoProps) => (
 )
 
 export default compose(
-  connect(null, {zoomToLocation}),
+  connect(null, {zoomToLocation, toggleModalOpen}),
   withHandlers({
-    showOnMap: ({data, zoomToLocation}) => () => {
-      data.toggleModalOpen && data.toggleModalOpen()
+    showOnMap: ({data, inModal, zoomToLocation, toggleModalOpen}) => () => {
+      inModal && toggleModalOpen()
       zoomToLocation(data, ENTITY_CLOSE_ZOOM)
     },
   })
