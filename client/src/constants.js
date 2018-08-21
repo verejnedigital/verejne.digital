@@ -1,11 +1,9 @@
 // @flow
 import okresyJson from './slovensko/okresy-centers.json'
 import krajeJson from './slovensko/kraje-centers.json'
-import slovakiaBordersJson from './slovensko/low-precision/slovensko-005.json'
 
 export const SLOVAKIA_OKRESY = okresyJson
 export const SLOVAKIA_KRAJE = krajeJson
-export const SLOVAKIA_BORDERS = slovakiaBordersJson
 
 export const PAGINATION_CHUNK_SIZE = 10
 export const NOTICES_PAGINATION_SIZE = 10
