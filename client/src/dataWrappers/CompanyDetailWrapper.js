@@ -11,13 +11,13 @@ import {entityDetailSelector, companyDetailSelector} from '../selectors'
 
 export type CompanyDetailProps = {
   useNewApi: boolean,
-  eid: string,
+  eid: number,
   company: NewEntityDetail,
   oldCompany: Company,
 }
 
 const CompanyDetailWrapper = (WrappedComponent: ComponentType<*>) => {
-  const wrapped = (props) =>
+  const wrapped = (props: CompanyDetailProps) =>
     (props.useNewApi ? props.company : props.oldCompany) ? <WrappedComponent {...props} /> : null
 
   return compose(
