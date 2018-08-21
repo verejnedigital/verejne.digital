@@ -47,7 +47,7 @@ const ClusterMarker = ({
     })
     children = cluster.numPoints === 1 ? <FaIconCircle size="18" /> : MarkerText
   }
-  if (selected) className += ' selected'
+  className = classnames(className, {selected})
   return (
     <Marker className={className} onClick={onClick}>
       {children}
