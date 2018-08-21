@@ -2,6 +2,10 @@ import React, {Fragment} from 'react'
 import Circle from 'react-icons/lib/fa/circle-o'
 import {Badge, Container} from 'reactstrap'
 import {Link} from 'react-router-dom'
+import {compose, withHandlers} from 'recompose'
+import {connect} from 'react-redux'
+import {zoomToLocation, toggleModalOpen} from '../../../actions/verejneActions'
+import {ENTITY_CLOSE_ZOOM} from '../../../constants'
 import {
   getFinancialData,
   extractIco,
@@ -74,7 +78,7 @@ const Findata = ({data}) => {
   )
 }
 
-const OldInfo = ({data, canClose, onClose}) => {
+const OldInfo = ({data, canClose, onClose, showOnMap}) => {
   const entity = data.entities[0]
   const findata = getFinancialData(data, extractIco(data))
 
@@ -84,7 +88,11 @@ const OldInfo = ({data, canClose, onClose}) => {
         <h3 className={`${isPolitician(data) ? 'politician' : ''}`}>
           <Circle aria-hidden="true" />&nbsp;{entity.entity_name}&nbsp;
         </h3>
-        <Link to={`/verejne?lat=${entity.lat}&lng=${entity.lng}&zoom=18`} title="Zobraz na mape">
+        <Link
+          to={`/verejne?lat=${entity.lat}&lng=${entity.lng}&zoom=${ENTITY_CLOSE_ZOOM}`}
+          title="Zobraz na mape"
+          onClick={showOnMap}
+        >
           <img src={mapIcon} alt="MapMarker" style={{width: '16px', height: '25px'}} />
         </Link>
         {canClose && (
@@ -180,4 +188,12 @@ const OldInfo = ({data, canClose, onClose}) => {
   )
 }
 
-export default OldInfo
+export default compose(
+  connect(null, {zoomToLocation, toggleModalOpen}),
+  withHandlers({
+    showOnMap: ({data, inModal, zoomToLocation, toggleModalOpen}) => () => {
+      inModal && toggleModalOpen()
+      zoomToLocation(data.entities[0], ENTITY_CLOSE_ZOOM)
+    },
+  })
+)(OldInfo)
