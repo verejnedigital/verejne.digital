@@ -152,7 +152,6 @@ export type MapOptions = {
   bounds: ?MapBounds,
 }
 
-export type Center = {lat: number, lng: number}
 
 export type SearchedEntity = {
   eids: number[],
