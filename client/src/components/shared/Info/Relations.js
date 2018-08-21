@@ -21,9 +21,9 @@ const _Relations = ({data, toggledOn, toggle, useNewApi}) => {
           {orderBy(data, ['edge_types']).map((related) => (
             <li key={related.eid}>
               {related.edge_types &&
-                related.edge_types.map((type) => (
+                related.edge_types.map((type, i) => (
                   <Badge key={type} color={type > 0 ? 'dark' : 'secondary'} className="mr-1">
-                    {showRelationType(type)}
+                    {showRelationType(type, related.edge_type_texts[i])}
                   </Badge>
                 ))}
               <RecursiveInfo name={related.name} eid={related.eid} useNewApi={useNewApi} />
