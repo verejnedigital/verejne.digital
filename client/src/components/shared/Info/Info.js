@@ -11,6 +11,10 @@ import {
   ShowNumberCurrency,
   showDate,
 } from '../../../services/utilities'
+import {compose, withHandlers} from 'recompose'
+import {connect} from 'react-redux'
+import {zoomToLocation} from '../../../actions/verejneActions'
+import {ENTITY_CLOSE_ZOOM} from '../../../constants'
 import Contracts from './Contracts'
 import Notices from './Notices'
 import Eurofunds from './Eurofunds'
@@ -88,13 +92,17 @@ const Findata = ({data}: {data: FinancialData}) => {
   )
 }
 
-const Info = ({data, canClose, onClose}: InfoProps) => (
+const Info = ({data, canClose, onClose, showOnMap}: InfoProps) => (
   <Container className={canClose ? 'info closable' : 'info'}>
     <div className="info-header">
       <h3 onClick={onClose}>
         <Circle aria-hidden="true" />&nbsp;{data.name}&nbsp;
       </h3>
-      <Link to={`/verejne?lat=${data.lat}&lng=${data.lng}&zoom=18`} title="Zobraz na mape">
+      <Link
+        to={`/verejne?lat=${data.lat}&lng=${data.lng}&zoom=${ENTITY_CLOSE_ZOOM}`}
+        title="Zobraz na mape"
+        onClick={showOnMap}
+      >
         <img src={mapIcon} alt="MapMarker" style={{width: '16px', height: '25px'}} />
       </Link>
       {canClose && (
@@ -124,4 +132,12 @@ const Info = ({data, canClose, onClose}: InfoProps) => (
   </Container>
 )
 
-export default Info
+export default compose(
+  connect(null, {zoomToLocation}),
+  withHandlers({
+    showOnMap: ({data, zoomToLocation}) => () => {
+      data.toggleModalOpen && data.toggleModalOpen()
+      zoomToLocation(data.entities[0], ENTITY_CLOSE_ZOOM)
+    },
+  })
+)(Info)
