@@ -111,7 +111,7 @@ const randomInt = (min: number, max: number) => {
 
 export const getNodeEid = (node: Node): GraphId => {
   // hack: extract eID (id) of a given node via converting it to a string
-  return node.toString()
+  return parseInt(node.toString(), 10)
 }
 
 export const addEdgeIfMissing = (a: GraphId, b: GraphId, edges: Array<Edge>) => {
@@ -127,7 +127,7 @@ export const addEdgeIfMissing = (a: GraphId, b: GraphId, edges: Array<Edge>) => 
 
 export const addNeighbours = (
   graph: Graph,
-  sourceEid: string,
+  sourceEid: number,
   sourcePoint: Point,
   neighbours: Array<RelatedEntity>
 ) => {
@@ -138,7 +138,7 @@ export const addNeighbours = (
   neighbours.forEach(({eid, name}: RelatedEntity) => {
     if (!nodeIds[eid]) {
       nodes.push({
-        id: eid.toString(),
+        id: eid,
         label: name,
         leaf: true,
         // spawn new nodes around the source
@@ -146,9 +146,9 @@ export const addNeighbours = (
         x: sourcePoint.x + randomInt(20, 100),
         y: sourcePoint.y + randomInt(20, 100),
       })
-      nodeIds[eid.toString()] = true
+      nodeIds[eid] = true
     }
-    addEdgeIfMissing(eid.toString(), sourceEid, edges)
+    addEdgeIfMissing(eid, sourceEid, edges)
   })
   return {nodes, edges, nodeIds}
 }
@@ -182,7 +182,7 @@ export const removeNodes = (
       }
     })
     // duplicates are not a problem
-    idsToRemove = idsToRemove.concat(Object.keys(possibleOrphans))
+    idsToRemove = idsToRemove.concat(Object.keys(possibleOrphans).map((key) => parseInt(key, 10)))
   }
 
   const nodes = graph.nodes.filter(({id}) => idsToRemove.indexOf(id) === -1)

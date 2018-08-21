@@ -22,7 +22,7 @@ const dispatchEntityDetail = (eid: number) => (
   dispatch(setEntityDetail(data[eid], eid))
 }
 
-export const companyDetailProvider = (eid: number) => {
+export const companyDetailProvider = (eid: number, needed: boolean = true) => {
   return {
     ref: `companyDetail-${eid}`,
     getData: [
@@ -34,10 +34,11 @@ export const companyDetailProvider = (eid: number) => {
     ],
     onData: [dispatchCompanyDetails, eid],
     keepAliveFor: 60 * 60 * 1000,
+    needed,
   }
 }
 
-export const entityDetailProvider = (eid: number) => {
+export const entityDetailProvider = (eid: number, needed: boolean = true) => {
   const requestPrefix = `${process.env.REACT_APP_API_URL || ''}`
   return {
     ref: `entityDetail-${eid}`,
@@ -51,5 +52,6 @@ export const entityDetailProvider = (eid: number) => {
     onData: [dispatchEntityDetail, eid],
     keepAliveFor: 60 * 60 * 1000,
     loadingComponent: <EntityDetailLoading />,
+    needed,
   }
 }
