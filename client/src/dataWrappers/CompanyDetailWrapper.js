@@ -5,8 +5,7 @@ import {connect} from 'react-redux'
 import {withDataProviders} from 'data-provider'
 import type {ComponentType} from 'react'
 import type {State, Company, NewEntityDetail} from '../state'
-import {entityDetailProvider} from '../dataProviders/publiclyDataProviders'
-import {companyDetailProvider} from '../dataProviders/sharedDataProviders'
+import {companyDetailProvider, entityDetailProvider} from '../dataProviders/sharedDataProviders'
 import {entityDetailSelector, companyDetailSelector} from '../selectors'
 
 export type CompanyDetailProps = {

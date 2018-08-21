@@ -12,7 +12,7 @@ import {
   setEntitySearchFor,
 } from '../../../../actions/verejneActions'
 import {updateValue} from '../../../../actions/sharedActions'
-import {entityDetailProvider} from '../../../../dataProviders/publiclyDataProviders'
+import {entityDetailProvider} from '../../../../dataProviders/sharedDataProviders'
 import {entityDetailSelector} from '../../../../selectors'
 import Info from '../../../shared/Info/Info'
 import './ListRow.css'
