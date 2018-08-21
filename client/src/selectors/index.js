@@ -14,6 +14,7 @@ import {sortBy, chunk, filter} from 'lodash'
 import supercluster from 'points-cluster'
 
 import type {ContextRouter} from 'react-router-dom'
+import type {ObjectMap} from '../types/commonTypes'
 import type {NoticesOrdering} from '../components/Notices/NoticeList'
 import type {NoticeDetailProps} from '../components/Notices/NoticeDetail'
 
@@ -101,6 +102,10 @@ export const addressesSelector = (state: State) => state.addresses
 export const showInfoSelector = (state: State) => state.publicly.showInfo
 export const openedAddressDetailSelector = (state: State) => state.publicly.openedAddressDetail
 export const entitiesSelector = (state: State) => state.entities
+export const entitySearchSelector = (state: State, query: string): SearchedEntity =>
+  state.entitySearch[query]
+export const allEntityDetailsSelector = (state: State): ObjectMap<NewEntityDetail> =>
+  state.entityDetails
 export const entityDetailSelector = (state: State, eid: number): NewEntityDetail | null =>
   eid ? state.entityDetails[eid.toString()] : null
 
