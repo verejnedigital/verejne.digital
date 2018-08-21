@@ -29,6 +29,7 @@ import {
   SLOVAKIA_KRAJE,
   SLOVAKIA_COORDINATES,
   OKRESY_ZOOM,
+  SLOVAKIA_BOUNDS,
 } from '../../../constants'
 import {withSideEffects} from '../../../utils'
 
@@ -37,15 +38,12 @@ import type {MapCluster} from '../../../selectors'
 import type {GenericAction} from '../../../types/reduxTypes'
 import type {RouterHistory} from 'react-router'
 
-import booleanContains from '@turf/boolean-contains'
-import {point} from '@turf/helpers'
+//import booleanContains from '@turf/boolean-contains'
+//import {point} from '@turf/helpers'
 
-if (process.env.NODE_ENV !== 'production') {
-  const {whyDidYouUpdate} = require('why-did-you-update')
-  whyDidYouUpdate(React, {exclude: [/ClusterMarker|Link|Route|Legend|PlacesAutocomplete|Input/]})
-}
+
 type Props = {
-  showLabelsInstead: boolean,
+  useLabels: boolean,
   zoom: number,
   center: [number, number],
   entities: Array<Entity>,
@@ -55,13 +53,15 @@ type Props = {
   history: RouterHistory,
 }
 
+const isInSlovakia = (center: [number, number]): boolean => {
+  return (center[0] > SLOVAKIA_BOUNDS[0][1]) && (center[0] < SLOVAKIA_BOUNDS[1][1]) &&
+    (center[1] > SLOVAKIA_BOUNDS[0][0]) && (center[1] < SLOVAKIA_BOUNDS[1][0])
+}
 // NOTE: there can be multiple points on the map on the same location...
-const Map = ({zoom, center, clusters, onChange}: Props) => {
+const Map = ({useLabels, zoom, center, clusters, onChange}: Props) => {
   //9 okresy, 8 kraje
   let finalClusters = clusters
-  const showLabelsInstead = !(zoom >= CITY_ZOOM ||
-  !booleanContains(SLOVAKIA_BORDERS.features[0], point([center[1], center[0]])))
-  if (showLabelsInstead) {
+  if (useLabels) {
     if (zoom <= WORLD_ZOOM) {
       finalClusters = [{
         lat: SLOVAKIA_COORDINATES[0],
@@ -106,7 +106,7 @@ const Map = ({zoom, center, clusters, onChange}: Props) => {
               zoom={zoom}
               lat={cluster.lat}
               lng={cluster.lng}
-              useName={showLabelsInstead}
+              useName={useLabels}
             />
           ))
         }
@@ -141,8 +141,18 @@ export default compose(
     clusters: clustersSelector(state),
     addressesUrl: addressesUrlSelector(state),
   })),
-  withDataProviders(({addressesUrl}) => {
-    return [addressesProvider(addressesUrl)]
+  withProps((props) => {
+    return {
+      useLabels: !(props.zoom >= CITY_ZOOM ||
+  !isInSlovakia(props.center)),
+    }
+  }),
+  withDataProviders(({useLabels, addressesUrl}) => {
+    if (!useLabels) {
+      return [addressesProvider(addressesUrl)]
+    } else {
+      return []
+    }
   }),
   withHandlers({
     onChange: (props) => (options) => {
@@ -159,7 +169,6 @@ export default compose(
     },
   }),
   // display loading only before first fetch
-  branch((props) => (!props.addresses && (props.zoom >= CITY_ZOOM
-|| !booleanContains(SLOVAKIA_BORDERS.features[0], point([props.center[1], props.center[0]]))
-  )), renderComponent(Loading))
+  branch((props) => (!props.addresses && !props.useLabels),
+    renderComponent(Loading))
 )(Map)

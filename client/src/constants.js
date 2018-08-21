@@ -25,6 +25,15 @@ export const WORLD_ZOOM = 6
 export const GOOGLE_MAP_API_KEY = 'AIzaSyCAXMlEL-sfzT4jVK5CQHysSPp77JnVLks'
 export const SLOVAKIA_COORDINATES = [48.6, 19.5]
 
+const SLOVAKIA_NORTH_BOUND = 49.62
+const SLOVAKIA_SOUTH_BOUND = 47.72
+const SLOVAKIA_WEST_BOUND = 16.82
+const SLOVAKIA_EAST_BOUND = 22.57 //TU NIC NIEJE!
+
+export const SLOVAKIA_BOUNDS = [[SLOVAKIA_WEST_BOUND, SLOVAKIA_SOUTH_BOUND],
+  [SLOVAKIA_EAST_BOUND, SLOVAKIA_NORTH_BOUND]]
+
+
 // Typing only the first level is enough for now
 type GMapOptions = {
   ControlPosition: {
