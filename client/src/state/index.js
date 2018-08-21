@@ -296,6 +296,7 @@ export type State = {|
     +entitySearchEids: Array<string>,
     +showInfo: any, //TODO: TBD
     +openedAddressDetail: ?number,
+    +drawerOpen: boolean,
   |},
   +mapOptions: MapOptions,
   +connections: Connections,
@@ -328,6 +329,7 @@ const getInitialState = (): State => ({
     entitySearchEids: [],
     showInfo: {},
     openedAddressDetail: undefined,
+    drawerOpen: false,
   },
   mapOptions: {
     center: SLOVAKIA_COORDINATES,

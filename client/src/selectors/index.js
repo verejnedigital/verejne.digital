@@ -215,3 +215,5 @@ export const entitySearchValueSelector = (state: State) => state.publicly.entity
 export const entitySearchModalOpenSelector = (state: State) => state.publicly.entitySearchModalOpen
 export const entitySearchForSelector = (state: State) => state.publicly.entitySearchFor
 export const entitySearchEidsSelector = (state: State) => state.publicly.entitySearchEids
+
+export const drawerOpenSelector = (state: State) => state.publicly.drawerOpen
