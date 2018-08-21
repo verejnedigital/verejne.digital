@@ -8,27 +8,27 @@
   border: 2px solid $border-color;
   box-shadow: 0 4px 12px 0 $shadow-color;
 
+  .info-header {
+    padding: .5rem .75rem .4rem .75rem;
+    border-bottom: 1px solid $border-color;
+    position: relative;
+
+    h3 {
+      color: $marker-border;
+      margin-bottom: 0;
+      font-size: 1rem;
+      line-height: 1rem;
+      display: inline-flex;
+      align-items: center;
+
+      &.politician {
+        color: $orange-color;
+      }
+    }
+  }
+
   &.closable .info-header > h3 {
     cursor: pointer;
-  }
-}
-
-.info-header {
-  padding: .5rem .75rem .4rem .75rem;
-  border-bottom: 1px solid $border-color;
-  position: relative;
-
-  h3 {
-    color: $marker-border;
-    margin-bottom: 0;
-    font-size: 1rem;
-    line-height: 1rem;
-    display: inline-flex;
-    align-items: center;
-
-    &.politician {
-      color: $orange-color;
-    }
   }
 }
 
