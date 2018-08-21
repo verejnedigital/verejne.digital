@@ -137,7 +137,7 @@ export default compose(
   withHandlers({
     showOnMap: ({data, zoomToLocation}) => () => {
       data.toggleModalOpen && data.toggleModalOpen()
-      zoomToLocation(data.entities[0], ENTITY_CLOSE_ZOOM)
+      zoomToLocation(data, ENTITY_CLOSE_ZOOM)
     },
   })
 )(Info)
