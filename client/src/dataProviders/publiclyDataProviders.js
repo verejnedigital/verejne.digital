@@ -10,7 +10,7 @@ import {EntityDetailLoading, ModalLoading} from '../components/Loading/'
 import type {Address, NewEntity, NewEntityDetail} from '../state'
 import type {Dispatch} from '../types/reduxTypes'
 
-const dispatchSearchEids = () => (ref: string, data: Array<{eid: string}>, dispatch: Dispatch) =>
+const dispatchSearchEids = () => (ref: string, data: Array<{eid: number}>, dispatch: Dispatch) =>
   dispatch(setEntitySearchEids(data))
 
 const dispatchAddresses = () => (ref: string, data: Address[], dispatch: Dispatch) => {
@@ -41,7 +41,7 @@ export const addressesProvider = (addressesUrl: string) => {
   }
 }
 
-export const entityDetailProvider = (entityId: string) => {
+export const entityDetailProvider = (entityId: number) => {
   const requestPrefix = `${process.env.REACT_APP_API_URL || ''}`
   return {
     ref: ['entityDetail', entityId],
@@ -58,7 +58,7 @@ export const entityDetailProvider = (entityId: string) => {
   }
 }
 
-export const addressEntitiesProvider = (addressId: string) => {
+export const addressEntitiesProvider = (addressId: number) => {
   const requestPrefix = `${process.env.REACT_APP_API_URL || ''}`
   return {
     ref: ['addressEntities', addressId],
@@ -74,12 +74,12 @@ export const addressEntitiesProvider = (addressId: string) => {
   }
 }
 
-export const entitiesSearchResultEidsProvider = (searchFor: string) => {
+export const entitiesSearchResultEidsProvider = (query: string) => {
   return {
-    ref: searchFor,
+    ref: query,
     getData: [
       fetch,
-      `${process.env.REACT_APP_API_URL || ''}/api/v/searchEntity?text=${searchFor}`,
+      `${process.env.REACT_APP_API_URL || ''}/api/v/searchEntity?text=${query}`,
       {
         accept: 'application/json',
       },

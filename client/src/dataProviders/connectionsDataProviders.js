@@ -3,18 +3,28 @@ import type {Dispatch} from '../types/reduxTypes'
 import {dispatchReceivedData} from './dataProvidersUtils'
 import {receiveData} from '../actions/sharedActions'
 
-const dispatchEntitiesData = (query: string) => (ref: string, data: any, dispatch: Dispatch) => {
+const dispatchEntitiesData = (query: string) => (
+  ref: string,
+  data: Array<{eid: number}>,
+  dispatch: Dispatch
+) => {
   dispatch(
     receiveData(['connections', 'entities'], {id: query, eids: data.map(({eid}) => eid)}, ref)
   )
 }
 
-const dispatchConnectionData = (eid1: string, eid2: string) => (
+const dispatchConnectionData = (eid1: number | number[], eid2: number | number[]) => (
   ref: string,
-  data: any,
+  data: number[],
   dispatch: Dispatch
 ) => {
-  dispatch(receiveData(['connections', 'detail'], {id: `${eid1}-${eid2}`, ids: data}, ref))
+  dispatch(
+    receiveData(
+      ['connections', 'detail'],
+      {id: `${eid1.toString()}-${eid2.toString()}`, ids: data},
+      ref
+    )
+  )
 }
 
 export const connectionEntityProvider = (query: string) => ({
@@ -30,11 +40,12 @@ export const connectionEntityProvider = (query: string) => ({
   keepAliveFor: 10 * 60 * 1000,
 })
 
-export const connectionDetailProvider = (eid1: string, eid2: string) => ({
-  ref: `connection-${eid1}-${eid2}`,
+export const connectionDetailProvider = (eid1: number | number[], eid2: number | number[]) => ({
+  ref: `connection-${eid1.toString()}-${eid2.toString()}`,
   getData: [
     fetch,
-    `${process.env.REACT_APP_API_URL || ''}/api/p/connection?eid1=${eid1}&eid2=${eid2}`,
+    `${process.env.REACT_APP_API_URL ||
+      ''}/api/p/connection?eid1=${eid1.toString()}&eid2=${eid2.toString()}`,
     {
       accept: 'application/json',
     },
@@ -43,11 +54,12 @@ export const connectionDetailProvider = (eid1: string, eid2: string) => ({
   keepAliveFor: 60 * 60 * 1000,
 })
 
-export const connectionSubgraphProvider = (eid1: string, eid2: string) => ({
-  ref: `connextion-${eid1}-${eid2}`,
+export const connectionSubgraphProvider = (eid1: number | number[], eid2: number | number[]) => ({
+  ref: `connextion-${eid1.toString()}-${eid2.toString()}`,
   getData: [
     fetch,
-    `${process.env.REACT_APP_API_URL || ''}/api/p/subgraph?eid1=${eid1}&eid2=${eid2}`,
+    `${process.env.REACT_APP_API_URL ||
+      ''}/api/p/subgraph?eid1=${eid1.toString()}&eid2=${eid2.toString()}`,
     {
       accept: 'application/json',
     },

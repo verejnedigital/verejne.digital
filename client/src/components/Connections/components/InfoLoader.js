@@ -4,7 +4,7 @@ import CompanyDetails from './../../shared/CompanyDetails'
 import './InfoLoader.css'
 
 type Props = {
-  eid: string,
+  eid: number,
   hasConnectLine?: boolean,
 }
 

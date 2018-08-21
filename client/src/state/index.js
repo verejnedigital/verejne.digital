@@ -16,8 +16,7 @@ export type Candidate = {
 
 export type Notice = {|
   id: number,
-  eid: number,
-  curstomer: string,
+  customer: string,
   bulletin_number: number,
   title: string,
   text: string,
@@ -30,7 +29,6 @@ export type Notice = {|
   kandidati: Array<Candidate | []>,
   price_num: number,
   price_avg: number,
-  customer: string,
 |}
 
 export type PoliticianDetail = {|
@@ -85,7 +83,7 @@ export type AssetDeclaration = {|
 |}
 
 export type CompanyEntity = {
-  eid: string,
+  eid: number,
   entity_name: string,
   lng: string,
   lat: string,
@@ -157,12 +155,12 @@ export type MapOptions = {
 export type Center = {lat: number, lng: number}
 
 export type SearchedEntity = {
-  eids: string[],
+  eids: number[],
   id: string,
 }
 
 export type Connections = {
-  detail: {[string]: {ids: string[]}},
+  detail: {[string]: {ids: number[]}},
   entities: {[string]: CompanyEntity},
 }
 
@@ -293,9 +291,10 @@ export type State = {|
     +entitySearchValue: string,
     +entitySearchModalOpen: boolean,
     +entitySearchFor: string,
-    +entitySearchEids: Array<string>,
+    +entitySearchEids: Array<number>,
     +showInfo: any, //TODO: TBD
     +openedAddressDetail: ?number,
+    +drawerOpen: boolean,
   |},
   +mapOptions: MapOptions,
   +connections: Connections,
@@ -328,6 +327,7 @@ const getInitialState = (): State => ({
     entitySearchEids: [],
     showInfo: {},
     openedAddressDetail: undefined,
+    drawerOpen: false,
   },
   mapOptions: {
     center: SLOVAKIA_COORDINATES,

@@ -18,7 +18,7 @@ const _Contracts = ({data, toggledOn, toggle}) => {
       {toggledOn && (
         <ul className="list-unstyled contracts-list">
           {data.map((contract, i) => (
-            <li key={contract.eid}>
+            <li key={i}>
               <ExternalLink url={contract.source}>
                 {`${contract.customer}, `}
                 <ShowNumberCurrency num={contract.total} />

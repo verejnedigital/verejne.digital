@@ -16,6 +16,8 @@ class Geocoder:
     cache_hit = 0
     api_lookups = 0
     api_lookup_fails = 0
+    missing_key_hint = 0
+    has_key_hint = 0
     geocode_key = None
     test_mode = False
 
@@ -50,7 +52,7 @@ class Geocoder:
                         row["formatted_address"].encode("utf8"), 
                         row["lat"], row["lng"]
                 )
-            print "Finished pre-processing geocoder input cache, size = ", len(self.cache)
+            print "Finished pre-processing geocoder input cache, size =", len(self.cache)
 
         with self.db_address_cache.dict_cursor() as cur:
             print "KeyHints cache"
@@ -61,7 +63,7 @@ class Geocoder:
             print "Processing database output"
             for row in cur:
                 self.cache_key_hints[row["address"].encode("utf8")] = row["key_hint"].encode("utf8")
-            print "Finished reading key hints, size = ", len(self.cache_key_hints)
+            print "Finished reading key hints, size =", len(self.cache_key_hints)
  
 
     def AddToCache(self, address, formatted_address, lat, lng):
@@ -244,24 +246,39 @@ class Geocoder:
                     return row_id["id"], key
             return None, None
 
+        def UpdateKeyHint(address, key_hint, matched_key):
+            # Updates key_hint for a given address with matched_key. Currently, if the
+            # old 'key_hint' exists, the new one is ignored.
+            if key_hint is not None: return
+            if matched_key is None: return
+            self.db_address_cache.add_values("AddressHints", [address, matched_key])
+            self.cache_key_hints[address] = matched_key
+
+        # Assume anything shorter than 4 characters is not a valid address.
+        if len(address) <= 3: return None
         # See if there is a key_hint int the table. If so, add it as the firts key
         # to try the cache lookup on.
         key_hint = self.cache_key_hints.get(address, None)
         key_iterator = self.GetKeysForAddress(address)
-        if key_hint is not None: key_iterator = itertools.chain([key_hint], key_iterator)
+        if key_hint is not None:
+            key_iterator = itertools.chain([key_hint], key_iterator)
+            self.has_key_hint += 1
+        else:
+            self.missing_key_hint += 1
+            if self.test_mode and self.missing_key_hint < 10:
+                print "Address without key hint:", address
         keys, keys_backup = itertools.tee(key_iterator)
 
         address_id, matched_key = LookupKeysInCache(keys)
         if address_id is not None:
             # If the address does not have key_hint, add the matched key
             # into the hints table:
-            if key_hint is None:
-                self.db_address_cache.add_values("AddressHints", [address, matched_key])
-                self.cache_key_hints[address] = matched_key
+            UpdateKeyHint(address, key_hint, matched_key)
             return address_id
         # Did not find address id, do geocoding lookup, which add data into cache.
         self.UpdateGeocodingAPILookup(address)
         address_id, _ = LookupKeysInCache(keys_backup)
+        if address_id is not None: UpdateKeyHint(address, key_hint, matched_key)
         return address_id
 
     
@@ -270,3 +287,5 @@ class Geocoder:
         print "CACHE_MISS", self.cache_miss
         print "API_LOOKUPS", self.api_lookups
         print "API_LOOKUP_FAILS", self.api_lookup_fails
+        print "HAS KEY HINT", self.has_key_hint
+        print "MISSING KEY HINT", self.missing_key_hint

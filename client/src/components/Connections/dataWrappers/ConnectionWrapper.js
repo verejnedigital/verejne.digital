@@ -12,7 +12,7 @@ import type {EntityProps} from './EntityWrapper'
 import type {State} from '../../../state'
 
 export type ConnectionProps = {
-  connections: Array<string>,
+  connections: Array<number>,
 }
 type DispatchProps = {
   receiveData: typeof receiveData,
@@ -41,7 +41,7 @@ const ConnectionWrapper = (WrappedComponent: ComponentType<*>) => {
     branch(
       ({entity1, entity2}: EntityProps) => entity1.eids.length > 0 && entity2.eids.length > 0,
       withDataProviders((props: EntityProps) => [
-        connectionDetailProvider(props.entity1.eids.join(), props.entity2.eids.join()),
+        connectionDetailProvider(props.entity1.eids, props.entity2.eids),
       ]),
       EmptyEidsWrapper
     ),

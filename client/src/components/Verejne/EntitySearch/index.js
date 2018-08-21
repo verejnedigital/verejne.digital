@@ -23,7 +23,7 @@ import {
   entitySearchEidsSelector,
   entitySearchForSelector,
 } from '../../../selectors'
-import {toggleModalOpen, setEntitySearchFor} from '../../../actions/verejneActions'
+import {toggleModalOpen, setEntitySearchFor, toggleDrawer} from '../../../actions/verejneActions'
 import {updateValue} from '../../../actions/sharedActions'
 import {FIND_ENTITY_TITLE} from '../../../constants'
 import './EntitySearch.css'
@@ -66,7 +66,7 @@ const EntitySearch = ({
                 placeholder={FIND_ENTITY_TITLE}
                 value={entitySearchValue}
                 onChange={setEntitySearchValue}
-                ref={input => input && ReactDOM.findDOMNode(input).focus()}
+                ref={(input) => input && ReactDOM.findDOMNode(input).focus()}
               />
               <InputGroupAddon addonType="append">
                 <Button color="primary" onClick={findEntities}>
@@ -98,14 +98,19 @@ export default compose(
       entitySearchEids: entitySearchEidsSelector(state),
       entitySearchFor: entitySearchForSelector(state),
     }),
-    {toggleModalOpen, setEntitySearchFor, updateValue}
+    {toggleModalOpen, setEntitySearchFor, updateValue, toggleDrawer}
   ),
   withHandlers({
-    findEntities: ({setEntitySearchFor, entitySearchValue}) => (e) => {
+    findEntities: ({setEntitySearchFor, entitySearchValue, toggleDrawer}) => (e) => {
       e.preventDefault()
       setEntitySearchFor(entitySearchValue)
+      toggleDrawer()
     },
     setEntitySearchValue: ({updateValue}) => (e) =>
-      updateValue(['publicly', 'entitySearchValue'], (e.target.value), 'Set entity search field value'),
+      updateValue(
+        ['publicly', 'entitySearchValue'],
+        e.target.value,
+        'Set entity search field value'
+      ),
   })
 )(EntitySearch)
