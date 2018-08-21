@@ -67,7 +67,9 @@ def CreateAndSetProdSchema(db, prod_schema_name):
                 id SERIAL PRIMARY KEY,
                 name TEXT,
                 address_id INTEGER REFERENCES Address(id)
-            )
+            );
+            CREATE INDEX ON Entities(name);
+            CREATE INDEX ON Entities(address_id);
         """)
         
 
@@ -181,11 +183,11 @@ def ProcessSource(db_prod, geocoder, entities, config, test_mode):
               name = ' '.join(re.findall('[A-Z][^A-Z]*', name))
             addressId = geocoder.GetAddressId(address.encode("utf8"))
             if addressId is None:
-                if test_mode and missed < 10:
-                    print "MISSING ADDRESS", address.encode("utf8")
                 if address == "":
                     empty += 1
                 else:
+                    if test_mode and missed < 10:
+                        print "MISSING ADDRESS", address.encode("utf8")
                     missed_addresses.add(address)
                     missed += 1
                     continue
@@ -193,11 +195,12 @@ def ProcessSource(db_prod, geocoder, entities, config, test_mode):
             
             eid = None
             if config.get("no_entity_id"):
+                # TODO(rasto): is the address lookup necessary here?
                 eid = None
             else:
                 eid = entities.GetEntity(row["ico"], name, addressId)
-            # print name, "-> eid:", eid
-            if found%20000==0:
+            
+            if found % 20000 == 0:
                 print "Progress:", found
                 sys.stdout.flush()
 
@@ -279,6 +282,8 @@ def main(args_dict):
         config_per_source = config[key]
         print "Working on source:", key
         ProcessSource(db_prod, geocoder, entities_lookup, config_per_source, test_mode)
+        print "GEOCODER STATS"
+        geocoder.PrintStats()
 
     # Grant apps read-only access to the newly created schema and tables within
     db_prod.grant_usage_and_select_on_schema(prod_schema_name, 'data')
@@ -295,9 +300,6 @@ def main(args_dict):
     else:
         db_prod.commit()
         db_prod.close()
-
-    print "STATS"
-    geocoder.PrintStats()
 
 
 if __name__ == '__main__':

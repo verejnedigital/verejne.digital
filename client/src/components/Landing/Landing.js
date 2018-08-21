@@ -16,14 +16,14 @@ class Landing extends Component {
             <b>verejne</b>.digital
           </h1>
           <p className="lead landing-lead">
-            Aplikácie umelej inteligencie<br /> na dáta slovenských verejných inštitúcii
+            Aplikácie umelej inteligencie<br /> na dáta slovenských verejných inštitúcií
           </p>
           <Row className="landing-cards">
             <Col md="6" lg="3">
               <Card
                 to="/verejne"
                 title="Verejné dáta"
-                text="Obchodujú moji susedia so štátom alebo čerpajú eurofondy?"
+                text="Obchodujú moji susedia alebo obchodní partneri so štátom?"
                 imgSrc={verejneDataIcon}
               />
             </Col>
@@ -31,7 +31,7 @@ class Landing extends Component {
               <Card
                 to="/prepojenia"
                 title="Prepojenia"
-                text="Sú víťazi verejných obstarávaní prepojení na politokov?"
+                text="Aké sú vzťahy medzi firmami a osobami?"
                 imgSrc={prepojeniaIcon}
               />
             </Col>
@@ -39,7 +39,7 @@ class Landing extends Component {
               <Card
                 to="/obstaravania"
                 title="Obstarávania"
-                text="Vyhrávajú firmy, ktoré sú v strate alebo založené len pár dní vopred?"
+                text="Do ktorých výziev sa prihlásiť a ktoré sú podozrivé?"
                 imgSrc={obstaravaniaIcon}
               />
             </Col>
@@ -47,7 +47,7 @@ class Landing extends Component {
               <Card
                 to="/profil"
                 title="Profily"
-                text="Majetok poslancov podľa priznaní a katastra"
+                text="Majetok poslancov podľa priznaní a katastra."
                 imgSrc={profilyIcon}
               />
             </Col>
@@ -57,8 +57,8 @@ class Landing extends Component {
           <div className="container">
             <ul className="float-md-right list-inline">
               <li className="list-inline-item">
-                <a href="http://transparency.sk/sk/">
-                  <img src="/tis.png" alt="Transparency international slovakia" />
+                <a href="https://www.zastavmekorupciu.sk/">
+                  <img src="/nzk.png" alt="Nadácia Zastavme Korupciu" />
                 </a>
               </li>
               <li className="list-inline-item">
