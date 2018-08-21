@@ -18,7 +18,15 @@ import type {NoticesOrdering} from '../components/Notices/NoticeList'
 import type {NoticeDetailProps} from '../components/Notices/NoticeDetail'
 
 import type {CompanyDetailProps} from '../dataWrappers/CompanyDetailWrapper'
-import type {State, MapOptions, CompanyEntity, MapBounds, Company, NewEntityDetail, Notice} from '../state'
+import type {
+  State,
+  MapOptions,
+  CompanyEntity,
+  MapBounds,
+  Company,
+  NewEntityDetail,
+  Notice,
+} from '../state'
 import type {ObjectMap} from '../types/commonTypes'
 
 export const paramsIdSelector = (_: State, props: ContextRouter): string =>
@@ -39,9 +47,7 @@ export const searchFilteredNoticesSelector = createSelector(
   (notices: ObjectMap<Notice>, query) => {
     const filteredNotices = filter(notices, (notice) => {
       const similarity =
-        notice.kandidati.length > 0
-          ? Math.round(notice.kandidati[0].score * 100)
-          : '?'
+        notice.kandidati.length > 0 ? Math.round(notice.kandidati[0].score * 100) : '?'
       return (
         normalizeName(
           notice.customer
@@ -55,14 +61,12 @@ export const searchFilteredNoticesSelector = createSelector(
     return filteredNotices.length > 0 ? filteredNotices : []
   }
 )
-export const dateSortedNoticesSelector = createSelector(
-  searchFilteredNoticesSelector,
-  (data) => sortBy(values(data), ['bulletin_year', 'bulletin_month', 'bulletin_day'])
+export const dateSortedNoticesSelector = createSelector(searchFilteredNoticesSelector, (data) =>
+  sortBy(values(data), ['bulletin_year', 'bulletin_month', 'bulletin_day'])
 )
 
-export const nameSortedNoticesSelector = createSelector(
-  searchFilteredNoticesSelector,
-  (data) => sortBy(values(data), ['title'])
+export const nameSortedNoticesSelector = createSelector(searchFilteredNoticesSelector, (data) =>
+  sortBy(values(data), ['title'])
 )
 
 export const locationSearchSelector = (_: State, props: ContextRouter) =>
@@ -93,14 +97,12 @@ export const paginatedNoticesSelector = createSelector(
 // sorted by date anyway
 export const newestBulletinDateSelector = createSelector(
   dateSortedNoticesSelector,
-  (notices) => notices[0] ? notices[0].bulletin_date : ''
+  (notices) => (notices[0] ? notices[0].bulletin_date : '')
 )
 
-export const noticesLengthSelector = createSelector(
-  searchFilteredNoticesSelector, (notices) => {
-    return notices.length
-  }
-)
+export const noticesLengthSelector = createSelector(searchFilteredNoticesSelector, (notices) => {
+  return notices.length
+})
 
 export const mapOptionsSelector = (state: State): MapOptions => state.mapOptions
 export const centerSelector = (state: State): [number, number] => state.mapOptions.center
