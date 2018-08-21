@@ -56,9 +56,11 @@ type Props = {
 }
 
 // NOTE: there can be multiple points on the map on the same location...
-const Map = ({showLabelsInstead, zoom, center, clusters, onChange}: Props) => {
+const Map = ({zoom, center, clusters, onChange}: Props) => {
   //9 okresy, 8 kraje
   let finalClusters = clusters
+  const showLabelsInstead = !(zoom >= CITY_ZOOM ||
+  !booleanContains(SLOVAKIA_BORDERS.features[0], point([center[1], center[0]])))
   if (showLabelsInstead) {
     if (zoom <= WORLD_ZOOM) {
       finalClusters = [{
@@ -135,22 +137,13 @@ export default compose(
   connect((state) => ({
     zoom: zoomSelector(state),
     center: centerSelector(state),
+    addresses: addressesSelector(state),
+    clusters: clustersSelector(state),
+    addressesUrl: addressesUrlSelector(state),
   })),
-  branch(
-    (props) => (props.zoom >= CITY_ZOOM)
-    || !booleanContains(SLOVAKIA_BORDERS.features[0], point([props.center[1], props.center[0]])),
-    compose(
-      connect((state) => ({
-        addresses: addressesSelector(state),
-        clusters: clustersSelector(state),
-        addressesUrl: addressesUrlSelector(state),
-      })),
-      withDataProviders(({addressesUrl}) => {
-        return [addressesProvider(addressesUrl)]
-      })
-    ),
-    withProps({showLabelsInstead: true})
-  ),
+  withDataProviders(({addressesUrl}) => {
+    return [addressesProvider(addressesUrl)]
+  }),
   withHandlers({
     onChange: (props) => (options) => {
       const newOptions = {zoom: options.zoom,
