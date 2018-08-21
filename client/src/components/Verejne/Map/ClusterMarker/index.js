@@ -41,10 +41,10 @@ const ClusterMarker = ({
   } else {
     //TODO: fix classnames after the api provides enough information
     className = classnames({
-      "company-marker": cluster.numPoints === 1,
-      "cluster-marker": cluster.numPoints > 1,
-      government: cluster.points[0].tradewithgovernment
-    });
+      'company-marker': cluster.numPoints === 1,
+      'cluster-marker': cluster.numPoints > 1,
+      'government': cluster.points[0].tradewithgovernment,
+    })
     children = cluster.numPoints === 1 ? <FaIconCircle size="18" /> : MarkerText
   }
   if (selected) className += ' selected'

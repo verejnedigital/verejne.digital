@@ -6,44 +6,32 @@ import {branch} from 'recompose'
 import {withDataProviders} from 'data-provider'
 import {isNil} from 'lodash'
 import type {ComponentType} from 'react'
-import {isPolitician} from '../../Notices/utilities'
-import {
-  connectionSubgraphProvider,
-  connectionEntityDetailProvider,
-} from '../../../dataProviders/connectionsDataProviders'
+import type {ObjectMap} from '../../../types/commonTypes'
+import {isPolitician} from '../../../services/utilities'
+import {connectionSubgraphProvider} from '../../../dataProviders/connectionsDataProviders'
+import {companyDetailProvider} from '../../../dataProviders/sharedDataProviders'
 import {addEdgeIfMissing} from '../components/graph/utils'
 import type {State, Company, RelatedEntity, Graph, GraphId, Node, Edge} from '../../../state'
 import type {EntityProps} from './EntityWrapper'
 import type {ConnectionProps} from './ConnectionWrapper'
-
-type EntityDetails = {
-  [string]: {
-    name: string,
-    // TODO: TBD import from state when available
-    data: {
-      related: Array<RelatedEntity>,
-      entities: Array<{entity_name: string}>,
-    } & Company,
-  },
-}
 
 export type OwnProps = {
   preloadNodes: boolean,
 }
 
 export type SubgraphProps = {
-  selectedEids: Array<string>,
+  selectedEids: Array<number>,
   subgraph: Graph,
-  entityDetails: EntityDetails,
+  entityDetails: ObjectMap<Company>,
 }
 
 type RawNode = {
-  eid: string | number,
+  eid: number,
   entity_name: string,
   distance_from_A: number,
   distance_from_B: number,
 }
-type RawEdge = [string, string]
+type RawEdge = [number, number]
 
 function findGroup(data: Company) {
   const politician = isPolitician(data)
@@ -63,8 +51,8 @@ function bold(makeBold: boolean, str: string) {
 
 function enhanceGraph(
   {nodes: oldNodes, edges: oldEdges, nodeIds}: Graph,
-  entityDetails: EntityDetails,
-  primaryConnEids: Array<string>
+  entityDetails: ObjectMap<Company>,
+  primaryConnEids: Array<number>
 ) {
   const edges = oldEdges.map(({from, to}) => ({
     from,
@@ -75,17 +63,17 @@ function enhanceGraph(
 
   // adds entity info to graph
   const nodes = oldNodes.map(({id, label, x, y, ...props}) => {
-    if (!entityDetails[id]) {
+    if (!entityDetails[id.toString()]) {
       return {id, label, group: 'notLoaded', x, y, ...props}
     }
-    const data = entityDetails[id].data
+    const data = entityDetails[id.toString()]
     const entity = data.entities[0]
     const poi = props.distA === 0 || props.distB === 0
     if (props.leaf && data.related.length) {
       // add more edges to this leaf if available, then mark as non-leaf
       data.related.forEach(({eid}: RelatedEntity) => {
-        if (nodeIds[eid.toString()]) {
-          addEdgeIfMissing(id, eid.toString(), edges)
+        if (nodeIds[eid]) {
+          addEdgeIfMissing(id, eid, edges)
         }
       })
     }
@@ -116,12 +104,12 @@ function transformRaw(rawGraph: {vertices: Array<RawNode>, edges: Array<RawEdge>
       return
     }
     nodes.push({
-      id: n.eid.toString(),
+      id: n.eid,
       label: n.entity_name,
       distA: n.distance_from_A,
       distB: n.distance_from_B,
     })
-    nodeIds[n.eid.toString()] = true
+    nodeIds[n.eid] = true
   })
 
   rawEdges.forEach(([from, to]: RawEdge) => {
@@ -139,22 +127,23 @@ const ConnectionWrapper = (WrappedComponent: ComponentType<*>) => {
     ({entity1, entity2}: EntityProps) => entity1.eids.length > 0 && entity2.eids.length > 0,
     compose(
       withDataProviders(({entity1, entity2}: EntityProps) => [
-        connectionSubgraphProvider(entity1.eids.join(), entity2.eids.join(), transformRaw),
+        connectionSubgraphProvider(entity1.eids, entity2.eids, transformRaw),
       ]),
+      // TODO extract selectors
       connect((state: State, props: EntityProps & ConnectionProps) => ({
         selectedEids: state.connections.selectedEids,
         subgraph: enhanceGraph(
           state.connections.subgraph[`${props.entity1.eids.join()}-${props.entity2.eids.join()}`]
             .data,
-          state.connections.entityDetails,
+          state.companies,
           props.connections
         ),
-        entityDetails: state.connections.entityDetails,
+        entityDetails: state.companies,
       })),
       branch(
         ({preloadNodes, subgraph}: OwnProps & SubgraphProps) => subgraph != null && preloadNodes,
         withDataProviders(({subgraph}: SubgraphProps) =>
-          subgraph.nodes.map(({id}: Node) => connectionEntityDetailProvider(id, false))
+          subgraph.nodes.map(({id}: Node) => companyDetailProvider(id, false))
         )
       )
     )

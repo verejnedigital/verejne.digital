@@ -158,7 +158,7 @@ export type SearchedEntity = {
   eids: number[],
   id: string,
 }
-export type GraphId = string
+export type GraphId = number
 
 export type Node = {
   id: GraphId,
@@ -181,15 +181,9 @@ export type Graph = {|
 
 export type Connections = {
   entities: {[string]: CompanyEntity},
-  detail: {[string]: {ids: string[]}},
-  entityDetails: {
-    [string]: {
-      name: string,
-      data: any, //TODO: TBD
-    },
-  },
+  detail: {[string]: {ids: number[]}},
   subgraph: {[string]: {data: Graph}},
-  selectedEids: Array<string>,
+  selectedEids: Array<number>,
 }
 
 export type Address = {
@@ -371,7 +365,6 @@ const getInitialState = (): State => ({
   connections: {
     entities: {},
     detail: {},
-    entityDetails: {},
     subgraph: {},
     selectedEids: [],
   },

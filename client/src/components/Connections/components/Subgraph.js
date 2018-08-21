@@ -3,8 +3,6 @@ import React from 'react'
 import {compose} from 'redux'
 import {connect} from 'react-redux'
 import {withHandlers} from 'recompose'
-import {updateValue} from '../../../../../../actions/sharedActions'
-import SubgraphWrapper from '../../../../dataWrappers/SubgraphWrapper'
 import GraphCompnent from 'react-graph-vis'
 import {Col, Row} from 'reactstrap'
 import InfoLoader from './InfoLoader'
@@ -105,7 +103,7 @@ const legendGraph = (() => {
         id: '5',
         x: x + 4 * step,
         y,
-        label: 'Údaje sa\nnačítavaju',
+        label: 'Údaje sa\nnačítavajú',
         group: 'notLoaded',
         fixed: true,
         physics: false,
@@ -188,8 +186,8 @@ export default compose(
       const subgraphId = `${props.entity1.eids.join()}-${props.entity2.eids.join()}`
       const clickedEid = getNodeEid(nodes[0])
 
-      if (props.entityDetails[clickedEid]) {
-        const related = props.entityDetails[clickedEid].data.related
+      if (props.entityDetails[clickedEid.toString()]) {
+        const related = props.entityDetails[clickedEid.toString()].related
         props.updateValue(
           ['connections', 'subgraph', subgraphId, 'data'],
           addNeighbours(props.subgraph, clickedEid, pointer.canvas, related)
