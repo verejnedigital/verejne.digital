@@ -1,7 +1,7 @@
 // @flow
 import React from 'react'
-import {setEntitySearchEids, setAddresses, setEntities} from '../actions/verejneActions'
-import {ModalLoading} from '../components/Loading/'
+import {setEntitySearchEids, setAddresses, setEntities} from '../actions/publicActions'
+import {ModalLoading} from '../components/Loading/Loading'
 import type {Address, NewEntity} from '../state'
 import type {Dispatch} from '../types/reduxTypes'
 

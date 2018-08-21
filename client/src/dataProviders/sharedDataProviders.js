@@ -1,8 +1,8 @@
 // @flow
 import React from 'react'
 import {receiveData} from '../actions/sharedActions'
-import {setEntityDetail} from '../actions/verejneActions'
-import {EntityDetailLoading} from '../components/Loading/'
+import {setEntityDetail} from '../actions/publicActions'
+import {EntityDetailLoading} from '../components/Loading/Loading'
 import type {Company, NewEntityDetail} from '../state'
 import type {Dispatch} from '../types/reduxTypes'
 

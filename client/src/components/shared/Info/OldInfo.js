@@ -4,7 +4,7 @@ import {Badge, Container} from 'reactstrap'
 import {Link} from 'react-router-dom'
 import {compose, withHandlers} from 'recompose'
 import {connect} from 'react-redux'
-import {zoomToLocation, toggleModalOpen} from '../../../actions/verejneActions'
+import {zoomToLocation, toggleModalOpen} from '../../../actions/publicActions'
 import {ENTITY_CLOSE_ZOOM} from '../../../constants'
 import {
   getFinancialData,

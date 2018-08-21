@@ -1,6 +1,6 @@
 // @flow
 import React from 'react'
-import Loading from './components/Loading'
+import Loading from './components/Loading/Loading'
 import {get, set} from 'lodash'
 import produce from 'immer'
 import {stringify, parse} from 'qs'

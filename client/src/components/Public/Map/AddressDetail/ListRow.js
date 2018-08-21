@@ -10,7 +10,7 @@ import {
   toggleEntityInfo,
   toggleModalOpen,
   setEntitySearchFor,
-} from '../../../../actions/verejneActions'
+} from '../../../../actions/publicActions'
 import {updateValue} from '../../../../actions/sharedActions'
 import {entityDetailProvider} from '../../../../dataProviders/sharedDataProviders'
 import {entityDetailSelector} from '../../../../selectors'

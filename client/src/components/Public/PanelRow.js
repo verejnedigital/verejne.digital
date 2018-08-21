@@ -10,7 +10,7 @@ import MapIcon from '../../assets/mapIcon.svg'
 import {isPolitician, hasContractsWithState} from './entityHelpers'
 import classnames from 'classnames'
 import {ListGroupItem, Badge} from 'reactstrap'
-import {selectEntity, toggleEntityInfo} from '../../actions/verejneActions'
+import {selectEntity, toggleEntityInfo} from '../../actions/publicActions'
 
 const renderListItemIcon = (entity) => {
   if (entity.size > 1) {

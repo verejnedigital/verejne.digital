@@ -6,9 +6,9 @@ import FaIconCircle from 'react-icons/lib/fa/circle-o'
 import classnames from 'classnames'
 
 import {ENTITY_ZOOM, ENTITY_CLOSE_ZOOM} from '../../../../constants'
-import {openAddressDetail, zoomToLocation, setDrawer} from '../../../../actions/verejneActions'
+import {openAddressDetail, zoomToLocation, setDrawer} from '../../../../actions/publicActions'
 import {openedAddressDetailSelector} from '../../../../selectors'
-import Marker from '../Marker'
+import Marker from '../Marker/Marker'
 import './ClusterMarker.css'
 
 import type {CompanyEntity} from '../../../../state'
