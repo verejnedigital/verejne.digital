@@ -3,6 +3,7 @@ import React from 'react'
 import {connect} from 'react-redux'
 import {withHandlers, compose} from 'recompose'
 import FaIconCircle from 'react-icons/lib/fa/circle-o'
+import classnames from 'classnames'
 
 import {ENTITY_ZOOM, ENTITY_CLOSE_ZOOM} from '../../../../constants'
 import {openAddressDetail, zoomToLocation, setDrawer} from '../../../../actions/verejneActions'
@@ -38,8 +39,12 @@ const ClusterMarker = ({
     className = cluster.numPoints === 1 ? 'simple-marker' : 'cluster-marker'
     children = cluster.numPoints !== 1 && <span className="marker__text">{cluster.numPoints}</span>
   } else {
-    //TODO: fix classnames after we api provides enough information
-    className = cluster.numPoints === 1 ? 'company-marker' : 'cluster-marker'
+    //TODO: fix classnames after the api provides enough information
+    className = classnames({
+      "company-marker": cluster.numPoints === 1,
+      "cluster-marker": cluster.numPoints > 1,
+      government: cluster.points[0].tradewithgovernment
+    });
     children = cluster.numPoints === 1 ? <FaIconCircle size="18" /> : MarkerText
   }
   if (selected) className += ' selected'

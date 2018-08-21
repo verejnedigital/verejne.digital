@@ -32,4 +32,13 @@
     &.politician svg {
         color: $orange-color !important;
     }
+    &.government svg {
+        background-color: $marker-color !important;
+        border-radius: 50%;
+    }
+    &.politician-government svg {
+        color: $orange-color !important;
+        background-color: $orange-color !important;
+        border-radius: 50%;
+    }
 }
