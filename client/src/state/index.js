@@ -1,7 +1,6 @@
 // @flow
-import {DEFAULT_MAP_CENTER, SLOVAKIA_COORDINATES} from '../constants'
+import {SLOVAKIA_COORDINATES} from '../constants'
 import type {ObjectMap} from '../types/commonTypes'
-
 
 export type Candidate = {
   id: number,
