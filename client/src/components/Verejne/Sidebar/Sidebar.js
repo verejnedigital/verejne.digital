@@ -32,13 +32,17 @@ import AddressDetail from './../Map/AddressDetail'
 import PlacesAutocomplete from '../../PlacesAutocomplete'
 
 const _DrawerIcon = ({drawerOpen, toggleDrawer}) =>
-  (drawerOpen ? <ArrowLeftIcon onClick={toggleDrawer} className="drawer-handle p-1"/> :
-    <ArrowRightIcon onClick={toggleDrawer} className="drawer-handle p-1" />)
+  (drawerOpen) ? (
+    <ArrowLeftIcon onClick={toggleDrawer} className="drawer-handle p-1" />
+  ) : (
+    <ArrowRightIcon onClick={toggleDrawer} className="drawer-handle p-1" />
+  )
 
 const DrawerIcon =
-  connect( (state) => ({
+  connect(
+    (state) => ({
       drawerOpen: drawerOpenSelector(state),
-  }),
+    }),
     {toggleDrawer}
   )(_DrawerIcon)
 
@@ -110,13 +114,13 @@ const Content = compose(
       toggleDrawer()
     },
     setAutocompleteValue: ({updateValue}) => (value) =>
-    updateValue(['publicly', 'autocompleteValue'], value, 'Set autocomplete value'),
+      updateValue(['publicly', 'autocompleteValue'], value, 'Set autocomplete value'),
     setEntitySearchValue: ({updateValue}) => (e) =>
-    updateValue(['publicly', 'entitySearchValue'], (e.target.value), 'Set entity search field value'),
+      updateValue(['publicly', 'entitySearchValue'], (e.target.value), 'Set entity search field value'),
     setZoomToLocation: ({zoomToLocation}) => (value, id) =>
-    geocodeByAddress(value)
-    .then((results) => getLatLng(results[0]))
-    .then((location) => zoomToLocation(location, ENTITY_CLOSE_ZOOM)),
+      geocodeByAddress(value)
+        .then((results) => getLatLng(results[0]))
+        .then((location) => zoomToLocation(location, ENTITY_CLOSE_ZOOM)),
   })
 )(_Content)
 
@@ -126,18 +130,21 @@ const Sidebar = ({
   drawerOpen,
   renderDrawer,
 }) => (
-  renderDrawer ? <Drawer level={null}
-    open={drawerOpen}
-    onMaskClick={closeDrawer}
-    onHandleClick={toggleDrawer}
-    width="90%"
-    handler={<DrawerIcon/>}
-  >
-    <Content />
-  </Drawer> :
-  <div className="verejne-side-panel">
-    <Content />
-  </div>
+  (renderDrawer) ? (
+    <Drawer level={null}
+      open={drawerOpen}
+      onMaskClick={closeDrawer}
+      onHandleClick={toggleDrawer}
+      width="90%"
+      handler={<DrawerIcon />}
+    >
+      <Content />
+    </Drawer>
+  ) : (
+    <div className="verejne-side-panel">
+      <Content />
+    </div>
+  )
 )
 
 export default compose(
