@@ -16,14 +16,14 @@ import {
 } from 'reactstrap'
 import {connect} from 'react-redux'
 import {compose, withHandlers} from 'recompose'
-import EntitySearchResult from '../EntitySearchResult'
+import EntitySearchResult from '../EntitySearchResult/EntitySearchResult'
 import {
   entitySearchValueSelector,
   entitySearchModalOpenSelector,
   entitySearchEidsSelector,
   entitySearchForSelector,
 } from '../../../selectors'
-import {toggleModalOpen, setEntitySearchFor, toggleDrawer} from '../../../actions/verejneActions'
+import {toggleModalOpen, setEntitySearchFor, toggleDrawer} from '../../../actions/publicActions'
 import {updateValue} from '../../../actions/sharedActions'
 import {FIND_ENTITY_TITLE} from '../../../constants'
 import './EntitySearch.css'

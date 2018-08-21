@@ -8,13 +8,13 @@ import {
   clustersSelector,
   addressesUrlSelector,
 } from '../../../selectors'
-import {setMapOptions} from '../../../actions/verejneActions'
+import {setMapOptions} from '../../../actions/publicActions'
 import './GoogleMap.css'
 import {map} from 'lodash'
-import ClusterMarker from './ClusterMarker'
+import ClusterMarker from './ClusterMarker/ClusterMarker'
 import {branch, compose, renderComponent, withHandlers} from 'recompose'
-import Loading from '../../Loading'
-import GoogleMap from '../../GoogleMap'
+import Loading from '../../Loading/Loading'
+import GoogleMap from '../../GoogleMap/GoogleMap'
 import {withDataProviders} from 'data-provider'
 import {addressesProvider} from '../../../dataProviders/publiclyDataProviders'
 import {withRouter} from 'react-router-dom'

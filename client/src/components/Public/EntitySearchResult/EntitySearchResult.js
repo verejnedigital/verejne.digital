@@ -5,7 +5,7 @@ import {compose} from 'redux'
 import {withDataProviders} from 'data-provider'
 import {entitySearchForSelector, entitySearchEidsSelector} from '../../../selectors'
 import {entitiesSearchResultEidsProvider} from '../../../dataProviders/publiclyDataProviders'
-import EntitySearchResultItem from '../EntitySearchResultItem'
+import EntitySearchResultItem from '../EntitySearchResultItem/EntitySearchResultItem'
 
 type Props = {
   searchFor: string,

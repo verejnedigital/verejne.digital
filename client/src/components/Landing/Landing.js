@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 import Card from './Card'
 import './Landing.css'
 import {Row, Col, Container} from 'reactstrap'
-import verejneDataIcon from './icons/verejne_data.png'
+import publicDataIcon from './icons/public_data.png'
 import prepojeniaIcon from './icons/prepojenia.png'
 import obstaravaniaIcon from './icons/obstaravania.png'
 import profilyIcon from './icons/profily.png'
@@ -24,7 +24,7 @@ class Landing extends Component {
                 to="/verejne"
                 title="Verejné dáta"
                 text="Obchodujú moji susedia alebo obchodní partneri so štátom?"
-                imgSrc={verejneDataIcon}
+                imgSrc={publicDataIcon}
               />
             </Col>
             <Col md="6" lg="3">
