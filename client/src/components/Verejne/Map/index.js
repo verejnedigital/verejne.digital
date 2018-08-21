@@ -40,6 +40,10 @@ import type {RouterHistory} from 'react-router'
 import booleanContains from '@turf/boolean-contains'
 import {point} from '@turf/helpers'
 
+if (process.env.NODE_ENV !== 'production') {
+  const {whyDidYouUpdate} = require('why-did-you-update')
+  whyDidYouUpdate(React, {exclude: [/ClusterMarker|Link|Route|Legend|PlacesAutocomplete|Input/]})
+}
 type Props = {
   showLabelsInstead: boolean,
   zoom: number,
@@ -142,7 +146,6 @@ export default compose(
         addressesUrl: addressesUrlSelector(state),
       })),
       withDataProviders(({addressesUrl}) => {
-        console.log('loading daaata')
         return [addressesProvider(addressesUrl)]
       })
     ),
