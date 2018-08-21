@@ -7,11 +7,19 @@ import {withDataProviders} from 'data-provider'
 import {isNil} from 'lodash'
 import type {ComponentType} from 'react'
 import type {ObjectMap} from '../../../types/commonTypes'
-import {isPolitician} from '../../../services/utilities'
 import {connectionSubgraphProvider} from '../../../dataProviders/connectionsDataProviders'
-import {companyDetailProvider} from '../../../dataProviders/sharedDataProviders'
+import {entityDetailProvider} from '../../../dataProviders/sharedDataProviders'
+import {allEntityDetailsSelector} from '../../../selectors'
 import {addEdgeIfMissing} from '../components/graph/utils'
-import type {State, Company, RelatedEntity, Graph, GraphId, Node, Edge} from '../../../state'
+import type {
+  State,
+  NewEntityDetail,
+  RelatedEntity,
+  Graph,
+  GraphId,
+  Node,
+  Edge,
+} from '../../../state'
 import type {EntityProps} from './EntityWrapper'
 import type {ConnectionProps} from './ConnectionWrapper'
 
@@ -22,7 +30,7 @@ export type OwnProps = {
 export type SubgraphProps = {
   selectedEids: Array<number>,
   subgraph: Graph,
-  entityDetails: ObjectMap<Company>,
+  entityDetails: ObjectMap<NewEntityDetail>,
 }
 
 type RawNode = {
@@ -33,9 +41,9 @@ type RawNode = {
 }
 type RawEdge = [number, number]
 
-function findGroup(data: Company) {
-  const politician = isPolitician(data)
-  const withContracts = data.total_contracts && data.total_contracts > 0
+function findGroup(data: NewEntityDetail) {
+  const politician = false // no data in new API yet // isPolitician(data)
+  const withContracts = data.notices && data.notices.count > 0
   return politician && withContracts
     ? 'politContracts'
     : politician
@@ -51,7 +59,7 @@ function bold(makeBold: boolean, str: string) {
 
 function enhanceGraph(
   {nodes: oldNodes, edges: oldEdges, nodeIds}: Graph,
-  entityDetails: ObjectMap<Company>,
+  entityDetails: ObjectMap<NewEntityDetail>,
   primaryConnEids: Array<number>
 ) {
   const edges = oldEdges.map(({from, to}) => ({
@@ -66,12 +74,11 @@ function enhanceGraph(
     if (!entityDetails[id.toString()]) {
       return {id, label, group: 'notLoaded', x, y, ...props}
     }
-    const data = entityDetails[id.toString()]
-    const entity = data.entities[0]
+    const entity = entityDetails[id.toString()]
     const poi = props.distA === 0 || props.distB === 0
-    if (props.leaf && data.related.length) {
+    if (props.leaf && entity.related.length) {
       // add more edges to this leaf if available, then mark as non-leaf
-      data.related.forEach(({eid}: RelatedEntity) => {
+      entity.related.forEach(({eid}: RelatedEntity) => {
         if (nodeIds[eid]) {
           addEdgeIfMissing(id, eid, edges)
         }
@@ -81,10 +88,10 @@ function enhanceGraph(
       // delete x, y to prevent jumping on node load
       ...props,
       id,
-      label: bold(poi, `${entity.entity_name} (${data.related.length})`),
-      value: data.related.length,
-      group: findGroup(data),
-      shape: poi ? 'box' : (data.company_stats[0] || {}).datum_zaniku ? 'diamond' : 'dot',
+      label: bold(poi, `${entity.name} (${entity.related.length})`),
+      value: entity.related.length,
+      group: findGroup(entity),
+      shape: poi ? 'box' : (entity.companyinfo || {}).terminated_on ? 'diamond' : 'dot',
       leaf: false,
     }
   })
@@ -135,15 +142,15 @@ const ConnectionWrapper = (WrappedComponent: ComponentType<*>) => {
         subgraph: enhanceGraph(
           state.connections.subgraph[`${props.entity1.eids.join()}-${props.entity2.eids.join()}`]
             .data,
-          state.companies,
+          allEntityDetailsSelector(state),
           props.connections
         ),
-        entityDetails: state.companies,
+        entityDetails: allEntityDetailsSelector(state),
       })),
       branch(
         ({preloadNodes, subgraph}: OwnProps & SubgraphProps) => subgraph != null && preloadNodes,
         withDataProviders(({subgraph}: SubgraphProps) =>
-          subgraph.nodes.map(({id}: Node) => companyDetailProvider(id, false))
+          subgraph.nodes.map(({id}: Node) => entityDetailProvider(id, false))
         )
       )
     )
