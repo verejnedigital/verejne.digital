@@ -325,18 +325,30 @@ def get_GetInfos(db, eIDs):
           SELECT
             related.eid AS source,
             related.eid_relation AS target,
-            +1 * related.stakeholder_type_id AS edge_type
+            +1 * related.stakeholder_type_id AS edge_type,
+            stakeholdertypes.stakeholder_type_text AS edge_type_text
           FROM
             related
+          LEFT JOIN
+            stakeholdertypes
+          ON
+            stakeholdertypes.stakeholder_type_id =
+                related.stakeholder_type_id
           WHERE
             related.eid IN %s
           UNION
           SELECT
             related.eid_relation AS source,
             related.eid AS target,
-            -1 * related.stakeholder_type_id AS edge_type
+            -1 * related.stakeholder_type_id AS edge_type,
+            stakeholdertypes.stakeholder_type_text AS edge_type_text
           FROM
             related
+          LEFT JOIN
+            stakeholdertypes
+          ON
+            stakeholdertypes.stakeholder_type_id =
+                related.stakeholder_type_id
           WHERE
             related.eid_relation IN %s
         ),
@@ -345,7 +357,8 @@ def get_GetInfos(db, eIDs):
           SELECT
             merged.source,
             merged.target,
-            array_agg(merged.edge_type) AS edge_types
+            array_agg(merged.edge_type) AS edge_types,
+            array_agg(merged.edge_type_text) AS edge_type_texts
           FROM merged
           GROUP BY (merged.source, merged.target)
         )
@@ -353,6 +366,7 @@ def get_GetInfos(db, eIDs):
           grouped.source AS eid_source,
           grouped.target AS eid,
           grouped.edge_types,
+          grouped.edge_type_texts,
           entities.name, address.lat, address.lng, address.address
         FROM
           grouped
