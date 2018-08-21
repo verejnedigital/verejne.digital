@@ -33,9 +33,9 @@ export const setEntities = (
   }),
 })
 
-export const setEntityDetail = (entityDetail: NewEntityDetail, entityId: number) => ({
+export const setEntityDetail = (entityDetail: NewEntityDetail, eid: number) => ({
   type: 'Set entity detail',
-  path: ['entityDetails', entityId],
+  path: ['entityDetails', eid],
   payload: entityDetail,
   reducer: () => entityDetail,
 })
