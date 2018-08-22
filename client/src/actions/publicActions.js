@@ -100,7 +100,7 @@ export const toggleDrawer = () => ({
   reducer: (open: boolean) => !open,
 })
 
-export const setDrawer = (open) => ({
+export const setDrawer = (open: boolean) => ({
   type: 'Set drawer',
   path: ['publicly', 'drawerOpen'],
   reducer: () => open,
