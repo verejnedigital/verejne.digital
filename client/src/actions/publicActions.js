@@ -66,6 +66,12 @@ export const toggleModalOpen = () => ({
   reducer: (open: boolean) => !open,
 })
 
+export const setModal = (open: boolean) => ({
+  type: 'Set modal',
+  path: ['publicly', 'entitySearchModalOpen'],
+  reducer: () => open,
+})
+
 export const setEntitySearchFor = (searchFor: string) => ({
   type: 'Set entity search for pattern',
   path: ['publicly', 'entitySearchFor'],

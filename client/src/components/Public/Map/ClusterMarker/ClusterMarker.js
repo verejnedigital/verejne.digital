@@ -6,7 +6,7 @@ import FaIconCircle from 'react-icons/lib/fa/circle-o'
 import classnames from 'classnames'
 
 import {ENTITY_ZOOM, ENTITY_CLOSE_ZOOM} from '../../../../constants'
-import {openAddressDetail, zoomToLocation, setDrawer} from '../../../../actions/publicActions'
+import {openAddressDetail, zoomToLocation, setDrawer, setModal} from '../../../../actions/publicActions'
 import {openedAddressDetailSelector} from '../../../../selectors'
 import Marker from '../Marker/Marker'
 import './ClusterMarker.css'
@@ -64,13 +64,15 @@ export default compose(
       openAddressDetail,
       zoomToLocation,
       setDrawer,
+      setModal,
     }
   ),
   withHandlers({
-    onClick: ({cluster, zoomToLocation, openAddressDetail, setDrawer}) => (event) => {
+    onClick: ({cluster, zoomToLocation, openAddressDetail, setDrawer, setModal}) => (event) => {
       if (cluster.numPoints === 1) {
         openAddressDetail(cluster.points[0].address_id)
         setDrawer(true)
+        setModal(false)
         zoomToLocation({lat: cluster.lat, lng: cluster.lng}, ENTITY_CLOSE_ZOOM)
       } else {
         zoomToLocation({lat: cluster.lat, lng: cluster.lng})

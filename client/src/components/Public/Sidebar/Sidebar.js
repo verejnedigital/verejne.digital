@@ -9,8 +9,10 @@ import ArrowLeftIcon from 'react-icons/lib/fa/angle-double-left'
 import Drawer from 'rc-drawer'
 import 'rc-drawer/assets/index.css'
 import './Sidebar.css'
+
 import SearchIcon from 'react-icons/lib/fa/search'
 import ModalIcon from 'react-icons/lib/fa/clone'
+import EntitySearch from '../EntitySearch/EntitySearch'
 
 import {
   zoomToLocation,
@@ -18,6 +20,7 @@ import {
   setEntitySearchFor,
   toggleDrawer,
   setDrawer,
+  closeAddressDetail,
 } from '../../../actions/publicActions'
 import {updateValue} from '../../../actions/sharedActions'
 import {
@@ -26,6 +29,7 @@ import {
   openedAddressDetailSelector,
   entitySearchValueSelector,
   drawerOpenSelector,
+  entitySearchModalOpenSelector,
 } from '../../../selectors'
 import {ENTITY_CLOSE_ZOOM, FIND_ENTITY_TITLE} from '../../../constants'
 import AddressDetail from './../Map/AddressDetail/AddressDetail'
@@ -88,7 +92,9 @@ const _Content = ({
   entitySearchValue,
   setEntitySearchValue,
   findEntities,
+  entitySearchModalOpen,
 }: ContentProps) => (
+
   <React.Fragment>
     <Form onSubmit={findEntities}>
       <FormGroup>
@@ -123,6 +129,7 @@ const _Content = ({
         className="form-control"
       />
     </FormGroup>
+    {entitySearchModalOpen && <EntitySearch />}
     {openedAddressId && <AddressDetail addressId={openedAddressId} />}
   </React.Fragment>
 )
@@ -134,15 +141,22 @@ const Content = compose(
       autocompleteOptions: autocompleteOptionsSelector(state),
       openedAddressId: openedAddressDetailSelector(state),
       entitySearchValue: entitySearchValueSelector(state),
+      entitySearchModalOpen: entitySearchModalOpenSelector(state),
     }),
-    {updateValue, zoomToLocation, toggleModalOpen, setEntitySearchFor, toggleDrawer}
+    {
+      updateValue,
+      zoomToLocation,
+      toggleModalOpen,
+      setEntitySearchFor,
+      toggleDrawer,
+      closeAddressDetail
+    }
   ),
   withHandlers({
-    findEntities: ({toggleModalOpen, setEntitySearchFor, entitySearchValue, toggleDrawer}) => (
-      e
-    ) => {
+    findEntities: ({toggleModalOpen, setEntitySearchFor, entitySearchValue, toggleDrawer, closeAddressDetail}) => (e) => {
       e.preventDefault()
       toggleModalOpen()
+      closeAddressDetail()
       setEntitySearchFor(entitySearchValue)
       toggleDrawer()
     },

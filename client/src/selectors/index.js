@@ -25,8 +25,6 @@ import type {
   NewEntityDetail,
   Notice,
 } from '../state'
-import type {ObjectMap} from '../types/commonTypes'
-
 export const paramsIdSelector = (_: State, props: ContextRouter): string =>
   props.match.params.id || '0'
 
