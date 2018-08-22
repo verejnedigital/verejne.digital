@@ -22,6 +22,7 @@ type ClusterMarkerProps = {
   cluster: MapCluster,
   onClick: () => void,
   openedAddressId: number,
+  useName: boolean,
 }
 
 const ClusterMarker = ({
@@ -31,13 +32,14 @@ const ClusterMarker = ({
   zoomToLocation,
   onClick,
   openedAddressId,
+  useName,
 }: ClusterMarkerProps) => {
-  const MarkerText = <span className="marker__text">{cluster.numPoints}</span>
+  const MarkerText = <span className="marker__text">{useName ? cluster.id : cluster.numPoints}</span>
   let className, children
   const selected = cluster.numPoints === 1 && cluster.points[0].address_id === openedAddressId
   if (zoom < ENTITY_ZOOM) {
-    className = cluster.numPoints === 1 ? 'simple-marker' : 'cluster-marker'
-    children = cluster.numPoints !== 1 && <span className="marker__text">{cluster.numPoints}</span>
+    className = useName ? 'map-label' : cluster.numPoints === 1 ? 'simple-marker' : 'cluster-marker'
+    children = cluster.numPoints !== 1 && MarkerText
   } else {
     //TODO: fix classnames after the api provides enough information
     className = classnames({
@@ -73,7 +75,7 @@ export default compose(
         setDrawer(true)
         zoomToLocation({lat: cluster.lat, lng: cluster.lng}, ENTITY_CLOSE_ZOOM)
       } else {
-        zoomToLocation({lat: cluster.lat, lng: cluster.lng})
+        zoomToLocation({lat: cluster.lat, lng: cluster.lng}, cluster.setZoomTo)
       }
     },
   })
