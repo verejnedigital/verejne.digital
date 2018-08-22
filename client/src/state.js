@@ -1,6 +1,6 @@
 // @flow
-import {SLOVAKIA_COORDINATES} from '../constants'
-import type {ObjectMap} from '../types/commonTypes'
+import {SLOVAKIA_COORDINATES} from './constants'
+import type {ObjectMap} from './types/commonTypes'
 
 export type Candidate = {
   id: number,
@@ -26,7 +26,7 @@ export type Notice = {|
   bulletin_month: number,
   bulletin_year: number,
   bulletin_date: string, // string representation of day/month/year
-  kandidati: Array<Candidate | []>,
+  kandidati: Array<Candidate>,
   price_num: number,
   price_avg: number,
 |}
@@ -158,10 +158,32 @@ export type SearchedEntity = {
   eids: number[],
   id: string,
 }
+export type GraphId = number
+
+export type Node = {
+  id: GraphId,
+  label: string,
+  x?: number,
+  y?: number,
+  distA?: number,
+  distB?: number,
+  leaf?: boolean,
+}
+export type Edge = {
+  from: GraphId,
+  to: GraphId,
+}
+export type Graph = {|
+  nodes: Array<Node>,
+  edges: Array<Edge>,
+  nodeIds: {[GraphId]: boolean},
+|}
 
 export type Connections = {
-  detail: {[string]: {ids: number[]}},
   entities: {[string]: CompanyEntity},
+  detail: {[string]: {ids: number[]}},
+  subgraph: {[string]: {data: Graph}},
+  selectedEids: Array<number>,
 }
 
 export type Address = {
@@ -178,13 +200,19 @@ export type NewEntity = {
 
 export type NewEntityState = NewEntity & {addressId: number}
 
-export type EuFund = {
+export type Eufund = {
   title: string,
   link: string,
   price: number,
   state: string,
   call_state: string,
   call_title: string,
+}
+
+export type Eufunds = {
+  eufunds_count: number,
+  eufunds_price_sum: number,
+  largest: Array<Eufund>,
 }
 
 export type CompanyFinancial = {
@@ -207,6 +235,13 @@ export type Contract = {
   contract_identifier: string,
 }
 
+export type Contracts = {
+  count: number,
+  price_amount_sum: number,
+  most_recent: Array<Contract>,
+  largest: Array<Contract>,
+}
+
 // TODO rename to Notice when old one is gone
 export type NoticeNew = {
   client_eid: number,
@@ -225,6 +260,13 @@ export type NoticeNew = {
   body: string,
 }
 
+export type Notices = {
+  count: number,
+  total_final_value_amount_eur_sum: number,
+  most_recent: Array<NoticeNew>,
+  largest: Array<NoticeNew>,
+}
+
 export type RelatedEntity = {
   eid: number,
   name: string,
@@ -240,11 +282,7 @@ export type NewEntityDetail = {
   lat: number,
   lng: number,
   address: string,
-  eufunds: {
-    eufunds_count: number,
-    eufunds_price_sum: number,
-    largest: Array<EuFund>,
-  },
+  eufunds: Eufunds,
   companyfinancials: {
     [year: number]: CompanyFinancial,
   },
@@ -253,18 +291,8 @@ export type NewEntityDetail = {
     established_on: string,
     terminated_on: string,
   },
-  contracts: {
-    count: number,
-    price_amount_sum: number,
-    most_recent: Array<Contract>,
-    largest: Array<Contract>,
-  },
-  notices: {
-    count: number,
-    total_final_value_amount_eur_sum: number,
-    most_recent: Array<NoticeNew>,
-    largest: Array<NoticeNew>,
-  },
+  contracts: Contracts,
+  notices: Notices,
   related: RelatedEntity[],
 }
 
@@ -337,6 +365,8 @@ const getInitialState = (): State => ({
   connections: {
     entities: {},
     detail: {},
+    subgraph: {},
+    selectedEids: [],
   },
   addresses: {},
   entities: {},

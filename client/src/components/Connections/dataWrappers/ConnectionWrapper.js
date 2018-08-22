@@ -18,6 +18,7 @@ type DispatchProps = {
   receiveData: typeof receiveData,
 }
 
+// TODO remove this component, see how SubgraphWrapper does it
 const EmptyEidsWrapper = (WrappedComponent: ComponentType<*>) => {
   const wrapped = ({receiveData, ...props}: EntityProps & DispatchProps) => {
     const eid1 = props.entity1.eids.join()

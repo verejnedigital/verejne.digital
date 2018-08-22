@@ -1,7 +1,12 @@
+// @flow
 import React from 'react'
 import './Trend.css'
 
-const Trend = ({trend}) => {
+type TrendProps = {
+  trend: number,
+}
+
+const Trend = ({trend}: TrendProps) => {
   let colorStyle
   let text
   if (trend > 0) {

@@ -18,7 +18,7 @@ import {
   setEntitySearchFor,
   toggleDrawer,
   setDrawer,
-} from '../../../actions/verejneActions'
+} from '../../../actions/publicActions'
 import {updateValue} from '../../../actions/sharedActions'
 import {
   autocompleteValueSelector,
@@ -28,8 +28,8 @@ import {
   drawerOpenSelector,
 } from '../../../selectors'
 import {ENTITY_CLOSE_ZOOM, FIND_ENTITY_TITLE} from '../../../constants'
-import AddressDetail from './../Map/AddressDetail'
-import PlacesAutocomplete from '../../PlacesAutocomplete'
+import AddressDetail from './../Map/AddressDetail/AddressDetail'
+import PlacesAutocomplete from '../../PlacesAutocomplete/PlacesAutocomplete'
 
 const _DrawerIcon = ({drawerOpen, toggleDrawer}) =>
   (drawerOpen) ? (

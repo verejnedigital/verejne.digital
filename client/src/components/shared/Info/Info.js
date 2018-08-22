@@ -1,25 +1,46 @@
+// @flow
 import React, {Fragment} from 'react'
 import Circle from 'react-icons/lib/fa/circle-o'
-import {Badge, Container} from 'reactstrap'
+import {Container} from 'reactstrap'
 import {Link} from 'react-router-dom'
+import type {Node} from 'react'
+
 import {
-  getFinancialData,
-  extractIco,
+  getNewFinancialData,
   icoUrl,
   ShowNumberCurrency,
   showDate,
-  isPolitician,
 } from '../../../services/utilities'
-import DonationsToParties from './DonationsToParties'
-import SponsorshipsOfParties from './SponsorshipsOfParties'
-import Relations from './Relations'
+import {compose, withHandlers} from 'recompose'
+import {connect} from 'react-redux'
+import {zoomToLocation, toggleModalOpen} from '../../../actions/publicActions'
+import {ENTITY_CLOSE_ZOOM} from '../../../constants'
 import Contracts from './Contracts'
+import Notices from './Notices'
+import Eurofunds from './Eurofunds'
+import Relations from './Relations'
 import Trend from './Trend'
 import ExternalLink from '../ExternalLink'
-import './Info.css'
 import mapIcon from '../../../assets/mapIcon.svg'
+import type {NewEntityDetail} from '../../../state'
+import type {FinancialData} from '../../../services/utilities'
+import './Info.css'
 
-const Item = ({children, label, url, linkText}) => (
+type InfoProps = {
+  data: NewEntityDetail,
+  inModal?: boolean,
+  canClose?: boolean,
+  onClose?: () => void,
+}
+
+type ItemProps = {
+  children?: Node,
+  label?: string,
+  url?: string,
+  linkText?: Node,
+}
+
+const Item = ({children, label, url, linkText}: ItemProps) => (
   <li className="info-item">
     {label && <strong className="info-item-label">{label}</strong>}
     {url && (
@@ -31,153 +52,93 @@ const Item = ({children, label, url, linkText}) => (
   </li>
 )
 
-const Findata = ({data}) => {
-  const zisk = data.hasOwnProperty('zisk16') ? data.zisk16 : data.zisk15
-  const trzby = data.hasOwnProperty('trzby16') ? data.trzby16 : data.trzby15
-
+const Findata = ({data}: {data: FinancialData}) => {
+  const finances = data.finances[0] || {} // possible feature: display finances also for older years
   return (
     <Fragment>
       <Item
         label="IČO"
         url={`http://www.orsr.sk/hladaj_ico.asp?ICO=${data.ico}&SID=0`}
+        // TODO link to zrsr when there is a way to tell companies and persons apart
         linkText={data.ico}
       >
-        (<ExternalLink isMapView={false} url={icoUrl(data.ico)}>
+        &nbsp;(<ExternalLink isMapView={false} url={icoUrl(data.ico)}>
           Detaily o firme
         </ExternalLink>)
       </Item>
-      {data.zaciatok && <Item label="Založená">{showDate(data.zaciatok)}</Item>}
-      {data.koniec && <Item label="Zaniknutá">{showDate(data.koniec)}</Item>}
-      {data.zamestnancov && <Item label="Zaniknutá">{data.zamestnancov}</Item>}
-      {data.zamestnancov && <Item label="Zaniknutá">{data.zamestnancov}</Item>}
-      {zisk &&
-        zisk !== 0 && (
-        <Item
-          label="Zisk v 2016"
-          url={icoUrl(data.ico)}
-          linkText={<ShowNumberCurrency num={zisk} />}
-        >
-          {data.zisk_trend !== 0 && <Trend trend={8} />}
-        </Item>
+      {data.established_on && <Item label="Založená">{showDate(data.established_on)}</Item>}
+      {data.terminated_on && <Item label="Zaniknutá">{showDate(data.terminated_on)}</Item>}
+      {finances.employees && (
+        <Item label={`Zamestnanci v ${finances.year}`}>{finances.employees}</Item>
       )}
-      {trzby &&
-        trzby !== 0 && (
+      {finances.profit ? (
         <Item
-          label="Tržby v 2016"
+          label={`Zisk v ${finances.year}`}
           url={icoUrl(data.ico)}
-          linkText={<ShowNumberCurrency num={trzby} />}
+          linkText={<ShowNumberCurrency num={finances.profit} />}
         >
-          {data.trzby_trend !== 0 && <Trend trend={10} />}
+          {finances.profitTrend ? <Trend trend={finances.profitTrend} /> : null}
         </Item>
-      )}
+      ) : null}
+      {finances.revenue ? (
+        <Item
+          label={`Tržby v ${finances.year}`}
+          url={icoUrl(data.ico)}
+          linkText={<ShowNumberCurrency num={finances.revenue} />}
+        >
+          {finances.revenueTrend ? <Trend trend={finances.revenueTrend} /> : null}
+        </Item>
+      ) : null}
     </Fragment>
   )
 }
 
-const Info = ({data, canClose, onClose}) => {
-  const entity = data.entities[0]
-  const findata = getFinancialData(data, extractIco(data))
-
-  return (
-    <Container className="info">
-      <div className="info-header">
-        <h3 className={`${isPolitician(data) ? 'politician' : ''}`}>
-          <Circle aria-hidden="true" />&nbsp;{entity.entity_name}&nbsp;
-        </h3>
-        <Link to={`/verejne?lat=${entity.lat}&lng=${entity.lng}&zoom=18`} title="Zobraz na mape">
-          <img src={mapIcon} alt="MapMarker" style={{width: '16px', height: '25px'}} />
-        </Link>
-        {canClose && (
-          <span className="info-close-button" onClick={onClose}>
-            &times;
-          </span>
+const Info = ({data, canClose, onClose, showOnMap}: InfoProps) => (
+  <Container className={canClose ? 'info closable' : 'info'}>
+    <div className="info-header">
+      <h3 onClick={onClose}>
+        <Circle aria-hidden="true" />&nbsp;{data.name}&nbsp;
+      </h3>
+      <Link
+        to={`/verejne?lat=${data.lat}&lng=${data.lng}&zoom=${ENTITY_CLOSE_ZOOM}`}
+        title="Zobraz na mape"
+        onClick={showOnMap}
+      >
+        <img src={mapIcon} alt="MapMarker" style={{width: '16px', height: '25px'}} />
+      </Link>
+      {canClose && (
+        <span className="info-close-button" onClick={onClose}>
+          &times;
+        </span>
+      )}
+    </div>
+    <div className="info-main">
+      <ul className="info-list">
+        <Item>{data.address}</Item>
+        {data.companyinfo && <Findata data={getNewFinancialData(data)} />}
+        {data.contracts &&
+          data.contracts.price_amount_sum > 0 && (
+          <Item
+            label="Verejné zákazky"
+            url={`http://www.otvorenezmluvy.sk/documents/search?utf8=%E2%9C%93&q=${data.name}`}
+            linkText={<ShowNumberCurrency num={data.contracts.price_amount_sum} />}
+          />
         )}
-      </div>
-      <div className="info-main">
-        <ul className="info-list">
-          <Item>{entity.address}</Item>
-          {findata.ico && <Findata data={findata} />}
-          {data.zrsr_data[0] && (
-            <Item
-              label="IČO Živnostníka"
-              url={`https://verejne.digital/zrsr.html?${data.zrsr_data[0].ico}`}
-              textLink={data.zrsr_data[0].ico}
-            />
-          )}
-          {data.total_contracts !== null &&
-            data.total_contracts > 0 && (
-            <Item
-              label="Verejné zákazky"
-              url={`http://www.otvorenezmluvy.sk/documents/search?utf8=%E2%9C%93&q=${
-                entity.entity_name
-              }`}
-              linkText={<ShowNumberCurrency num={data.total_contracts} />}
-            />
-          )}
-          {data.sponzori_stran_data.length >= 1 && (
-            <Item label="Stranícke príspevky">
-              <SponsorshipsOfParties
-                entityName={entity.entity_name}
-                data={data.sponzori_stran_data}
-              />
-            </Item>
-          )}
-          {data.stranicke_prispevky_data.length >= 1 && (
-            <Item label="Stranícke príspevky">
-              <DonationsToParties
-                entityName={entity.entity_name}
-                data={data.stranicke_prispevky_data}
-              />
-            </Item>
-          )}
-        </ul>
-        <div className="info-badges">
-          {data.advokati_data.length >= 1 && (
-            <Badge
-              color="info"
-              href={`http://datanest.fair-play.sk/searches/quick?query_string=${
-                entity.entity_name
-              }`}
-            >
-              Advokát
-            </Badge>
-          )}
-          {data.nadacie_data.length >= 1 && (
-            <Badge
-              color="info"
-              href={`http://datanest.fair-play.sk/searches/quick?query_string=${
-                entity.entity_name
-              }`}
-            >
-              Nadácia
-            </Badge>
-          )}
-          {data.auditori_data.length >= 1 && (
-            <Badge
-              color="info"
-              href={`http://datanest.fair-play.sk/searches/quick?query_string=${
-                entity.entity_name
-              }`}
-            >
-              Auditor
-            </Badge>
-          )}
-          {data.uzivatelia_vyhody_ludia_data.find(
-            (funkcionar) => funkcionar.is_funkcionar === '1'
-          ) && (
-            <Badge
-              color="info"
-              href="http://www.transparency.sk/sk/zverejnujeme-zoznam-vlastnikov-firiem/"
-            >
-              Verejný funkcionár
-            </Badge>
-          )}
-        </div>
-        {data.contracts.length >= 1 && <Contracts data={data.contracts} />}
-        {data.related.length >= 1 && <Relations data={data.related} />}
-      </div>
-    </Container>
-  )
-}
+      </ul>
+      {data.contracts && data.contracts.count > 0 && <Contracts data={data.contracts} />}
+      {data.notices && data.notices.count > 0 && <Notices data={data.notices} />}
+      {data.eufunds && data.eufunds.eufunds_count > 0 && <Eurofunds data={data.eufunds} />}
+      {data.related.length > 0 && <Relations data={data.related} useNewApi />}
+    </div>
+  </Container>
+)
 
-export default Info
+export default compose(
+  connect(null, {zoomToLocation, toggleModalOpen}),
+  withHandlers({
+    showOnMap: ({data, inModal, zoomToLocation, toggleModalOpen}) => () => {
+      inModal && toggleModalOpen()
+      zoomToLocation(data, ENTITY_CLOSE_ZOOM)
+    },
+  })
+)(Info)

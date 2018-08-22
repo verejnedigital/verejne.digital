@@ -1,16 +1,17 @@
 import React from 'react'
 import CompanyDetails from '../CompanyDetails'
 import {compose, withState, withHandlers} from 'recompose'
+import {Button} from 'reactstrap'
 import './RecursiveInfo.css'
 
-const _RecursiveInfo = ({name, eid, toggledOn, toggle}) => {
+const _RecursiveInfo = ({name, eid, useNewApi, toggledOn, toggle}) => {
   if (toggledOn) {
-    return <CompanyDetails eid={eid} />
+    return <CompanyDetails useNewApi={useNewApi} eid={eid} />
   } else {
     return (
-      <button onClick={toggle} className="recursive-info-btn btn btn-link">
+      <Button onClick={toggle} color="link">
         {name}
-      </button>
+      </Button>
     )
   }
 }
@@ -18,6 +19,6 @@ const _RecursiveInfo = ({name, eid, toggledOn, toggle}) => {
 export default compose(
   withState('toggledOn', 'toggle', false),
   withHandlers({
-    toggle: ({toggle}) => (e) => toggle((current) => !current),
+    toggle: ({toggle}) => () => toggle((current) => !current),
   })
 )(_RecursiveInfo)

@@ -1,13 +1,8 @@
 // @flow
 import React from 'react'
-import {
-  setEntitySearchEids,
-  setAddresses,
-  setEntities,
-  setEntityDetail,
-} from '../actions/verejneActions'
-import {EntityDetailLoading, ModalLoading} from '../components/Loading/'
-import type {Address, NewEntity, NewEntityDetail} from '../state'
+import {setEntitySearchEids, setAddresses, setEntities} from '../actions/publicActions'
+import {ModalLoading} from '../components/Loading/Loading'
+import type {Address, NewEntity} from '../state'
 import type {Dispatch} from '../types/reduxTypes'
 
 const dispatchSearchEids = () => (ref: string, data: Array<{eid: number}>, dispatch: Dispatch) =>
@@ -19,10 +14,6 @@ const dispatchAddresses = () => (ref: string, data: Address[], dispatch: Dispatc
 
 const dispatchEntities = () => (ref: number[], data: NewEntity[], dispatch: Dispatch) => {
   dispatch(setEntities(data, ref[1]))
-}
-
-const dispatchEntityDetail = () => (ref: number[], data: NewEntityDetail, dispatch: Dispatch) => {
-  dispatch(setEntityDetail(data[ref[1]], ref[1]))
 }
 
 export const addressesProvider = (addressesUrl: string) => {
@@ -38,23 +29,6 @@ export const addressesProvider = (addressesUrl: string) => {
     onData: [dispatchAddresses],
     keepAliveFor: 60 * 60 * 1000,
     needed: false,
-  }
-}
-
-export const entityDetailProvider = (entityId: number) => {
-  const requestPrefix = `${process.env.REACT_APP_API_URL || ''}`
-  return {
-    ref: ['entityDetail', entityId],
-    getData: [
-      fetch,
-      `${requestPrefix}/api/v/getInfos?eids=${entityId}`,
-      {
-        accept: 'application/json',
-      },
-    ],
-    onData: [dispatchEntityDetail],
-    keepAliveFor: 60 * 60 * 1000,
-    loadingComponent: <EntityDetailLoading />,
   }
 }
 
