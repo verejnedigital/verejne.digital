@@ -14,7 +14,7 @@ import {
   SLOVAKIA_COORDINATES,
   DISTRICT_ZOOM,
 } from '../constants'
-import {isInSlovakia, normalizeName} from '../utils'
+import {isInSlovakia, normalizeName, values} from '../utils'
 import {sortBy, filter} from 'lodash'
 import supercluster from 'points-cluster'
 import type {ContextRouter} from 'react-router-dom'
@@ -116,6 +116,12 @@ export const useLabelsSelector = createSelector(
   centerSelector,
   (zoom, center) => (zoom < CITY_ZOOM && isInSlovakia(center))
 )
+
+export const addressEntitiesIdsSelector = createSelector(
+  addressEntitiesSelector,
+  (entities) => values(entities).map((v) => v.id) : []
+)
+
 type SuperCluster = {
   numPoints: number,
   points: Array<CompanyEntity>,
