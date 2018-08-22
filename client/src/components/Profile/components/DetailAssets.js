@@ -1,3 +1,4 @@
+// @flow
 import React from 'react'
 import './DetailAssets.css'
 import {Table} from 'reactstrap'
@@ -6,7 +7,21 @@ import {branch, compose, withState} from 'recompose'
 import {withDataProviders} from 'data-provider/dist/withDataProviders'
 import {imageSrcProvider} from '../../../dataProviders/profileDataProviders'
 
-const DetailAssetDeclaration = ({assets, year, title, preloadedImageSrc, source}) => (
+export type DetailAssetProps = {
+  assets: Array<string>,
+  year: string,
+  title: string,
+  preloadedImageSrc: string,
+  source: string,
+}
+
+const DetailAssetDeclaration = ({
+  assets,
+  year,
+  title,
+  preloadedImageSrc,
+  source,
+}: DetailAssetProps) => (
   <Table className="assets-declaration">
     <thead>
       <tr>
