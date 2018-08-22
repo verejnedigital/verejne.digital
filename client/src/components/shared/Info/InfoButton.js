@@ -8,6 +8,7 @@ import type {Node} from 'react'
 
 import {ShowNumberCurrency} from '../../../services/utilities'
 import type {Contract, NoticeNew, Eufund} from '../../../state'
+import type {stateUpdater} from '../../../types/commonTypes'
 
 import './InfoButton.css'
 
@@ -19,6 +20,10 @@ type InfoButtonProps<T> = {
   buildItem: (T, number, Array<T>) => Node,
   toggledOn: boolean,
   toggle: () => void,
+}
+type StateProps = {
+  toggledOn: boolean,
+  toggle: stateUpdater<boolean>,
 }
 
 const InfoButton = ({
@@ -43,6 +48,6 @@ const InfoButton = ({
 export default compose(
   withState('toggledOn', 'toggle', false),
   withHandlers({
-    toggle: ({toggle}) => () => toggle((current: boolean) => !current),
+    toggle: ({toggle}: StateProps) => () => toggle((current: boolean) => !current),
   })
 )(InfoButton)
