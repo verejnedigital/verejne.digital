@@ -5,18 +5,15 @@ import {withHandlers} from 'recompose'
 import {connect} from 'react-redux'
 import {withRouter} from 'react-router-dom'
 import {withDataProviders} from 'data-provider'
-import Pagination from 'react-js-pagination'
 import {noticesProvider} from '../../dataProviders/noticesDataProviders'
 import {
   newestBulletinDateSelector,
-  paginatedNoticesSelector,
+  dateSortedNoticesSelector,
   paginationSelector,
   noticesLengthSelector,
   locationSearchSelector,
   noticesSearchQuerySelector,
 } from '../../selectors'
-import {PAGINATION_CHUNK_SIZE, NOTICES_PAGINATION_SIZE} from '../../constants'
-import {modifyQuery} from '../../utils'
 import {groupBy, map} from 'lodash'
 
 import {updateValue} from '../../actions/sharedActions'
@@ -27,13 +24,7 @@ import type {Notice, State} from '../../state'
 
 import Legend from './Legend'
 import Bulletin from './Bulletin'
-import {
-  Input,
-  FormText,
-  Row,
-  Col,
-  Container
-} from 'reactstrap'
+import {Input, FormText, Row, Col, Container} from 'reactstrap'
 import './NoticeList.css'
 
 export type NoticesOrdering = 'title' | 'date'
@@ -41,7 +32,7 @@ export type NoticesOrdering = 'title' | 'date'
 export type NoticeListProps = {
   dispatch: Dispatch,
   newestBulletinDate: string,
-  paginatedNotices: Array<Notice>,
+  dateSortedNotices: Array<Notice>,
   currentPage: number,
   noticesLength: number,
   query: Object,
@@ -52,7 +43,7 @@ export type NoticeListProps = {
 const NoticeList = ({
   dispatch,
   newestBulletinDate,
-  paginatedNotices,
+  dateSortedNotices,
   currentPage,
   noticesLength,
   location,
@@ -62,8 +53,8 @@ const NoticeList = ({
   updateSearchValue,
 }: NoticeListProps) => {
   let items = []
-  if (paginatedNotices.length > 0) {
-    items = groupBy(paginatedNotices, (item) => `${item.bulletin_number}/${item.bulletin_year}`)
+  if (dateSortedNotices.length > 0) {
+    items = groupBy(dateSortedNotices, (item) => `${item.bulletin_number}/${item.bulletin_year}`)
   }
 
   const plurality = (count) => {
@@ -75,18 +66,6 @@ const NoticeList = ({
     return `Nájdených ${count} výsledkov`
   }
 
-  const pagination = (
-    <Pagination
-      itemClass="page-item"
-      linkClass="page-link"
-      hideNavigation
-      pageRangeDisplayed={NOTICES_PAGINATION_SIZE}
-      activePage={currentPage}
-      itemsCountPerPage={PAGINATION_CHUNK_SIZE}
-      totalItemsCount={noticesLength}
-      onChange={(page) => history.push({search: modifyQuery(query, {page})})}
-    />
-  )
   return (
     <Container fluid className="notice-list">
       <Row>
@@ -125,27 +104,17 @@ const NoticeList = ({
             value={searchValue}
             onChange={updateSearchValue}
           />
-          <FormText>
-            {searchValue && `${plurality(noticesLength)} pre "${searchValue}".`}
-          </FormText>
+          <FormText>{searchValue && `${plurality(noticesLength)} pre "${searchValue}".`}</FormText>
           {noticesLength >= 1 &&
-              map(items, (bulletin, index) => (
-                <Bulletin
+            map(items, (bulletin, index) => (
+              <Bulletin
                 key={index}
                 items={bulletin}
                 number={bulletin[0].bulletin_number}
                 year={bulletin[0].bulletin_year}
                 date={bulletin[0].bulletin_date}
-                />
-              ))
-          }
-          {noticesLength > 10 &&
-              <div className="pagination-wrapper">
-                <div className="scroll-container">
-                  {pagination}
-                </div>
-              </div>}
-
+              />
+            ))}
         </Col>
       </Row>
     </Container>
@@ -154,20 +123,21 @@ const NoticeList = ({
 
 export default compose(
   withDataProviders(() => [noticesProvider()]),
-  connect((state: State, props: NoticeListProps) => ({
-    paginatedNotices: paginatedNoticesSelector(state, props),
-    currentPage: paginationSelector(state, props),
-    noticesLength: noticesLengthSelector(state, props),
-    newestBulletinDate: newestBulletinDateSelector(state, props),
-    query: locationSearchSelector(state, props),
-    searchValue: noticesSearchQuerySelector(state),
-  }),
+  connect(
+    (state: State, props: NoticeListProps) => ({
+      dateSortedNotices: dateSortedNoticesSelector(state, props),
+      currentPage: paginationSelector(state, props),
+      noticesLength: noticesLengthSelector(state, props),
+      newestBulletinDate: newestBulletinDateSelector(state, props),
+      query: locationSearchSelector(state, props),
+      searchValue: noticesSearchQuerySelector(state),
+    }),
     {updateValue}
   ),
   withHandlers({
     updateSearchValue: (props) => (e) => {
       props.updateValue(['notices', 'searchQuery'], e.target.value)
-      if (props.history.location.search !== "") props.history.push({})
+      if (props.history.location.search !== '') props.history.push({})
     },
   }),
   withRouter
