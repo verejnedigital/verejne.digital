@@ -8,22 +8,29 @@ import type {State, Company, NewEntityDetail} from '../state'
 import {companyDetailProvider, entityDetailProvider} from '../dataProviders/sharedDataProviders'
 import {entityDetailSelector, companyDetailSelector} from '../selectors'
 
-export type CompanyDetailProps = {
-  useNewApi: boolean,
+type BaseCompanyDetailProps = {
+  useNewApi?: boolean,
   eid: number,
+}
+
+export type CompanyDetailProps = {
+  eid: number,
+  useNewApi?: boolean,
   company: NewEntityDetail,
   oldCompany: Company,
 }
 
-const CompanyDetailWrapper = (WrappedComponent: ComponentType<*>) => {
+const CompanyDetailWrapper = (
+  WrappedComponent: ComponentType<CompanyDetailProps>
+): ComponentType<BaseCompanyDetailProps> => {
   const wrapped = (props: CompanyDetailProps) =>
     (props.useNewApi ? props.company : props.oldCompany) ? <WrappedComponent {...props} /> : null
 
   return compose(
-    withDataProviders(({eid, useNewApi}: CompanyDetailProps) => [
+    withDataProviders(({eid, useNewApi}: BaseCompanyDetailProps) => [
       useNewApi ? entityDetailProvider(eid) : companyDetailProvider(eid),
     ]),
-    connect((state: State, props: CompanyDetailProps) => ({
+    connect((state: State, props: BaseCompanyDetailProps) => ({
       company: props.useNewApi ? entityDetailSelector(state, props.eid) : null,
       oldCompany: !props.useNewApi ? companyDetailSelector(state, props) : null,
     }))

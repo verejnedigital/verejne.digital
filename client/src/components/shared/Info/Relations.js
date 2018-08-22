@@ -1,3 +1,4 @@
+// @flow
 import React from 'react'
 import {compose, withState, withHandlers} from 'recompose'
 import {Badge, Button} from 'reactstrap'
@@ -7,9 +8,22 @@ import {orderBy} from 'lodash'
 
 import RecursiveInfo from './RecursiveInfo'
 import {showRelationType} from '../../../services/utilities'
+import type {RelatedEntity} from '../../../state'
+import type {stateUpdater} from '../../../types/commonTypes'
 import './InfoButton.css'
 
-const _Relations = ({data, toggledOn, toggle, useNewApi}) => {
+type RelationsProps = {
+  data: Array<RelatedEntity>,
+  useNewApi: boolean,
+  toggledOn: boolean,
+  toggle: () => void,
+}
+type StateProps = {
+  toggledOn: boolean,
+  toggle: stateUpdater<boolean>,
+}
+
+const Relations = ({data, useNewApi, toggledOn, toggle}: RelationsProps) => {
   return (
     <div className="relations info-button">
       <Button outline color="primary" onClick={toggle}>
@@ -18,10 +32,10 @@ const _Relations = ({data, toggledOn, toggle, useNewApi}) => {
       </Button>
       {toggledOn && (
         <ul className="list-unstyled info-button-list">
-          {orderBy(data, ['edge_types']).map((related) => (
+          {orderBy(data, ['edge_types']).map((related: RelatedEntity) => (
             <li key={related.eid}>
               {related.edge_types &&
-                related.edge_types.map((type, i) => (
+                related.edge_types.map((type: number, i: number) => (
                   <Badge key={type} color={type > 0 ? 'dark' : 'secondary'} className="mr-1">
                     {showRelationType(type, related.edge_type_texts[i])}
                   </Badge>
@@ -38,6 +52,6 @@ const _Relations = ({data, toggledOn, toggle, useNewApi}) => {
 export default compose(
   withState('toggledOn', 'toggle', false),
   withHandlers({
-    toggle: ({toggle}) => () => toggle((current) => !current),
+    toggle: ({toggle}: StateProps) => () => toggle((current) => !current),
   })
-)(_Relations)
+)(Relations)

@@ -15,8 +15,6 @@ import supercluster from 'points-cluster'
 import type {ContextRouter} from 'react-router-dom'
 import type {NoticesOrdering} from '../components/Notices/NoticeList'
 import type {NoticeDetailProps} from '../components/Notices/NoticeDetail'
-
-import type {CompanyDetailProps} from '../dataWrappers/CompanyDetailWrapper'
 import type {
   State,
   MapOptions,
@@ -34,7 +32,7 @@ export const paramsIdSelector = (_: State, props: ContextRouter): string =>
 export const noticeDetailSelector = (state: State, props: NoticeDetailProps) =>
   props.match.params.id && state.notices.details[props.match.params.id]
 
-export const companyDetailSelector = (state: State, props: CompanyDetailProps): Company | null =>
+export const companyDetailSelector = (state: State, props: {eid: number}): Company | null =>
   props.eid ? state.companies[props.eid.toString()] : null
 
 export const noticesSelector = (state: State) => state.notices.list

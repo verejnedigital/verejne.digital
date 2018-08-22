@@ -7,7 +7,7 @@ import Info from '../shared/Info/Info'
 
 const CompanyDetails = ({company, oldCompany, useNewApi}: CompanyDetailProps) =>
   useNewApi ? (
-    <Info data={company} eid={company.eid} />
+    <Info data={company} />
   ) : (
     <OldInfo data={oldCompany} eid={oldCompany.eid} />
   )
