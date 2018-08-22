@@ -1,7 +1,8 @@
 // @flow
 import React from 'react'
-import {reduce, pickBy, isEmpty, orderBy, padStart, isFinite} from 'lodash'
+import {reduce, isEmpty, orderBy, padStart, isFinite} from 'lodash'
 
+import {pickBy} from '../utils'
 import type {ObjectMap} from '../types/commonTypes'
 import type {Company, NewEntityDetail, CompanyFinancial} from '../state'
 
@@ -114,8 +115,8 @@ export type EnhancedCompanyFinancial = {
 
 export type FinancialData = {
   ico: string,
-  established_on: string,
-  terminated_on: string,
+  established_on?: string,
+  terminated_on?: string,
   finances: Array<EnhancedCompanyFinancial>,
 }
 
@@ -123,7 +124,7 @@ export function getNewFinancialData(data: NewEntityDetail): FinancialData {
   const finances = reduce(
     data.companyfinancials || {},
     (items: Array<EnhancedCompanyFinancial>, origItem: CompanyFinancial, year: string, origObj) => {
-      const item = (pickBy(origItem, isValidValue): CompanyFinancial)
+      const item = pickBy(origItem, isValidValue)
       if (!isEmpty(item)) {
         item.year = parseInt(year, 10)
         if (origObj[item.year - 1]) {
@@ -138,7 +139,7 @@ export function getNewFinancialData(data: NewEntityDetail): FinancialData {
   )
   return {
     ...pickBy(data.companyinfo, isValidValue),
-    ico: padIco(data.companyinfo.ico),
+    ico: padIco(data.companyinfo.ico) || '',
     finances: orderBy(finances, ['year'], ['desc']),
   }
 }
