@@ -130,7 +130,7 @@ const _Content = ({
       />
     </FormGroup>
     {entitySearchModalOpen && <EntitySearch />}
-    {openedAddressId && <AddressDetail addressId={openedAddressId} />}
+    {openedAddressId && <div className="address-detail-wrapper"><AddressDetail addressId={openedAddressId} /></div>}
   </React.Fragment>
 )
 

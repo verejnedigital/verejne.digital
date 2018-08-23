@@ -6,6 +6,7 @@ import {withDataProviders} from 'data-provider'
 import {addressEntitiesProvider} from '../../../../dataProviders/publiclyDataProviders'
 import {addressEntitiesSelector} from '../../../../selectors'
 import {closeAddressDetail} from '../../../../actions/publicActions'
+import {withAutosize} from '../../../../utils'
 import {ListGroup, Button} from 'reactstrap'
 import {map} from 'lodash'
 import ListRow from './ListRow'
@@ -21,16 +22,20 @@ type AddressDetailProps = {|
   entities: Array<Entity>,
   addressId: number,
   onClick: (e: Event) => void,
+  width: number,
+  height: number,
 |}
 
-const AddressDetail = ({entities, addressId, onClick}: AddressDetailProps) => (
+const DETAILS_HEADER_HEIGHT = 37
+
+const AddressDetail = ({entities, addressId, onClick, height}: AddressDetailProps) => (
   <div className="address-detail">
-    <div className="address-detail-header">
+    <div className="address-detail-header" style={{height: DETAILS_HEADER_HEIGHT}}>
       <Button color="link" onClick={onClick}>
         Close detail
       </Button>
     </div>
-    <ListGroup className="address-detail-list">
+    <ListGroup className="address-detail-list" style={{maxHeight: height - DETAILS_HEADER_HEIGHT}}>
       {map(entities, (e) => <ListRow entity={e} key={e.id} />)}
     </ListGroup>
   </div>
@@ -50,5 +55,6 @@ export default compose(
     onClick: ({closeAddressDetail}) => (event) => {
       closeAddressDetail()
     },
-  })
+  }),
+  withAutosize, // Note: Solves auto height for entities list
 )(AddressDetail)

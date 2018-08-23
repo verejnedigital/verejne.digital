@@ -1,6 +1,7 @@
 // @flow
 import React from 'react'
 import Loading from './components/Loading/Loading'
+import {AutoSizer} from 'react-virtualized'
 import {get, set, pickBy as _pickBy} from 'lodash'
 import produce from 'immer'
 import {stringify, parse} from 'qs'
@@ -119,3 +120,11 @@ export const pickBy = <T: {}>(obj: T, predicate: (value: any) => boolean): T => 
 // https://github.com/facebook/flow/issues/2221#issuecomment-372112477
 // there is no nice way to handle object.values in flow currently - use this instead
 export const values = <T>(obj: {[string]: T}): Array<T> => Object.keys(obj).map((k) => obj[k])
+
+export const withAutosize = (BaseComponent) => (props) => (
+  <AutoSizer>
+    {({height, width}) => (height !== 0 && width !== 0) &&
+      <BaseComponent {...props} height={height} witdth={width} />
+    }
+  </AutoSizer>
+)
