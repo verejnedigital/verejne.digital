@@ -31,20 +31,51 @@ import {ENTITY_CLOSE_ZOOM, FIND_ENTITY_TITLE} from '../../../constants'
 import AddressDetail from './../Map/AddressDetail/AddressDetail'
 import PlacesAutocomplete from '../../PlacesAutocomplete/PlacesAutocomplete'
 
-const _DrawerIcon = ({drawerOpen, toggleDrawer}) =>
-  (drawerOpen) ? (
+type DrawerIconProps = {|
+  drawerOpen: boolean,
+  toggleDrawer: () => void,
+|}
+
+type Bound = {|
+  east: number,
+  north: number,
+  west: number,
+  south: number,
+|}
+
+type ContentProps = {
+  autocompleteValue: string,
+  setAutocompleteValue: (value: string) => void,
+  setZoomToLocation: (value: string, id: string) => void,
+  autocompleteOptions: Bound,
+  toggleModalOpen: () => void,
+  toggleDrawer: () => void,
+  openedAddressId: number,
+  entitySearchValue: string,
+  setEntitySearchValue: (e: Event) => void,
+  findEntities: (e: Event) => void,
+}
+
+type SidebarProps = {|
+  toggleDrawer: () => void,
+  closeDrawer: () => void,
+  drawerOpen: boolean,
+  renderDrawer: boolean,
+|}
+
+const _DrawerIcon = ({drawerOpen, toggleDrawer}: DrawerIconProps) =>
+  drawerOpen ? (
     <ArrowLeftIcon onClick={toggleDrawer} className="drawer-handle p-1" />
   ) : (
     <ArrowRightIcon onClick={toggleDrawer} className="drawer-handle p-1" />
   )
 
-const DrawerIcon =
-  connect(
-    (state) => ({
-      drawerOpen: drawerOpenSelector(state),
-    }),
-    {toggleDrawer}
-  )(_DrawerIcon)
+const DrawerIcon = connect(
+  (state) => ({
+    drawerOpen: drawerOpenSelector(state),
+  }),
+  {toggleDrawer}
+)(_DrawerIcon)
 
 const _Content = ({
   autocompleteValue,
@@ -57,7 +88,7 @@ const _Content = ({
   entitySearchValue,
   setEntitySearchValue,
   findEntities,
-}) => (
+}: ContentProps) => (
   <React.Fragment>
     <Form onSubmit={findEntities}>
       <FormGroup>
@@ -107,7 +138,9 @@ const Content = compose(
     {updateValue, zoomToLocation, toggleModalOpen, setEntitySearchFor, toggleDrawer}
   ),
   withHandlers({
-    findEntities: ({toggleModalOpen, setEntitySearchFor, entitySearchValue, toggleDrawer}) => (e) => {
+    findEntities: ({toggleModalOpen, setEntitySearchFor, entitySearchValue, toggleDrawer}) => (
+      e
+    ) => {
       e.preventDefault()
       toggleModalOpen()
       setEntitySearchFor(entitySearchValue)
@@ -116,7 +149,11 @@ const Content = compose(
     setAutocompleteValue: ({updateValue}) => (value) =>
       updateValue(['publicly', 'autocompleteValue'], value, 'Set autocomplete value'),
     setEntitySearchValue: ({updateValue}) => (e) =>
-      updateValue(['publicly', 'entitySearchValue'], (e.target.value), 'Set entity search field value'),
+      updateValue(
+        ['publicly', 'entitySearchValue'],
+        e.target.value,
+        'Set entity search field value'
+      ),
     setZoomToLocation: ({zoomToLocation}) => (value, id) =>
       geocodeByAddress(value)
         .then((results) => getLatLng(results[0]))
@@ -124,14 +161,10 @@ const Content = compose(
   })
 )(_Content)
 
-const Sidebar = ({
-  toggleDrawer,
-  closeDrawer,
-  drawerOpen,
-  renderDrawer,
-}) => (
-  (renderDrawer) ? (
-    <Drawer level={null}
+const Sidebar = ({toggleDrawer, closeDrawer, drawerOpen, renderDrawer}: SidebarProps) =>
+  renderDrawer ? (
+    <Drawer
+      level={null}
       open={drawerOpen}
       onMaskClick={closeDrawer}
       onHandleClick={toggleDrawer}
@@ -145,7 +178,6 @@ const Sidebar = ({
       <Content />
     </div>
   )
-)
 
 export default compose(
   connect(

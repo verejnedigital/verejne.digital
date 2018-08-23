@@ -7,8 +7,8 @@
     bottom: 2rem;
     //width: 11.3rem;
     //height: 10.3rem;
-    border: 1px solid #000;
-    opacity: 0.9;
+    border: 1px solid $border-color;
+    box-shadow: 0 4px 12px 0 $shadow-color;
     &__Header {
         display: flex;
     }

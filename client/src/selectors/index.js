@@ -44,7 +44,7 @@ export const noticesSearchQuerySelector = (state: State) => normalizeName(state.
 export const searchFilteredNoticesSelector = createSelector(
   noticesSelector,
   noticesSearchQuerySelector,
-  (notices: ObjectMap<Notice>, query) => {
+  (notices: ObjectMap<Notice>, query): Array<Notice> => {
     const filteredNotices = filter(notices, (notice) => {
       const similarity =
         notice.kandidati.length > 0 ? Math.round(notice.kandidati[0].score * 100) : '?'
@@ -61,12 +61,13 @@ export const searchFilteredNoticesSelector = createSelector(
     return filteredNotices.length > 0 ? filteredNotices : []
   }
 )
-export const dateSortedNoticesSelector = createSelector(searchFilteredNoticesSelector, (data) =>
-  sortBy(values(data), ['bulletin_year', 'bulletin_month', 'bulletin_day'])
+export const dateSortedNoticesSelector = createSelector(
+  searchFilteredNoticesSelector,
+  (data: Array<Notice>) => sortBy(data, ['bulletin_year', 'bulletin_month', 'bulletin_day'])
 )
-
-export const nameSortedNoticesSelector = createSelector(searchFilteredNoticesSelector, (data) =>
-  sortBy(values(data), ['title'])
+export const nameSortedNoticesSelector = createSelector(
+  searchFilteredNoticesSelector,
+  (data: Array<Notice>) => sortBy(data, ['title'])
 )
 
 export const locationSearchSelector = (_: State, props: ContextRouter) =>

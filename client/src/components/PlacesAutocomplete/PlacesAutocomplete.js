@@ -32,6 +32,7 @@ const PlacesAutocomplete = (props: Props) => {
       onSelect={onSelect}
       onError={onErrorBinded}
       searchOptions={searchOptions}
+      googleCallbackName="placesAutocompleteCallback"
     >
       {({getInputProps, suggestions, getSuggestionItemProps}) => (
         <div className="autocomplete">

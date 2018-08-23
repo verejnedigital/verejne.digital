@@ -110,23 +110,27 @@ export type CompanyStat = {
   zamestnanci2015: string,
 }
 
+export type IcoSource = Array<{
+  ico: number,
+}>
+
 export type Company = {
   id: number,
   eid: number,
-  zrsr_data: Array<any>,
+  zrsr_data: IcoSource,
   company_stats: Array<CompanyStat>,
   contracts: Array<any>,
-  new_orsr_data: Array<any>,
+  new_orsr_data: IcoSource,
   sponzori_stran_data: Array<any>,
   related: Array<any>,
   auditori_data: Array<any>,
   audiovizfond_data: Array<any>,
   entities: Array<CompanyEntity>,
-  firmy_data: Array<any>,
+  firmy_data: IcoSource,
   total_contracts: number,
   advokati_data: Array<any>,
   nadacie_data: Array<any>,
-  orsresd_data: Array<any>,
+  orsresd_data: IcoSource,
   politicians_data: Array<any>,
   stranicke_prispevky_data: Array<any>,
   uzivatelia_vyhody_ludia_data: Array<any>,
@@ -287,7 +291,7 @@ export type NewEntityDetail = {
     [year: number]: CompanyFinancial,
   },
   companyinfo: {
-    ico: number,
+    ico: string,
     established_on: string,
     terminated_on: string,
   },

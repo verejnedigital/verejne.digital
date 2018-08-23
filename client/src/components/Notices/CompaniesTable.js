@@ -2,13 +2,19 @@ import React from 'react'
 import {compose, branch, renderNothing} from 'recompose'
 import {Table} from 'reactstrap'
 import Company from './Company'
+
+import type {Notice} from '../../state'
+
 import './CompaniesTable.css'
 
-const _CompaniesTable = ({item}) => {
+type Props = {|
+  item: Notice,
+|}
+
+const _CompaniesTable = ({item}: Props) => {
   if (item === null) {
     return null
   }
-
   return (
     <Table key="companies" responsive className="companies-table" borderless>
       <thead className="companies-table-header">
