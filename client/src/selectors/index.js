@@ -3,6 +3,7 @@ import {createSelector} from 'reselect'
 import qs from 'qs'
 import {
   clusterOptions,
+  clusterOptionsCloser,
   ENTITY_ZOOM,
   SUB_CITY_ZOOM,
   CITY_ZOOM,
@@ -146,7 +147,8 @@ type EntitiesRequestParams = {
 }
 
 const getClusters = (mapOptions: MapOptions, addresses): Array<SuperCluster> => {
-  const clusters = supercluster(addresses, clusterOptions)
+  const _clusterOptions = (mapOptions.zoom > 18) ? clusterOptionsCloser : clusterOptions
+  const clusters = supercluster(addresses, _clusterOptions)
   return clusters(mapOptions)
 }
 
