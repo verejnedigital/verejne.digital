@@ -163,6 +163,7 @@ const Content = compose(
     setAutocompleteValue: ({updateValue}) => (value) =>
       updateValue(['publicly', 'autocompleteValue'], value, 'Set autocomplete value'),
     setEntitySearchValue: ({updateValue}) => (e) =>
+<<<<<<< HEAD
       updateValue(
         ['publicly', 'entitySearchValue'],
         e.target.value,
@@ -172,6 +173,15 @@ const Content = compose(
       geocodeByAddress(value)
         .then((results) => getLatLng(results[0]))
         .then((location) => zoomToLocation(location, ENTITY_CLOSE_ZOOM)),
+=======
+      updateValue(['publicly', 'entitySearchValue'], (e.target.value), 'Set entity search field value'),
+    setZoomToLocation: ({zoomToLocation, updateValue}) => (value, id) => {
+      updateValue(['publicly', 'autocompleteValue'], value, 'Set autocomplete value')
+      geocodeByAddress(value)
+        .then((results) => getLatLng(results[0]))
+        .then((location) => zoomToLocation(location, ENTITY_CLOSE_ZOOM))
+    },
+>>>>>>> autocomplete now gets the value of selected item
   })
 )(_Content)
 
