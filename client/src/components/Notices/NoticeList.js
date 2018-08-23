@@ -9,7 +9,6 @@ import {noticesProvider} from '../../dataProviders/noticesDataProviders'
 import {
   newestBulletinDateSelector,
   dateSortedNoticesSelector,
-  paginationSelector,
   noticesLengthSelector,
   locationSearchSelector,
   noticesSearchQuerySelector,
@@ -33,7 +32,6 @@ export type NoticeListProps = {
   dispatch: Dispatch,
   newestBulletinDate: string,
   dateSortedNotices: Array<Notice>,
-  currentPage: number,
   noticesLength: number,
   query: Object,
   searchValue: string,
@@ -44,7 +42,6 @@ const NoticeList = ({
   dispatch,
   newestBulletinDate,
   dateSortedNotices,
-  currentPage,
   noticesLength,
   location,
   history,
@@ -126,7 +123,6 @@ export default compose(
   connect(
     (state: State, props: NoticeListProps) => ({
       dateSortedNotices: dateSortedNoticesSelector(state, props),
-      currentPage: paginationSelector(state, props),
       noticesLength: noticesLengthSelector(state, props),
       newestBulletinDate: newestBulletinDateSelector(state, props),
       query: locationSearchSelector(state, props),
