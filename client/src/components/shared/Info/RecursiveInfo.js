@@ -3,19 +3,19 @@ import React from 'react'
 import CompanyDetails from '../CompanyDetails'
 import {compose, withState, withHandlers} from 'recompose'
 import {Button} from 'reactstrap'
-import type {stateUpdater} from '../../../types/commonTypes'
+import type {StateUpdater} from '../../../types/commonTypes'
 import './RecursiveInfo.css'
 
-type RecursiveInfoProps = {
+type RecursiveInfoProps = {|
   name: string,
   eid: number,
   useNewApi: boolean,
   toggledOn: boolean,
   toggle: () => void,
-}
+|}
 type StateProps = {
   toggledOn: boolean,
-  toggle: stateUpdater<boolean>,
+  toggle: StateUpdater<boolean>,
 }
 
 const RecursiveInfo = ({name, eid, useNewApi, toggledOn, toggle}: RecursiveInfoProps) => {

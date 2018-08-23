@@ -6,9 +6,9 @@ import ExternalLink from '../ExternalLink'
 import {ShowNumberCurrency} from '../../../services/utilities'
 import type {Eufunds, Eufund} from '../../../state'
 
-type EurofundsProps = {
+type EurofundsProps = {|
   data: Eufunds,
-}
+|}
 
 const Eurofunds = ({data}: EurofundsProps) => (
   <InfoButton
