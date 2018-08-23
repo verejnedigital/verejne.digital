@@ -2,18 +2,18 @@
 import React from 'react'
 import CircleIcon from 'react-icons/lib/fa/circle-o'
 import FilledCircleIcon from 'react-icons/lib/fa/circle'
-import {withState} from 'recompose'
+import {compose, withState, withHandlers} from 'recompose'
 import {FACEBOOK_LIKE_SRC} from '../../../constants'
 import './Legend.css'
 import MapIcon from '../../../assets/mapIcon.svg'
 
 type Props = {
   legendOpen: boolean,
-  setLegendOpen: (open: boolean) => void,
+  toggleLegend: (open: boolean) => void,
 }
 
-const Legend = ({legendOpen, setLegendOpen}: Props) => (
-  (legendOpen) ? (
+const Legend = ({legendOpen, toggleLegend}: Props) =>
+  legendOpen ? (
     <div className="legend">
       <div className="legend__header">
         <iframe
@@ -24,13 +24,11 @@ const Legend = ({legendOpen, setLegendOpen}: Props) => (
           frameBorder="0"
           title="Facebook"
         />
-        <button type="button" className="close" onClick={() => setLegendOpen(false)}>
+        <button type="button" className="close" onClick={toggleLegend}>
           <span>&times;</span>
         </button>
       </div>
-      <p>
-        Legenda
-      </p>
+      <p>Legenda</p>
       <p>
         <CircleIcon className="svg" />
         Firma / Osoba
@@ -57,10 +55,14 @@ const Legend = ({legendOpen, setLegendOpen}: Props) => (
       </p>
     </div>
   ) : (
-    <button type="button" className="legend" onClick={() => setLegendOpen(true)}>
+    <button type="button" className="legend" onClick={toggleLegend}>
       Legenda
     </button>
   )
-)
 
-export default withState('legendOpen', 'setLegendOpen', true)(Legend)
+export default compose(
+  withState('legendOpen', 'setLegendOpen', true),
+  withHandlers({
+    toggleLegend: ({setLegendOpen}) => (e) => setLegendOpen((current) => !current),
+  })
+)(Legend)
