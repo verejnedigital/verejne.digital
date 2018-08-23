@@ -28,6 +28,21 @@ import {updateValue} from '../../../actions/sharedActions'
 import {FIND_ENTITY_TITLE} from '../../../constants'
 import './EntitySearch.css'
 
+type EntitySearchProps = {|
+  entitySearchModalOpen: boolean,
+  toggleModalOpen: () => void,
+  className: string,
+  entitySearchValue: string,
+  setEntitySearchValue: (updateValue: string) => void,
+  findEntities: (setEntitySearchFor: Function, entitySearchValue: string) => void,
+  entitySearchEids: Array<number>,
+  entitySearchFor: string,
+|}
+
+type PluralityProps = {
+  count: number,
+}
+
 const EntitySearch = ({
   entitySearchModalOpen,
   toggleModalOpen,
@@ -37,8 +52,8 @@ const EntitySearch = ({
   findEntities,
   entitySearchEids,
   entitySearchFor,
-}) => {
-  const plurality = (count) => {
+}: EntitySearchProps) => {
+  const plurality = ({count}: PluralityProps) => {
     if (count === 1) {
       return `Nájdený ${count} výsledok`
     } else if (count > 1 && count < 5) {

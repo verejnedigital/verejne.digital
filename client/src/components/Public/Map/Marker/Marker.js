@@ -11,7 +11,7 @@ type Props = {
   onClick?: () => void,
 }
 
-const Marker = ({className, title, children, onClick}: Props) => (
+const Marker = ({className, children, onClick}: Props) => (
   <div className={classnames('marker', className)} onClick={onClick}>
     {children}
   </div>
