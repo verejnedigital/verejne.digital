@@ -53,7 +53,7 @@ export const entitiesSearchResultEidsProvider = (query: string) => {
     ref: query,
     getData: [
       fetch,
-      `${process.env.REACT_APP_API_URL || ''}/api/v/searchEntity?text=${query}`,
+      `${process.env.REACT_APP_API_URL || ''}/api/v/searchEntityByName?name=${query}`,
       {
         accept: 'application/json',
       },

@@ -33,11 +33,11 @@ export const setEntities = (
   }),
 })
 
-export const setEntityDetail = (entityDetail: NewEntityDetail, eid: number) => ({
-  type: 'Set entity detail',
-  path: ['entityDetails', eid],
-  payload: entityDetail,
-  reducer: () => entityDetail,
+export const setEntityDetails = (entityDetails: ObjectMap<NewEntityDetail>) => ({
+  type: 'Set entity details',
+  path: ['entityDetails'],
+  payload: entityDetails,
+  reducer: (state: ObjectMap<NewEntityDetail>) => ({...state, ...entityDetails}),
 })
 
 export const setMapOptions = (mapOptions: MapOptions) => ({

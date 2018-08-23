@@ -1,10 +1,11 @@
 // @flow
 import React from 'react'
 import {receiveData} from '../actions/sharedActions'
-import {setEntityDetail} from '../actions/publicActions'
+import {setEntityDetails} from '../actions/publicActions'
 import {EntityDetailLoading} from '../components/Loading/Loading'
 import type {Company, NewEntityDetail} from '../state'
 import type {Dispatch} from '../types/reduxTypes'
+import type {ObjectMap} from '../types/commonTypes'
 
 const dispatchCompanyDetails = (eid: number) => (
   ref: string,
@@ -14,12 +15,12 @@ const dispatchCompanyDetails = (eid: number) => (
   dispatch(receiveData(['companies'], {id: eid, eid, ...data}, ref))
 }
 
-const dispatchEntityDetail = (eid: number) => (
+const dispatchEntityDetails = () => (
   ref: string,
-  data: NewEntityDetail,
+  data: ObjectMap<NewEntityDetail>,
   dispatch: Dispatch
 ) => {
-  dispatch(setEntityDetail(data[eid], eid))
+  dispatch(setEntityDetails(data))
 }
 
 export const companyDetailProvider = (eid: number, needed: boolean = true) => {
@@ -38,18 +39,19 @@ export const companyDetailProvider = (eid: number, needed: boolean = true) => {
   }
 }
 
-export const entityDetailProvider = (eid: number, needed: boolean = true) => {
+export const entityDetailProvider = (eids: number | number[], needed: boolean = true) => {
   const requestPrefix = `${process.env.REACT_APP_API_URL || ''}`
+  const query = eids instanceof Array ? eids.join() : eids
   return {
-    ref: `entityDetail-${eid}`,
+    ref: `entityDetail-${query}`,
     getData: [
       fetch,
-      `${requestPrefix}/api/v/getInfos?eids=${eid}`,
+      `${requestPrefix}/api/v/getInfos?eids=${query}`,
       {
         accept: 'application/json',
       },
     ],
-    onData: [dispatchEntityDetail, eid],
+    onData: [dispatchEntityDetails],
     keepAliveFor: 60 * 60 * 1000,
     loadingComponent: <EntityDetailLoading />,
     needed,
