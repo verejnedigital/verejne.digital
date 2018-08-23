@@ -122,6 +122,11 @@ export const addressEntitiesSelector = createSelector(
   (entities, addressId) => filter(entities, (entity) => entity.addressId === addressId)
 )
 
+export const addressEntitiesIdsSelector = createSelector(
+  addressEntitiesSelector,
+  (entities) => values(entities).map((v) => v.id) : []
+)
+
 type SuperCluster = {
   numPoints: number,
   points: Array<CompanyEntity>,
