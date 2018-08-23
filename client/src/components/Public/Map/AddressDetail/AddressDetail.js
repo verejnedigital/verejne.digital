@@ -11,7 +11,19 @@ import {map} from 'lodash'
 import ListRow from './ListRow'
 import './AddressDetail.css'
 
-const AddressDetail = ({entities, addressId, onClick}) => (
+type Entity = {
+  addressId: number,
+  id: number,
+  name: string,
+}
+
+type AddressDetailProps = {|
+  entities: Array<Entity>,
+  addressId: number,
+  onClick: (e: Event) => void,
+|}
+
+const AddressDetail = ({entities, addressId, onClick}: AddressDetailProps) => (
   <div className="address-detail">
     <div className="address-detail-header">
       <Button color="link" onClick={onClick}>

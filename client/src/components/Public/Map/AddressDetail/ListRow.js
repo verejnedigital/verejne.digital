@@ -15,13 +15,24 @@ import {updateValue} from '../../../../actions/sharedActions'
 import {entityDetailProvider} from '../../../../dataProviders/sharedDataProviders'
 import {entityDetailSelector} from '../../../../selectors'
 import Info from '../../../shared/Info/Info'
+
+import type {NewEntityDetail} from '../../../../state'
+
 import './ListRow.css'
 
-const _DetailedInfo = ({toggleEntityInfo, data}) => (
+
+type DetailedInfoProps = {|
+  toggleEntityInfo: (id: number) => void,
+  data: NewEntityDetail,
+|}
+
+const _DetailedInfo = ({toggleEntityInfo, data}: DetailedInfoProps) => {
+  console.log(data, 'detailedinfo')
+  return(
   <ListGroupItem action className="list-row">
     <Info data={data} canClose onClose={toggleEntityInfo} />
   </ListGroupItem>
-)
+)}
 
 const DetailedInfo = compose(
   connect(
