@@ -89,7 +89,7 @@ const _Content = ({
   autocompleteOptions,
   toggleModalOpen,
   toggleDrawer,
-  openedAddressId,
+  openedAddressIds,
   entitySearchValue,
   setEntitySearchValue,
   findEntities,
@@ -130,9 +130,8 @@ const _Content = ({
         className="form-control"
       />
     </FormGroup>
-
     {entitySearchModalOpen && <EntitySearch />}
-    {openedAddressId && <AddressDetail addressId={openedAddressId} />}
+    {(openedAddressIds != null && openedAddressIds.length !== 0) && <AddressDetail addressIds={openedAddressIds} />}
   </React.Fragment>
 )
 
@@ -141,7 +140,7 @@ const Content = compose(
     (state) => ({
       autocompleteValue: autocompleteValueSelector(state),
       autocompleteOptions: autocompleteOptionsSelector(state),
-      openedAddressId: openedAddressDetailSelector(state),
+      openedAddressIds: openedAddressDetailSelector(state),
       entitySearchValue: entitySearchValueSelector(state),
       entitySearchModalOpen: entitySearchModalOpenSelector(state),
     }),

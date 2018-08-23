@@ -45,7 +45,7 @@ export default compose(
       closeAddressDetail,
     }
   ),
-  withDataProviders(({addressId}) => flatten(addressId.map((singleId) => [addressEntitiesProvider(singleId)]))),
+  withDataProviders(({addressIds}) => flatten(addressIds.map((singleId) => [addressEntitiesProvider(singleId)]))),
   withHandlers({
     onClick: ({closeAddressDetail}) => (event) => {
       closeAddressDetail()

@@ -92,10 +92,10 @@ export const toggleEntityInfo = (eid: number) => ({
   reducer: (open: boolean): boolean => !open,
 })
 
-export const openAddressDetail = (addressId: Array<number>) => ({
+export const openAddressDetail = (addressIds: Array<number>) => ({
   type: 'Open address detail',
   path: ['publicly', 'openedAddressDetail'],
-  reducer: () => addressId,
+  reducer: () => addressIds,
 })
 
 export const closeAddressDetail = () => ({

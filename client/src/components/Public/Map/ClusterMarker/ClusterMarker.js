@@ -21,7 +21,7 @@ type ClusterMarkerProps = {
   zoomToLocation: ({lat: number, lng: number}) => Thunk,
   cluster: MapCluster,
   onClick: () => void,
-  openedAddressId: Array<number>,
+  openedAddressIds: Array<number>,
 }
 
 const ClusterMarker = ({
@@ -30,10 +30,10 @@ const ClusterMarker = ({
   selectEntity,
   zoomToLocation,
   onClick,
-  openedAddressId,
+  openedAddressIds,
 }: ClusterMarkerProps) => {
   let className, children
-  const selected = cluster.numPoints === 1 && openedAddressId.includes(cluster.points[0].address_id)
+  const selected = cluster.numPoints === 1 && openedAddressIds.includes(cluster.points[0].address_id)
   if (zoom < ENTITY_ZOOM) {
     className = cluster.isLabel || (cluster.numPoints === 1)
       ? 'simple-marker'
@@ -59,7 +59,7 @@ const ClusterMarker = ({
 export default compose(
   connect(
     (state) => ({
-      openedAddressId: openedAddressDetailSelector(state),
+      openedAddressIds: openedAddressDetailSelector(state),
       zoom: zoomSelector(state),
     }),
     {

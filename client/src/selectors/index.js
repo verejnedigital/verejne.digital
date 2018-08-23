@@ -109,7 +109,7 @@ export const entityDetailSelector = (state: State, eid: number): NewEntityDetail
 export const addressEntitiesSelector = createSelector(
   entitiesSelector,
   openedAddressDetailSelector,
-  (entities, addressId : Array<number>) => filter(entities, (entity) => addressId.includes(entity.addressId))
+  (entities, addressIds : Array<number>) => filter(entities, (entity) => addressIds.includes(entity.addressId))
 )
 
 export const useLabelsSelector = createSelector(
