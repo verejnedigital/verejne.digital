@@ -4,14 +4,14 @@ import {CardImg, CardBody, CardTitle, CardText} from 'reactstrap'
 import {Link} from 'react-router-dom'
 import './Card.css'
 
-type CardProps = {
+type CardProps = {|
   title: string,
   text: string,
   imgSrc: string,
   to: string,
-}
+|}
 
-export default ({title, text, imgSrc, to}: CardProps) => (
+const Card = ({title, text, imgSrc, to}: CardProps) => (
   <Link to={to} className="card">
     <div className="card-image-wrap">
       <CardImg className="card-image" src={imgSrc} alt={title} />
@@ -22,3 +22,5 @@ export default ({title, text, imgSrc, to}: CardProps) => (
     </CardBody>
   </Link>
 )
+
+export default Card
