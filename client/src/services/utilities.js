@@ -139,7 +139,7 @@ export function getNewFinancialData(data: NewEntityDetail): FinancialData {
   )
   return {
     ...pickBy(data.companyinfo, isValidValue),
-    ico: padIco(data.companyinfo.ico) || '',
+    ico: padIco(data.companyinfo.ico),
     finances: orderBy(finances, ['year'], ['desc']),
   }
 }
@@ -168,7 +168,8 @@ export function showRelationType(typeId: number, typeText: string) {
 }
 
 function padIco(ico?: number | string) {
-  return ico != null ? padStart(ico.toString(), 8, '0') : null
+  // TODO remove null checks when `extractIco` is removed
+  return ico != null ? padStart(ico.toString(), 8, '0') : ''
 }
 
 export function extractIco(data: Company) {
