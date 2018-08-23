@@ -4,9 +4,19 @@ import './LegendSymbols.css'
 import NoticeItem from './NoticeItem'
 import {Table} from 'reactstrap'
 import ExternalLink from '../shared/ExternalLink'
+
+import type {Notice} from '../../state'
+
 import './Bulletin.css'
 
-const Bulletin = ({items, number, year, date}) => (
+type Props = {|
+  items: Array<Notice>,
+  number: number,
+  year: number,
+  date: string,
+|}
+
+const Bulletin = ({items, number, year, date}: Props) => (
   <div className="bulletin">
     <h3 className="bulletin-title">
       <strong>{date}</strong>

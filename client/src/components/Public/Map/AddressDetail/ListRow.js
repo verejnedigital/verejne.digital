@@ -26,13 +26,11 @@ type DetailedInfoProps = {|
   data: NewEntityDetail,
 |}
 
-const _DetailedInfo = ({toggleEntityInfo, data}: DetailedInfoProps) => {
-  console.log(data, 'detailedinfo')
-  return(
+const _DetailedInfo = ({toggleEntityInfo, data}: DetailedInfoProps) => (
   <ListGroupItem action className="list-row">
     <Info data={data} canClose onClose={toggleEntityInfo} />
   </ListGroupItem>
-)}
+)
 
 const DetailedInfo = compose(
   connect(
