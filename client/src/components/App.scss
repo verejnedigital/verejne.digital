@@ -1,4 +1,10 @@
 @import "./variables.scss";
-.application-container {
-  margin-top: $navbar-height;
+
+html, body, #root, .application-container {
+  height: 100%;
+}
+
+.screen-container {
+  height: calc(100% - #{$navbar-height});
+  overflow: auto;
 }
