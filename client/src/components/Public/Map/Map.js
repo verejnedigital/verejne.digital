@@ -24,10 +24,10 @@ import {
   DEFAULT_MAP_CENTER,
   COUNTRY_ZOOM,
   WORLD_ZOOM,
-  SLOVAKIA_OKRESY,
-  SLOVAKIA_KRAJE,
+  SLOVAKIA_DISTRICT,
+  SLOVAKIA_REGION,
   SLOVAKIA_COORDINATES,
-  OKRESY_ZOOM,
+  DISTRICT_ZOOM,
   SLOVAKIA_BOUNDS,
 } from '../../../constants'
 import {withSideEffects} from '../../../utils'
@@ -63,26 +63,29 @@ const Map = ({useLabels, zoom, center, clusters, onChange}: Props) => {
         id: 'SLOVAKIA',
         points: [],
         setZoomTo: COUNTRY_ZOOM,
+        isLabel: true,
       }]
     } else {
       if (zoom <= COUNTRY_ZOOM) {
-        finalClusters = SLOVAKIA_KRAJE.map((e) => ({
-          lat: e.centroid[1],
-          lng: e.centroid[0],
+        finalClusters = SLOVAKIA_REGION.map((region) => ({
+          lat: region.centroid[1],
+          lng: region.centroid[0],
           numPoints: 0,
-          id: e.name,
+          id: region.name,
           points: [],
-          setZoomTo: OKRESY_ZOOM,
+          setZoomTo: DISTRICT_ZOOM,
+          isLabel: true,
         })
         )
       } else {
-        finalClusters = SLOVAKIA_OKRESY.map((e) => ({
-          lat: e.centroid[1],
-          lng: e.centroid[0],
+        finalClusters = SLOVAKIA_DISTRICT.map((district) => ({
+          lat: district.centroid[1],
+          lng: district.centroid[0],
           numPoints: 0,
-          id: e.name,
+          id: district.name,
           points: [],
           setZoomTo: CITY_ZOOM,
+          isLabel: true,
         })
         )
       }
@@ -98,7 +101,7 @@ const Map = ({useLabels, zoom, center, clusters, onChange}: Props) => {
             zoom={zoom}
             lat={cluster.lat}
             lng={cluster.lng}
-            useName={useLabels}
+            MarkerLabel={cluster.isLabel || cluster.numPoints}
           />
         ))}
       </GoogleMap>
@@ -132,19 +135,8 @@ export default compose(
     clusters: clustersSelector(state),
     addressesUrl: addressesUrlSelector(state),
   })),
-  withProps((props) => {
-    return {
-      useLabels: !(props.zoom >= CITY_ZOOM ||
-  !isInSlovakia(props.center)),
-    }
-  }),
-  withDataProviders(({useLabels, addressesUrl}) => {
-    if (!useLabels) {
-      return [addressesProvider(addressesUrl)]
-    } else {
-      return []
-    }
-  }),
+  withProps((props) => ({useLabels: (props.zoom < CITY_ZOOM && isInSlovakia(props.center))})),
+  withDataProviders(({useLabels, addressesUrl}) => useLabels ? [] : [addressesProvider(addressesUrl)]),
   withHandlers({
     onChange: (props) => (options) => {
       const newOptions = {zoom: options.zoom,

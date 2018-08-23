@@ -22,7 +22,7 @@ type ClusterMarkerProps = {
   cluster: MapCluster,
   onClick: () => void,
   openedAddressId: number,
-  useName: boolean,
+  MarkerLabel: boolean | number,
 }
 
 const ClusterMarker = ({
@@ -32,14 +32,17 @@ const ClusterMarker = ({
   zoomToLocation,
   onClick,
   openedAddressId,
-  useName,
+  MarkerLabel,
 }: ClusterMarkerProps) => {
-  const MarkerText = <span className="marker__text">{useName ? cluster.id : cluster.numPoints}</span>
   let className, children
   const selected = cluster.numPoints === 1 && cluster.points[0].address_id === openedAddressId
   if (zoom < ENTITY_ZOOM) {
-    className = useName ? 'map-label' : cluster.numPoints === 1 ? 'simple-marker' : 'cluster-marker'
-    children = cluster.numPoints !== 1 && MarkerText
+    className = (MarkerLabel === true)
+      ? 'simple-marker'
+      : cluster.numPoints === 1
+        ? 'simple-marker'
+        : 'cluster-marker'
+    children = cluster.numPoints !== 1 && <span className="marker__text">{MarkerLabel}</span>
   } else {
     //TODO: fix classnames after the api provides enough information
     className = classnames({
@@ -47,7 +50,7 @@ const ClusterMarker = ({
       'cluster-marker': cluster.numPoints > 1,
       'government': cluster.points[0].tradewithgovernment,
     })
-    children = cluster.numPoints === 1 ? <FaIconCircle size="18" /> : MarkerText
+    children = cluster.numPoints === 1 ? <FaIconCircle size="18" /> : <span className="marker__text">{MarkerLabel}</span>
   }
   className = classnames(className, {selected})
   return (
