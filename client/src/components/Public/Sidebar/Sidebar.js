@@ -30,15 +30,18 @@ import AddressDetail from './../Map/AddressDetail/AddressDetail'
 import PlacesAutocomplete from '../../PlacesAutocomplete/PlacesAutocomplete'
 
 const _DrawerIcon = ({drawerOpen, toggleDrawer}) =>
-  (drawerOpen ? <ArrowLeftIcon onClick={toggleDrawer} className="drawer-handle p-1"/> :
-    <ArrowRightIcon onClick={toggleDrawer} className="drawer-handle p-1" />)
+  drawerOpen ? (
+    <ArrowLeftIcon onClick={toggleDrawer} className="drawer-handle p-1" />
+  ) : (
+    <ArrowRightIcon onClick={toggleDrawer} className="drawer-handle p-1" />
+  )
 
-const DrawerIcon =
-  connect( (state) => ({
-      drawerOpen: drawerOpenSelector(state),
+const DrawerIcon = connect(
+  (state) => ({
+    drawerOpen: drawerOpenSelector(state),
   }),
-    {toggleDrawer}
-  )(_DrawerIcon)
+  {toggleDrawer}
+)(_DrawerIcon)
 
 const _Content = ({
   autocompleteValue,
@@ -88,42 +91,46 @@ const Content = compose(
     {updateValue, zoomToLocation, toggleModalOpen, setEntitySearchFor, toggleDrawer}
   ),
   withHandlers({
-    findEntities: ({toggleModalOpen, setEntitySearchFor, entitySearchValue, toggleDrawer}) => (e) => {
+    findEntities: ({toggleModalOpen, setEntitySearchFor, entitySearchValue, toggleDrawer}) => (
+      e
+    ) => {
       e.preventDefault()
       toggleModalOpen()
       setEntitySearchFor(entitySearchValue)
       toggleDrawer()
     },
     setAutocompleteValue: ({updateValue}) => (value) =>
-    updateValue(['publicly', 'autocompleteValue'], value, 'Set autocomplete value'),
+      updateValue(['publicly', 'autocompleteValue'], value, 'Set autocomplete value'),
     setEntitySearchValue: ({updateValue}) => (e) =>
-    updateValue(['publicly', 'entitySearchValue'], (e.target.value), 'Set entity search field value'),
+      updateValue(
+        ['publicly', 'entitySearchValue'],
+        e.target.value,
+        'Set entity search field value'
+      ),
     setZoomToLocation: ({zoomToLocation}) => (value, id) =>
-    geocodeByAddress(value)
-    .then((results) => getLatLng(results[0]))
-    .then((location) => zoomToLocation(location, ENTITY_CLOSE_ZOOM)),
+      geocodeByAddress(value)
+        .then((results) => getLatLng(results[0]))
+        .then((location) => zoomToLocation(location, ENTITY_CLOSE_ZOOM)),
   })
 )(_Content)
 
-const Sidebar = ({
-  toggleDrawer,
-  closeDrawer,
-  drawerOpen,
-  renderDrawer,
-}) => (
-  renderDrawer ? <Drawer level={null}
-    open={drawerOpen}
-    onMaskClick={closeDrawer}
-    onHandleClick={toggleDrawer}
-    width="90%"
-    handler={<DrawerIcon/>}
-  >
-    <Content />
-  </Drawer> :
-  <div className="verejne-side-panel">
-    <Content />
-  </div>
-)
+const Sidebar = ({toggleDrawer, closeDrawer, drawerOpen, renderDrawer}) =>
+  renderDrawer ? (
+    <Drawer
+      level={null}
+      open={drawerOpen}
+      onMaskClick={closeDrawer}
+      onHandleClick={toggleDrawer}
+      width="90%"
+      handler={<DrawerIcon />}
+    >
+      <Content />
+    </Drawer>
+  ) : (
+    <div className="verejne-side-panel">
+      <Content />
+    </div>
+  )
 
 export default compose(
   connect(
