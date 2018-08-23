@@ -44,12 +44,12 @@ type HandlerProps = {
 
 type InfoProps = OwnProps & DispatchProps & HandlerProps
 
-type ItemProps = {
+type ItemProps = {|
   children?: Node,
   label?: string,
   url?: string,
   linkText?: Node,
-}
+|}
 
 const Item = ({children, label, url, linkText}: ItemProps) => (
   <li className="info-item">

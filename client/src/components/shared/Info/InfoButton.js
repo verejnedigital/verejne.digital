@@ -8,11 +8,11 @@ import type {Node} from 'react'
 
 import {ShowNumberCurrency} from '../../../services/utilities'
 import type {Contract, NoticeNew, Eufund} from '../../../state'
-import type {stateUpdater} from '../../../types/commonTypes'
+import type {StateUpdater} from '../../../types/commonTypes'
 
 import './InfoButton.css'
 
-type InfoButtonProps<T> = {
+type InfoButtonProps<T> = {|
   label: string,
   count: number,
   priceSum: number,
@@ -20,10 +20,10 @@ type InfoButtonProps<T> = {
   buildItem: (T, number, Array<T>) => Node,
   toggledOn: boolean,
   toggle: () => void,
-}
+|}
 type StateProps = {
   toggledOn: boolean,
-  toggle: stateUpdater<boolean>,
+  toggle: StateUpdater<boolean>,
 }
 
 const InfoButton = ({

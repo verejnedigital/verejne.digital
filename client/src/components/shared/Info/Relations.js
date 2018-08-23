@@ -9,18 +9,18 @@ import {orderBy} from 'lodash'
 import RecursiveInfo from './RecursiveInfo'
 import {showRelationType} from '../../../services/utilities'
 import type {RelatedEntity} from '../../../state'
-import type {stateUpdater} from '../../../types/commonTypes'
+import type {StateUpdater} from '../../../types/commonTypes'
 import './InfoButton.css'
 
-type RelationsProps = {
+type RelationsProps = {|
   data: Array<RelatedEntity>,
   useNewApi: boolean,
   toggledOn: boolean,
   toggle: () => void,
-}
+|}
 type StateProps = {
   toggledOn: boolean,
-  toggle: stateUpdater<boolean>,
+  toggle: StateUpdater<boolean>,
 }
 
 const Relations = ({data, useNewApi, toggledOn, toggle}: RelationsProps) => {

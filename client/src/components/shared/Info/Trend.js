@@ -2,9 +2,9 @@
 import React from 'react'
 import './Trend.css'
 
-type TrendProps = {
+type TrendProps = {|
   trend: number,
-}
+|}
 
 const Trend = ({trend}: TrendProps) => {
   let colorStyle
