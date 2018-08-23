@@ -7,7 +7,7 @@ import classnames from 'classnames'
 
 import {ENTITY_ZOOM, ENTITY_CLOSE_ZOOM} from '../../../../constants'
 import {openAddressDetail, zoomToLocation, setDrawer, setModal} from '../../../../actions/publicActions'
-import {openedAddressDetailSelector} from '../../../../selectors'
+import {zoomSelector, openedAddressDetailSelector} from '../../../../selectors'
 import Marker from '../Marker/Marker'
 import './ClusterMarker.css'
 
@@ -21,7 +21,7 @@ type ClusterMarkerProps = {
   zoomToLocation: ({lat: number, lng: number}) => Thunk,
   cluster: MapCluster,
   onClick: () => void,
-  openedAddressId: number,
+  openedAddressId: Array<number>,
 }
 
 const ClusterMarker = ({
@@ -33,7 +33,7 @@ const ClusterMarker = ({
   openedAddressId,
 }: ClusterMarkerProps) => {
   let className, children
-  const selected = cluster.numPoints === 1 && cluster.points[0].address_id === openedAddressId
+  const selected = cluster.numPoints === 1 && openedAddressId.includes(cluster.points[0].address_id)
   if (zoom < ENTITY_ZOOM) {
     className = cluster.isLabel || (cluster.numPoints === 1)
       ? 'simple-marker'
@@ -60,6 +60,7 @@ export default compose(
   connect(
     (state) => ({
       openedAddressId: openedAddressDetailSelector(state),
+      zoom: zoomSelector(state),
     }),
     {
       openAddressDetail,
@@ -71,7 +72,7 @@ export default compose(
   withHandlers({
     onClick: ({cluster, zoomToLocation, openAddressDetail, setDrawer, setModal}) => (event) => {
       if (cluster.numPoints === 1) {
-        openAddressDetail(cluster.points[0].address_id)
+        openAddressDetail([cluster.points[0].address_id])
         setDrawer(true)
         setModal(false)
         zoomToLocation({lat: cluster.lat, lng: cluster.lng}, ENTITY_CLOSE_ZOOM)

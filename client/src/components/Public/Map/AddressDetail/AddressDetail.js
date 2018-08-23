@@ -7,7 +7,7 @@ import {addressEntitiesProvider} from '../../../../dataProviders/publiclyDataPro
 import {addressEntitiesSelector} from '../../../../selectors'
 import {closeAddressDetail} from '../../../../actions/publicActions'
 import {ListGroup, Button} from 'reactstrap'
-import {map} from 'lodash'
+import {map, flatten} from 'lodash'
 import ListRow from './ListRow'
 import './AddressDetail.css'
 
@@ -45,7 +45,7 @@ export default compose(
       closeAddressDetail,
     }
   ),
-  withDataProviders(({addressId}) => [addressEntitiesProvider(addressId)]),
+  withDataProviders(({addressId}) => flatten(addressId.map((singleId) => [addressEntitiesProvider(singleId)]))),
   withHandlers({
     onClick: ({closeAddressDetail}) => (event) => {
       closeAddressDetail()

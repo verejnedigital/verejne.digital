@@ -58,6 +58,7 @@ type ContentProps = {
   entitySearchValue: string,
   setEntitySearchValue: (e: Event) => void,
   findEntities: (e: Event) => void,
+  entitySearchModalOpen: boolean,
 }
 
 type SidebarProps = {|
@@ -129,6 +130,7 @@ const _Content = ({
         className="form-control"
       />
     </FormGroup>
+
     {entitySearchModalOpen && <EntitySearch />}
     {openedAddressId && <AddressDetail addressId={openedAddressId} />}
   </React.Fragment>

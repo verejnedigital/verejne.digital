@@ -97,7 +97,7 @@ export const zoomSelector = (state: State): number => state.mapOptions.zoom
 export const boundsSelector = (state: State): ?MapBounds => state.mapOptions.bounds
 export const addressesSelector = (state: State) => state.addresses
 export const showInfoSelector = (state: State) => state.publicly.showInfo
-export const openedAddressDetailSelector = (state: State) => state.publicly.openedAddressDetail
+export const openedAddressDetailSelector = (state: State): any => state.publicly.openedAddressDetail
 export const entitiesSelector = (state: State) => state.entities
 export const entitySearchSelector = (state: State, query: string): SearchedEntity =>
   state.entitySearch[query]
@@ -109,7 +109,7 @@ export const entityDetailSelector = (state: State, eid: number): NewEntityDetail
 export const addressEntitiesSelector = createSelector(
   entitiesSelector,
   openedAddressDetailSelector,
-  (entities, addressId) => filter(entities, (entity) => entity.addressId === addressId)
+  (entities, addressId : Array<number>) => filter(entities, (entity) => addressId.includes(entity.addressId))
 )
 
 export const useLabelsSelector = createSelector(
