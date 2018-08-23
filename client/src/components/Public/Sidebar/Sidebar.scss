@@ -15,8 +15,11 @@
   }
 }
 
-.drawer.drawer-left{
-    z-index: 1030;
+.drawer{
+  z-index: 900;
+}
+.drawer.drawer-left.drawer-open{
+  z-index: 1030;
 }
 .drawer-content {
   padding: 1rem 0.5rem;
