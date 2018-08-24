@@ -5,9 +5,9 @@ import InfoButton from './InfoButton'
 import {ShowNumberCurrency} from '../../../services/utilities'
 import type {Notices as NoticesType, NoticeNew} from '../../../state'
 
-type NoticesProps = {
+type NoticesProps = {|
   data: NoticesType,
-}
+|}
 
 const Notices = ({data}: NoticesProps) => (
   <InfoButton

@@ -274,7 +274,8 @@ export type Notices = {
 export type RelatedEntity = {
   eid: number,
   name: string,
-  stakeholder_type_id: number,
+  edge_types: number[],
+  edge_type_texts: string[],
   lat: number,
   lng: number,
   address: string,

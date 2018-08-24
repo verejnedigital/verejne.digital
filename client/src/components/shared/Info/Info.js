@@ -22,23 +22,34 @@ import Relations from './Relations'
 import Trend from './Trend'
 import ExternalLink from '../ExternalLink'
 import mapIcon from '../../../assets/mapIcon.svg'
-import type {NewEntityDetail} from '../../../state'
+import type {NewEntityDetail, Center} from '../../../state'
 import type {FinancialData} from '../../../services/utilities'
 import './Info.css'
 
-type InfoProps = {
+type OwnProps = {
   data: NewEntityDetail,
   inModal?: boolean,
   canClose?: boolean,
   onClose?: () => void,
 }
 
-type ItemProps = {
+type DispatchProps = {
+  zoomToLocation: (center: Center, withZoom?: number) => void,
+  toggleModalOpen: () => void,
+}
+
+type HandlerProps = {
+  showOnMap: () => void,
+}
+
+type InfoProps = OwnProps & DispatchProps & HandlerProps
+
+type ItemProps = {|
   children?: Node,
   label?: string,
   url?: string,
   linkText?: Node,
-}
+|}
 
 const Item = ({children, label, url, linkText}: ItemProps) => (
   <li className="info-item">
@@ -136,7 +147,12 @@ const Info = ({data, canClose, onClose, showOnMap}: InfoProps) => (
 export default compose(
   connect(null, {zoomToLocation, toggleModalOpen}),
   withHandlers({
-    showOnMap: ({data, inModal, zoomToLocation, toggleModalOpen}) => () => {
+    showOnMap: ({
+      data,
+      inModal,
+      zoomToLocation,
+      toggleModalOpen,
+    }: OwnProps & DispatchProps) => () => {
       inModal && toggleModalOpen()
       zoomToLocation(data, ENTITY_CLOSE_ZOOM)
     },

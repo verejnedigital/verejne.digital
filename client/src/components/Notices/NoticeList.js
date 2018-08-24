@@ -5,18 +5,14 @@ import {withHandlers} from 'recompose'
 import {connect} from 'react-redux'
 import {withRouter} from 'react-router-dom'
 import {withDataProviders} from 'data-provider'
-import Pagination from 'react-js-pagination'
 import {noticesProvider} from '../../dataProviders/noticesDataProviders'
 import {
   newestBulletinDateSelector,
-  paginatedNoticesSelector,
-  paginationSelector,
+  dateSortedNoticesSelector,
   noticesLengthSelector,
   locationSearchSelector,
   noticesSearchQuerySelector,
 } from '../../selectors'
-import {PAGINATION_CHUNK_SIZE, NOTICES_PAGINATION_SIZE} from '../../constants'
-import {modifyQuery} from '../../utils'
 import {groupBy, map} from 'lodash'
 
 import {updateValue} from '../../actions/sharedActions'
@@ -35,8 +31,7 @@ export type NoticesOrdering = 'title' | 'date'
 export type NoticeListProps = {
   dispatch: Dispatch,
   newestBulletinDate: string,
-  paginatedNotices: Array<Notice>,
-  currentPage: number,
+  dateSortedNotices: Array<Notice>,
   noticesLength: number,
   query: Object,
   searchValue: string,
@@ -46,8 +41,7 @@ export type NoticeListProps = {
 const NoticeList = ({
   dispatch,
   newestBulletinDate,
-  paginatedNotices,
-  currentPage,
+  dateSortedNotices,
   noticesLength,
   location,
   history,
@@ -56,8 +50,8 @@ const NoticeList = ({
   updateSearchValue,
 }: NoticeListProps) => {
   let items = []
-  if (paginatedNotices.length > 0) {
-    items = groupBy(paginatedNotices, (item) => `${item.bulletin_number}/${item.bulletin_year}`)
+  if (dateSortedNotices.length > 0) {
+    items = groupBy(dateSortedNotices, (item) => `${item.bulletin_number}/${item.bulletin_year}`)
   }
 
   const plurality = (count) => {
@@ -69,18 +63,6 @@ const NoticeList = ({
     return `Nájdených ${count} výsledkov`
   }
 
-  const pagination = (
-    <Pagination
-      itemClass="page-item"
-      linkClass="page-link"
-      hideNavigation
-      pageRangeDisplayed={NOTICES_PAGINATION_SIZE}
-      activePage={currentPage}
-      itemsCountPerPage={PAGINATION_CHUNK_SIZE}
-      totalItemsCount={noticesLength}
-      onChange={(page) => history.push({search: modifyQuery(query, {page})})}
-    />
-  )
   return (
     <Container fluid className="notice-list">
       <Row>
@@ -104,11 +86,6 @@ const NoticeList = ({
                 date={bulletin[0].bulletin_date}
               />
             ))}
-          {noticesLength > 10 && (
-            <div className="pagination-wrapper">
-              <div className="scroll-container">{pagination}</div>
-            </div>
-          )}
         </Col>
       </Row>
     </Container>
@@ -119,8 +96,7 @@ export default compose(
   withDataProviders(() => [noticesProvider()]),
   connect(
     (state: State, props: NoticeListProps) => ({
-      paginatedNotices: paginatedNoticesSelector(state, props),
-      currentPage: paginationSelector(state, props),
+      dateSortedNotices: dateSortedNoticesSelector(state, props),
       noticesLength: noticesLengthSelector(state, props),
       newestBulletinDate: newestBulletinDateSelector(state, props),
       query: locationSearchSelector(state, props),

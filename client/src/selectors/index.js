@@ -2,7 +2,6 @@
 import {createSelector} from 'reselect'
 import qs from 'qs'
 import {
-  PAGINATION_CHUNK_SIZE,
   clusterOptions,
   ENTITY_ZOOM,
   SUB_CITY_ZOOM,
@@ -10,14 +9,12 @@ import {
   DEFAULT_ENTITIES_REQUEST_PARAMS,
 } from '../constants'
 import {values, normalizeName} from '../utils'
-import {sortBy, chunk, filter} from 'lodash'
+import {sortBy, filter} from 'lodash'
 import supercluster from 'points-cluster'
 
 import type {ContextRouter} from 'react-router-dom'
 import type {NoticesOrdering} from '../components/Notices/NoticeList'
 import type {NoticeDetailProps} from '../components/Notices/NoticeDetail'
-
-import type {CompanyDetailProps} from '../dataWrappers/CompanyDetailWrapper'
 import type {
   State,
   MapOptions,
@@ -35,7 +32,7 @@ export const paramsIdSelector = (_: State, props: ContextRouter): string =>
 export const noticeDetailSelector = (state: State, props: NoticeDetailProps) =>
   props.match.params.id && state.notices.details[props.match.params.id]
 
-export const companyDetailSelector = (state: State, props: CompanyDetailProps): Company | null =>
+export const companyDetailSelector = (state: State, props: {eid: number}): Company | null =>
   props.eid ? state.companies[props.eid.toString()] : null
 
 export const noticesSelector = (state: State) => state.notices.list
@@ -73,25 +70,9 @@ export const nameSortedNoticesSelector = createSelector(
 export const locationSearchSelector = (_: State, props: ContextRouter) =>
   qs.parse(props.location.search.slice(1))
 
-export const paginationSelector = createSelector(
-  locationSearchSelector,
-  (query) => Number.parseInt(query.page, 10) || 1
-)
-
 export const noticesOrderingSelector = createSelector(
   locationSearchSelector,
   (query): NoticesOrdering => query.ordering || 'date'
-)
-
-export const paginatedNoticesSelector = createSelector(
-  dateSortedNoticesSelector,
-  nameSortedNoticesSelector,
-  noticesOrderingSelector,
-  paginationSelector,
-  (dateSorted, nameSorted, orderBy, page) => {
-    const notices = orderBy === 'title' ? nameSorted : dateSorted
-    return chunk(notices, PAGINATION_CHUNK_SIZE)[page - 1] || []
-  }
 )
 
 // not the most elegant, but presently we need the whole list

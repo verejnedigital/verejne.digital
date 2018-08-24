@@ -1,6 +1,4 @@
 // @flow
-export const PAGINATION_CHUNK_SIZE = 10
-export const NOTICES_PAGINATION_SIZE = 10
 export const CADASTRAL_PAGINATION_CHUNK_SIZE = 20
 export const CADASTRAL_PAGINATION_SIZE = 10
 

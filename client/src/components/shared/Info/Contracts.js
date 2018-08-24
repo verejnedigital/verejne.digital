@@ -6,9 +6,9 @@ import ExternalLink from '../ExternalLink'
 import {ShowNumberCurrency, showContractStatus} from '../../../services/utilities'
 import type {Contracts as ContractsType, Contract} from '../../../state'
 
-type ContractsProps = {
+type ContractsProps = {|
   data: ContractsType,
-}
+|}
 
 const Contracts = ({data}: ContractsProps) => (
   <InfoButton
