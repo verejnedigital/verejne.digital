@@ -5,6 +5,9 @@
   top: $navbar-height + 40px;
   left: 40px;
   z-index: 1;
+  height: 80%;
+  display: flex;
+  flex-direction: column;
 
   .form-control {
     box-shadow: 0 4px 12px darken($shadow-color, 25%);
@@ -16,6 +19,10 @@
 
   .entity-input {
     width: auto;
+  }
+
+  .address-detail-wrapper {
+    flex: 1;
   }
 }
 
