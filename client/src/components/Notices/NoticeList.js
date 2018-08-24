@@ -25,15 +25,9 @@ import type {ContextRouter} from 'react-router-dom'
 import type {Dispatch} from '../../types/reduxTypes'
 import type {Notice, State} from '../../state'
 
-import Legend from './Legend'
+import NoticeSidebar from './NoticeSidebar'
 import Bulletin from './Bulletin'
-import {
-  Input,
-  FormText,
-  Row,
-  Col,
-  Container
-} from 'reactstrap'
+import {Input, FormText, Row, Col, Container} from 'reactstrap'
 import './NoticeList.css'
 
 export type NoticesOrdering = 'title' | 'date'
@@ -90,33 +84,7 @@ const NoticeList = ({
   return (
     <Container fluid className="notice-list">
       <Row>
-        <Col xl="3" tag="aside" className="notice-list-sidebar">
-          <Row>
-            <Col sm={{size: 10, offset: 2}}>
-              <h2 className="notice-list-title">Aktuálne obstarávania</h2>
-              <p className="notice-list-text">
-                Našim cieľom je identifikovať a osloviť najvhodnejších uchádzačov, ktorí by sa mali
-                zapojiť do verejných obstarávaní. <a href=".">Viac info</a>
-              </p>
-            </Col>
-          </Row>
-          <hr />
-          <Legend />
-          <hr />
-          <Row>
-            <Col sm={{size: 10, offset: 2}}>
-              <div className="fbfooter">
-                <iframe
-                  src="https://www.facebook.com/plugins/like.php?href=https%3A%2F%2Fwww.facebook.com%2Fverejne.digital&width=111&layout=button_count&action=like&size=small&show_faces=true&share=true&height=46&appId="
-                  className="fbIframe"
-                  title="facebook"
-                  scrolling="no"
-                  frameBorder="0"
-                />
-              </div>
-            </Col>
-          </Row>
-        </Col>
+        <NoticeSidebar />
         <Col xl={{size: 9, offset: 3}}>
           <Input
             type="text"
@@ -125,27 +93,22 @@ const NoticeList = ({
             value={searchValue}
             onChange={updateSearchValue}
           />
-          <FormText>
-            {searchValue && `${plurality(noticesLength)} pre "${searchValue}".`}
-          </FormText>
+          <FormText>{searchValue && `${plurality(noticesLength)} pre "${searchValue}".`}</FormText>
           {noticesLength >= 1 &&
-              map(items, (bulletin, index) => (
-                <Bulletin
+            map(items, (bulletin, index) => (
+              <Bulletin
                 key={index}
                 items={bulletin}
                 number={bulletin[0].bulletin_number}
                 year={bulletin[0].bulletin_year}
                 date={bulletin[0].bulletin_date}
-                />
-              ))
-          }
-          {noticesLength > 10 &&
-              <div className="pagination-wrapper">
-                <div className="scroll-container">
-                  {pagination}
-                </div>
-              </div>}
-
+              />
+            ))}
+          {noticesLength > 10 && (
+            <div className="pagination-wrapper">
+              <div className="scroll-container">{pagination}</div>
+            </div>
+          )}
         </Col>
       </Row>
     </Container>
@@ -154,20 +117,21 @@ const NoticeList = ({
 
 export default compose(
   withDataProviders(() => [noticesProvider()]),
-  connect((state: State, props: NoticeListProps) => ({
-    paginatedNotices: paginatedNoticesSelector(state, props),
-    currentPage: paginationSelector(state, props),
-    noticesLength: noticesLengthSelector(state, props),
-    newestBulletinDate: newestBulletinDateSelector(state, props),
-    query: locationSearchSelector(state, props),
-    searchValue: noticesSearchQuerySelector(state),
-  }),
+  connect(
+    (state: State, props: NoticeListProps) => ({
+      paginatedNotices: paginatedNoticesSelector(state, props),
+      currentPage: paginationSelector(state, props),
+      noticesLength: noticesLengthSelector(state, props),
+      newestBulletinDate: newestBulletinDateSelector(state, props),
+      query: locationSearchSelector(state, props),
+      searchValue: noticesSearchQuerySelector(state),
+    }),
     {updateValue}
   ),
   withHandlers({
     updateSearchValue: (props) => (e) => {
       props.updateValue(['notices', 'searchQuery'], e.target.value)
-      if (props.history.location.search !== "") props.history.push({})
+      if (props.history.location.search !== '') props.history.push({})
     },
   }),
   withRouter
