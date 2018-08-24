@@ -22,7 +22,6 @@ type ClusterMarkerProps = {
   cluster: MapCluster,
   onClick: () => void,
   openedAddressId: number,
-  MarkerLabel: boolean | number,
 }
 
 const ClusterMarker = ({
