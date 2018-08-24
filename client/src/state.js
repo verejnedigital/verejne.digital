@@ -110,23 +110,27 @@ export type CompanyStat = {
   zamestnanci2015: string,
 }
 
+export type IcoSource = Array<{
+  ico: number,
+}>
+
 export type Company = {
   id: number,
   eid: number,
-  zrsr_data: Array<any>,
+  zrsr_data: IcoSource,
   company_stats: Array<CompanyStat>,
   contracts: Array<any>,
-  new_orsr_data: Array<any>,
+  new_orsr_data: IcoSource,
   sponzori_stran_data: Array<any>,
   related: Array<any>,
   auditori_data: Array<any>,
   audiovizfond_data: Array<any>,
   entities: Array<CompanyEntity>,
-  firmy_data: Array<any>,
+  firmy_data: IcoSource,
   total_contracts: number,
   advokati_data: Array<any>,
   nadacie_data: Array<any>,
-  orsresd_data: Array<any>,
+  orsresd_data: IcoSource,
   politicians_data: Array<any>,
   stranicke_prispevky_data: Array<any>,
   uzivatelia_vyhody_ludia_data: Array<any>,
@@ -155,8 +159,8 @@ export type MapOptions = {
 export type Center = {lat: number, lng: number}
 
 export type SearchedEntity = {
+  query: string,
   eids: number[],
-  id: string,
 }
 export type GraphId = number
 
@@ -180,7 +184,6 @@ export type Graph = {|
 |}
 
 export type Connections = {
-  entities: {[string]: CompanyEntity},
   detail: {[string]: {ids: number[]}},
   subgraph: {[string]: {data: Graph}},
   selectedEids: Array<number>,
@@ -270,7 +273,8 @@ export type Notices = {
 export type RelatedEntity = {
   eid: number,
   name: string,
-  stakeholder_type_id: number,
+  edge_types: number[],
+  edge_type_texts: string[],
   lat: number,
   lng: number,
   address: string,
@@ -287,7 +291,7 @@ export type NewEntityDetail = {
     [year: number]: CompanyFinancial,
   },
   companyinfo: {
-    ico: number,
+    ico: string,
     established_on: string,
     terminated_on: string,
   },
@@ -329,6 +333,7 @@ export type State = {|
   +addresses: ObjectMap<Address>,
   +entities: ObjectMap<NewEntityState>,
   +entityDetails: ObjectMap<NewEntityDetail>,
+  +entitySearch: ObjectMap<SearchedEntity>,
 |}
 
 const getInitialState = (): State => ({
@@ -363,7 +368,6 @@ const getInitialState = (): State => ({
     bounds: undefined,
   },
   connections: {
-    entities: {},
     detail: {},
     subgraph: {},
     selectedEids: [],
@@ -371,6 +375,7 @@ const getInitialState = (): State => ({
   addresses: {},
   entities: {},
   entityDetails: {},
+  entitySearch: {},
 })
 
 export default getInitialState

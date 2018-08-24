@@ -1,1 +1,33 @@
-
+@import "../../variables.scss";
+.search-results {
+    box-shadow: 0 4px 12px darken($shadow-color, 25%);
+	border-radius: 2px;
+	width: $verejne-sidebar-width;
+    @media screen and (max-width: 576px) {
+    width: 100%;
+  }
+}
+.search-results-header {
+    position: relative;
+    background: white;
+    padding-top: 0.3rem;
+    padding-bottom: 0.6rem;
+    padding-left: 1em;
+    padding-right: 0.3em;
+    border-bottom: 2px solid $border-color;
+}
+.search-results-panel {
+    position: relative;
+    background: white;
+    padding: 1rem;
+    max-height: calc(100vh - 300px);
+    @media screen and (max-width: 576px) {
+      max-height: calc(100vh - 220px);
+    }
+    overflow-y: auto;
+}
+.search-results-footer {
+    position: relative;
+    background: white;
+    height: 1em;
+}

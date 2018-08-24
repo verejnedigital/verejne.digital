@@ -2,7 +2,6 @@
 import {createSelector} from 'reselect'
 import qs from 'qs'
 import {
-  PAGINATION_CHUNK_SIZE,
   clusterOptions,
   ENTITY_ZOOM,
   SUB_CITY_ZOOM,
@@ -15,14 +14,12 @@ import {
   SLOVAKIA_COORDINATES,
   DISTRICT_ZOOM,
 } from '../constants'
-import {isInSlovakia, values, normalizeName} from '../utils'
-import {sortBy, chunk, filter} from 'lodash'
+import {isInSlovakia, normalizeName} from '../utils'
+import {sortBy, filter} from 'lodash'
 import supercluster from 'points-cluster'
 import type {ContextRouter} from 'react-router-dom'
 import type {NoticesOrdering} from '../components/Notices/NoticeList'
 import type {NoticeDetailProps} from '../components/Notices/NoticeDetail'
-
-import type {CompanyDetailProps} from '../dataWrappers/CompanyDetailWrapper'
 import type {
   State,
   MapOptions,
@@ -31,16 +28,15 @@ import type {
   Company,
   NewEntityDetail,
   Notice,
+  SearchedEntity,
 } from '../state'
-import type {ObjectMap} from '../types/commonTypes'
-
 export const paramsIdSelector = (_: State, props: ContextRouter): string =>
   props.match.params.id || '0'
 
 export const noticeDetailSelector = (state: State, props: NoticeDetailProps) =>
   props.match.params.id && state.notices.details[props.match.params.id]
 
-export const companyDetailSelector = (state: State, props: CompanyDetailProps): Company | null =>
+export const companyDetailSelector = (state: State, props: {eid: number}): Company | null =>
   props.eid ? state.companies[props.eid.toString()] : null
 
 export const noticesSelector = (state: State) => state.notices.list
@@ -49,7 +45,7 @@ export const noticesSearchQuerySelector = (state: State) => normalizeName(state.
 export const searchFilteredNoticesSelector = createSelector(
   noticesSelector,
   noticesSearchQuerySelector,
-  (notices: ObjectMap<Notice>, query) => {
+  (notices: ObjectMap<Notice>, query): Array<Notice> => {
     const filteredNotices = filter(notices, (notice) => {
       const similarity =
         notice.kandidati.length > 0 ? Math.round(notice.kandidati[0].score * 100) : '?'
@@ -66,36 +62,21 @@ export const searchFilteredNoticesSelector = createSelector(
     return filteredNotices.length > 0 ? filteredNotices : []
   }
 )
-export const dateSortedNoticesSelector = createSelector(searchFilteredNoticesSelector, (data) =>
-  sortBy(values(data), ['bulletin_year', 'bulletin_month', 'bulletin_day'])
+export const dateSortedNoticesSelector = createSelector(
+  searchFilteredNoticesSelector,
+  (data: Array<Notice>) => sortBy(data, ['bulletin_year', 'bulletin_month', 'bulletin_day'])
 )
-
-export const nameSortedNoticesSelector = createSelector(searchFilteredNoticesSelector, (data) =>
-  sortBy(values(data), ['title'])
+export const nameSortedNoticesSelector = createSelector(
+  searchFilteredNoticesSelector,
+  (data: Array<Notice>) => sortBy(data, ['title'])
 )
 
 export const locationSearchSelector = (_: State, props: ContextRouter) =>
   qs.parse(props.location.search.slice(1))
 
-export const paginationSelector = createSelector(
-  locationSearchSelector,
-  (query) => Number.parseInt(query.page, 10) || 1
-)
-
 export const noticesOrderingSelector = createSelector(
   locationSearchSelector,
   (query): NoticesOrdering => query.ordering || 'date'
-)
-
-export const paginatedNoticesSelector = createSelector(
-  dateSortedNoticesSelector,
-  nameSortedNoticesSelector,
-  noticesOrderingSelector,
-  paginationSelector,
-  (dateSorted, nameSorted, orderBy, page) => {
-    const notices = orderBy === 'title' ? nameSorted : dateSorted
-    return chunk(notices, PAGINATION_CHUNK_SIZE)[page - 1] || []
-  }
 )
 
 // not the most elegant, but presently we need the whole list
@@ -117,6 +98,10 @@ export const addressesSelector = (state: State) => state.addresses
 export const showInfoSelector = (state: State) => state.publicly.showInfo
 export const openedAddressDetailSelector = (state: State) => state.publicly.openedAddressDetail
 export const entitiesSelector = (state: State) => state.entities
+export const entitySearchSelector = (state: State, query: string): SearchedEntity =>
+  state.entitySearch[query]
+export const allEntityDetailsSelector = (state: State): ObjectMap<NewEntityDetail> =>
+  state.entityDetails
 export const entityDetailSelector = (state: State, eid: number): NewEntityDetail | null =>
   eid ? state.entityDetails[eid.toString()] : null
 

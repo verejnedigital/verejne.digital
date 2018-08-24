@@ -28,6 +28,17 @@ import {updateValue} from '../../../actions/sharedActions'
 import {FIND_ENTITY_TITLE} from '../../../constants'
 import './EntitySearch.css'
 
+type EntitySearchProps = {|
+  entitySearchModalOpen: boolean,
+  toggleModalOpen: () => void,
+  className: string,
+  entitySearchValue: string,
+  setEntitySearchValue: (updateValue: string) => void,
+  findEntities: (setEntitySearchFor: Function, entitySearchValue: string) => void,
+  entitySearchEids: Array<number>,
+  entitySearchFor: string,
+|}
+
 const EntitySearch = ({
   entitySearchModalOpen,
   toggleModalOpen,
@@ -37,8 +48,8 @@ const EntitySearch = ({
   findEntities,
   entitySearchEids,
   entitySearchFor,
-}) => {
-  const plurality = (count) => {
+}: EntitySearchProps) => {
+  const plurality = (count: number) => {
     if (count === 1) {
       return `Nájdený ${count} výsledok`
     } else if (count > 1 && count < 5) {
@@ -48,45 +59,18 @@ const EntitySearch = ({
   }
 
   return (
-    <Modal
-      isOpen={entitySearchModalOpen}
-      toggle={toggleModalOpen}
-      className={className}
-      autoFocus
-      size="md"
-    >
-      <ModalHeader toggle={toggleModalOpen}>{FIND_ENTITY_TITLE}</ModalHeader>
-      <ModalBody>
-        <Form onSubmit={findEntities}>
-          <FormGroup>
-            <InputGroup>
-              <Input
-                type="text"
-                className="form-control"
-                placeholder={FIND_ENTITY_TITLE}
-                value={entitySearchValue}
-                onChange={setEntitySearchValue}
-                ref={(input) => input && ReactDOM.findDOMNode(input).focus()}
-              />
-              <InputGroupAddon addonType="append">
-                <Button color="primary" onClick={findEntities}>
-                  {FIND_ENTITY_TITLE}
-                </Button>
-              </InputGroupAddon>
-            </InputGroup>
-            <FormText>
-              {entitySearchFor && `${plurality(entitySearchEids.length)} pre "${entitySearchFor}".`}
-            </FormText>
-          </FormGroup>
-        </Form>
+    <div className="search-results">
+      <div className="search-results-header">
+        <button type="button" className="close" onClick={toggleModalOpen}>
+          <span>&times;</span>
+        </button>
+        {entitySearchFor && `${plurality(entitySearchEids.length)} pre "${entitySearchFor}".`}
+      </div>
+      <div className="search-results-panel">
         <EntitySearchResult />
-      </ModalBody>
-      <ModalFooter>
-        <Button color="secondary" onClick={toggleModalOpen}>
-          Zavrieť
-        </Button>
-      </ModalFooter>
-    </Modal>
+      </div>
+      <div className="search-results-footer" />
+    </div>
   )
 }
 

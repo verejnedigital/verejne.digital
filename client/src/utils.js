@@ -1,7 +1,7 @@
 // @flow
 import React from 'react'
 import Loading from './components/Loading/Loading'
-import {get, set} from 'lodash'
+import {get, set, pickBy as _pickBy} from 'lodash'
 import produce from 'immer'
 import {stringify, parse} from 'qs'
 import type {Location} from 'react-router-dom'
@@ -112,6 +112,9 @@ export const withSideEffects = <P: Object>(sideEffectsFunc: SideEffectsFunc<P>) 
     render = () => (this.state.done ? <WrappedComponent {...this.props} /> : <Loading />)
   }
 }
+
+// flow cannot handle pickBy when there are values of different types in obj
+export const pickBy = <T: {}>(obj: T, predicate: (value: any) => boolean): T => _pickBy(obj, predicate)
 
 // https://github.com/facebook/flow/issues/2221#issuecomment-372112477
 // there is no nice way to handle object.values in flow currently - use this instead

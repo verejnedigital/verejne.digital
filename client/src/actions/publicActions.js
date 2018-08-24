@@ -1,7 +1,7 @@
 // @flow
-import {zoomSelector, mapOptionsSelector} from '../selectors'
 import {fromPairs} from 'lodash'
-
+import {zoomSelector, mapOptionsSelector} from '../selectors'
+import type {ObjectMap} from '../types/commonTypes'
 import type {
   MapOptions,
   Center,
@@ -11,7 +11,6 @@ import type {
   NewEntityDetail,
 } from '../state'
 import type {GenericAction, Thunk} from '../types/reduxTypes'
-import type {ObjectMap} from '../types/commonTypes'
 
 export const setAddresses = (addresses: Address[]) => ({
   type: 'Set addresses',
@@ -33,11 +32,16 @@ export const setEntities = (
   }),
 })
 
-export const setEntityDetail = (entityDetail: NewEntityDetail, eid: number) => ({
+export const setEntityDetails = (
+  entityDetails: ObjectMap<NewEntityDetail>
+): GenericAction<ObjectMap<NewEntityDetail>, ObjectMap<NewEntityDetail>> => ({
   type: 'Set entity detail',
-  path: ['entityDetails', eid],
-  payload: entityDetail,
-  reducer: () => entityDetail,
+  path: ['entityDetails'],
+  payload: entityDetails,
+  reducer: (state) => ({
+    ...state,
+    ...entityDetails,
+  }),
 })
 
 export const setMapOptions = (mapOptions: MapOptions) => ({
@@ -60,6 +64,12 @@ export const toggleModalOpen = () => ({
   type: 'Toggle modal open',
   path: ['publicly', 'entitySearchModalOpen'],
   reducer: (open: boolean) => !open,
+})
+
+export const setModal = (open: boolean) => ({
+  type: 'Set modal',
+  path: ['publicly', 'entitySearchModalOpen'],
+  reducer: () => open,
 })
 
 export const setEntitySearchFor = (searchFor: string) => ({
@@ -100,7 +110,7 @@ export const toggleDrawer = () => ({
   reducer: (open: boolean) => !open,
 })
 
-export const setDrawer = (open) => ({
+export const setDrawer = (open: boolean) => ({
   type: 'Set drawer',
   path: ['publicly', 'drawerOpen'],
   reducer: () => open,
