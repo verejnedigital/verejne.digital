@@ -264,7 +264,8 @@ export const autocompleteOptionsSelector = createSelector(boundsSelector, (bound
 })
 
 export const entitySearchValueSelector = (state: State) => state.publicly.entitySearchValue
-export const entitySearchModalOpenSelector = (state: State) => state.publicly.entitySearchModalOpen
+export const entitySearchOpenSelector = (state: State) => state.publicly.entitySearchOpen
+export const entitySearchModalOpenSelector = (state: State) => state.publicly.entityModalOpen
 export const entitySearchForSelector = (state: State) => state.publicly.entitySearchFor
 export const entitySearchEidsSelector = (state: State) => state.publicly.entitySearchEids
 

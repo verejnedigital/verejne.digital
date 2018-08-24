@@ -8,7 +8,7 @@ import SearchIcon from 'react-icons/lib/fa/search'
 import {ListGroupItem} from 'reactstrap'
 import {
   toggleEntityInfo,
-  toggleModalOpen,
+  toggleEntitySearchOpen,
   setEntitySearchFor,
 } from '../../../../actions/publicActions'
 import {updateValue} from '../../../../actions/sharedActions'
@@ -65,16 +65,16 @@ export default compose(
     (state, {entity}) => ({
       showInfo: state.publicly.showInfo[entity.id],
     }),
-    {toggleEntityInfo, toggleModalOpen, setEntitySearchFor, updateValue}
+    {toggleEntityInfo, toggleEntitySearchOpen, setEntitySearchFor, updateValue}
   ),
   withHandlers({
     toggleEntityInfo: ({toggleEntityInfo, entity}) => () => {
       toggleEntityInfo(entity.id)
     },
-    openModalSearch: ({entity, toggleModalOpen, setEntitySearchFor, updateValue}) => () => {
+    openModalSearch: ({entity, toggleEntitySearchOpen, setEntitySearchFor, updateValue}) => () => {
       setEntitySearchFor(entity.name)
       updateValue(['publicly', 'entitySearchValue'], entity.name, 'Set entity search field value')
-      toggleModalOpen()
+      toggleEntitySearchOpen()
     },
   })
 )(ListRow)

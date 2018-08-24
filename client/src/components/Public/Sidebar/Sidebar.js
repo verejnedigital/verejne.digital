@@ -16,11 +16,12 @@ import EntitySearch from '../EntitySearch/EntitySearch'
 
 import {
   zoomToLocation,
-  toggleModalOpen,
+  toggleEntitySearchOpen,
   setEntitySearchFor,
   toggleDrawer,
   setDrawer,
   closeAddressDetail,
+  toggleModalOpen,
 } from '../../../actions/publicActions'
 import {updateValue} from '../../../actions/sharedActions'
 import {
@@ -29,7 +30,7 @@ import {
   openedAddressDetailSelector,
   entitySearchValueSelector,
   drawerOpenSelector,
-  entitySearchModalOpenSelector,
+  entitySearchOpenSelector,
 } from '../../../selectors'
 import {ENTITY_CLOSE_ZOOM, FIND_ENTITY_TITLE} from '../../../constants'
 import AddressDetail from './../Map/AddressDetail/AddressDetail'
@@ -54,11 +55,11 @@ type ContentProps = {
   autocompleteOptions: Bound,
   toggleModalOpen: () => void,
   toggleDrawer: () => void,
-  openedAddressId: number,
+  openedAddressIds: Array<number>,
   entitySearchValue: string,
   setEntitySearchValue: (e: Event) => void,
   findEntities: (e: Event) => void,
-  entitySearchModalOpen: boolean,
+  entitySearchOpen: boolean,
 }
 
 type SidebarProps = {|
@@ -87,13 +88,13 @@ const _Content = ({
   setAutocompleteValue,
   setZoomToLocation,
   autocompleteOptions,
-  toggleModalOpen,
   toggleDrawer,
   openedAddressIds,
   entitySearchValue,
   setEntitySearchValue,
   findEntities,
-  entitySearchModalOpen,
+  entitySearchOpen,
+  toggleModalOpen,
 }: ContentProps) => (
 
   <React.Fragment>
@@ -130,7 +131,7 @@ const _Content = ({
         className="form-control"
       />
     </FormGroup>
-    {entitySearchModalOpen && <EntitySearch />}
+    {entitySearchOpen && <EntitySearch />}
     {(openedAddressIds != null && openedAddressIds.length !== 0) && <AddressDetail addressIds={openedAddressIds} />}
   </React.Fragment>
 )
@@ -142,21 +143,22 @@ const Content = compose(
       autocompleteOptions: autocompleteOptionsSelector(state),
       openedAddressIds: openedAddressDetailSelector(state),
       entitySearchValue: entitySearchValueSelector(state),
-      entitySearchModalOpen: entitySearchModalOpenSelector(state),
+      entitySearchOpen: entitySearchOpenSelector(state),
     }),
     {
       updateValue,
       zoomToLocation,
-      toggleModalOpen,
+      toggleEntitySearchOpen,
       setEntitySearchFor,
       toggleDrawer,
       closeAddressDetail,
+      toggleModalOpen,
     }
   ),
   withHandlers({
-    findEntities: ({toggleModalOpen, setEntitySearchFor, entitySearchValue, toggleDrawer, closeAddressDetail}) => (e) => {
+    findEntities: ({toggleEntitySearchOpen, setEntitySearchFor, entitySearchValue, toggleDrawer, closeAddressDetail}) => (e) => {
       e.preventDefault()
-      toggleModalOpen()
+      toggleEntitySearchOpen()
       closeAddressDetail()
       setEntitySearchFor(entitySearchValue)
       toggleDrawer()
@@ -202,7 +204,7 @@ export default compose(
       drawerOpen: drawerOpenSelector(state),
       renderDrawer: window.innerWidth < 576,
     }),
-    {updateValue, zoomToLocation, toggleModalOpen, setEntitySearchFor, toggleDrawer, setDrawer}
+    {updateValue, zoomToLocation, toggleEntitySearchOpen, setEntitySearchFor, toggleDrawer, setDrawer}
   ),
   withHandlers({
     toggleDrawer: ({toggleDrawer}) => () => {
