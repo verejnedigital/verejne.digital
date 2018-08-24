@@ -147,12 +147,6 @@ export type MapCluster = {
   numPoints: number,
   id: string,
   points: Array<any>,
-}
-export type MapLabel = {
-  lat: number,
-  lng: number,
-  numPoints: number,
-  id: string,
   setZoomTo: number,
   isLabel: boolean,
 }
@@ -180,10 +174,12 @@ const createClusters = (mapOptions: MapOptions, addresses): Array<MapCluster> =>
       numPoints,
       id: `${i}`,
       points,
+      isLabel: false,
+      setZoomTo: mapOptions.zoom + 1,
     })
   )
 }
-const createLabels = (mapOptions: MapOptions): Array<MapLabel> => {
+const createLabels = (mapOptions: MapOptions): Array<MapCluster> => {
   let labels = []
   if (mapOptions.zoom <= WORLD_ZOOM) {
     labels = [{

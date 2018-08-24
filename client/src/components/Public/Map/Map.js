@@ -27,7 +27,7 @@ import {
 import {withSideEffects} from '../../../utils'
 
 import type {MapOptions, CompanyEntity} from '../../../state'
-import type {MapCluster, MapLabel} from '../../../selectors'
+import type {MapCluster} from '../../../selectors'
 import type {GenericAction} from '../../../types/reduxTypes'
 import type {RouterHistory} from 'react-router'
 
@@ -37,7 +37,7 @@ type Props = {
   center: [number, number],
   entities: Array<CompanyEntity>,
   setMapOptions: (mapOptions: MapOptions) => GenericAction<MapOptions, MapOptions>,
-  clusters: Array<MapCluster> | Array<MapLabel>,
+  clusters: Array<MapCluster>,
   onChange: (options: MapOptions) => any,
   history: RouterHistory,
 }
@@ -54,7 +54,6 @@ const Map = ({useLabels, zoom, center, clusters, onChange}: Props) => {
             zoom={zoom}
             lat={cluster.lat}
             lng={cluster.lng}
-            MarkerLabel={cluster.isLabel || cluster.numPoints}
           />
         ))}
       </GoogleMap>
