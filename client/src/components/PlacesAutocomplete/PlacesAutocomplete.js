@@ -18,49 +18,76 @@ type Props = {
 }
 
 // TODO: $FlowFixMe: undefined is incompatible with ...
-const PlacesAutocomplete = (props: Props) => {
+class PlacesAutocomplete extends React.Component<Props, {loaded: false}> {
+
+  constructor(props) {
+    super(props)
+    this.state = {loaded: false}
+    this.interval = null
+  }
+
+  componentDidMount() {
+    // `googleMapsLoaded` is set in `googleapis` callback
+    if (!window.googleMapsLoaded) {
+      this.interval = setInterval(() => {
+        if (window.googleMapsLoaded) {
+          clearInterval(this.interval)
+          this.interval = null
+        }
+      }, 100)
+    }
+  }
+
+  componentWillUnmount() {
+    if (this.interval) {
+      clearInterval(this.interval)
+    }
+  }
+
+  render() {
   // Do mnot destructure in argument as formatter will reorder lines and flow issue
   // will not work.
-  const {value, onChange, onSelect, onErrorBinded, searchOptions, className} = props
-  return (
-    <GoogleAutocomplete
-      type="text"
-      className="form-control"
-      placeholder="Hľadaj adresu"
-      value={value}
-      onChange={onChange}
-      onSelect={onSelect}
-      onError={onErrorBinded}
-      searchOptions={searchOptions}
-      googleCallbackName="placesAutocompleteCallback"
-    >
-      {({getInputProps, suggestions, getSuggestionItemProps}) => (
-        <div className="autocomplete">
-          <input
-            {...getInputProps({
-              placeholder: 'Hľadaj adresu...',
-              className: classnames(className, 'autocomplete__input'),
-              autoFocus: true,
-            })}
-          />
-          <div className="autocomplete__suggestions">
-            {suggestions.map((suggestion, i) => {
-              const className = classnames(
-                'autocomplete__suggestions__item',
-                suggestion.active && 'autocomplete__suggestions__item--active'
-              )
-              return (
-                <div {...getSuggestionItemProps(suggestion, {className})} key={i}>
-                  <strong>{suggestion.formattedSuggestion.mainText}</strong>{' '}
-                  <small>{suggestion.formattedSuggestion.secondaryText}</small>
-                </div>
-              )
-            })}
+    const {value, onChange, onSelect, onErrorBinded, searchOptions, className} = this.props
+    return this.state.loaded && (
+      <GoogleAutocomplete
+        type="text"
+        className="form-control"
+        placeholder="Hľadaj adresu"
+        value={value}
+        onChange={onChange}
+        onSelect={onSelect}
+        onError={onErrorBinded}
+        searchOptions={searchOptions}
+        googleCallbackName="placesAutocompleteCallback"
+      >
+        {({getInputProps, suggestions, getSuggestionItemProps}) => (
+          <div className="autocomplete">
+            <input
+              {...getInputProps({
+                placeholder: 'Hľadaj adresu...',
+                className: classnames(className, 'autocomplete__input'),
+                autoFocus: true,
+              })}
+            />
+            <div className="autocomplete__suggestions">
+              {suggestions.map((suggestion, i) => {
+                const className = classnames(
+                  'autocomplete__suggestions__item',
+                  suggestion.active && 'autocomplete__suggestions__item--active'
+                )
+                return (
+                  <div {...getSuggestionItemProps(suggestion, {className})} key={i}>
+                    <strong>{suggestion.formattedSuggestion.mainText}</strong>{' '}
+                    <small>{suggestion.formattedSuggestion.secondaryText}</small>
+                  </div>
+                )
+              })}
+            </div>
           </div>
-        </div>
-      )}
-    </GoogleAutocomplete>
-  )
+        )}
+      </GoogleAutocomplete>
+    )
+  }
 }
 
 export default compose(
