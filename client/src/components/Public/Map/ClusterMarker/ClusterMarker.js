@@ -78,7 +78,7 @@ export default compose(
         zoomToLocation({lat: cluster.lat, lng: cluster.lng}, Math.max(ENTITY_CLOSE_ZOOM, zoom))
       } else {
         if (zoom < 22) {
-          zoomToLocation({lat: cluster.lat, lng: cluster.lng})
+          zoomToLocation({lat: cluster.lat, lng: cluster.lng}, cluster.setZoomTo)
         } else {
           openAddressDetail(cluster.points.map((point) => point.address_id))
           setDrawer(true)
