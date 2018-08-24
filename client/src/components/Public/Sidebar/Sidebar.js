@@ -58,6 +58,7 @@ type ContentProps = {
   entitySearchValue: string,
   setEntitySearchValue: (e: Event) => void,
   findEntities: (e: Event) => void,
+  entitySearchModalOpen: boolean,
 }
 
 type SidebarProps = {|
@@ -88,7 +89,7 @@ const _Content = ({
   autocompleteOptions,
   toggleModalOpen,
   toggleDrawer,
-  openedAddressId,
+  openedAddressIds,
   entitySearchValue,
   setEntitySearchValue,
   findEntities,
@@ -130,7 +131,7 @@ const _Content = ({
       />
     </FormGroup>
     {entitySearchModalOpen && <EntitySearch />}
-    {openedAddressId && <div className="address-detail-wrapper"><AddressDetail addressId={openedAddressId} /></div>}
+    {(openedAddressIds != null && openedAddressIds.length !== 0) && <AddressDetail addressIds={openedAddressIds} />}
   </React.Fragment>
 )
 
@@ -139,7 +140,7 @@ const Content = compose(
     (state) => ({
       autocompleteValue: autocompleteValueSelector(state),
       autocompleteOptions: autocompleteOptionsSelector(state),
-      openedAddressId: openedAddressDetailSelector(state),
+      openedAddressIds: openedAddressDetailSelector(state),
       entitySearchValue: entitySearchValueSelector(state),
       entitySearchModalOpen: entitySearchModalOpenSelector(state),
     }),
