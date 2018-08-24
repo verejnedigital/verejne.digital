@@ -9,7 +9,7 @@ import MapIcon from '../../../assets/mapIcon.svg'
 
 type Props = {
   legendOpen: boolean,
-  toggleLegend: (open: boolean) => void,
+  toggleLegend: () => void,
 }
 
 const Legend = ({legendOpen, toggleLegend}: Props) =>
@@ -63,6 +63,6 @@ const Legend = ({legendOpen, toggleLegend}: Props) =>
 export default compose(
   withState('legendOpen', 'setLegendOpen', true),
   withHandlers({
-    toggleLegend: ({setLegendOpen}) => (e) => setLegendOpen((current) => !current),
+    toggleLegend: ({setLegendOpen}) => setLegendOpen((current: boolean) => !current),
   })
 )(Legend)
