@@ -149,7 +149,7 @@ const Content = compose(
       toggleModalOpen,
       setEntitySearchFor,
       toggleDrawer,
-      closeAddressDetail
+      closeAddressDetail,
     }
   ),
   withHandlers({
@@ -168,10 +168,12 @@ const Content = compose(
         e.target.value,
         'Set entity search field value'
       ),
-    setZoomToLocation: ({zoomToLocation}) => (value, id) =>
+    setZoomToLocation: ({zoomToLocation, updateValue}) => (value, id) => {
+      updateValue(['publicly', 'autocompleteValue'], value, 'Set autocomplete value')
       geocodeByAddress(value)
         .then((results) => getLatLng(results[0]))
-        .then((location) => zoomToLocation(location, ENTITY_CLOSE_ZOOM)),
+        .then((location) => zoomToLocation(location, ENTITY_CLOSE_ZOOM))
+    },
   })
 )(_Content)
 
