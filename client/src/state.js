@@ -159,8 +159,8 @@ export type MapOptions = {
 export type Center = {lat: number, lng: number}
 
 export type SearchedEntity = {
+  query: string,
   eids: number[],
-  id: string,
 }
 export type GraphId = number
 
@@ -184,7 +184,6 @@ export type Graph = {|
 |}
 
 export type Connections = {
-  entities: {[string]: CompanyEntity},
   detail: {[string]: {ids: number[]}},
   subgraph: {[string]: {data: Graph}},
   selectedEids: Array<number>,
@@ -274,7 +273,8 @@ export type Notices = {
 export type RelatedEntity = {
   eid: number,
   name: string,
-  stakeholder_type_id: number,
+  edge_types: number[],
+  edge_type_texts: string[],
   lat: number,
   lng: number,
   address: string,
@@ -333,6 +333,7 @@ export type State = {|
   +addresses: ObjectMap<Address>,
   +entities: ObjectMap<NewEntityState>,
   +entityDetails: ObjectMap<NewEntityDetail>,
+  +entitySearch: ObjectMap<SearchedEntity>,
 |}
 
 const getInitialState = (): State => ({
@@ -367,7 +368,6 @@ const getInitialState = (): State => ({
     bounds: undefined,
   },
   connections: {
-    entities: {},
     detail: {},
     subgraph: {},
     selectedEids: [],
@@ -375,6 +375,7 @@ const getInitialState = (): State => ({
   addresses: {},
   entities: {},
   entityDetails: {},
+  entitySearch: {},
 })
 
 export default getInitialState

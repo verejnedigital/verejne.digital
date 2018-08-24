@@ -11,12 +11,19 @@
     border-radius: 2px;
     font-size: 1rem;
     padding: 1em 1.5em;
-    width: 360px;
+    width: $verejne-sidebar-width;
+  }
+
+  .entity-input {
+    width: auto;
   }
 }
 
-.drawer.drawer-left{
-    z-index: 1030;
+.drawer{
+  z-index: 900;
+}
+.drawer.drawer-left.drawer-open{
+  z-index: 1030;
 }
 .drawer-content {
   padding: 1rem 0.5rem;

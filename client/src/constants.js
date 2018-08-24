@@ -1,6 +1,4 @@
 // @flow
-export const PAGINATION_CHUNK_SIZE = 10
-export const NOTICES_PAGINATION_SIZE = 10
 export const CADASTRAL_PAGINATION_CHUNK_SIZE = 20
 export const CADASTRAL_PAGINATION_SIZE = 10
 
@@ -153,4 +151,4 @@ export const DEFAULT_ENTITIES_REQUEST_PARAMS = {
 
 export const FIND_ENTITY_TITLE = 'Hľadaj firmu / človeka'
 
-export const LOADING_CIRCLE_COLOR = "#0062db"
+export const LOADING_CIRCLE_COLOR = '#0062db'
