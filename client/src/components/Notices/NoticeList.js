@@ -66,7 +66,9 @@ const NoticeList = ({
   return (
     <Container fluid className="notice-list">
       <Row>
-        <NoticeSidebar />
+        <Col xl="3" tag="aside" className="notice-list-sidebar">
+          <NoticeSidebar />
+        </Col>
         <Col xl={{size: 9, offset: 3}}>
           <Input
             type="text"

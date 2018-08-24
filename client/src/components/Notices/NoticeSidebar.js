@@ -1,10 +1,11 @@
-import React from 'react'
+import React, {Fragment} from 'react'
+
 import {Row, Col} from 'reactstrap'
 import Legend from './Legend'
 import './NoticeSidebar.css'
 
 export default () => (
-  <Col xl="3" tag="aside" className="notice-list-sidebar">
+  <Fragment>
     <Row>
       <Col sm={{size: 10, offset: 2}}>
         <h2 className="notice-list-title">Aktuálne obstarávania</h2>
@@ -30,5 +31,5 @@ export default () => (
         </div>
       </Col>
     </Row>
-  </Col>
+  </Fragment>
 )
