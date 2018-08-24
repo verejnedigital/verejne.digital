@@ -149,7 +149,7 @@ const Content = compose(
       toggleModalOpen,
       setEntitySearchFor,
       toggleDrawer,
-      closeAddressDetail
+      closeAddressDetail,
     }
   ),
   withHandlers({
