@@ -7,11 +7,16 @@ import {
   SUB_CITY_ZOOM,
   CITY_ZOOM,
   DEFAULT_ENTITIES_REQUEST_PARAMS,
+  COUNTRY_ZOOM,
+  WORLD_ZOOM,
+  SLOVAKIA_DISTRICT,
+  SLOVAKIA_REGION,
+  SLOVAKIA_COORDINATES,
+  DISTRICT_ZOOM,
 } from '../constants'
-import {normalizeName} from '../utils'
+import {isInSlovakia, normalizeName} from '../utils'
 import {sortBy, filter} from 'lodash'
 import supercluster from 'points-cluster'
-
 import type {ContextRouter} from 'react-router-dom'
 import type {NoticesOrdering} from '../components/Notices/NoticeList'
 import type {NoticeDetailProps} from '../components/Notices/NoticeDetail'
@@ -106,6 +111,11 @@ export const addressEntitiesSelector = createSelector(
   (entities, addressId) => filter(entities, (entity) => entity.addressId === addressId)
 )
 
+export const useLabelsSelector = createSelector(
+  zoomSelector,
+  centerSelector,
+  (zoom, center) => (zoom < CITY_ZOOM && isInSlovakia(center))
+)
 type SuperCluster = {
   numPoints: number,
   points: Array<CompanyEntity>,
@@ -122,6 +132,8 @@ export type MapCluster = {
   numPoints: number,
   id: string,
   points: Array<any>,
+  setZoomTo: number,
+  isLabel: boolean,
 }
 
 type EntitiesRequestParams = {
@@ -147,14 +159,57 @@ const createClusters = (mapOptions: MapOptions, addresses): Array<MapCluster> =>
       numPoints,
       id: `${i}`,
       points,
+      isLabel: false,
+      setZoomTo: mapOptions.zoom + 1,
     })
   )
 }
-
+const createLabels = (mapOptions: MapOptions): Array<MapCluster> => {
+  let labels = []
+  if (mapOptions.zoom <= WORLD_ZOOM) {
+    labels = [{
+      lat: SLOVAKIA_COORDINATES[0],
+      lng: SLOVAKIA_COORDINATES[1],
+      numPoints: 0,
+      id: 'SLOVAKIA',
+      points: [],
+      setZoomTo: COUNTRY_ZOOM,
+      isLabel: true,
+    }]
+  } else {
+    if (mapOptions.zoom <= COUNTRY_ZOOM) {
+      labels = SLOVAKIA_REGION.map((region) => ({
+        lat: region.centroid[1],
+        lng: region.centroid[0],
+        numPoints: 0,
+        id: region.name,
+        points: [],
+        setZoomTo: DISTRICT_ZOOM,
+        isLabel: true,
+      })
+      )
+    } else {
+      labels = SLOVAKIA_DISTRICT.map((district) => ({
+        lat: district.centroid[1],
+        lng: district.centroid[0],
+        numPoints: 0,
+        id: district.name,
+        points: [],
+        setZoomTo: CITY_ZOOM,
+        isLabel: true,
+      })
+      )
+    }
+  }
+  return labels
+}
 export const clustersSelector = createSelector(
   mapOptionsSelector,
   addressesSelector,
-  (mapOptions, addresses) => createClusters(mapOptions, addresses)
+  useLabelsSelector,
+  (mapOptions, addresses, useLabels) => useLabels
+    ? createLabels(mapOptions)
+    : createClusters(mapOptions, addresses)
 )
 
 const requestParamsSelector = createSelector(

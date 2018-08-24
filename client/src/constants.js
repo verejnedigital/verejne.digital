@@ -1,4 +1,12 @@
 // @flow
+import districtJson from './slovakiaData/district-centers.json'
+import regionJson from './slovakiaData/region-centers.json'
+
+export const SLOVAKIA_DISTRICT = districtJson
+export const SLOVAKIA_REGION = regionJson
+
+export const PAGINATION_CHUNK_SIZE = 10
+export const NOTICES_PAGINATION_SIZE = 10
 export const CADASTRAL_PAGINATION_CHUNK_SIZE = 20
 export const CADASTRAL_PAGINATION_SIZE = 10
 
@@ -10,8 +18,18 @@ export const ENTITY_ZOOM = 17
 export const SUB_CITY_ZOOM = 14
 export const CITY_ZOOM = 11
 export const COUNTRY_ZOOM = 8
+export const DISTRICT_ZOOM = 10
+export const WORLD_ZOOM = 6
 export const GOOGLE_MAP_API_KEY = 'AIzaSyCAXMlEL-sfzT4jVK5CQHysSPp77JnVLks'
 export const SLOVAKIA_COORDINATES = [48.6, 19.5]
+
+const SLOVAKIA_NORTH_BOUND = 49.62
+const SLOVAKIA_SOUTH_BOUND = 47.72
+const SLOVAKIA_WEST_BOUND = 16.82
+const SLOVAKIA_EAST_BOUND = 22.57 //TU NIC NIEJE!
+
+export const SLOVAKIA_BOUNDS = [[SLOVAKIA_WEST_BOUND, SLOVAKIA_SOUTH_BOUND],
+  [SLOVAKIA_EAST_BOUND, SLOVAKIA_NORTH_BOUND]]
 
 // Typing only the first level is enough for now
 type GMapOptions = {

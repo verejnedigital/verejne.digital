@@ -32,12 +32,13 @@ const ClusterMarker = ({
   onClick,
   openedAddressId,
 }: ClusterMarkerProps) => {
-  const MarkerText = <span className="marker__text">{cluster.numPoints}</span>
   let className, children
   const selected = cluster.numPoints === 1 && cluster.points[0].address_id === openedAddressId
   if (zoom < ENTITY_ZOOM) {
-    className = cluster.numPoints === 1 ? 'simple-marker' : 'cluster-marker'
-    children = cluster.numPoints !== 1 && <span className="marker__text">{cluster.numPoints}</span>
+    className = cluster.isLabel || (cluster.numPoints === 1)
+      ? 'simple-marker'
+      : 'cluster-marker'
+    children = cluster.numPoints > 1 && <span className="marker__text">{cluster.numPoints}</span>
   } else {
     //TODO: fix classnames after the api provides enough information
     className = classnames({
@@ -45,7 +46,7 @@ const ClusterMarker = ({
       'cluster-marker': cluster.numPoints > 1,
       'government': cluster.points[0].tradewithgovernment,
     })
-    children = cluster.numPoints === 1 ? <FaIconCircle size="18" /> : MarkerText
+    children = cluster.numPoints === 1 ? <FaIconCircle size="18" /> : <span className="marker__text">{cluster.numPoints}</span>
   }
   className = classnames(className, {selected})
   return (
@@ -75,7 +76,7 @@ export default compose(
         setModal(false)
         zoomToLocation({lat: cluster.lat, lng: cluster.lng}, ENTITY_CLOSE_ZOOM)
       } else {
-        zoomToLocation({lat: cluster.lat, lng: cluster.lng})
+        zoomToLocation({lat: cluster.lat, lng: cluster.lng}, cluster.setZoomTo)
       }
     },
   })
