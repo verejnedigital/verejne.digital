@@ -170,6 +170,7 @@ const Content = compose(
         'Set entity search field value'
       ),
     setZoomToLocation: ({zoomToLocation}) => (value, id) =>
+      updateValue(['publicly', 'autocompleteValue'], value, 'Set autocomplete value')
       geocodeByAddress(value)
         .then((results) => getLatLng(results[0]))
         .then((location) => zoomToLocation(location, ENTITY_CLOSE_ZOOM)),
