@@ -2,7 +2,6 @@
 import {createSelector} from 'reselect'
 import qs from 'qs'
 import {
-  PAGINATION_CHUNK_SIZE,
   clusterOptions,
   ENTITY_ZOOM,
   SUB_CITY_ZOOM,
@@ -10,7 +9,7 @@ import {
   DEFAULT_ENTITIES_REQUEST_PARAMS,
 } from '../constants'
 import {values, normalizeName} from '../utils'
-import {sortBy, chunk, filter} from 'lodash'
+import {sortBy, filter} from 'lodash'
 import supercluster from 'points-cluster'
 
 import type {ContextRouter} from 'react-router-dom'
@@ -73,25 +72,9 @@ export const nameSortedNoticesSelector = createSelector(
 export const locationSearchSelector = (_: State, props: ContextRouter) =>
   qs.parse(props.location.search.slice(1))
 
-export const paginationSelector = createSelector(
-  locationSearchSelector,
-  (query) => Number.parseInt(query.page, 10) || 1
-)
-
 export const noticesOrderingSelector = createSelector(
   locationSearchSelector,
   (query): NoticesOrdering => query.ordering || 'date'
-)
-
-export const paginatedNoticesSelector = createSelector(
-  dateSortedNoticesSelector,
-  nameSortedNoticesSelector,
-  noticesOrderingSelector,
-  paginationSelector,
-  (dateSorted, nameSorted, orderBy, page) => {
-    const notices = orderBy === 'title' ? nameSorted : dateSorted
-    return chunk(notices, PAGINATION_CHUNK_SIZE)[page - 1] || []
-  }
 )
 
 // not the most elegant, but presently we need the whole list
