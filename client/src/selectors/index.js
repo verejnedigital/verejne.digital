@@ -8,12 +8,11 @@ import {
   CITY_ZOOM,
   DEFAULT_ENTITIES_REQUEST_PARAMS,
 } from '../constants'
-import {values, normalizeName} from '../utils'
+import {normalizeName} from '../utils'
 import {sortBy, filter} from 'lodash'
 import supercluster from 'points-cluster'
 
 import type {ContextRouter} from 'react-router-dom'
-import type {ObjectMap} from '../types/commonTypes'
 import type {NoticesOrdering} from '../components/Notices/NoticeList'
 import type {NoticeDetailProps} from '../components/Notices/NoticeDetail'
 import type {
@@ -24,6 +23,7 @@ import type {
   Company,
   NewEntityDetail,
   Notice,
+  SearchedEntity,
 } from '../state'
 export const paramsIdSelector = (_: State, props: ContextRouter): string =>
   props.match.params.id || '0'

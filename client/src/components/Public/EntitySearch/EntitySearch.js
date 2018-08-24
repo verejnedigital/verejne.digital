@@ -39,10 +39,6 @@ type EntitySearchProps = {|
   entitySearchFor: string,
 |}
 
-type PluralityProps = {
-  count: number,
-}
-
 const EntitySearch = ({
   entitySearchModalOpen,
   toggleModalOpen,
@@ -53,7 +49,7 @@ const EntitySearch = ({
   entitySearchEids,
   entitySearchFor,
 }: EntitySearchProps) => {
-  const plurality = ({count}: PluralityProps) => {
+  const plurality = (count: number) => {
     if (count === 1) {
       return `Nájdený ${count} výsledok`
     } else if (count > 1 && count < 5) {
