@@ -1,6 +1,6 @@
 // @flow
-import districtJson from './slovensko/okresy-centers.json'
-import regionJson from './slovensko/kraje-centers.json'
+import districtJson from './slovakiaData/district-centers.json'
+import regionJson from './slovakiaData/region-centers.json'
 
 export const SLOVAKIA_DISTRICT = districtJson
 export const SLOVAKIA_REGION = regionJson

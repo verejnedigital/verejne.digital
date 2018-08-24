@@ -7,12 +7,13 @@ import {
   addressesSelector,
   clustersSelector,
   addressesUrlSelector,
+  useLabelsSelector,
 } from '../../../selectors'
 import {setMapOptions} from '../../../actions/publicActions'
 import './GoogleMap.css'
 import {map} from 'lodash'
 import ClusterMarker from './ClusterMarker/ClusterMarker'
-import {branch, compose, renderComponent, withHandlers, withProps} from 'recompose'
+import {branch, compose, renderComponent, withHandlers} from 'recompose'
 import Loading from '../../Loading/Loading'
 import GoogleMap from '../../GoogleMap/GoogleMap'
 import {withDataProviders} from 'data-provider'
@@ -20,20 +21,13 @@ import {addressesProvider} from '../../../dataProviders/publiclyDataProviders'
 import {withRouter} from 'react-router-dom'
 import qs from 'qs'
 import {
-  CITY_ZOOM,
   DEFAULT_MAP_CENTER,
   COUNTRY_ZOOM,
-  WORLD_ZOOM,
-  SLOVAKIA_DISTRICT,
-  SLOVAKIA_REGION,
-  SLOVAKIA_COORDINATES,
-  DISTRICT_ZOOM,
-  SLOVAKIA_BOUNDS,
 } from '../../../constants'
 import {withSideEffects} from '../../../utils'
 
 import type {MapOptions, CompanyEntity} from '../../../state'
-import type {MapCluster} from '../../../selectors'
+import type {MapCluster, MapLabel} from '../../../selectors'
 import type {GenericAction} from '../../../types/reduxTypes'
 import type {RouterHistory} from 'react-router'
 
@@ -43,58 +37,17 @@ type Props = {
   center: [number, number],
   entities: Array<CompanyEntity>,
   setMapOptions: (mapOptions: MapOptions) => GenericAction<MapOptions, MapOptions>,
-  clusters: Array<MapCluster>,
+  clusters: Array<MapCluster> | Array<MapLabel>,
   onChange: (options: MapOptions) => any,
   history: RouterHistory,
 }
-const isInSlovakia = (center: [number, number]): boolean => {
-  return (center[0] > SLOVAKIA_BOUNDS[0][1]) && (center[0] < SLOVAKIA_BOUNDS[1][1]) &&
-    (center[1] > SLOVAKIA_BOUNDS[0][0]) && (center[1] < SLOVAKIA_BOUNDS[1][0])
-}
+
 // NOTE: there can be multiple points on the map on the same location...
 const Map = ({useLabels, zoom, center, clusters, onChange}: Props) => {
-  let finalClusters = clusters
-  if (useLabels) {
-    if (zoom <= WORLD_ZOOM) {
-      finalClusters = [{
-        lat: SLOVAKIA_COORDINATES[0],
-        lng: SLOVAKIA_COORDINATES[1],
-        numPoints: 0,
-        id: 'SLOVAKIA',
-        points: [],
-        setZoomTo: COUNTRY_ZOOM,
-        isLabel: true,
-      }]
-    } else {
-      if (zoom <= COUNTRY_ZOOM) {
-        finalClusters = SLOVAKIA_REGION.map((region) => ({
-          lat: region.centroid[1],
-          lng: region.centroid[0],
-          numPoints: 0,
-          id: region.name,
-          points: [],
-          setZoomTo: DISTRICT_ZOOM,
-          isLabel: true,
-        })
-        )
-      } else {
-        finalClusters = SLOVAKIA_DISTRICT.map((district) => ({
-          lat: district.centroid[1],
-          lng: district.centroid[0],
-          numPoints: 0,
-          id: district.name,
-          points: [],
-          setZoomTo: CITY_ZOOM,
-          isLabel: true,
-        })
-        )
-      }
-    }
-  }
   return (
     <div className="google-map-wrapper">
       <GoogleMap center={center} zoom={zoom} onChange={onChange}>
-        {map(finalClusters, (cluster, i: number) => (
+        {map(clusters, (cluster, i: number) => (
           <ClusterMarker
             key={i}
             cluster={cluster}
@@ -134,8 +87,8 @@ export default compose(
     addresses: addressesSelector(state),
     clusters: clustersSelector(state),
     addressesUrl: addressesUrlSelector(state),
+    useLabels: useLabelsSelector(state),
   })),
-  withProps((props) => ({useLabels: (props.zoom < CITY_ZOOM && isInSlovakia(props.center))})),
   withDataProviders(({useLabels, addressesUrl}) => useLabels ? [] : [addressesProvider(addressesUrl)]),
   withHandlers({
     onChange: (props) => (options) => {
