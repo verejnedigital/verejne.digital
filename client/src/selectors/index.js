@@ -15,6 +15,7 @@ import {
   DISTRICT_ZOOM,
 } from '../constants'
 import {isInSlovakia, normalizeName, values} from '../utils'
+import {hasTradeWithState} from './utils'
 import {sortBy, filter} from 'lodash'
 import supercluster from 'points-cluster'
 import type {ContextRouter} from 'react-router-dom'
@@ -30,6 +31,7 @@ import type {
   Notice,
   SearchedEntity,
 } from '../state'
+
 export const paramsIdSelector = (_: State, props: ContextRouter): string =>
   props.match.params.id || '0'
 
@@ -102,8 +104,11 @@ export const entitySearchSelector = (state: State, query: string): SearchedEntit
   state.entitySearch[query]
 export const allEntityDetailsSelector = (state: State): ObjectMap<NewEntityDetail> =>
   state.entityDetails
-export const entityDetailSelector = (state: State, eid: number): NewEntityDetail | null =>
-  eid ? state.entityDetails[eid.toString()] : null
+export const entityDetailSelector = (state: State, eid: number): NewEntityDetail | null => {
+  if (!eid) return null
+  const entityDetails = state.entityDetails[eid.toString()]
+  return {...entityDetails, tradesWithState: hasTradeWithState(entityDetails)}
+}
 
 export const addressEntitiesSelector = createSelector(
   entitiesSelector,

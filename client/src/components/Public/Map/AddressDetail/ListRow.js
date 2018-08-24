@@ -13,7 +13,6 @@ import {
 } from '../../../../actions/publicActions'
 import {updateValue} from '../../../../actions/sharedActions'
 import {entityDetailSelector} from '../../../../selectors'
-import {hasTradeWithState} from '../../entityHelpers'
 import Info from '../../../shared/Info/Info'
 
 import type {NewEntityDetail} from '../../../../state'
@@ -47,14 +46,13 @@ const DetailedInfo = compose(
   })
 )(_DetailedInfo)
 
-const ListRow = ({entity, toggleEntityInfo, showInfo, openModalSearch, entityDetails,
-  tradesWithState}) =>
+const ListRow = ({entity, toggleEntityInfo, showInfo, openModalSearch, entityDetails}) =>
   showInfo ? (
     <DetailedInfo id={entity.id} data={entityDetails} />
   ) : (
     <ListGroupItem action className="list-row">
       <span className="list-row-toggler" onClick={toggleEntityInfo}>
-        <TradeIcon filled={tradesWithState} />
+        <TradeIcon filled={entityDetails.tradesWithState} />
         <span>{entity.name}</span>
       </span>
       <SearchIcon size="16" className="search-icon float-right mr-3" onClick={openModalSearch} />
@@ -64,11 +62,9 @@ const ListRow = ({entity, toggleEntityInfo, showInfo, openModalSearch, entityDet
 export default compose(
   connect(
     (state, {entity}) => {
-      const entityDetails = entityDetailSelector(state, entity.id)
       return {
         showInfo: state.publicly.showInfo[entity.id],
-        tradesWithState: hasTradeWithState(entityDetails),
-        entityDetails,
+        entityDetails: entityDetailSelector(state, entity.id),
       }
     },
     {toggleEntityInfo, toggleModalOpen, setEntitySearchFor, updateValue}

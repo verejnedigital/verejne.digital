@@ -6,13 +6,12 @@ import {withDataProviders} from 'data-provider'
 import {addressEntitiesProvider} from '../../../../dataProviders/publiclyDataProviders'
 import {entityDetailProvider} from '../../../../dataProviders/sharedDataProviders'
 import {addressEntitiesSelector, addressEntitiesIdsSelector} from '../../../../selectors'
+import {MAX_ENTITY_REQUEST_COUNT} from '../../../../constants'
 import {closeAddressDetail} from '../../../../actions/publicActions'
 import {ListGroup, Button} from 'reactstrap'
 import {map, chunk} from 'lodash'
 import ListRow from './ListRow'
 import './AddressDetail.css'
-
-const MAX_REQUEST_ID_COUNT = 50
 
 type Entity = {
   addressId: number,
@@ -52,7 +51,7 @@ export default compose(
   ),
   withDataProviders(({addressId}) => [addressEntitiesProvider(addressId)]),
   withDataProviders(({entitiesIds}) => entitiesIds.length ?
-    chunk(entitiesIds, MAX_REQUEST_ID_COUNT).map((ids) => entityDetailProvider(ids)) : []
+    chunk(entitiesIds, MAX_ENTITY_REQUEST_COUNT).map((ids) => entityDetailProvider(ids)) : []
   ),
   withHandlers({
     onClick: ({closeAddressDetail}) => (event) => {
