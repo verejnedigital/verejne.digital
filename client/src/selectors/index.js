@@ -162,7 +162,7 @@ const createClusters = (mapOptions: MapOptions, addresses): Array<MapCluster> =>
       id: `${i}`,
       points,
       isLabel: false,
-      setZoomTo: mapOptions.zoom + 1,
+      setZoomTo: Math.min(mapOptions.zoom + 1, 22),
     })
   )
 }

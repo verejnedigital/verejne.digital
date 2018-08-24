@@ -70,14 +70,21 @@ export default compose(
     }
   ),
   withHandlers({
-    onClick: ({cluster, zoomToLocation, openAddressDetail, setDrawer, setModal}) => (event) => {
+    onClick: ({zoom, cluster, zoomToLocation, openAddressDetail, setDrawer, setModal}) => (event) => {
       if (cluster.numPoints === 1) {
         openAddressDetail([cluster.points[0].address_id])
         setDrawer(true)
         setModal(false)
-        zoomToLocation({lat: cluster.lat, lng: cluster.lng}, ENTITY_CLOSE_ZOOM)
+        zoomToLocation({lat: cluster.lat, lng: cluster.lng}, Math.max(ENTITY_CLOSE_ZOOM, zoom))
       } else {
-        zoomToLocation({lat: cluster.lat, lng: cluster.lng}, cluster.setZoomTo)
+        if (zoom < 22) {
+          zoomToLocation({lat: cluster.lat, lng: cluster.lng})
+        } else {
+          openAddressDetail(cluster.points.map((point) => point.address_id))
+          setDrawer(true)
+          setModal(false)
+          zoomToLocation({lat: cluster.lat, lng: cluster.lng}, Math.max(ENTITY_CLOSE_ZOOM, zoom))
+        }
       }
     },
   })
