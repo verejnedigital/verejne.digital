@@ -46,7 +46,9 @@ def update_SQL_source(source, timestamp, dry_run, verbose):
         return
 
     # Load into postgres, unzipping along the way
-    if source['path'].endswith('.sql.gz'):
+    if source['path'].endswith('internal_profil.sql.gz'):
+        subprocess.call(['pg_restore', source['path'], '-d', 'vd'])
+    elif source['path'].endswith('.sql.gz'):
         p1 = subprocess.Popen(['gunzip', '-c', source['path']], stdout=subprocess.PIPE)
         subprocess.check_output(['psql', '-d', 'vd', '-q'], stdin=p1.stdout)
     # Load into postgres directly
