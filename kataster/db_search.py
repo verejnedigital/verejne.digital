@@ -125,16 +125,16 @@ def get_politicians_with_Folio_counts(db):
         Persons
       INNER JOIN
         AssetDeclarations ON AssetDeclarations.PersonId=Persons.Id
-      JOIN
+      INNER JOIN
         PersonCounts ON PersonCounts.PersonId=Persons.Id
-      JOIN
+      INNER JOIN
         PersonOffices ON PersonOffices.PersonId=Persons.Id
-      JOIN
+      INNER JOIN
         Offices ON Offices.id=PersonOffices.OfficeId
-      JOIN
+      LEFT JOIN
         Parties ON Parties.id=PersonOffices.party_nomid
       WHERE
-        AssetDeclarations.Year=2017
+        AssetDeclarations.Year>=2016
       ORDER BY
         Persons.Id, PersonOffices.term_end DESC
       ;"""
