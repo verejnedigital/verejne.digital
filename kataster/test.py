@@ -36,7 +36,7 @@ class TestHandlers(unittest.TestCase):
     content = _request_json('/kataster_info_person', self)
 
   def test_kataster_info_politician(self):
-    content = _request_json('/kataster_info_politician?id=40', self)
+    content = _request_json('/kataster_info_politician?id=717', self)
     self.assertIsInstance(content, list)
     self.assertTrue(content)
     print('KatasterInfoPolitician returned %d results.' % (
@@ -49,12 +49,12 @@ class TestHandlers(unittest.TestCase):
     print('ListPoliticians returned %d results.' % (len(content)))
 
   def test_info_politician(self):
-    content = _request_json('/info_politician?id=40', self)
+    content = _request_json('/info_politician?id=717', self)
     self.assertIsInstance(content, dict)
     self.assertTrue(content)
 
   def test_asset_declarations(self):
-    content = _request_json('/asset_declarations?id=40', self)
+    content = _request_json('/asset_declarations?id=717', self)
     self.assertIsInstance(content, list)
     self.assertTrue(content)
     print('AssetDeclarations returned %d declarations.' % (
