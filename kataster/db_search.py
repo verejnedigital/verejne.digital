@@ -18,11 +18,11 @@ def get_politician_by_PersonId(db, PersonId):
         Offices.name_female AS office_name_female
       FROM
         Persons
-      JOIN
+      INNER JOIN
         PersonOffices ON PersonOffices.PersonId=Persons.id
-      JOIN
+      INNER JOIN
         Offices ON Offices.id=PersonOffices.officeid
-      JOIN
+      LEFT JOIN
         Parties ON Parties.id=PersonOffices.party_nomid
       WHERE
         Persons.Id=%s
