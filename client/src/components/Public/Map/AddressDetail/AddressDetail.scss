@@ -1,0 +1,26 @@
+@import '../../../variables.scss';
+
+.address-detail {
+  width: $verejne-sidebar-width;
+  box-shadow: 0 4px 12px darken($shadow-color, 25%);
+  background-color: $component-background;
+  border-radius: 2px;
+  @media screen and (max-width: 576px) {
+    width: 100%;
+  }
+}
+
+.address-detail-header {
+  border-bottom: 2px solid $border-color;
+  text-align: right;
+}
+
+.address-detail-list {
+  overflow-y: auto;
+  border-radius: 0;
+  padding-left: 1.5rem;
+  padding-right: 0.5rem;
+  @media screen and (max-width: 576px) {
+    padding: 0 0.2rem;
+  }
+}

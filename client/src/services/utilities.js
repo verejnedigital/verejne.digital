@@ -1,8 +1,10 @@
 // @flow
-
 import React from 'react'
+import {reduce, isEmpty, orderBy, padStart, isFinite} from 'lodash'
 
-import type {Company} from '../state'
+import {pickBy} from '../utils'
+import type {ObjectMap} from '../types/commonTypes'
+import type {Company, NewEntityDetail, CompanyFinancial} from '../state'
 
 const monthNames = [
   'január',
@@ -19,8 +21,18 @@ const monthNames = [
   'december',
 ]
 
+/* eslint-disable quote-props */
+// source: https://ekosystem.slovensko.digital/otvorene-data#crz.contracts.status_id
+const contractStatuses: ObjectMap<string> = {
+  '1': 'rozpracovaná',
+  '2': 'zverejnená',
+  '3': 'doplnená',
+  '4': 'zrušená',
+  '5': 'stiahnutá',
+}
+
 export function localeNumber(number: number) {
-  return number
+  return isFinite(number)
     ? number.toLocaleString('sk-SK', {minimumFractionDigits: 2, maximumFractionDigits: 2})
     : null
 }
@@ -31,12 +43,11 @@ type ShowNumberCurrencyProps = {
 }
 
 export const ShowNumberCurrency = ({num, cur = '€'}: ShowNumberCurrencyProps) => {
-  if (!num) return null
-  return (
+  return isFinite(num) ? (
     <span className="text-nowrap">
       {localeNumber(num)} {cur}
     </span>
-  )
+  ) : null
 }
 
 export function icoUrl(ico: string) {
@@ -56,7 +67,7 @@ function isValidValue(value) {
     value === 'null' ||
     value === 'NULL' ||
     value === 'None' ||
-    value === 'nezisten'
+    (typeof value === 'string' && value.indexOf('nezisten') === 0)
   )
 }
 
@@ -96,6 +107,43 @@ export function getFinancialData(data: Company, ico: string) {
   return findata
 }
 
+export type EnhancedCompanyFinancial = {
+  year: number,
+  revenueTrend?: number,
+  profitTrend?: number,
+} & CompanyFinancial
+
+export type FinancialData = {
+  ico: string,
+  established_on?: string,
+  terminated_on?: string,
+  finances: Array<EnhancedCompanyFinancial>,
+}
+
+export function getNewFinancialData(data: NewEntityDetail): FinancialData {
+  const finances = reduce(
+    data.companyfinancials || {},
+    (items: Array<EnhancedCompanyFinancial>, origItem: CompanyFinancial, year: string, origObj) => {
+      const item = pickBy(origItem, isValidValue)
+      if (!isEmpty(item)) {
+        item.year = parseInt(year, 10)
+        if (origObj[item.year - 1]) {
+          item.revenueTrend = computeTrend(item.revenue, origObj[item.year - 1].revenue)
+          item.profitTrend = computeTrend(item.profit, origObj[item.year - 1].profit)
+        }
+        items.push(item)
+      }
+      return items
+    },
+    []
+  )
+  return {
+    ...pickBy(data.companyinfo, isValidValue),
+    ico: padIco(data.companyinfo.ico),
+    finances: orderBy(finances, ['year'], ['desc']),
+  }
+}
+
 export function showDate(dateString: string) {
   const date = new Date(dateString)
   const day = date.getDate()
@@ -105,15 +153,28 @@ export function showDate(dateString: string) {
   return `${day}.${monthNames[monthIndex]} ${year}`
 }
 
+export function showContractStatus(statusId: number) {
+  if (statusId == null) {
+    return 'Neznáme'
+  }
+  return contractStatuses[statusId.toString()] || 'Neznáme'
+}
+
+export function showRelationType(typeId: number, typeText: string) {
+  if (typeId == null) {
+    return 'Neznáme'
+  }
+  return `${typeText || 'Neznáme'} ${typeId > 0 ? '>' : '<'}`
+}
+
+function padIco(ico?: number | string) {
+  // TODO remove null checks when `extractIco` is removed
+  return ico != null ? padStart(ico.toString(), 8, '0') : ''
+}
+
 export function extractIco(data: Company) {
   const icoSource = ['new_orsr_data', 'orsresd_data', 'firmy_data'].find(
     (src) => data[src].length >= 1
   )
-  let ico = icoSource ? data[icoSource][0].ico : null
-  if (ico != null) {
-    while (ico.length < 8) {
-      ico = `0${ico}`
-    }
-  }
-  return ico
+  return icoSource ? padIco(data[icoSource][0].ico) : null
 }

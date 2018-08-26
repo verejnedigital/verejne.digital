@@ -1,9 +1,17 @@
+// @flow
 import React from 'react'
 import {CardImg, CardBody, CardTitle, CardText} from 'reactstrap'
 import {Link} from 'react-router-dom'
 import './Card.css'
 
-export default ({title, text, imgSrc, to}) => (
+type CardProps = {|
+  title: string,
+  text: string,
+  imgSrc: string,
+  to: string,
+|}
+
+const Card = ({title, text, imgSrc, to}: CardProps) => (
   <Link to={to} className="card">
     <div className="card-image-wrap">
       <CardImg className="card-image" src={imgSrc} alt={title} />
@@ -14,3 +22,5 @@ export default ({title, text, imgSrc, to}) => (
     </CardBody>
   </Link>
 )
+
+export default Card

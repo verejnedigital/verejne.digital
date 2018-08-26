@@ -2,7 +2,7 @@
 import React from 'react'
 import './Cardboard.css'
 
-import type {PoliticianDetail} from '../../../state/index'
+import type {PoliticianDetail} from '../../../state'
 
 type CardboardProps = {
   politician: PoliticianDetail,

@@ -4,9 +4,18 @@ import {compose, withState, withHandlers} from 'recompose'
 import {formatSimilarPercent} from './LegendSymbols'
 import CompanyDetails from '../shared/CompanyDetails'
 import {localeNumber} from '../../services/utilities'
+
+import type {Candidate} from '../../state'
+
 import './Company.css'
 
-const _Company = ({item, toggledOn, toggle}) => {
+type Props = {|
+  item: Candidate,
+  toggledOn: boolean,
+  toggle: (e: Event) => void,
+|}
+
+const _Company = ({item, toggledOn, toggle}: Props) => {
   const showCompanyDetails = toggledOn && item.eid
   return (
     <Fragment>

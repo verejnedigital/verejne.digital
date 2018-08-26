@@ -1,0 +1,40 @@
+@import "../../../variables.scss";
+
+.list-row {
+  border: 0;
+  margin-bottom: 0;
+  padding: .5rem 0;
+
+  &:first-child {
+    border-radius: 0;
+  }
+
+  &:last-child {
+    border-radius: 0;
+  }
+
+  & + & {
+    border-top: 1px solid $border-color;
+  }
+
+  .info {
+    cursor: default;
+  }
+}
+
+.list-row-toggler {
+  cursor: pointer;
+  width: calc(100% - 3rem);
+  display: inline-block;
+}
+
+.list-row-icon {
+  margin-left: -1rem;
+  margin-right: 1rem;
+  color: $blue-color;
+}
+
+.search-icon {
+  cursor: pointer;
+  color: $blue-color;
+}

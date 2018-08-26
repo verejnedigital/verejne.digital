@@ -8,7 +8,7 @@ import ConnectionWrapper, {type ConnectionProps} from '../dataWrappers/Connectio
 import Alternative from './Alternative'
 import './Statuses.css'
 
-type EmptyHandler = () => void // TODO extract
+type EmptyHandler = () => void
 
 const translateZaznam = (count: number, onClickMethod) => {
   const button = <strong onClick={onClickMethod}>{count}</strong>
@@ -50,17 +50,17 @@ const Statuses = ({
     )}
     <p id="search-status1" className="searchStatus">
       {translateZaznam(entity1.eids.length, toggleAlternatives1)}
-      <span> pre</span> <strong>&quot;{entity1.id}&quot;</strong>
+      <span> pre</span> <strong>&quot;{entity1.query}&quot;</strong>
       {showAlternatives1 &&
         entity1.eids &&
-        entity1.eids.map((eid) => <Alternative key={eid} eid={eid} />)}
+        entity1.eids.map((eid) => <Alternative key={eid} eid={eid} useNewApi />)}
     </p>
     <p id="search-status2" className="searchStatus">
       {translateZaznam(entity2.eids.length, toggleAlternatives2)}
-      <span> pre</span> <strong>&quot;{entity2.id}&quot;</strong>
+      <span> pre</span> <strong>&quot;{entity2.query}&quot;</strong>
       {showAlternatives2 &&
         entity2.eids &&
-        entity2.eids.map((eid) => <Alternative key={eid} eid={eid} />)}
+        entity2.eids.map((eid) => <Alternative key={eid} eid={eid} useNewApi />)}
     </p>
   </div>
 )

@@ -2,7 +2,11 @@ import React from 'react'
 import {branch, renderNothing} from 'recompose'
 import './NoticeInformation.css'
 
-const _NoticeInformation = ({data}) => (
+type Props = {|
+  data: Array<{body: string, label:string}>,
+|}
+
+const _NoticeInformation = ({data}: Props) => (
   <ul className="notice-information">
     {data.map(({label, body}, index) => (
       <li className="notice-information-item" key={index}>

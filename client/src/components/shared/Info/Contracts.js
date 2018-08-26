@@ -1,39 +1,31 @@
+// @flow
 import React from 'react'
-import {compose, withState, withHandlers} from 'recompose'
-import ChevronUp from 'react-icons/lib/fa/chevron-up'
-import ChevronDown from 'react-icons/lib/fa/chevron-down'
-import {Badge, Button} from 'reactstrap'
 
+import InfoButton from './InfoButton'
 import ExternalLink from '../ExternalLink'
-import {ShowNumberCurrency} from '../../../services/utilities'
-import './Contracts.css'
+import {ShowNumberCurrency, showContractStatus} from '../../../services/utilities'
+import type {Contracts as ContractsType, Contract} from '../../../state'
 
-const _Contracts = ({data, toggledOn, toggle}) => {
-  return (
-    <div className="contracts">
-      <Button outline color="primary" onClick={toggle}>
-        {toggledOn ? <ChevronUp aria-hidden="true" /> : <ChevronDown aria-hidden="true" />} Zmluvy{' '}
-        <Badge color="primary">{data.length}</Badge>
-      </Button>
-      {toggledOn && (
-        <ul className="list-unstyled contracts-list">
-          {data.map((contract, i) => (
-            <li key={contract.eid}>
-              <ExternalLink url={contract.source}>
-                {`${contract.customer}, `}
-                <ShowNumberCurrency num={contract.total} />
-              </ExternalLink>
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
-  )
-}
+type ContractsProps = {|
+  data: ContractsType,
+|}
 
-export default compose(
-  withState('toggledOn', 'toggle', false),
-  withHandlers({
-    toggle: ({toggle}) => (e) => toggle((current) => !current),
-  })
-)(_Contracts)
+const Contracts = ({data}: ContractsProps) => (
+  <InfoButton
+    label="Zmluvy"
+    count={data.count}
+    priceSum={data.price_amount_sum}
+    list={data.most_recent}
+    buildItem={(contract: Contract) => (
+      <li key={contract.id}>
+        <ExternalLink url={`https://www.crz.gov.sk/index.php?ID=${contract.contract_id}`}>
+          {`${contract.client_name}, `}
+          <ShowNumberCurrency num={contract.contract_price_total_amount} />
+        </ExternalLink>
+        &nbsp;({showContractStatus(contract.status_id)})
+      </li>
+    )}
+  />
+)
+
+export default Contracts

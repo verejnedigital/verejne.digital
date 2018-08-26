@@ -1,8 +1,8 @@
-import React, {Fragment} from 'react'
+import React from 'react'
 import Navigation from './Navigation'
 import {Route} from 'react-router-dom'
 import {Switch} from 'react-router'
-import Verejne from './Verejne'
+import Public from './Public/Public'
 import Connections from './Connections/Connections'
 import NoticeList from './Notices/NoticeList'
 import NoticeDetail from './Notices/NoticeDetail'
@@ -13,12 +13,12 @@ import Landing from './Landing/Landing'
 import './App.css'
 
 export default (props) => (
-  <Fragment>
+  <div className="application-container">
     <Route path="/:something" component={Navigation} />
-    <div className="application-container">
+    <div className="screen-container">
       <Switch>
         <Route exact path="/" component={Landing} />
-        <Route path="/verejne" exact component={Verejne} />
+        <Route path="/verejne" exact component={Public} />
         <Route path="/prepojenia" exact component={Connections} />
         <Route path="/obstaravania" exact component={NoticeList} />
         <Route path="/obstaravania/:id" component={NoticeDetail} />
@@ -26,5 +26,5 @@ export default (props) => (
         <Route path="/profil/:id" component={DetailPage} />
       </Switch>
     </div>
-  </Fragment>
+  </div>
 )

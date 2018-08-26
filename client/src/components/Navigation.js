@@ -28,7 +28,7 @@ class Navigation extends Component {
   }
 
   render = () => (
-    <Navbar light fixed="top" expand="lg">
+    <Navbar light expand="lg">
       <NavLink to="/" className="navbar-brand">
         <b>verejne</b>.digital
       </NavLink>

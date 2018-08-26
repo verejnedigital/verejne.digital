@@ -7,8 +7,13 @@ To run an individual unit test only, run (for example):
   python test.py TestHandlers.test_subgraph
 """
 import json
+import os
+import sys
 import unittest
 import webapp2
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../data/db')))
+from db import DatabaseConnection
 
 import server
 
@@ -35,6 +40,23 @@ class TestHandlers(unittest.TestCase):
     content = _request_json(url, self)
     print('AShortestPath:\n%s' % (content))
 
+  def test_a_shortest_path_of_unit_length(self):
+    """Tests finding a shortest path between endpoints of an edge."""
+
+    # Find a relation in the database:
+    db = DatabaseConnection(path_config='db_config.yaml')
+    schema = db.get_latest_schema('prod_')
+    db.execute('SET search_path to ' + schema + ';')
+    rel = db.query('SELECT eid, eid_relation FROM related LIMIT 1')[0]
+    source = int(rel["eid"])
+    target = int(rel["eid_relation"])
+
+    # Check that the shortest path of length 1 is found:
+    url = '/a_shortest_path?eid1=%d&eid2=%d' % (source, target)
+    content = _request_json(url, self)
+    print('AShortestPath:\n%s' % (content))
+    self.assertListEqual(content, [source, target])
+
   def test_subgraph(self):
     url = '/subgraph?eid1=3264887&eid2=706143,1184394,1662599,1703776,2349437,3135421'
     content = _request_json(url, self)
@@ -43,7 +65,8 @@ class TestHandlers(unittest.TestCase):
 
 
 def main():
-  max_relations_to_load = 10000000
+  max_relations_to_load = 123456789
+
   server.initialise_app(max_relations_to_load)
   unittest.main()
 

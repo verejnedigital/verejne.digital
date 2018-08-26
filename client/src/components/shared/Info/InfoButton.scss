@@ -1,0 +1,16 @@
+@import '../../variables.scss';
+
+.info-button {
+  border-top: 1px solid $border-color;
+  padding-top: 1rem;
+  margin-top: 1rem;
+}
+
+.info-button-list {
+  margin-top: 1rem;
+
+  > li {
+    margin-bottom: .5rem;
+  }
+}
+

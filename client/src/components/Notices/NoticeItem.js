@@ -5,9 +5,17 @@ import {formatSimilarCount, formatSimilarPercent} from './LegendSymbols'
 import CompanyDetails from '../shared/CompanyDetails'
 import {Link} from 'react-router-dom'
 import {compose, withState, withHandlers} from 'recompose'
+
+import type {Notice} from '../../state'
+
 import './NoticeItem.css'
 
-const _NoticeItem = ({item, toggledOn, toggle}) => {
+type Props = {|
+  item: Notice,
+  toggledOn: boolean,
+  toggle: (e: Event) => void,
+|}
+const _NoticeItem = ({item, toggledOn, toggle}: Props) => {
   const {kandidati} = item
   const similarity = kandidati.length > 0 ? Math.round(kandidati[0].score * 100) : '?'
   const showCompanyDetail = toggledOn && kandidati[0].eid
