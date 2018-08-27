@@ -3,7 +3,7 @@ import ExclamationTriangle from 'react-icons/lib/fa/exclamation-triangle'
 import classnames from 'classnames'
 import React from 'react'
 
-export function getWarningSymbol(level) {
+export function getWarningSymbol(level: number) {
   if (level < 0) {
     return <QuestionCircle className={classnames('warning', `warning${level}`)} />
   } else if (level > 0) {
@@ -13,7 +13,7 @@ export function getWarningSymbol(level) {
   }
 }
 
-export function formatSimilarPercent(value) {
+export function formatSimilarPercent(value: number) {
   const styles = [
     {style: 'similarity-high', num: 75},
     {style: 'similarity-medium', num: 50},
@@ -28,7 +28,7 @@ export function formatSimilarPercent(value) {
   )
 }
 
-export function formatSimilarCount(value) {
+export function formatSimilarCount(value: number) {
   return (
     <span className="similar-count" title={value}>
       {value > 20 ? '20+' : value}

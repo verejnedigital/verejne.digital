@@ -6,7 +6,8 @@ import {withDataProviders} from 'data-provider'
 import type {ComponentType} from 'react'
 import type {EntitySearchProps} from './EntitySearchWrapper'
 import type {State, SearchedEntity} from '../../../state'
-import {connectionEntityProvider} from '../../../dataProviders/connectionsDataProviders'
+import {entitySearchProvider} from '../../../dataProviders/sharedDataProviders'
+import {entitySearchSelector} from '../../../selectors'
 
 export type EntityProps = {
   entity1: SearchedEntity,
@@ -19,12 +20,12 @@ const EntityWrapper = (WrappedComponent: ComponentType<*>) => {
 
   return compose(
     withDataProviders(({entitySearch1, entitySearch2}: EntitySearchProps) => [
-      connectionEntityProvider(entitySearch1),
-      connectionEntityProvider(entitySearch2),
+      entitySearchProvider(entitySearch1),
+      entitySearchProvider(entitySearch2),
     ]),
     connect((state: State, props: EntitySearchProps) => ({
-      entity1: state.connections.entities[props.entitySearch1],
-      entity2: state.connections.entities[props.entitySearch2],
+      entity1: entitySearchSelector(state, props.entitySearch1),
+      entity2: entitySearchSelector(state, props.entitySearch2),
     }))
   )(wrapped)
 }

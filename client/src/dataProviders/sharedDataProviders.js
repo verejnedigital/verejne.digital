@@ -15,6 +15,14 @@ const dispatchCompanyDetails = (eid: number) => (
   dispatch(receiveData(['companies'], {id: eid, eid, ...data}, ref))
 }
 
+const dispatchEntitySearch = (query: string) => (
+  ref: string,
+  data: Array<{eid: number}>,
+  dispatch: Dispatch
+) => {
+  dispatch(receiveData(['entitySearch'], {id: query, query, eids: data.map(({eid}) => eid)}, ref))
+}
+
 const dispatchEntityDetails = () => (
   ref: string,
   data: ObjectMap<NewEntityDetail>,
@@ -39,14 +47,25 @@ export const companyDetailProvider = (eid: number, needed: boolean = true) => {
   }
 }
 
-export const entityDetailProvider = (eids: number | number[], needed: boolean = true) => {
+export const entitySearchProvider = (query: string) => ({
+  ref: `entitySearch-${query}`,
+  getData: [
+    fetch,
+    `${process.env.REACT_APP_API_URL || ''}/api/v/searchEntityByName?name=${query}`,
+    {
+      accept: 'application/json',
+    },
+  ],
+  onData: [dispatchEntitySearch, query],
+})
+
+export const entityDetailProvider = (eid: number | number[], needed: boolean = true) => {
   const requestPrefix = `${process.env.REACT_APP_API_URL || ''}`
-  const query = eids instanceof Array ? eids.join() : eids
   return {
-    ref: `entityDetail-${query}`,
+    ref: `entityDetail-${eid.toString()}`,
     getData: [
       fetch,
-      `${requestPrefix}/api/v/getInfos?eids=${query}`,
+      `${requestPrefix}/api/v/getInfos?eids=${eid.toString()}`,
       {
         accept: 'application/json',
       },

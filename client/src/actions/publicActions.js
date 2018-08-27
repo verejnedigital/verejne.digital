@@ -1,7 +1,7 @@
 // @flow
-import {zoomSelector, mapOptionsSelector} from '../selectors'
 import {fromPairs} from 'lodash'
-
+import {zoomSelector, mapOptionsSelector} from '../selectors'
+import type {ObjectMap} from '../types/commonTypes'
 import type {
   MapOptions,
   Center,
@@ -11,7 +11,6 @@ import type {
   NewEntityDetail,
 } from '../state'
 import type {GenericAction, Thunk} from '../types/reduxTypes'
-import type {ObjectMap} from '../types/commonTypes'
 
 export const setAddresses = (addresses: Address[]) => ({
   type: 'Set addresses',
@@ -33,11 +32,16 @@ export const setEntities = (
   }),
 })
 
-export const setEntityDetails = (entityDetails: ObjectMap<NewEntityDetail>) => ({
-  type: 'Set entity details',
+export const setEntityDetails = (
+  entityDetails: ObjectMap<NewEntityDetail>
+): GenericAction<ObjectMap<NewEntityDetail>, ObjectMap<NewEntityDetail>> => ({
+  type: 'Set entity detail',
   path: ['entityDetails'],
   payload: entityDetails,
-  reducer: (state: ObjectMap<NewEntityDetail>) => ({...state, ...entityDetails}),
+  reducer: (state) => ({
+    ...state,
+    ...entityDetails,
+  }),
 })
 
 export const setMapOptions = (mapOptions: MapOptions) => ({
@@ -62,6 +66,12 @@ export const toggleModalOpen = () => ({
   reducer: (open: boolean) => !open,
 })
 
+export const setModal = (open: boolean) => ({
+  type: 'Set modal',
+  path: ['publicly', 'entitySearchModalOpen'],
+  reducer: () => open,
+})
+
 export const setEntitySearchFor = (searchFor: string) => ({
   type: 'Set entity search for pattern',
   path: ['publicly', 'entitySearchFor'],
@@ -82,16 +92,16 @@ export const toggleEntityInfo = (eid: number) => ({
   reducer: (open: boolean): boolean => !open,
 })
 
-export const openAddressDetail = (addressId: number) => ({
+export const openAddressDetail = (addressIds: Array<number>) => ({
   type: 'Open address detail',
   path: ['publicly', 'openedAddressDetail'],
-  reducer: () => addressId,
+  reducer: () => addressIds,
 })
 
 export const closeAddressDetail = () => ({
   type: 'Close address detail',
   path: ['publicly', 'openedAddressDetail'],
-  reducer: () => null,
+  reducer: () => [],
 })
 
 export const toggleDrawer = () => ({
@@ -100,7 +110,7 @@ export const toggleDrawer = () => ({
   reducer: (open: boolean) => !open,
 })
 
-export const setDrawer = (open) => ({
+export const setDrawer = (open: boolean) => ({
   type: 'Set drawer',
   path: ['publicly', 'drawerOpen'],
   reducer: () => open,
