@@ -54,7 +54,7 @@ type ContentProps = {
   autocompleteOptions: Bound,
   toggleModalOpen: () => void,
   toggleDrawer: () => void,
-  openedAddressId: number,
+  openedAddressIds: Array<number>,
   entitySearchValue: string,
   setEntitySearchValue: (e: Event) => void,
   findEntities: (e: Event) => void,
@@ -95,7 +95,6 @@ const _Content = ({
   findEntities,
   entitySearchModalOpen,
 }: ContentProps) => (
-
   <React.Fragment>
     <Form onSubmit={findEntities}>
       <FormGroup>
@@ -131,7 +130,8 @@ const _Content = ({
       />
     </FormGroup>
     {entitySearchModalOpen && <EntitySearch />}
-    {(openedAddressIds != null && openedAddressIds.length !== 0) && <AddressDetail addressIds={openedAddressIds} />}
+    {openedAddressIds != null &&
+      openedAddressIds.length !== 0 && <AddressDetail addressIds={openedAddressIds} />}
   </React.Fragment>
 )
 
@@ -154,7 +154,13 @@ const Content = compose(
     }
   ),
   withHandlers({
-    findEntities: ({toggleModalOpen, setEntitySearchFor, entitySearchValue, toggleDrawer, closeAddressDetail}) => (e) => {
+    findEntities: ({
+      toggleModalOpen,
+      setEntitySearchFor,
+      entitySearchValue,
+      toggleDrawer,
+      closeAddressDetail,
+    }) => (e) => {
       e.preventDefault()
       toggleModalOpen()
       closeAddressDetail()
