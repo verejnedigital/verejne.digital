@@ -48,6 +48,13 @@ class TestHandlers(unittest.TestCase):
     self.assertTrue(content)
     print('ListPoliticians returned %d results.' % (len(content)))
 
+  def test_list_politicians_mps_only(self):
+    content = _request_json('/list_politicians?mps_only=true', self)
+    self.assertIsInstance(content, list)
+    self.assertTrue(content)
+    print('ListPoliticians (MPs only) returned %d results.' % (
+        len(content)))
+
   def test_info_politician(self):
     content = _request_json('/info_politician?id=717', self)
     self.assertIsInstance(content, dict)

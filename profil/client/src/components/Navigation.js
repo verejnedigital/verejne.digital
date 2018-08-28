@@ -4,7 +4,7 @@ import './Navigation.css';
 const Navigation = () =>
   (
     <nav className="sidebarnav navbar">
-      <div className="navbar-header" id="world-top">        
+      <div className="navbar-header" id="world-top">
         <button
           type="button" className="navbar-toggle"
           data-toggle="collapse" data-target=".navbar-collapse"
@@ -18,7 +18,7 @@ const Navigation = () =>
       </div>
       <div className="collapse navbar-collapse">
         <ul className="nav navbar-nav">
-          <li><a href="https://verejne.digital">verejne.digital</a></li>          
+          <li><a href="https://verejne.digital">verejne.digital</a></li>
           <li><a href="https://obstaravania.verejne.digital">obstaravania.verejne.digital</a></li>
           <li><a href="https://prepojenia.verejne.digital">prepojenia.verejne.digital</a></li>
           <li><a href="http://www.facebook.com/verejne.digital" target="_blank" rel="noopener noreferrer">kontaktuj nás na Facebooku</a></li>

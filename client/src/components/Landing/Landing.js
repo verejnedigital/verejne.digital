@@ -46,7 +46,7 @@ const Landing = () => (
           <Card
             to="/profil"
             title="Profily"
-            text="Majetok poslancov podľa priznaní a katastra."
+            text="Majetok verejných funkcionárov podľa priznaní a katastra."
             imgSrc={profilyIcon}
           />
         </Col>
