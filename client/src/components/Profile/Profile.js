@@ -29,7 +29,7 @@ const Profile = ({query, politicians, updateQuery}: ProfileProps) => (
         <h1 className="title">
           <span className="bolder">profil</span>.verejne.digital
         </h1>
-        <h3 className="sub-title">Majetok poslancov podľa priznaní a katastra</h3>
+        <h3 className="sub-title">Majetok poslancov a verejných funkcionárov podľa priznaní a katastra</h3>
       </Col>
     </Row>
     <Row key="search" className="profile-search">
