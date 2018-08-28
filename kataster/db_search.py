@@ -77,7 +77,7 @@ def get_Parcels_owned_by_Person(db, PersonId):
   return rows
 
 
-def get_politicians_with_Folio_counts(db):
+def get_politicians_with_Folio_counts(db, mps_only):
   """Returns a list of politicians with asset counts."""
   q = """
       WITH
@@ -131,7 +131,7 @@ def get_politicians_with_Folio_counts(db):
         PersonOffices ON PersonOffices.PersonId=Persons.Id
       INNER JOIN
         Offices ON Offices.id=PersonOffices.OfficeId
-      LEFT JOIN
+      """ + ("""INNER""" if mps_only else """LEFT""") + """ JOIN
         Parties ON Parties.id=PersonOffices.party_nomid
       WHERE
         AssetDeclarations.Year>=2016

@@ -99,9 +99,16 @@ class AssetDeclarations(MyServer):
 
 class ListPoliticians(MyServer):
   def get(self):
+    mps_only = False
+    try:
+      mps_only = bool(self.request.GET['mps_only'])
+    except:
+      pass
+
     # Return politicians augmented with property counts as JSON
     db = webapp2.get_app().registry['db']
-    politicians = db_search.get_politicians_with_Folio_counts(db)
+    politicians = db_search.get_politicians_with_Folio_counts(
+        db, mps_only)
     self.returnJSON(politicians)
 
 
