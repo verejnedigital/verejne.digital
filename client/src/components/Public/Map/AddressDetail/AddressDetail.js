@@ -6,7 +6,6 @@ import {withDataProviders} from 'data-provider'
 import {addressEntitiesProvider} from '../../../../dataProviders/publiclyDataProviders'
 import {addressEntitiesSelector} from '../../../../selectors'
 import {closeAddressDetail} from '../../../../actions/publicActions'
-import {withAutosize} from '../../../../utils'
 import {ListGroup, Button} from 'reactstrap'
 import {map, flatten} from 'lodash'
 import ListRow from './ListRow'
@@ -50,11 +49,12 @@ export default compose(
       closeAddressDetail,
     }
   ),
-  withDataProviders(({addressIds}) => flatten(addressIds.map((singleId) => [addressEntitiesProvider(singleId)]))),
+  withDataProviders(({addressIds}) =>
+    flatten(addressIds.map((singleId) => [addressEntitiesProvider(singleId)]))
+  ),
   withHandlers({
     onClick: ({closeAddressDetail}) => (event) => {
       closeAddressDetail()
     },
-  }),
-  withAutosize, // Note: Solves auto height for entities list
+  })
 )(AddressDetail)
