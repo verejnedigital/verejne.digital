@@ -2,7 +2,7 @@
 import React from 'react'
 import {compose, withHandlers} from 'recompose'
 import {withDataProviders} from 'data-provider'
-import {InputGroup, InputGroupAddon, Button} from 'reactstrap'
+import {Form, InputGroup, InputGroupAddon, Button} from 'reactstrap'
 import {connect} from 'react-redux'
 
 import SearchIcon from 'react-icons/lib/fa/search'
@@ -48,37 +48,38 @@ const EntitySearchAutocomplete = ({
   onSelectHandler,
   findEntities,
 }: Props) => (
-  <InputGroup>
-    <Autocomplete
-      getItemValue={([eid, entity]) => entity ? entity.name : ''}
-      items={suggestions}
-      renderItem={([eid, entity], isHighlighted) => (
-        <div key={eid} style={{background: isHighlighted ? 'lightgray' : 'white'}}>
-          {entity ? entity.name : ''}
-        </div>
-      )}
-      value={entitySearchValue}
-      onChange={onChangeHandler}
-      onSelect={onSelectHandler}
-      autoHighlight={false}
-      inputProps={{
-        id: 'entity-input',
-        className: 'form-control',
-        placeholder: FIND_ENTITY_TITLE,
-        onSubmit: findEntities,
-      }}
-    />
-    <InputGroupAddon addonType="append">
-      <Button color="primary" onClick={findEntities}>
-        <SearchIcon />
-      </Button>
-    </InputGroupAddon>
-    <InputGroupAddon addonType="append">
-      <Button color="primary" onClick={toggleModalOpen}>
-        <ModalIcon />
-      </Button>
-    </InputGroupAddon>
-  </InputGroup>
+  <Form onSubmit={findEntities}>
+    <InputGroup>
+      <Autocomplete
+        getItemValue={([eid, entity]) => entity ? entity.name : ''}
+        items={suggestions}
+        renderItem={([eid, entity], isHighlighted) => (
+          <div key={eid} style={{background: isHighlighted ? 'lightgray' : 'white'}}>
+            {entity ? entity.name : ''}
+          </div>
+        )}
+        value={entitySearchValue}
+        onChange={onChangeHandler}
+        onSelect={onSelectHandler}
+        autoHighlight={false}
+        inputProps={{
+          id: 'entity-input',
+          className: 'form-control',
+          placeholder: FIND_ENTITY_TITLE,
+        }}
+      />
+      <InputGroupAddon addonType="append">
+        <Button color="primary" onClick={findEntities}>
+          <SearchIcon />
+        </Button>
+      </InputGroupAddon>
+      <InputGroupAddon addonType="append">
+        <Button color="primary" onClick={toggleModalOpen}>
+          <ModalIcon />
+        </Button>
+      </InputGroupAddon>
+    </InputGroup>
+  </Form>
 )
 
 export default compose(
