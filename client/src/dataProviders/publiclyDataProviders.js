@@ -1,12 +1,15 @@
 // @flow
 import React from 'react'
-import {setEntitySearchEids, setAddresses, setEntities} from '../actions/publicActions'
+import {setEntitySearchEids, setEntitySearchSuggestionEids, setAddresses, setEntities} from '../actions/publicActions'
 import {ModalLoading} from '../components/Loading/Loading'
 import type {Address, NewEntity} from '../state'
 import type {Dispatch} from '../types/reduxTypes'
 
 const dispatchSearchEids = () => (ref: string, data: Array<{eid: number}>, dispatch: Dispatch) =>
   dispatch(setEntitySearchEids(data))
+
+const dispatchSearchSuggestionEids = () => (ref: string, data: Array<{eid: number}>, dispatch: Dispatch) =>
+  dispatch(setEntitySearchSuggestionEids(data))
 
 const dispatchAddresses = () => (ref: string, data: Address[], dispatch: Dispatch) => {
   dispatch(setAddresses(data))
@@ -60,5 +63,20 @@ export const entitiesSearchResultEidsProvider = (query: string) => {
     ],
     onData: [dispatchSearchEids],
     loadingComponent: <ModalLoading />,
+  }
+}
+
+export const entitiesSearchSuggestionEidsProvider = (query: string) => {
+  return {
+    ref: `autocomplete:${query}`,
+    getData: [
+      fetch,
+      `${process.env.REACT_APP_API_URL || ''}/api/v/searchEntityByName?name=${query}`,
+      {
+        accept: 'application/json',
+      },
+    ],
+    onData: [dispatchSearchSuggestionEids],
+    needed: false,
   }
 }

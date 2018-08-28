@@ -115,3 +115,17 @@ export const setDrawer = (open: boolean) => ({
   path: ['publicly', 'drawerOpen'],
   reducer: () => open,
 })
+
+export const setEntitySearchValue = (value: string) => ({
+  type: 'Set entity search field value',
+  path: ['publicly', 'entitySearchValue'],
+  payload: value,
+  reducer: () => value,
+})
+
+export const setEntitySearchSuggestionEids = (eids: Array<{eid: number}>) => ({
+  type: 'Set entity search suggestion eids',
+  path: ['publicly', 'entitySearchSuggestionEids'],
+  payload: eids,
+  reducer: (): Array<number> => eids.map((e) => e.eid),
+})

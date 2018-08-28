@@ -82,7 +82,9 @@ const _Content = ({
 }: ContentProps) => (
 
   <React.Fragment>
-    <EntitySearchAutocomplete className="form-control" />
+    <FormGroup>
+      <EntitySearchAutocomplete />
+    </FormGroup>
     <FormGroup>
       <PlacesAutocomplete
         value={autocompleteValue}

@@ -269,3 +269,14 @@ export const entitySearchForSelector = (state: State) => state.publicly.entitySe
 export const entitySearchEidsSelector = (state: State) => state.publicly.entitySearchEids
 
 export const drawerOpenSelector = (state: State) => state.publicly.drawerOpen
+
+export const entitySearchSuggestionEidsSelector = (state: State) =>
+  state.publicly.entitySearchSuggestionEids
+export const entitySearchSuggestionsSelector = createSelector(
+  allEntityDetailsSelector,
+  entitySearchSuggestionEidsSelector,
+  (details, eids) => {
+    const result = eids ? eids.map((eid) => [eid, details[eid]]) : []
+    return result
+  }
+)
