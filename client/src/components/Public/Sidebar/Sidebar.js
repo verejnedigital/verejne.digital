@@ -131,8 +131,7 @@ const _Content = ({
       />
     </FormGroup>
     {entitySearchModalOpen && <EntitySearch />}
-    {/* FIXME: if not wrapped in extra <div /> loading is rendered through autocomplete bar which looks ugly */}
-    {(openedAddressIds != null && openedAddressIds.length !== 0) && <div><AddressDetail addressIds={openedAddressIds} /></div>}
+    {(openedAddressIds != null && openedAddressIds.length !== 0) && <AddressDetail addressIds={openedAddressIds} />}
   </React.Fragment>
 )
 
