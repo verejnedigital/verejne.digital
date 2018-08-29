@@ -7,11 +7,6 @@
   z-index: 1;
   display: flex;
   flex-direction: column;
-  pointer-events: none;
-
-  & > * {
-    pointer-events: all;
-  }
 
   .form-control {
     box-shadow: 0 4px 12px darken($shadow-color, 25%);
