@@ -40,6 +40,8 @@ type Props = {
   onChangeHandler: (e: Event) => void,
   onSelectHandler: (e: Event) => void,
   findEntities: (e: Event) => void,
+  getItemValue: (entity: NewEntityDetail) => string,
+  renderItem: (entity: NewEntityDetail, isHighlighted: boolean) => any,
 }
 
 const menuStyle = {
@@ -57,17 +59,15 @@ const EntitySearchAutocomplete = ({
   onChangeHandler,
   onSelectHandler,
   findEntities,
+  getItemValue,
+  renderItem,
 }: Props) => (
   <Form onSubmit={findEntities}>
     <InputGroup>
       <Autocomplete
-        getItemValue={(entity) => entity.name && entity.name}
+        getItemValue={getItemValue}
         items={suggestions}
-        renderItem={(entity, isHighlighted) => (
-          <div key={entity.eid} className={classnames('item', isHighlighted && 'item--active')} >
-            <strong>{entity.name && entity.name}</strong>
-          </div>
-        )}
+        renderItem={renderItem}
         value={entitySearchValue}
         onChange={onChangeHandler}
         onSelect={onSelectHandler}
@@ -142,6 +142,12 @@ export default compose(
       closeAddressDetail()
       setDrawer(false)
     },
+    getItemValue: () => (entity) => (entity.name ? entity.name : ''),
+    renderItem: () => (entity, isHighlighted) => (
+      <div key={entity.eid} className={entity.name && classnames('item', isHighlighted && 'item--active')} >
+        <strong>{entity.name ? entity.name : ''}</strong>
+      </div>
+    ),
   }),
   withDataProviders(
     ({entitySearchValue, suggestionEids}) => [
