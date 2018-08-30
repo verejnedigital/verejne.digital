@@ -176,6 +176,23 @@
                        CREATE INDEX ON StakeholderTypes(stakeholder_type_id)
                     "
 
+9_profil_mapping:
+    source_schema: "internal_profil"
+    command: "select persons.id as profil_id,concat_ws(' ', persons.firstname, persons.surname) as name, concat_ws(' ', addresses.street, addresses.houseno, addresses.municipality, addresses.state) as address, null as ico from persons join personaddresses on personaddresses.personid = persons.id join addresses on addresses.id = personaddresses.addressid"
+    tables:
+            ProfilMapping:
+                     columns: ["profil_id"]
+                     create_command: "
+                       CREATE TABLE ProfilMapping (
+                                id SERIAL PRIMARY KEY,
+                                eid INTEGER REFERENCES Entities(id),
+                                profil_id INTEGER
+                       );
+                       CREATE INDEX ON ProfilMapping(eid);
+                       CREATE INDEX ON ProfilMapping(profil_id);
+                       CREATE UNIQUE INDEX ON ProfilMapping(eid, profil_id);
+                    "
+
 post_processing_1_trade_with_government:
     source_schema: ""
     command: "select offset 1"
