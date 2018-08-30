@@ -1,0 +1,23 @@
+@import '../../variables.scss';
+
+#entity-input {
+    width: $verejne-sidebar-width - 80px;
+}
+
+.addon-button {
+    width: 41px;
+}
+
+.menu {
+    width: $verejne-sidebar-width;
+}
+
+.item {
+    color: $search-color;
+    padding: 0.3rem;
+    cursor: pointer;
+    background-color: white;
+    &--active {
+        background-color: $asset-hover-color;
+    }
+}

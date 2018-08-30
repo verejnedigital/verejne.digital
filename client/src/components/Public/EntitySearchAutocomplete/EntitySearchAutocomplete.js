@@ -5,6 +5,9 @@ import {withDataProviders} from 'data-provider'
 import {Form, InputGroup, InputGroupAddon, Button} from 'reactstrap'
 import {connect} from 'react-redux'
 
+import classnames from 'classnames'
+import './EntitySearchAutocomplete.css'
+
 import SearchIcon from 'react-icons/lib/fa/search'
 import ModalIcon from 'react-icons/lib/fa/clone'
 import Autocomplete from 'react-autocomplete'
@@ -39,6 +42,13 @@ type Props = {
   findEntities: (e: Event) => void,
 }
 
+const menuStyle = {
+  boxShadow: '',
+  padding: '0px',
+  borderRadius: '0px',
+  background: 'white',
+}
+
 const EntitySearchAutocomplete = ({
   toggleModalOpen,
   entitySearchValue,
@@ -54,8 +64,8 @@ const EntitySearchAutocomplete = ({
         getItemValue={([eid, entity]) => entity ? entity.name : ''}
         items={suggestions}
         renderItem={([eid, entity], isHighlighted) => (
-          <div key={eid} style={{background: isHighlighted ? 'lightgray' : 'white'}}>
-            {entity ? entity.name : ''}
+          <div key={eid} className={classnames('item', isHighlighted && 'item--active')} >
+            <strong>{entity ? entity.name : ''}</strong>
           </div>
         )}
         value={entitySearchValue}
@@ -67,14 +77,17 @@ const EntitySearchAutocomplete = ({
           className: 'form-control',
           placeholder: FIND_ENTITY_TITLE,
         }}
+        renderMenu={function(items, value, style) {
+          return <div className="menu" style={{...style, ...this.menuStyle, ...menuStyle}} children={items} />
+        }}
       />
       <InputGroupAddon addonType="append">
-        <Button color="primary" onClick={findEntities}>
+        <Button className="addon-button" color="primary" onClick={findEntities}>
           <SearchIcon />
         </Button>
       </InputGroupAddon>
       <InputGroupAddon addonType="append">
-        <Button color="primary" onClick={toggleModalOpen}>
+        <Button className="addon-button" color="primary" onClick={toggleModalOpen}>
           <ModalIcon />
         </Button>
       </InputGroupAddon>
