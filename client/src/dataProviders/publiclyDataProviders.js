@@ -51,9 +51,9 @@ export const addressEntitiesProvider = (addressId: number) => {
   }
 }
 
-export const entitiesSearchResultEidsProvider = (query: string) => {
+export const entitiesSearchResultEidsProvider = (query: string, autocomplete: boolean = false) => {
   return {
-    ref: query,
+    ref: `${autocomplete ? 'autocomplete:' : ''}${query}`,
     getData: [
       fetch,
       `${process.env.REACT_APP_API_URL || ''}/api/v/searchEntityByName?name=${query}`,
@@ -61,22 +61,8 @@ export const entitiesSearchResultEidsProvider = (query: string) => {
         accept: 'application/json',
       },
     ],
-    onData: [dispatchSearchEids],
+    onData: [autocomplete ? dispatchSearchSuggestionEids : dispatchSearchEids],
     loadingComponent: <ModalLoading />,
-  }
-}
-
-export const entitiesSearchSuggestionEidsProvider = (query: string) => {
-  return {
-    ref: `autocomplete:${query}`,
-    getData: [
-      fetch,
-      `${process.env.REACT_APP_API_URL || ''}/api/v/searchEntityByName?name=${query}`,
-      {
-        accept: 'application/json',
-      },
-    ],
-    onData: [dispatchSearchSuggestionEids],
-    needed: false,
+    needed: !autocomplete,
   }
 }

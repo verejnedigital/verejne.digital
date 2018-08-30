@@ -276,7 +276,6 @@ export const entitySearchSuggestionsSelector = createSelector(
   allEntityDetailsSelector,
   entitySearchSuggestionEidsSelector,
   (details, eids) => {
-    const result = eids ? eids.map((eid) => [eid, details[eid]]) : []
-    return result
+    return eids.map((eid) => ({eid: Number(eid), ...details[eid]}))
   }
 )

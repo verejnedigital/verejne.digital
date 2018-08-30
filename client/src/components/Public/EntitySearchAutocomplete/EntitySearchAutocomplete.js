@@ -25,7 +25,7 @@ import {
   entitySearchSuggestionsSelector,
   entitySearchSuggestionEidsSelector,
 } from '../../../selectors'
-import {entitiesSearchSuggestionEidsProvider} from '../../../dataProviders/publiclyDataProviders'
+import {entitiesSearchResultEidsProvider} from '../../../dataProviders/publiclyDataProviders'
 import {entityDetailProvider} from '../../../dataProviders/sharedDataProviders'
 import {FIND_ENTITY_TITLE} from '../../../constants'
 import type NewEntityDetail from '../../../state'
@@ -43,10 +43,10 @@ type Props = {
 }
 
 const menuStyle = {
-  boxShadow: '',
   padding: '0px',
   borderRadius: '0px',
   background: 'white',
+  zIndex: 1,
 }
 
 const EntitySearchAutocomplete = ({
@@ -61,11 +61,11 @@ const EntitySearchAutocomplete = ({
   <Form onSubmit={findEntities}>
     <InputGroup>
       <Autocomplete
-        getItemValue={([eid, entity]) => entity ? entity.name : ''}
+        getItemValue={(entity) => entity.name && entity.name}
         items={suggestions}
-        renderItem={([eid, entity], isHighlighted) => (
-          <div key={eid} className={classnames('item', isHighlighted && 'item--active')} >
-            <strong>{entity ? entity.name : ''}</strong>
+        renderItem={(entity, isHighlighted) => (
+          <div key={entity.eid} className={classnames('item', isHighlighted && 'item--active')} >
+            <strong>{entity.name && entity.name}</strong>
           </div>
         )}
         value={entitySearchValue}
@@ -135,7 +135,7 @@ export default compose(
       setModal,
       closeAddressDetail,
       setDrawer,
-    }) => (name, [eid, entity]) => {
+    }) => (name, entity) => {
       setEntitySearchValue(name)
       setEntitySearchFor(name)
       setModal(true)
@@ -145,7 +145,7 @@ export default compose(
   }),
   withDataProviders(
     ({entitySearchValue, suggestionEids}) => [
-      entitiesSearchSuggestionEidsProvider(entitySearchValue),
+      entitiesSearchResultEidsProvider(entitySearchValue, true),
       entityDetailProvider(suggestionEids, false),
     ]
   ),
