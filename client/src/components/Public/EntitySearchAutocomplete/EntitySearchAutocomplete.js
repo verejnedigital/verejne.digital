@@ -35,9 +35,9 @@ type Props = {
   setModal: (open: boolean) => void,
   setDrawer: (open: boolean) => void,
   entitySearchValue: string,
-  suggestions: NewEntityDetail[],
+  suggestions: Array<NewEntityDetail>,
   setEntitySearchValue: (e: Event) => void,
-  onChangeHandler: {e: Event} => void,
+  onChangeHandler: (e: Event) => void,
   onSelectHandler: (e: Event) => void,
   findEntities: (e: Event) => void,
 }
