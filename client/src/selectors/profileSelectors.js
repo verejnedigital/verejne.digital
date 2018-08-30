@@ -135,6 +135,6 @@ export const filteredPoliticiansSelector: Selector<State, *, Array<Politician>> 
       (p) =>
         normalizeName(p.firstname).startsWith(query) ||
         normalizeName(p.surname).startsWith(query) ||
-        normalizeName(p.party_abbreviation).indexOf(query) !== -1
+        (p.party_abbreviation && normalizeName(p.party_abbreviation).indexOf(query) !== -1)
     )
 )
