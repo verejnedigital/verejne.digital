@@ -35,8 +35,8 @@ class FakeTextEmbedder:
         for text in texts:
             random_embedding = np.random.uniform(low=0.0, high=1.0, size=(512,))
             embeddings.append(random_embedding)
-        for text, embedding in zip(texts,embeddings):
-            print text, embedding
+        # for text, embedding in zip(texts,embeddings):
+        #     print text, embedding
         return embeddings
 
 def main(args_dict):
