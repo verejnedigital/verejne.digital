@@ -10,6 +10,23 @@ from db import DatabaseConnection
 """
 Script to run post processing on the latest prod schema.
 """
+class Notice:
+    idx = None
+    embedding = None
+    best_supplier = None
+    best_similarity = None
+    candidates = None
+    similarities = None
+    supplier = None
+    norm = None
+
+    def __init__(self, idx, embedding, supplier):
+        self.idx = idx
+        self.supplier = supplier
+        self.embedding = embedding
+        self.norm = numpy.linalg.norm(self.embedding)
+        self.candidates = []
+        self.similarities = []
 
 # Create table that will contain extra data
 def notices_create_extra_table(db):
@@ -36,49 +53,36 @@ def arrayize(a, type_str="float"):
         a = a + "::" + type_str + "[]"
     return a
 
-def notices_insert_into_extra_table(db, ids, embeddings, candidates, similarities, 
-                                    best_suppliers, best_similarities):
+def nullize(x):
+    return "NULL" if x is None else str(x) 
+
+def notices_insert_into_extra_table(db, notices):
     with db.dict_cursor() as cur:
-        for idx, embedding, candidate, similarity, best_supplier, best_similarity in zip(ids, embeddings, candidates, similarities, best_suppliers, best_similarities):
-            embedding = arrayize(embedding)
-            candidate = arrayize(candidate, type_str = "integer")
-            similarity = arrayize(similarity)
-            best_sup = "NULL" if best_supplier is None else str(best_supplier)
-            best_sim = "NULL" if best_similarity is None else str(best_similarity)
+        for notice in notices:
             cur.execute("INSERT INTO NoticesExtraData(notice_id, embedding, best_supplier,"
                         + " best_similarity, candidates, similarities) VALUES ( "
-                        + str(idx) + ", " + embedding + ", " + best_sup
-                        + ", " + best_sim + ", " + candidate + ", " + similarity + ");")
+                        + str(notice.idx) + ", " + arrayize(notice.embedding) + ", " + nullize(notice.best_supplier)
+                        + ", " + nullize(notice.best_similarity) + ", " + arrayize(notice.candidates)
+                        + ", " + arrayize(notice.similarities) + ");")
 
-def notices_find_candidates(ids, embeddings, suppliers):
-    candidates_list = []
-    similarities_list = []
-    best_suppliers = []
-    best_similarities = []
-    for idx, embedding, supplier in zip(ids, embeddings, suppliers):
-        candidates = []
-        similarities = []
-        best_supplier = None
-        best_similarity = None
+def notices_find_candidates(notices):
+    for notice in notices:
+        print notice.idx, notice.supplier
         # If we do not know the winner already
-        if supplier is None:
+        if notice.supplier is None:
             # try all other candidates, but keep only similar
-            for idx2, embedding2, supplier2 in zip(ids, embeddings, suppliers):
+            for notice2 in notices:
                 # candidates are only the notices with known winners / suppliers
-                if not supplier2 is None:
-                    similarity = numpy.inner(embedding, embedding2)
-                    if similarity > 0.8 and len(similarities) < 5:
-                        print similarity, idx, idx2
-                        similarities.append(similarity)
-                        candidates.append(idx2)
-                        if (best_supplier is None) or similarity > best_similarity:
-                            best_supplier = supplier2
-                            best_similarity = similarity
-        candidates_list.append(candidates)
-        similarities_list.append(similarities)
-        best_suppliers.append(best_supplier)
-        best_similarities.append(best_similarity)
-    return candidates_list, similarities_list, best_suppliers, best_similarities
+                if not notice2.supplier is None:
+                    similarity = numpy.inner(notice.embedding, notice2.embedding) / (notice.norm * notice2.norm)
+                    if similarity > 0.75 and len(notice.similarities) < 5:
+                        print similarity, notice.idx, notice2.idx
+                        notice.similarities.append(similarity)
+                        notice.candidates.append(notice2.idx)
+                        if (notice.best_supplier is None) or (similarity > notice.best_similarity):
+                            notice.best_supplier = notice2.supplier
+                            notice.best_similarity = similarity
+    return notices
 
 
 def post_process_notices(db):
@@ -87,18 +91,17 @@ def post_process_notices(db):
     ids = []
     texts = []
     suppliers = []
+    notices = []
     with db.dict_cursor() as cur:
         cur.execute("""
             SELECT id, concat_ws(' ', title, short_description) as text, supplier_eid 
-            FROM Notices LIMIT 30;
+            FROM Notices LIMIT 50;
         """)
+        text_embedder = embed.FakeTextEmbedder()
         for row in cur:
-            ids.append(row["id"])
-            texts.append(row["text"])
-            suppliers.append(row["supplier_eid"])
-    embeddings = text_embedder.embed(texts)
-    candidates, similarities, best_suppliers, best_similarities = notices_find_candidates(ids, embeddings, suppliers)
-    notices_insert_into_extra_table(db, ids, embeddings, candidates, similarities, best_suppliers, best_similarities)
+            notices.append(Notice(row["id"], text_embedder.embed([row["text"]])[0], row["supplier_eid"]))
+    notices = notices_find_candidates(notices)
+    notices_insert_into_extra_table(db, notices)
 
 """
 db input is provided from outside, so that it can be called

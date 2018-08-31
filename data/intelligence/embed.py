@@ -29,9 +29,12 @@ import numpy as np
 
 # Using fake embedder until tensorflow starts to work.
 class FakeTextEmbedder:
+    def __init__(self):
+        np.random.seed(22)
+    
+
     def embed(self, texts):
         embeddings = []
-        np.random.seed(22)
         for text in texts:
             random_embedding = np.random.uniform(low=0.0, high=1.0, size=(512,))
             embeddings.append(random_embedding)
