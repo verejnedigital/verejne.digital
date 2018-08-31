@@ -29,7 +29,8 @@
                                 id SERIAL PRIMARY KEY,
                                 eid INTEGER REFERENCES Entities(id),
                                 stakeholder_type_id INT4,
-                                eid_relation INTEGER REFERENCES Entities(id)
+                                eid_relation INTEGER REFERENCES Entities(id),
+                                CHECK(eid <> eid_relation)
                        );
                        CREATE INDEX ON Related(eid);
                        CREATE INDEX ON Related(eid_relation);
