@@ -2,6 +2,7 @@ import argparse
 import os
 import sys
 import numpy
+import math
 from intelligence import embed
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../data/db')))
@@ -19,14 +20,33 @@ class Notice:
     similarities = None
     supplier = None
     norm = None
+    price = None
 
-    def __init__(self, idx, embedding, supplier):
+    def __init__(self, idx, embedding, supplier, price):
         self.idx = idx
         self.supplier = supplier
         self.embedding = embedding
         self.norm = numpy.linalg.norm(self.embedding)
         self.candidates = []
         self.similarities = []
+        self.candidate_prices = []
+        self.price = price
+
+    def get_price_range(self):
+        values = []
+        for price in self.candidate_prices:
+            if not price is None:
+                values.append(price)
+        if len(values) < 2:
+            return None, None, None
+        # TODO: consider doing these computation in log world.
+        std_dev = numpy.std(values)
+        mean = numpy.mean(values)
+        # Here we compute 95% reliability interval
+        price_low = mean - 1.96 * std_dev / math.sqrt(len(values))
+        price_high = mean + 1.96 * std_dev / math.sqrt(len(values))
+        return mean, price_low, price_high
+
 
 # Create table that will contain extra data
 def notices_create_extra_table(db):
@@ -40,7 +60,10 @@ def notices_create_extra_table(db):
                 best_supplier INTEGER References Entities(id),
                 best_similarity FLOAT,
                 candidates INTEGER[],
-                similarities FLOAT[]
+                similarities FLOAT[],
+                price_est FLOAT,
+                price_est_low FLOAT,
+                price_est_high FLOAT
             );
             CREATE INDEX ON NoticesExtraData (notice_id);
         """)
@@ -59,11 +82,13 @@ def nullize(x):
 def notices_insert_into_extra_table(db, notices):
     with db.dict_cursor() as cur:
         for notice in notices:
+            price, price_low, price_high = notice.get_price_range()
             cur.execute("INSERT INTO NoticesExtraData(notice_id, embedding, best_supplier,"
-                        + " best_similarity, candidates, similarities) VALUES ( "
+                        + " best_similarity, candidates, similarities, price_est, price_est_low, price_est_high) VALUES ( "
                         + str(notice.idx) + ", " + arrayize(notice.embedding) + ", " + nullize(notice.best_supplier)
                         + ", " + nullize(notice.best_similarity) + ", " + arrayize(notice.candidates)
-                        + ", " + arrayize(notice.similarities) + ");")
+                        + ", " + arrayize(notice.similarities) + ", " + nullize(price) + ", " + nullize(price_low)
+                        + ", " + nullize(price_high) + ");")
 
 def notices_find_candidates(notices):
     for notice in notices:
@@ -79,6 +104,7 @@ def notices_find_candidates(notices):
                         print similarity, notice.idx, notice2.idx
                         notice.similarities.append(similarity)
                         notice.candidates.append(notice2.idx)
+                        notice.candidate_prices.append(notice2.price)
                         if (notice.best_supplier is None) or (similarity > notice.best_similarity):
                             notice.best_supplier = notice2.supplier
                             notice.best_similarity = similarity
@@ -94,12 +120,12 @@ def post_process_notices(db):
     notices = []
     with db.dict_cursor() as cur:
         cur.execute("""
-            SELECT id, concat_ws(' ', title, short_description) as text, supplier_eid 
+            SELECT id, concat_ws(' ', title, short_description) as text, supplier_eid, total_final_value_amount as price 
             FROM Notices LIMIT 50;
         """)
         text_embedder = embed.FakeTextEmbedder()
         for row in cur:
-            notices.append(Notice(row["id"], text_embedder.embed([row["text"]])[0], row["supplier_eid"]))
+            notices.append(Notice(row["id"], text_embedder.embed([row["text"]])[0], row["supplier_eid"], row["price"]))
     notices = notices_find_candidates(notices)
     notices_insert_into_extra_table(db, notices)
 
