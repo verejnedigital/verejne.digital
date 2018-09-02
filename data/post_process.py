@@ -92,7 +92,8 @@ def notices_insert_into_extra_table(db, notices):
 
 def notices_find_candidates(notices):
     for notice in notices:
-        print notice.idx, notice.supplier
+        if notice.idx % 1000 == 0:
+            print "progress:", notice.idx, len(notices)
         # If we do not know the winner already
         if notice.supplier is None:
             # try all other candidates, but keep only similar
@@ -101,7 +102,6 @@ def notices_find_candidates(notices):
                 if not notice2.supplier is None:
                     similarity = numpy.inner(notice.embedding, notice2.embedding) / (notice.norm * notice2.norm)
                     if similarity > 0.75 and len(notice.similarities) < 5:
-                        print similarity, notice.idx, notice2.idx
                         notice.similarities.append(similarity)
                         notice.candidates.append(notice2.idx)
                         notice.candidate_prices.append(notice2.price)
@@ -121,7 +121,7 @@ def post_process_notices(db):
     with db.dict_cursor() as cur:
         cur.execute("""
             SELECT id, concat_ws(' ', title, short_description) as text, supplier_eid, total_final_value_amount as price 
-            FROM Notices LIMIT 50;
+            FROM Notices;
         """)
         text_embedder = embed.FakeTextEmbedder()
         for row in cur:
@@ -140,19 +140,23 @@ def do_post_processing(db):
 
 
 def main(args_dict):
-    verbose = args_dict['verbose']
+    test_mode = not args_dict['disable_test_mode']
+    if test_mode:
+        print "Running in TEST mode."
     # Connect to the latest production data schema
     db = DatabaseConnection(path_config='db_config_update_source.yaml')
     schema = db.get_latest_schema('prod_')
     db.execute('SET search_path="' + schema + '";')
     print('[OK] Postprocessing schema "%s"...' % (schema))
     do_post_processing(db)
-    # We rollback the changes by default as this is supposed to be run in test mode.
-    db.conn.rollback()
+    if test_mode:
+        db.conn.rollback()
+    else:
+        db.commit()
     db.close()
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--verbose', default=False, action='store_true', help='Report progress to stdout')
+    parser.add_argument('--disable_test_mode', default=False, action='store_true', help='Disable test mode.')
     args_dict = vars(parser.parse_args())
     main(args_dict)
