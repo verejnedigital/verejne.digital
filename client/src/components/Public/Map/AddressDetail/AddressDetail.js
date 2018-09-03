@@ -7,7 +7,7 @@ import {addressEntitiesProvider} from '../../../../dataProviders/publiclyDataPro
 import {entityDetailProvider} from '../../../../dataProviders/sharedDataProviders'
 import {addressEntitiesSelector, addressEntitiesIdsSelector} from '../../../../selectors'
 import {MAX_ENTITY_REQUEST_COUNT} from '../../../../constants'
-import {closeAddressDetail} from '../../../../actions/publicActions'
+import {closeAddressDetail, toggleEntityInfo} from '../../../../actions/publicActions'
 import {withAutosize} from '../../../../utils'
 import {ListGroup, Button} from 'reactstrap'
 import {map, chunk, flatten} from 'lodash'
@@ -31,33 +31,34 @@ type AddressDetailProps = {|
 
 const DETAILS_HEADER_HEIGHT = 37
 
-const AddressDetail = ({
-  entities,
-  addressId,
-  onClick,
-  hasStateTraders,
-  height,
-}: AddressDetailProps) => (
-  <div className="address-detail">
-    <div className="address-detail-header" style={{height: DETAILS_HEADER_HEIGHT}}>
-      <Button color="link" onClick={onClick}>
-        Close detail
-      </Button>
+class AddressDetail extends React.Component {
+  constructor(props) {
+    super(props)
+    if (props.entities.length === 1) {
+      props.toggleEntityInfo(props.entities[0].id)
+    }
+  }
+  render = () => (
+    <div className="address-detail">
+      <div className="address-detail-header" style={{height: DETAILS_HEADER_HEIGHT}}>
+        <Button color="link" onClick={this.props.onClick}>
+          Close detail
+        </Button>
+      </div>
+      <ListGroup className="address-detail-list" style={{maxHeight: this.props.height - DETAILS_HEADER_HEIGHT}}>
+        {map(this.props.entities, (e) => <ListRow entity={e} key={e.id} />)}
+      </ListGroup>
     </div>
-    <ListGroup className="address-detail-list" style={{maxHeight: height - DETAILS_HEADER_HEIGHT}}>
-      {map(entities, (e) => <ListRow entity={e} key={e.id} />)}
-    </ListGroup>
-  </div>
-)
-
+  )
+}
 export default compose(
   connect(
-    (state, {addressId}) => ({
+    (state) => ({
       entities: addressEntitiesSelector(state),
       entitiesIds: addressEntitiesIdsSelector(state),
     }),
     {
-      closeAddressDetail,
+      closeAddressDetail, toggleEntityInfo,
     }
   ),
   withDataProviders(({addressIds}) =>
