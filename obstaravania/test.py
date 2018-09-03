@@ -31,12 +31,6 @@ class TestHandlers(unittest.TestCase):
     print('===== info_obstaravanie response =====')
     print(content)
 
-  def test_list_obstaravania(self):
-    content = _request_json('/list_obstaravania', self)
-    self.assertTrue(content)
-    print('===== list_obstaravania response =====')
-    print(content)
-
   def test_info_notice(self):
     content = _request_json('/info_notice?id=155196', self)
     self.assertIsInstance(content, dict)
