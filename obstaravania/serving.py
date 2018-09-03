@@ -170,28 +170,40 @@ class InfoNotice(MyServer):
         SELECT
           eid,
           supplier_eid,
-          notice_id,
+          Notices.notice_id,
           contract_id,
           title,
           estimated_value_amount,
           estimated_value_currency,
-          bulletin_issue_id,
+          Notices.bulletin_issue_id,
+          year as bulletin_year,
+          number as bulletin_number,
+          published_on as bulletin_published,
+          source_url as bulletin_source_url,
           notice_type_id,
           short_description,
           total_final_value_amount,
           total_final_value_currency,
-          body --,
-          --best_supplier,
-          --best_similarity,
-          --candidates,
-          --similarities,
-          --price_est,
-          --price_est_low,
-          --price_est_high
+          body,
+          best_supplier,
+          best_similarity,
+          candidates,
+          similarities,
+          price_est,
+          price_est_low,
+          price_est_high
         FROM
           Notices
+        JOIN
+          NoticesExtraData
+        ON
+          Notices.notice_id = NoticesExtraData.notice_id
+        JOIN
+          NoticeBulletins
+        ON
+          Notices.bulletin_issue_id = NoticeBulletins.bulletin_id
         WHERE
-          notice_id=%s;
+          Notices.notice_id=%s;
         """,
         [notice_id]
     )
@@ -214,29 +226,37 @@ class ListNotices(MyServer):
         SELECT
           eid,
           supplier_eid,
-          notice_id,
+          Notices.notice_id,
           contract_id,
           title,
           estimated_value_amount,
           estimated_value_currency,
-          bulletin_issue_id,
+          Notices.bulletin_issue_id,
+          year as bulletin_year,
+          number as bulletin_number,
+          published_on as bulletin_published,
+          source_url as bulletin_source_url,
           notice_type_id,
-          short_description,
           total_final_value_amount,
           total_final_value_currency,
-          body --,
-          --best_supplier,
-          --best_similarity,
-          --candidates,
-          --similarities,
-          --price_est,
-          --price_est_low,
-          --price_est_high
+          best_supplier,
+          best_similarity,
+          price_est,
+          price_est_low,
+          price_est_high
         FROM
           Notices
+        JOIN
+          NoticesExtraData
+        ON
+          Notices.notice_id = NoticesExtraData.notice_id
+        JOIN
+          NoticeBulletins
+        ON
+          Notices.bulletin_issue_id = NoticeBulletins.bulletin_id
         ORDER BY
           bulletin_issue_id DESC
-        LIMIT 100;
+        LIMIT 300;
         """)
     self.returnJSON(rows)
 
