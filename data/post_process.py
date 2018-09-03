@@ -48,11 +48,12 @@ class Notice:
         return mean, price_low, price_high
 
 
-def notices_create_extra_table(db):
+def notices_create_extra_table(db, test_mode):
+    table_name_suffix = "_test" if test_mode else ""
     """Creates table NoticesExtra that will contain extra data."""
     db.execute(
         """
-        CREATE TABLE NoticesExtra (
+        CREATE TABLE NoticesExtra""" + table_name_suffix + """ (
           id SERIAL PRIMARY KEY,
           notice_id INTEGER,
           embedding FLOAT[],
@@ -97,7 +98,7 @@ def notices_insert_into_extra_table(db, notices):
 def notices_find_candidates(notices):
     for notice in notices:
         if notice.idx % 1000 == 0:
-            print "progress:", notice.idx, len(notices)
+            print "progress:", notice.idx, len(notices)*3
         # If we do not know the winner already
         if notice.supplier is None:
             # try all other candidates, but keep only similar
@@ -116,7 +117,7 @@ def notices_find_candidates(notices):
 
 
 def post_process_notices(db, test_mode):
-    notices_create_extra_table(db)
+    notices_create_extra_table(db, test_mode)
     text_embedder = embed.FakeTextEmbedder()
     ids = []
     texts = []
