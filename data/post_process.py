@@ -49,13 +49,12 @@ class Notice:
 
 
 def notices_create_extra_table(db):
-    """Creates table NoticesExtraData that will contain extra data."""
+    """Creates table NoticesExtra that will contain extra data."""
     db.execute(
         """
-        DROP TABLE IF EXISTS NoticesExtraData;
-        CREATE TABLE NoticesExtraData (
+        CREATE TABLE NoticesExtra (
           id SERIAL PRIMARY KEY,
-          notice_id INTEGER References Notices(notice_id),
+          notice_id INTEGER,
           embedding FLOAT[],
           best_supplier INTEGER References Entities(id),
           best_similarity FLOAT,
@@ -65,7 +64,7 @@ def notices_create_extra_table(db):
           price_est_low FLOAT,
           price_est_high FLOAT
         );
-        CREATE INDEX ON NoticesExtraData (notice_id);
+        CREATE INDEX ON NoticesExtra (notice_id);
         """
     )
 
@@ -87,7 +86,7 @@ def notices_insert_into_extra_table(db, notices):
     with db.dict_cursor() as cur:
         for notice in notices:
             price, price_low, price_high = notice.get_price_range()
-            cur.execute("INSERT INTO NoticesExtraData(notice_id, embedding, best_supplier,"
+            cur.execute("INSERT INTO NoticesExtra(notice_id, embedding, best_supplier,"
                         + " best_similarity, candidates, similarities, price_est, price_est_low, price_est_high) VALUES ( "
                         + str(notice.idx) + ", " + arrayize(notice.embedding) + ", " + nullize(notice.best_supplier)
                         + ", " + nullize(notice.best_similarity) + ", " + arrayize(notice.candidates)
