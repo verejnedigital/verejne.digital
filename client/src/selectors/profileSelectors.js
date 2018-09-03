@@ -1,6 +1,6 @@
 // @flow
 import {createSelector} from 'reselect'
-import {sortBy, last, mapValues, chunk, filter} from 'lodash'
+import {sortBy, last, mapValues, chunk, filter, values} from 'lodash'
 import {normalizeName, parseQueryFromLocation} from '../utils'
 import {paramsIdSelector} from './index'
 import {CADASTRAL_PAGINATION_CHUNK_SIZE} from '../constants'
@@ -90,8 +90,24 @@ export const cadastralSearchSelector: Selector<State, ContextRouter, string> = c
   (search) => search || ''
 )
 
+const cadastralInfoComparator = (a: CadastralData, b: CadastralData) => {
+  if (a.landusename === 'Orná pôda') return -1
+  if (b.landusename === 'Orná pôda') return 1
+  return a.landusename.localeCompare(b.landusename)
+}
+
+export const sortedCadastralInfoSelector: Selector<
+  State,
+  ContextRouter,
+  Array<CadastralData>
+> = createSelector(politicianCadastralSelector, (cadastral) =>
+  values(cadastral)
+    .sort(cadastralInfoComparator)
+    .reverse()
+)
+
 export const filteredCadastralInfoSelector: Selector<State, ContextRouter, string> = createSelector(
-  politicianCadastralSelector,
+  sortedCadastralInfoSelector,
   cadastralSearchSelector,
   (cadastral, search) => {
     // TODO: $FlowFixMe Cannot call `filter` because string is incompatible with number
