@@ -1,9 +1,11 @@
 // @flow
 import districtJson from './slovakiaData/district-centers.json'
 import regionJson from './slovakiaData/region-centers.json'
+import districtCityJson from './slovakiaData/district_cities.json'
 
 export const SLOVAKIA_DISTRICT = districtJson
 export const SLOVAKIA_REGION = regionJson
+export const SLOVAKIA_CITIES = districtCityJson
 
 export const PAGINATION_CHUNK_SIZE = 10
 export const NOTICES_PAGINATION_SIZE = 10

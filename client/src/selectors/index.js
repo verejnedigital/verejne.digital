@@ -10,10 +10,8 @@ import {
   DEFAULT_ENTITIES_REQUEST_PARAMS,
   COUNTRY_ZOOM,
   WORLD_ZOOM,
-  SLOVAKIA_DISTRICT,
-  SLOVAKIA_REGION,
   SLOVAKIA_COORDINATES,
-  DISTRICT_ZOOM,
+  SLOVAKIA_CITIES,
 } from '../constants'
 import {isInSlovakia, normalizeName} from '../utils'
 import {sortBy, filter} from 'lodash'
@@ -179,23 +177,12 @@ const createLabels = (mapOptions: MapOptions): Array<MapCluster> => {
       isLabel: true,
     }]
   } else {
-    if (mapOptions.zoom <= COUNTRY_ZOOM) {
-      labels = SLOVAKIA_REGION.map((region) => ({
-        lat: region.centroid[1],
-        lng: region.centroid[0],
+    if (mapOptions.zoom < CITY_ZOOM) {
+      labels = SLOVAKIA_CITIES.map((city) => ({
+        lat: city.coord[1],
+        lng: city.coord[0],
         numPoints: 0,
-        id: region.name,
-        points: [],
-        setZoomTo: DISTRICT_ZOOM,
-        isLabel: true,
-      })
-      )
-    } else {
-      labels = SLOVAKIA_DISTRICT.map((district) => ({
-        lat: district.centroid[1],
-        lng: district.centroid[0],
-        numPoints: 0,
-        id: district.name,
+        id: city.name,
         points: [],
         setZoomTo: CITY_ZOOM,
         isLabel: true,
