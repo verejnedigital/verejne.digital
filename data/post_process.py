@@ -55,7 +55,7 @@ def notices_create_extra_table(db):
         DROP TABLE IF EXISTS NoticesExtraData;
         CREATE TABLE NoticesExtraData (
           id SERIAL PRIMARY KEY,
-          notice_id INTEGER References Notices(id),
+          notice_id INTEGER References Notices(notice_id),
           embedding FLOAT[],
           best_supplier INTEGER References Entities(id),
           best_similarity FLOAT,
