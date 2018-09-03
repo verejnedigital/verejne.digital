@@ -195,9 +195,9 @@ class InfoNotice(MyServer):
         FROM
           Notices
         JOIN
-          NoticesExtra
+          NoticesExtras
         ON
-          Notices.notice_id = NoticesExtra.notice_id
+          Notices.notice_id = NoticesExtras.notice_id
         JOIN
           NoticeBulletins
         ON
@@ -247,9 +247,9 @@ class ListNotices(MyServer):
         FROM
           Notices
         JOIN
-          NoticesExtra
+          NoticesExtras
         ON
-          Notices.notice_id = NoticesExtra.notice_id
+          Notices.notice_id = NoticesExtras.notice_id
         JOIN
           NoticeBulletins
         ON

@@ -50,10 +50,9 @@ class Notice:
 
 def notices_create_extra_table(db, test_mode):
     table_name_suffix = "_test" if test_mode else ""
-    """Creates table NoticesExtra that will contain extra data."""
-    db.execute(
-        """
-        CREATE TABLE NoticesExtra""" + table_name_suffix + """ (
+    """Creates table NoticesExtras that will contain extra data."""
+    command = """ 
+        CREATE TABLE NoticesExtras""" + table_name_suffix + """ (
           id SERIAL PRIMARY KEY,
           notice_id INTEGER,
           embedding FLOAT[],
@@ -65,9 +64,11 @@ def notices_create_extra_table(db, test_mode):
           price_est_low FLOAT,
           price_est_high FLOAT
         );
-        CREATE INDEX ON NoticesExtra (notice_id);
+        CREATE INDEX ON NoticesExtras""" + table_name_suffix + """ (notice_id);
         """
-    )
+    print command    
+    db.execute(command)
+
 
 
 def arrayize(a, type_str="float"):
@@ -83,11 +84,12 @@ def nullize(x):
     return "NULL" if x is None else str(x)
 
 
-def notices_insert_into_extra_table(db, notices):
+def notices_insert_into_extra_table(db, notices, test_mode):
+    table_name_suffix = "_test" if test_mode else ""
     with db.dict_cursor() as cur:
         for notice in notices:
             price, price_low, price_high = notice.get_price_range()
-            cur.execute("INSERT INTO NoticesExtra(notice_id, embedding, best_supplier,"
+            cur.execute("INSERT INTO NoticesExtras" + table_name_suffix + "(notice_id, embedding, best_supplier,"
                         + " best_similarity, candidates, similarities, price_est, price_est_low, price_est_high) VALUES ( "
                         + str(notice.idx) + ", " + arrayize(notice.embedding) + ", " + nullize(notice.best_supplier)
                         + ", " + nullize(notice.best_similarity) + ", " + arrayize(notice.candidates)
@@ -127,7 +129,7 @@ def post_process_notices(db, test_mode):
         test_mode_suffix = " LIMIT 100" if test_mode else ""
         cur.execute("""
             SELECT
-                id,
+                notice_id,
                 concat_ws(' ', title, short_description) as text,
                 supplier_eid,
                 total_final_value_amount as price
@@ -135,12 +137,12 @@ def post_process_notices(db, test_mode):
         """)
         for row in cur:
             notices.append(
-                Notice(row["id"],
+                Notice(row["notice_id"],
                        text_embedder.embed([row["text"]])[0],
                        row["supplier_eid"],
                        row["price"]))
     notices = notices_find_candidates(notices)
-    notices_insert_into_extra_table(db, notices)
+    notices_insert_into_extra_table(db, notices, test_mode)
 
 
 def do_post_processing(db, test_mode=False):
