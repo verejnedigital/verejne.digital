@@ -8,7 +8,7 @@ db = None
 
 def getConfig():
     import yaml
-    with open("db_config.yaml", "r") as stream:
+    with open("db_config_old.yaml", "r") as stream:
         return yaml.load(stream)
 
 def connect(local = True):

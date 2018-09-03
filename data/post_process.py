@@ -48,25 +48,27 @@ class Notice:
         return mean, price_low, price_high
 
 
-# Create table that will contain extra data
 def notices_create_extra_table(db):
-    with db.dict_cursor() as cur:
-        cur.execute("""
-            DROP TABLE IF EXISTS NoticesExtraData;
-            CREATE TABLE NoticesExtraData (
-                id SERIAL PRIMARY KEY,
-                notice_id INTEGER References Notices(id),
-                embedding FLOAT[],
-                best_supplier INTEGER References Entities(id),
-                best_similarity FLOAT,
-                candidates INTEGER[],
-                similarities FLOAT[],
-                price_est FLOAT,
-                price_est_low FLOAT,
-                price_est_high FLOAT
-            );
-            CREATE INDEX ON NoticesExtraData (notice_id);
-        """)
+    """Creates table NoticesExtraData that will contain extra data."""
+    db.execute(
+        """
+        DROP TABLE IF EXISTS NoticesExtraData;
+        CREATE TABLE NoticesExtraData (
+          id SERIAL PRIMARY KEY,
+          notice_id INTEGER References Notices(id),
+          embedding FLOAT[],
+          best_supplier INTEGER References Entities(id),
+          best_similarity FLOAT,
+          candidates INTEGER[],
+          similarities FLOAT[],
+          price_est FLOAT,
+          price_est_low FLOAT,
+          price_est_high FLOAT
+        );
+        CREATE INDEX ON NoticesExtraData (notice_id);
+        """
+    )
+
 
 def arrayize(a, type_str="float"):
     length = len(a)
@@ -76,8 +78,10 @@ def arrayize(a, type_str="float"):
         a = a + "::" + type_str + "[]"
     return a
 
+
 def nullize(x):
-    return "NULL" if x is None else str(x) 
+    return "NULL" if x is None else str(x)
+
 
 def notices_insert_into_extra_table(db, notices):
     with db.dict_cursor() as cur:
@@ -89,6 +93,7 @@ def notices_insert_into_extra_table(db, notices):
                         + ", " + nullize(notice.best_similarity) + ", " + arrayize(notice.candidates)
                         + ", " + arrayize(notice.similarities) + ", " + nullize(price) + ", " + nullize(price_low)
                         + ", " + nullize(price_high) + ");")
+
 
 def notices_find_candidates(notices):
     for notice in notices:
@@ -111,7 +116,7 @@ def notices_find_candidates(notices):
     return notices
 
 
-def post_process_notices(db):
+def post_process_notices(db, test_mode):
     notices_create_extra_table(db)
     text_embedder = embed.FakeTextEmbedder()
     ids = []
@@ -119,36 +124,64 @@ def post_process_notices(db):
     suppliers = []
     notices = []
     with db.dict_cursor() as cur:
+        test_mode_suffix = " LIMIT 100" if test_mode else ""
         cur.execute("""
-            SELECT id, concat_ws(' ', title, short_description) as text, supplier_eid, total_final_value_amount as price 
-            FROM Notices;
+            SELECT
+                id,
+                concat_ws(' ', title, short_description) as text,
+                supplier_eid,
+                total_final_value_amount as price
+            FROM Notices""" + test_mode_suffix + """;
         """)
-        text_embedder = embed.FakeTextEmbedder()
         for row in cur:
-            notices.append(Notice(row["id"], text_embedder.embed([row["text"]])[0], row["supplier_eid"], row["price"]))
+            notices.append(
+                Notice(row["id"],
+                       text_embedder.embed([row["text"]])[0],
+                       row["supplier_eid"],
+                       row["price"]))
     notices = notices_find_candidates(notices)
     notices_insert_into_extra_table(db, notices)
 
-"""
-db input is provided from outside, so that it can be called
-- from outside process, e.g. generate_prod_data
-- statically on its own from this file.
-"""
-def do_post_processing(db):
-    print 'Postprocessing'
-    post_process_notices(db)
+
+def do_post_processing(db, test_mode=False):
+    """Performs post processing on the provided database `db`.
+
+    The argument `db` is provided from outside, so that this procedure
+    can be invoked both
+    - from an outside process, e.g. generate_prod_data, or
+    - statically on its own from this file.
+
+    Args:
+      db: An open DatabaseConnection for which `search_path` has
+          already been set to the production schema on which post
+          processing is to be performed.
+      test_mode: Boolean indicating whether a quick test run with no
+          side effects is desired.
+    """
+    print('[OK] Postprocessing...')
+    post_process_notices(db, test_mode)
 
 
 def main(args_dict):
+    # Handle test mode option:
     test_mode = not args_dict['disable_test_mode']
     if test_mode:
-        print "Running in TEST mode."
-    # Connect to the latest production data schema
+        print("[OK] Running in TEST mode...")
+
+    # Connect to the latest production data schema:
     db = DatabaseConnection(path_config='db_config_update_source.yaml')
     schema = db.get_latest_schema('prod_')
     db.execute('SET search_path="' + schema + '";')
     print('[OK] Postprocessing schema "%s"...' % (schema))
-    do_post_processing(db)
+    do_post_processing(db, test_mode)
+
+    # Grant SELECT on any new tables to our applications:
+    db.grant_select_on_schema(schema, 'data')
+    db.grant_select_on_schema(schema, 'verejne')
+    db.grant_select_on_schema(schema, 'kataster')
+    db.grant_select_on_schema(schema, 'prepojenia')
+    db.grant_select_on_schema(schema, 'obstaravania')
+
     if test_mode:
         db.conn.rollback()
     else:
@@ -157,6 +190,9 @@ def main(args_dict):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--disable_test_mode', default=False, action='store_true', help='Disable test mode.')
+    parser.add_argument('--disable_test_mode',
+                        default=False,
+                        action='store_true',
+                        help='Disable test mode.')
     args_dict = vars(parser.parse_args())
     main(args_dict)
