@@ -242,6 +242,7 @@ class ListNotices(MyServer):
           total_final_value_amount,
           total_final_value_currency,
           best_supplier,
+          e3.name as best_supplier_name,
           best_similarity,
           price_est,
           price_est_low,
@@ -264,6 +265,10 @@ class ListNotices(MyServer):
           Entities as e2
         ON
           e2.id = Notices.supplier_eid
+        LEFT JOIN
+          Entities as e3
+        ON
+          e3.id = Notices.best_supplier
         ORDER BY
           bulletin_issue_id DESC
         LIMIT 300;
