@@ -11,8 +11,12 @@ import type {SegmentReducer, Path} from './types/reduxTypes'
 import {SLOVAKIA_BOUNDS} from './constants'
 
 export const isInSlovakia = (center: [number, number]): boolean => {
-  return (center[0] > SLOVAKIA_BOUNDS[0][1]) && (center[0] < SLOVAKIA_BOUNDS[1][1]) &&
-    (center[1] > SLOVAKIA_BOUNDS[0][0]) && (center[1] < SLOVAKIA_BOUNDS[1][0])
+  return (
+    center[0] > SLOVAKIA_BOUNDS[0][1] &&
+    center[0] < SLOVAKIA_BOUNDS[1][1] &&
+    center[1] > SLOVAKIA_BOUNDS[0][0] &&
+    center[1] < SLOVAKIA_BOUNDS[1][0]
+  )
 }
 
 const normalizeObjBeforeMap = (data: Array<Object> | Object): Array<Object> =>
@@ -127,7 +131,7 @@ export type AutoSizeProps = {
   width: number,
 }
 
-export const withAutosize = (BaseComponent) => (props) => (
+export const withAutosize = <T: {}>(BaseComponent: ComponentType<T>) => (props: T) => (
   <AutoSizer>
     {({height, width}: AutoSizeProps) =>
       height !== 0 && width !== 0 && <BaseComponent {...props} height={height} witdth={width} />

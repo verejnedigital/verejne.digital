@@ -39,7 +39,6 @@ type EntitySearchProps = {|
   entitySearchFor: string,
 |}
 
-
 const EntitySearchModal = ({
   entitySearchModalOpen,
   toggleModalOpen,
@@ -78,7 +77,10 @@ const EntitySearchModal = ({
                 placeholder={FIND_ENTITY_TITLE}
                 value={entitySearchValue}
                 onChange={setEntitySearchValue}
-                ref={(input) => input && ReactDOM.findDOMNode(input).focus()}
+                ref={(input) => {
+                  const el = ReactDOM.findDOMNode(input)
+                  el && el instanceof HTMLElement && el.focus()
+                }}
               />
               <InputGroupAddon addonType="append">
                 <Button color="primary" onClick={findEntities}>
