@@ -23,12 +23,14 @@
     use_org_id_as_eid_relation: true
     tables:
             Related:
-                    columns: ["stakeholder_type_id", "eid_relation"]
+                    columns: ["stakeholder_type_id", "eid_relation", "effective_from", "effective_to"]
                     create_command: "
                        CREATE TABLE Related (
                                 id SERIAL PRIMARY KEY,
                                 eid INTEGER REFERENCES Entities(id),
                                 stakeholder_type_id INT4,
+                                effective_from date,
+                                effective_to date,
                                 eid_relation INTEGER REFERENCES Entities(id),
                                 CHECK(eid <> eid_relation)
                        );
