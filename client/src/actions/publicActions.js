@@ -59,11 +59,24 @@ export const zoomToLocation = (center: Center, withZoom?: number): Thunk => (
   const zoom = withZoom || zoomSelector(getState()) + 1
   dispatch(setMapOptions({...mapOptionsSelector(state), zoom, center: [center.lat, center.lng]}))
 }
+export const makeLocationSelected = (point: Center) => ({
+  type: 'Make Location Selected',
+  path: ['publicly', 'selectedLocation'],
+  payload: point,
+  reducer: () => point,
+})
 
 export const toggleEntitySearchOpen = () => ({
   type: 'Toggle sidebar search open',
   path: ['publicly', 'entitySearchOpen'],
   reducer: (open: boolean) => !open,
+})
+
+export const deselectLocation = () => ({
+  type: 'Unselect Location',
+  path: ['publicly', 'selectedLocation'],
+  payload: null,
+  reducer: () => null,
 })
 
 export const toggleModalOpen = () => ({

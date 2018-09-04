@@ -329,6 +329,7 @@ export type State = {|
     +showInfo: any, //TODO: TBD
     +openedAddressDetail: Array<number>,
     +drawerOpen: boolean,
+    +selectedLocation: Center | null,
   |},
   +mapOptions: MapOptions,
   +connections: Connections,
@@ -364,6 +365,7 @@ const getInitialState = (): State => ({
     showInfo: {},
     openedAddressDetail: [],
     drawerOpen: false,
+    selectedLocation: null,
   },
   mapOptions: {
     center: SLOVAKIA_COORDINATES,
