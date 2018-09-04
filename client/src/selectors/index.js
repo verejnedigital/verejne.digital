@@ -268,3 +268,4 @@ export const entitySearchForSelector = (state: State) => state.publicly.entitySe
 export const entitySearchEidsSelector = (state: State) => state.publicly.entitySearchEids
 
 export const drawerOpenSelector = (state: State) => state.publicly.drawerOpen
+export const selectedLocationSelector = (state: State) => state.publicly.selectedLocation
