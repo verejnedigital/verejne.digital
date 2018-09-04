@@ -8,7 +8,6 @@ import {entityDetailProvider} from '../../../../dataProviders/sharedDataProvider
 import {addressEntitiesSelector, addressEntitiesIdsSelector} from '../../../../selectors'
 import {MAX_ENTITY_REQUEST_COUNT} from '../../../../constants'
 import {closeAddressDetail, toggleEntityInfo} from '../../../../actions/publicActions'
-import {withAutosize} from '../../../../utils'
 import {ListGroup, Button} from 'reactstrap'
 import {map, chunk, flatten} from 'lodash'
 import ListRow from './ListRow'
@@ -30,15 +29,12 @@ type StateProps = {
   addressId: number,
   onClick: (e: Event) => void,
   hasStateTraders: boolean,
-  width: number,
-  height: number,
   closeAddressDetail: () => void,
   toggleEntityInfo: (id: number) => void,
 }
 
 type AddressDetailProps = OwnProps &
-  StateProps &
-  AutoSizeProps & {
+  StateProps & {
     onClick: (e: Event) => void,
   }
 
@@ -58,10 +54,7 @@ class AddressDetail extends React.Component<AddressDetailProps> {
           Close detail
         </Button>
       </div>
-      <ListGroup
-        className="address-detail-list"
-        style={{maxHeight: this.props.height - DETAILS_HEADER_HEIGHT}}
-      >
+      <ListGroup className="address-detail-list">
         {map(this.props.entities, (e) => <ListRow entity={e} key={e.id} />)}
       </ListGroup>
     </div>
@@ -90,5 +83,4 @@ export default compose(
   withHandlers({
     onClick: ({closeAddressDetail}: StateProps) => closeAddressDetail,
   }),
-  withAutosize // Note: Solves auto height for entities list
 )(AddressDetail)
