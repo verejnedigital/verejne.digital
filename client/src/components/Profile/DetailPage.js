@@ -4,6 +4,7 @@ import {Link, NavLink} from 'react-router-dom'
 import {compose} from 'redux'
 import {connect} from 'react-redux'
 import {stringify} from 'qs'
+import {values} from 'lodash'
 import {withHandlers, withState} from 'recompose'
 import {withDataProviders} from 'data-provider'
 import {
@@ -29,6 +30,7 @@ import Cardboard from './components/Cardboard'
 import DetailCadastralTable from './components/DetailCadastralTable'
 import DetailAsset from './components/DetailAssets'
 import MapContainer from './components/MapContainer'
+import Info from '../shared/Info/Info'
 import {Row, Col, Container} from 'reactstrap'
 
 import './DetailPage.css'
@@ -82,6 +84,10 @@ const DetailPage = ({
     <Cardboard key="cardboard" politician={politician} />,
     <Row tag="article" key="politician" className="profile">
       <Col tag="section">
+        {politician.entities && values(politician.entities)[0] &&
+        <section className="mb-4">
+          <Info data={values(politician.entities)[0]} className="bc-transparent" />
+        </section>}
         <div className="profile-tabs">
           {assetsYears.map((y) => (
             <Link

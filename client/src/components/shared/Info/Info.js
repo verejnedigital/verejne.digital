@@ -3,6 +3,7 @@ import React, {Fragment} from 'react'
 import Circle from 'react-icons/lib/fa/circle-o'
 import {Container} from 'reactstrap'
 import {Link} from 'react-router-dom'
+import classnames from 'classnames'
 import type {Node} from 'react'
 
 import {
@@ -28,6 +29,7 @@ import './Info.css'
 
 type OwnProps = {
   data: NewEntityDetail,
+  className?: string,
   inModal?: boolean,
   canClose?: boolean,
   onClose?: () => void,
@@ -105,8 +107,8 @@ const Findata = ({data}: {data: FinancialData}) => {
   )
 }
 
-const Info = ({data, canClose, onClose, showOnMap}: InfoProps) => (
-  <Container className={canClose ? 'info closable' : 'info'}>
+const Info = ({data, canClose, onClose, showOnMap, className}: InfoProps) => (
+  <Container className={classnames(className, {closable: canClose}, 'info')}>
     <div className="info-header">
       <h3 onClick={onClose}>
         <Circle aria-hidden="true" />&nbsp;{data.name}&nbsp;
