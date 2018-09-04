@@ -34,6 +34,7 @@
     right: 50px;
     box-shadow: 0 4px 12px 0 $shadow-color;
     border: 2px solid $border-color;
+    background: $component-background;
     @media screen and (max-width: 766px) {
       position: static;
       display: block;
