@@ -268,7 +268,7 @@ class ListNotices(MyServer):
         LEFT JOIN
           Entities as e3
         ON
-          e3.id = NoticesExtra.best_supplier
+          e3.id = NoticesExtras.best_supplier
         ORDER BY
           bulletin_issue_id DESC
         LIMIT 300;
