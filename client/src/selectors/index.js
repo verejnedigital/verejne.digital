@@ -10,12 +10,11 @@ import {
   DEFAULT_ENTITIES_REQUEST_PARAMS,
   COUNTRY_ZOOM,
   WORLD_ZOOM,
-  SLOVAKIA_DISTRICT,
-  SLOVAKIA_REGION,
   SLOVAKIA_COORDINATES,
-  DISTRICT_ZOOM,
+  SLOVAKIA_CITIES,
 } from '../constants'
-import {isInSlovakia, normalizeName} from '../utils'
+import {isInSlovakia, normalizeName, values} from '../utils'
+import {hasTradeWithState} from './utils'
 import {sortBy, filter} from 'lodash'
 import supercluster from 'points-cluster'
 import type {ContextRouter} from 'react-router-dom'
@@ -31,6 +30,7 @@ import type {
   Notice,
   SearchedEntity,
 } from '../state'
+
 export const paramsIdSelector = (_: State, props: ContextRouter): string =>
   props.match.params.id || '0'
 
@@ -103,8 +103,11 @@ export const entitySearchSelector = (state: State, query: string): SearchedEntit
   state.entitySearch[query]
 export const allEntityDetailsSelector = (state: State): ObjectMap<NewEntityDetail> =>
   state.entityDetails
-export const entityDetailSelector = (state: State, eid: number): NewEntityDetail | null =>
-  eid ? state.entityDetails[eid.toString()] : null
+export const entityDetailSelector = (state: State, eid: number): NewEntityDetail | null => {
+  if (!eid) return null
+  const entityDetails = state.entityDetails[eid.toString()]
+  return {...entityDetails, tradesWithState: hasTradeWithState(entityDetails)}
+}
 
 export const addressEntitiesSelector = createSelector(
   entitiesSelector,
@@ -117,6 +120,12 @@ export const useLabelsSelector = createSelector(
   centerSelector,
   (zoom, center) => (zoom < CITY_ZOOM && isInSlovakia(center))
 )
+
+export const addressEntitiesIdsSelector = createSelector(
+  addressEntitiesSelector,
+  (entities) => values(entities).map((v) => v.id) : []
+)
+
 type SuperCluster = {
   numPoints: number,
   points: Array<CompanyEntity>,
@@ -179,23 +188,12 @@ const createLabels = (mapOptions: MapOptions): Array<MapCluster> => {
       isLabel: true,
     }]
   } else {
-    if (mapOptions.zoom <= COUNTRY_ZOOM) {
-      labels = SLOVAKIA_REGION.map((region) => ({
-        lat: region.centroid[1],
-        lng: region.centroid[0],
+    if (mapOptions.zoom < CITY_ZOOM) {
+      labels = SLOVAKIA_CITIES.map((city) => ({
+        lat: city.coord[1],
+        lng: city.coord[0],
         numPoints: 0,
-        id: region.name,
-        points: [],
-        setZoomTo: DISTRICT_ZOOM,
-        isLabel: true,
-      })
-      )
-    } else {
-      labels = SLOVAKIA_DISTRICT.map((district) => ({
-        lat: district.centroid[1],
-        lng: district.centroid[0],
-        numPoints: 0,
-        id: district.name,
+        id: city.name,
         points: [],
         setZoomTo: CITY_ZOOM,
         isLabel: true,
@@ -264,7 +262,8 @@ export const autocompleteOptionsSelector = createSelector(boundsSelector, (bound
 })
 
 export const entitySearchValueSelector = (state: State) => state.publicly.entitySearchValue
-export const entitySearchModalOpenSelector = (state: State) => state.publicly.entitySearchModalOpen
+export const entitySearchOpenSelector = (state: State) => state.publicly.entitySearchOpen
+export const entitySearchModalOpenSelector = (state: State) => state.publicly.entityModalOpen
 export const entitySearchForSelector = (state: State) => state.publicly.entitySearchFor
 export const entitySearchEidsSelector = (state: State) => state.publicly.entitySearchEids
 

@@ -11,6 +11,9 @@ import skgeodesy
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../data/db')))
 from db import DatabaseConnection
 
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../verejne')))
+from api_GetInfos import get_GetInfos
+
 
 # All individual hooks inherit from this class
 # Actual work of subclasses is done in method get
@@ -80,6 +83,19 @@ class InfoPolitician(MyServer):
     if politician is None:
       self.abort(
           404, detail='Could not find politician with provided `id`')
+
+    # Add information from database vd:
+    db_vd = webapp2.get_app().registry['db_vd']
+    rows = db_vd.query(
+        """
+        SELECT eid FROM profilmapping
+        WHERE profil_id=%s;
+        """,
+        [politician_id]
+    )
+    eids = [row['eid'] for row in rows]
+    politician['entities'] = get_GetInfos(db_vd, eids)
+
     self.returnJSON(politician)
 
 
@@ -99,9 +115,16 @@ class AssetDeclarations(MyServer):
 
 class ListPoliticians(MyServer):
   def get(self):
+    mps_only = False
+    try:
+      mps_only = bool(self.request.GET['mps_only'])
+    except:
+      pass
+
     # Return politicians augmented with property counts as JSON
     db = webapp2.get_app().registry['db']
-    politicians = db_search.get_politicians_with_Folio_counts(db)
+    politicians = db_search.get_politicians_with_Folio_counts(
+        db, mps_only)
     self.returnJSON(politicians)
 
 
@@ -120,6 +143,14 @@ app = webapp2.WSGIApplication([
 def initialise_app():
   """Precomputes values to be shared across requests."""
   app.registry['db'] = DatabaseConnection(search_path='profil')
+
+  # TEMP: While profil is running from database `kataster`, store a
+  # separate connection to database `vd` (which is required for
+  # querying information about entities).
+  db_vd = DatabaseConnection(path_config='db_config_vd.yaml')
+  schema = db_vd.get_latest_schema('prod_')
+  db_vd.execute('SET search_path to ' + schema + ';')
+  app.registry['db_vd'] = db_vd
 
 
 def main():

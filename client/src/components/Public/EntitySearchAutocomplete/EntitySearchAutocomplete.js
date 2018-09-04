@@ -12,6 +12,7 @@ import {
   setEntitySearchFor,
   toggleDrawer,
   closeAddressDetail,
+  toggleEntitySearchOpen,
 } from '../../../actions/publicActions'
 import {updateValue} from '../../../actions/sharedActions'
 import {
@@ -20,6 +21,7 @@ import {
 import {FIND_ENTITY_TITLE} from '../../../constants'
 
 type Props = {
+  toggleEntitySearchOpen: () => void,
   toggleModalOpen: () => void,
   entitySearchValue: string,
   setEntitySearchValue: (e: Event) => void,
@@ -64,6 +66,7 @@ export default compose(
     }),
     {
       updateValue,
+      toggleEntitySearchOpen,
       toggleModalOpen,
       setEntitySearchFor,
       toggleDrawer,
@@ -71,9 +74,9 @@ export default compose(
     }
   ),
   withHandlers({
-    findEntities: ({toggleModalOpen, setEntitySearchFor, entitySearchValue, toggleDrawer, closeAddressDetail}) => (e) => {
+    findEntities: ({toggleEntitySearchOpen, setEntitySearchFor, entitySearchValue, toggleDrawer, closeAddressDetail}) => (e) => {
       e.preventDefault()
-      toggleModalOpen()
+      toggleEntitySearchOpen()
       closeAddressDetail()
       setEntitySearchFor(entitySearchValue)
       toggleDrawer()

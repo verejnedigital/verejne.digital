@@ -37,7 +37,12 @@ class Navigation extends Component {
         <Nav navbar className="mr-auto">
           <NavItem>
             <NavLink to="/verejne" className="nav-link">
-              Verejne data
+              Verejné dáta
+            </NavLink>
+          </NavItem>
+          <NavItem>
+            <NavLink to="/profil" className="nav-link">
+              Profil
             </NavLink>
           </NavItem>
           <NavItem>
@@ -47,14 +52,9 @@ class Navigation extends Component {
           </NavItem>
           <NavItem>
             <NavLink to="/obstaravania" className="nav-link">
-              Obstaravania
+              Obstarávania
             </NavLink>
-          </NavItem>
-          <NavItem>
-            <NavLink to="/profil" className="nav-link">
-              Profil
-            </NavLink>
-          </NavItem>
+          </NavItem>          
         </Nav>
         <Nav className="ml-auto" navbar>
           <NavItem>

@@ -1,9 +1,11 @@
 // @flow
 import districtJson from './slovakiaData/district-centers.json'
 import regionJson from './slovakiaData/region-centers.json'
+import districtCityJson from './slovakiaData/district_cities.json'
 
 export const SLOVAKIA_DISTRICT = districtJson
 export const SLOVAKIA_REGION = regionJson
+export const SLOVAKIA_CITIES = districtCityJson
 
 export const PAGINATION_CHUNK_SIZE = 10
 export const NOTICES_PAGINATION_SIZE = 10
@@ -30,6 +32,8 @@ const SLOVAKIA_EAST_BOUND = 22.57 //TU NIC NIEJE!
 
 export const SLOVAKIA_BOUNDS = [[SLOVAKIA_WEST_BOUND, SLOVAKIA_SOUTH_BOUND],
   [SLOVAKIA_EAST_BOUND, SLOVAKIA_NORTH_BOUND]]
+
+export const MAX_ENTITY_REQUEST_COUNT = 50
 
 // Typing only the first level is enough for now
 type GMapOptions = {

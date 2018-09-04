@@ -122,19 +122,19 @@ export const parsedAssetDeclarationsForYearSelector: Selector<
 
 export const profileQuerySelector = (state: State): string => normalizeName(state.profile.query)
 
-export const housesOrderedPoliticiansSelector = (state: State): Array<Politician> =>
-  sortBy(Object.values(state.profile.list), ['num_houses_flats'])
+export const orderedPoliticiansSelector = (state: State): Array<Politician> =>
+  sortBy(Object.values(state.profile.list), ['num_houses_flats', 'num_fields_gardens', 'num_others'])
     .reverse()
     .map((p, i) => ({order: i + 1, ...p}))
 
 export const filteredPoliticiansSelector: Selector<State, *, Array<Politician>> = createSelector(
   profileQuerySelector,
-  housesOrderedPoliticiansSelector,
+  orderedPoliticiansSelector,
   (query, list) =>
     list.filter(
       (p) =>
         normalizeName(p.firstname).startsWith(query) ||
         normalizeName(p.surname).startsWith(query) ||
-        normalizeName(p.party_abbreviation).indexOf(query) !== -1
+        (p.party_abbreviation && normalizeName(p.party_abbreviation).indexOf(query) !== -1)
     )
 )

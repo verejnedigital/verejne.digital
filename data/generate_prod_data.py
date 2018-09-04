@@ -10,6 +10,7 @@ from psycopg2.extensions import AsIs
 
 import geocoder as geocoder_lib
 import entities
+import post_process
 from datetime import datetime
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../data/db')))
@@ -284,6 +285,9 @@ def main(args_dict):
         ProcessSource(db_prod, geocoder, entities_lookup, config_per_source, test_mode)
         print "GEOCODER STATS"
         geocoder.PrintStats()
+
+    # Run post processing
+    post_process.do_post_processing(db_prod, test_mode)
 
     # Grant apps read-only access to the newly created schema and tables within
     db_prod.grant_usage_and_select_on_schema(prod_schema_name, 'data')

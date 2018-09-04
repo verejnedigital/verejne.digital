@@ -298,6 +298,7 @@ export type NewEntityDetail = {
   contracts: Contracts,
   notices: Notices,
   related: RelatedEntity[],
+  tradeWithState?: boolean,
 }
 
 // Each property must begin with '+' to be made read only and each object
@@ -321,7 +322,8 @@ export type State = {|
     +currentPage: number,
     +autocompleteValue: string,
     +entitySearchValue: string,
-    +entitySearchModalOpen: boolean,
+    +entitySearchOpen: boolean,
+    +entityModalOpen: boolean,
     +entitySearchFor: string,
     +entitySearchEids: Array<number>,
     +showInfo: any, //TODO: TBD
@@ -355,7 +357,8 @@ const getInitialState = (): State => ({
     currentPage: 1,
     autocompleteValue: '',
     entitySearchValue: '',
-    entitySearchModalOpen: false,
+    entitySearchOpen: false,
+    entityModalOpen: false,
     entitySearchFor: '',
     entitySearchEids: [],
     showInfo: {},

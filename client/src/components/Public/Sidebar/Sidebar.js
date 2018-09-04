@@ -24,9 +24,9 @@ import {
   autocompleteOptionsSelector,
   openedAddressDetailSelector,
   drawerOpenSelector,
-  entitySearchModalOpenSelector,
+  entitySearchOpenSelector,
 } from '../../../selectors'
-import {ENTITY_CLOSE_ZOOM,} from '../../../constants'
+import {ENTITY_CLOSE_ZOOM} from '../../../constants'
 import AddressDetail from './../Map/AddressDetail/AddressDetail'
 import PlacesAutocomplete from '../../PlacesAutocomplete/PlacesAutocomplete'
 
@@ -47,8 +47,8 @@ type ContentProps = {
   setAutocompleteValue: (value: string) => void,
   setZoomToLocation: (value: string, id: string) => void,
   autocompleteOptions: Bound,
-  openedAddressId: number,
-  entitySearchModalOpen: boolean,
+  openedAddressIds: Array<number>,
+  entitySearchOpen: boolean,
 }
 
 type SidebarProps = {|
@@ -78,7 +78,7 @@ const _Content = ({
   setZoomToLocation,
   autocompleteOptions,
   openedAddressIds,
-  entitySearchModalOpen,
+  entitySearchOpen,
 }: ContentProps) => (
 
   <React.Fragment>
@@ -93,7 +93,7 @@ const _Content = ({
         className="form-control"
       />
     </FormGroup>
-    {entitySearchModalOpen && <EntitySearch />}
+    {entitySearchOpen && <EntitySearch />}
     {(openedAddressIds != null && openedAddressIds.length !== 0) && <AddressDetail addressIds={openedAddressIds} />}
   </React.Fragment>
 )
@@ -104,7 +104,7 @@ const Content = compose(
       autocompleteValue: autocompleteValueSelector(state),
       autocompleteOptions: autocompleteOptionsSelector(state),
       openedAddressIds: openedAddressDetailSelector(state),
-      entitySearchModalOpen: entitySearchModalOpenSelector(state),
+      entitySearchOpen: entitySearchOpenSelector(state),
     }),
     {
       updateValue,
