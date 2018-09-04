@@ -6,7 +6,7 @@ import FaIconCircle from 'react-icons/lib/fa/circle-o'
 import classnames from 'classnames'
 
 import {ENTITY_CLOSE_ZOOM} from '../../../../constants'
-import {openAddressDetail, zoomToLocation, setDrawer, setModal, deselectLocation} from '../../../../actions/publicActions'
+import {openAddressDetail, zoomToLocation, setDrawer, setEntitySearchOpen, deselectLocation} from '../../../../actions/publicActions'
 import {
   zoomSelector,
   openedAddressDetailSelector,
@@ -72,16 +72,24 @@ export default compose(
       openAddressDetail,
       zoomToLocation,
       setDrawer,
-      setModal,
+      setEntitySearchOpen,
       deselectLocation,
     }
   ),
   withHandlers({
-    onClick: ({deselectLocation, zoom, cluster, zoomToLocation, openAddressDetail, setDrawer, setModal}) => (event) => {
+    onClick: ({
+      deselectLocation,
+      zoom,
+      cluster,
+      zoomToLocation,
+      openAddressDetail,
+      setDrawer,
+      setEntitySearchOpen,
+    }) => (event) => {
       if (cluster.numPoints === 1) {
         openAddressDetail([cluster.points[0].address_id])
         setDrawer(true)
-        setModal(false)
+        setEntitySearchOpen(false)
         zoomToLocation({lat: cluster.lat, lng: cluster.lng}, Math.max(ENTITY_CLOSE_ZOOM, zoom))
         deselectLocation()
       } else {
@@ -91,7 +99,7 @@ export default compose(
         } else {
           openAddressDetail(cluster.points.map((point) => point.address_id))
           setDrawer(true)
-          setModal(false)
+          setEntitySearchOpen(false)
           zoomToLocation({lat: cluster.lat, lng: cluster.lng}, Math.max(ENTITY_CLOSE_ZOOM, zoom))
           deselectLocation()
         }
