@@ -31,6 +31,8 @@ const SLOVAKIA_EAST_BOUND = 22.57 //TU NIC NIEJE!
 export const SLOVAKIA_BOUNDS = [[SLOVAKIA_WEST_BOUND, SLOVAKIA_SOUTH_BOUND],
   [SLOVAKIA_EAST_BOUND, SLOVAKIA_NORTH_BOUND]]
 
+export const MAX_ENTITY_REQUEST_COUNT = 50
+
 // Typing only the first level is enough for now
 type GMapOptions = {
   ControlPosition: {

@@ -4,11 +4,13 @@ import {connect} from 'react-redux'
 import {withHandlers, compose} from 'recompose'
 import {withDataProviders} from 'data-provider'
 import {addressEntitiesProvider} from '../../../../dataProviders/publiclyDataProviders'
-import {addressEntitiesSelector} from '../../../../selectors'
+import {entityDetailProvider} from '../../../../dataProviders/sharedDataProviders'
+import {addressEntitiesSelector, addressEntitiesIdsSelector} from '../../../../selectors'
+import {MAX_ENTITY_REQUEST_COUNT} from '../../../../constants'
 import {closeAddressDetail} from '../../../../actions/publicActions'
 import {withAutosize} from '../../../../utils'
 import {ListGroup, Button} from 'reactstrap'
-import {map, flatten} from 'lodash'
+import {map, chunk, flatten} from 'lodash'
 import ListRow from './ListRow'
 import './AddressDetail.css'
 
@@ -22,13 +24,20 @@ type AddressDetailProps = {|
   entities: Array<Entity>,
   addressId: number,
   onClick: (e: Event) => void,
+  hasStateTraders: boolean,
   width: number,
   height: number,
 |}
 
 const DETAILS_HEADER_HEIGHT = 37
 
-const AddressDetail = ({entities, addressId, onClick, height}: AddressDetailProps) => (
+const AddressDetail = ({
+  entities,
+  addressId,
+  onClick,
+  hasStateTraders,
+  height,
+}: AddressDetailProps) => (
   <div className="address-detail">
     <div className="address-detail-header" style={{height: DETAILS_HEADER_HEIGHT}}>
       <Button color="link" onClick={onClick}>
@@ -43,18 +52,27 @@ const AddressDetail = ({entities, addressId, onClick, height}: AddressDetailProp
 
 export default compose(
   connect(
-    (state) => ({
+    (state, {addressId}) => ({
       entities: addressEntitiesSelector(state),
+      entitiesIds: addressEntitiesIdsSelector(state),
     }),
     {
       closeAddressDetail,
     }
   ),
-  withDataProviders(({addressIds}) => flatten(addressIds.map((singleId) => [addressEntitiesProvider(singleId)]))),
+  withDataProviders(({addressIds}) =>
+    flatten(addressIds.map((singleId) => [addressEntitiesProvider(singleId)]))
+  ),
+  withDataProviders(
+    ({entitiesIds}) =>
+      entitiesIds.length
+        ? chunk(entitiesIds, MAX_ENTITY_REQUEST_COUNT).map((ids) => entityDetailProvider(ids))
+        : []
+  ),
   withHandlers({
     onClick: ({closeAddressDetail}) => (event) => {
       closeAddressDetail()
     },
   }),
-  withAutosize, // Note: Solves auto height for entities list
+  withAutosize // Note: Solves auto height for entities list
 )(AddressDetail)

@@ -298,6 +298,7 @@ export type NewEntityDetail = {
   contracts: Contracts,
   notices: Notices,
   related: RelatedEntity[],
+  tradeWithState?: boolean,
 }
 
 // Each property must begin with '+' to be made read only and each object
