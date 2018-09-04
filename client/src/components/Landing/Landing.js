@@ -49,28 +49,41 @@ const Landing = () => (
             text="Do ktorých výziev sa prihlásiť a ktoré sú podozrivé?"
             imgSrc={obstaravaniaIcon}
           />
-        </Col>        
+        </Col>
       </Row>
     </Container>
     <footer className="landing-footer">
       <div className="container">
-        <ul className="float-md-right list-inline">
-          <li className="list-inline-item">
-            <a href="https://www.zastavmekorupciu.sk/">
-              <img src="/nzk.png" alt="Nadácia Zastavme Korupciu" />
-            </a>
-          </li>
-          <li className="list-inline-item">
-            <a href="https://slovensko.digital/">
-              <img src="/slovenko.png" alt="slovenko.digital" />
-            </a>
-          </li>
-          <li className="list-inline-item">
-            <a href="https://www.finstat.sk/">
-              <img src="/finstat.png" alt="FinStat" />
-            </a>
-          </li>
-        </ul>
+        <div className="float-md-right">
+          <span className="partners"> Partneri projektu </span>
+          <ul className="list-inline">
+            <li className="list-inline-item">
+              <a href="https://www.zastavmekorupciu.sk/">
+                <img src="/nzk.png" alt="Nadácia Zastavme Korupciu" />
+              </a>
+            </li>
+            <li className="list-inline-item">
+              <a href="https://www.chcemvediet.sk/">
+                <img src="/chv.png" alt="chcemvediet.sk" />
+              </a>
+            </li>
+            <li className="list-inline-item">
+              <a href="https://slovensko.digital/">
+                <img src="/slovenko.png" alt="slovenko.digital" />
+              </a>
+            </li>
+            <li className="list-inline-item">
+              <a href="https://www.finstat.sk/">
+                <img src="/finstat.png" alt="FinStat" />
+              </a>
+            </li>
+            <li className="list-inline-item">
+              <a href="https://vacuumlabs.com/">
+                <img src="/vl.png" alt="VacuumLabs" />
+              </a>
+            </li>
+          </ul>
+        </div>
         <ul className="float-md-left list-inline landing-footer-text">
           <li className="list-inline-item list-inline-item-text">
             <a
