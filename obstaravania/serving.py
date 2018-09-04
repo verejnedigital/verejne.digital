@@ -225,7 +225,9 @@ class ListNotices(MyServer):
         """
         SELECT
           eid,
+          e1.name,
           supplier_eid,
+          e2.name as supplier_name,
           Notices.notice_id,
           contract_id,
           title,
@@ -254,6 +256,14 @@ class ListNotices(MyServer):
           NoticeBulletins
         ON
           Notices.bulletin_issue_id = NoticeBulletins.bulletin_id
+        JOIN
+          Entities as e1
+        ON
+          e1.id = Notices.eid
+        RIGHT JOIN
+          Entities as e2
+        ON
+          e2.id = Notices.supplier_eid
         ORDER BY
           bulletin_issue_id DESC
         LIMIT 300;
