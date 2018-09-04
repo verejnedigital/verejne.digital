@@ -5,6 +5,7 @@ import {compose} from 'redux'
 import {withDataProviders} from 'data-provider'
 import {entitySearchForSelector, entitySearchEidsSelector} from '../../../selectors'
 import {entitiesSearchResultEidsProvider} from '../../../dataProviders/publiclyDataProviders'
+import {entityDetailProvider} from '../../../dataProviders/sharedDataProviders'
 import EntitySearchResultItem from '../EntitySearchResultItem/EntitySearchResultItem'
 
 type Props = {
@@ -12,17 +13,20 @@ type Props = {
   entitySearchEids: Array<number>,
 }
 
-const EntitySearchResult = ({entitySearchEids}: Props) =>
-  entitySearchEids
-    ? entitySearchEids.map((eid: number, index: number) => (
-      <EntitySearchResultItem key={index} eid={eid} />
-    ))
-    : null
+const EntitySearchResult = ({entitySearchEids}: Props) => (
+  entitySearchEids.map((eid) =>
+    <EntitySearchResultItem key={eid} eid={eid} />
+  )
+)
 
 export default compose(
   connect((state) => ({
     searchFor: entitySearchForSelector(state),
     entitySearchEids: entitySearchEidsSelector(state),
   })),
-  withDataProviders(({searchFor}) => [entitiesSearchResultEidsProvider(searchFor)])
+  withDataProviders(
+    ({searchFor, entitySearchEids}) => [
+      entitiesSearchResultEidsProvider(searchFor),
+      entityDetailProvider(entitySearchEids),
+    ])
 )(EntitySearchResult)
