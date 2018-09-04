@@ -115,16 +115,22 @@ export const withSideEffects = <P: Object>(sideEffectsFunc: SideEffectsFunc<P>) 
 }
 
 // flow cannot handle pickBy when there are values of different types in obj
-export const pickBy = <T: {}>(obj: T, predicate: (value: any) => boolean): T => _pickBy(obj, predicate)
+export const pickBy = <T: {}>(obj: T, predicate: (value: any) => boolean): T =>
+  _pickBy(obj, predicate)
 
 // https://github.com/facebook/flow/issues/2221#issuecomment-372112477
 // there is no nice way to handle object.values in flow currently - use this instead
 export const values = <T>(obj: {[string]: T}): Array<T> => Object.keys(obj).map((k) => obj[k])
 
+export type AutoSizeProps = {
+  height: number,
+  width: number,
+}
+
 export const withAutosize = (BaseComponent) => (props) => (
   <AutoSizer>
-    {({height, width}) => (height !== 0 && width !== 0) &&
-      <BaseComponent {...props} height={height} witdth={width} />
+    {({height, width}: AutoSizeProps) =>
+      height !== 0 && width !== 0 && <BaseComponent {...props} height={height} witdth={width} />
     }
   </AutoSizer>
 )
