@@ -3,6 +3,7 @@ import {createSelector} from 'reselect'
 import qs from 'qs'
 import {
   clusterOptions,
+  clusterOptionsCloser,
   ENTITY_ZOOM,
   SUB_CITY_ZOOM,
   CITY_ZOOM,
@@ -98,7 +99,7 @@ export const zoomSelector = (state: State): number => state.mapOptions.zoom
 export const boundsSelector = (state: State): ?MapBounds => state.mapOptions.bounds
 export const addressesSelector = (state: State) => state.addresses
 export const showInfoSelector = (state: State) => state.publicly.showInfo
-export const openedAddressDetailSelector = (state: State) => state.publicly.openedAddressDetail
+export const openedAddressDetailSelector = (state: State): Array<number> => state.publicly.openedAddressDetail
 export const entitiesSelector = (state: State) => state.entities
 export const entitySearchSelector = (state: State, query: string): SearchedEntity =>
   state.entitySearch[query]
@@ -113,7 +114,7 @@ export const entityDetailSelector = (state: State, eid: number): NewEntityDetail
 export const addressEntitiesSelector = createSelector(
   entitiesSelector,
   openedAddressDetailSelector,
-  (entities, addressId) => filter(entities, (entity) => entity.addressId === addressId)
+  (entities, addressIds : Array<number>) => filter(entities, (entity) => addressIds.includes(entity.addressId))
 )
 
 export const useLabelsSelector = createSelector(
@@ -157,7 +158,8 @@ type EntitiesRequestParams = {
 }
 
 const getClusters = (mapOptions: MapOptions, addresses): Array<SuperCluster> => {
-  const clusters = supercluster(addresses, clusterOptions)
+  const _clusterOptions = (mapOptions.zoom > 18) ? clusterOptionsCloser : clusterOptions
+  const clusters = supercluster(addresses, _clusterOptions)
   return clusters(mapOptions)
 }
 
@@ -171,7 +173,7 @@ const createClusters = (mapOptions: MapOptions, addresses): Array<MapCluster> =>
       id: `${i}`,
       points,
       isLabel: false,
-      setZoomTo: mapOptions.zoom + 1,
+      setZoomTo: Math.min(mapOptions.zoom + 2, 22),
     })
   )
 }

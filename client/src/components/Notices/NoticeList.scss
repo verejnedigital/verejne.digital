@@ -7,6 +7,18 @@
   }
 }
 
+.pagination-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.scroll-container {
+  margin: auto;
+  max-height: 100%;
+  overflow: auto;
+}
+
 .notice-list-sidebar {
   background-color: $component-background;
   position: fixed;
@@ -25,41 +37,4 @@
     padding-top: 2rem;
     padding-right: 1rem;
   }
-}
-
-.notice-list-title {
-  font-weight: 200;
-  font-size: 2rem;
-  padding-bottom: 1rem;
-}
-
-@media screen and (max-width: 576px) {
-  .notice-list-title, .notice-list-text {
-    text-align: center;
-  }
-}
-
-.fbfooter {
-  margin-top: 10px;
-  padding: 0;
-  height: 50px;
-  overflow: hidden;
-
-  .fbIframe {
-    border: none;
-    overflow: hidden;
-    margin-top: 0;
-  }
-}
-
-.pagination-wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.scroll-container {
-  margin: auto;
-  max-height: 100%;
-  overflow: auto;
 }

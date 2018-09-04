@@ -92,16 +92,16 @@ export const toggleEntityInfo = (eid: number) => ({
   reducer: (open: boolean): boolean => !open,
 })
 
-export const openAddressDetail = (addressId: number) => ({
+export const openAddressDetail = (addressIds: Array<number>) => ({
   type: 'Open address detail',
   path: ['publicly', 'openedAddressDetail'],
-  reducer: () => addressId,
+  reducer: () => addressIds,
 })
 
 export const closeAddressDetail = () => ({
   type: 'Close address detail',
   path: ['publicly', 'openedAddressDetail'],
-  reducer: () => null,
+  reducer: () => [],
 })
 
 export const toggleDrawer = () => ({

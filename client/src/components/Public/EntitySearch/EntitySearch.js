@@ -1,19 +1,5 @@
 // @flow
 import React from 'react'
-import ReactDOM from 'react-dom'
-import {
-  Button,
-  Modal,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  Input,
-  InputGroup,
-  InputGroupAddon,
-  Form,
-  FormGroup,
-  FormText,
-} from 'reactstrap'
 import {connect} from 'react-redux'
 import {compose, withHandlers} from 'recompose'
 import EntitySearchResult from '../EntitySearchResult/EntitySearchResult'
@@ -25,7 +11,6 @@ import {
 } from '../../../selectors'
 import {toggleModalOpen, setEntitySearchFor, toggleDrawer} from '../../../actions/publicActions'
 import {updateValue} from '../../../actions/sharedActions'
-import {FIND_ENTITY_TITLE} from '../../../constants'
 import './EntitySearch.css'
 
 type EntitySearchProps = {|

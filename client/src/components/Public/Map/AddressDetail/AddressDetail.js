@@ -8,8 +8,9 @@ import {entityDetailProvider} from '../../../../dataProviders/sharedDataProvider
 import {addressEntitiesSelector, addressEntitiesIdsSelector} from '../../../../selectors'
 import {MAX_ENTITY_REQUEST_COUNT} from '../../../../constants'
 import {closeAddressDetail} from '../../../../actions/publicActions'
+import {withAutosize} from '../../../../utils'
 import {ListGroup, Button} from 'reactstrap'
-import {map, chunk} from 'lodash'
+import {map, chunk, flatten} from 'lodash'
 import ListRow from './ListRow'
 import './AddressDetail.css'
 
@@ -24,16 +25,26 @@ type AddressDetailProps = {|
   addressId: number,
   onClick: (e: Event) => void,
   hasStateTraders: boolean,
+  width: number,
+  height: number,
 |}
 
-const AddressDetail = ({entities, addressId, onClick, hasStateTraders}: AddressDetailProps) => (
+const DETAILS_HEADER_HEIGHT = 37
+
+const AddressDetail = ({
+  entities,
+  addressId,
+  onClick,
+  hasStateTraders,
+  height,
+}: AddressDetailProps) => (
   <div className="address-detail">
-    <div className="address-detail-header">
+    <div className="address-detail-header" style={{height: DETAILS_HEADER_HEIGHT}}>
       <Button color="link" onClick={onClick}>
         Close detail
       </Button>
     </div>
-    <ListGroup className="address-detail-list">
+    <ListGroup className="address-detail-list" style={{maxHeight: height - DETAILS_HEADER_HEIGHT}}>
       {map(entities, (e) => <ListRow entity={e} key={e.id} />)}
     </ListGroup>
   </div>
@@ -49,13 +60,19 @@ export default compose(
       closeAddressDetail,
     }
   ),
-  withDataProviders(({addressId}) => [addressEntitiesProvider(addressId)]),
-  withDataProviders(({entitiesIds}) => entitiesIds.length ?
-    chunk(entitiesIds, MAX_ENTITY_REQUEST_COUNT).map((ids) => entityDetailProvider(ids)) : []
+  withDataProviders(({addressIds}) =>
+    flatten(addressIds.map((singleId) => [addressEntitiesProvider(singleId)]))
+  ),
+  withDataProviders(
+    ({entitiesIds}) =>
+      entitiesIds.length
+        ? chunk(entitiesIds, MAX_ENTITY_REQUEST_COUNT).map((ids) => entityDetailProvider(ids))
+        : []
   ),
   withHandlers({
     onClick: ({closeAddressDetail}) => (event) => {
       closeAddressDetail()
     },
-  })
+  }),
+  withAutosize // Note: Solves auto height for entities list
 )(AddressDetail)

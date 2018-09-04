@@ -149,6 +149,12 @@ export const clusterOptions = {
   maxZoom: 18,
   radius: 30,
 }
+
+export const clusterOptionsCloser = {
+  minZoom: 19,
+  maxZoom: 22,
+  radius: 10,
+}
 export const FACEBOOK_LIKE_SRC =
   'https://www.facebook.com/plugins/like.php?href=https%3A%2F%2Fwww.facebook.com%2Fverejne.digital&width=111&layout=button_count&action=like&size=small&show_faces=true&share=false&height=46&appId='
 
