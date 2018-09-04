@@ -260,7 +260,7 @@ class ListNotices(MyServer):
           Entities as e1
         ON
           e1.id = Notices.eid
-        RIGHT JOIN
+        LEFT JOIN
           Entities as e2
         ON
           e2.id = Notices.supplier_eid
