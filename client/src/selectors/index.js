@@ -13,7 +13,7 @@ import {
   SLOVAKIA_COORDINATES,
   SLOVAKIA_CITIES,
 } from '../constants'
-import {isInSlovakia, normalizeName, values} from '../utils'
+import {isInSlovakia, normalizeName} from '../utils'
 import {hasTradeWithState} from './utils'
 import {sortBy, filter} from 'lodash'
 import supercluster from 'points-cluster'
@@ -30,6 +30,7 @@ import type {
   Notice,
   SearchedEntity,
 } from '../state'
+import type {ObjectMap} from '../types/commonTypes'
 
 export const paramsIdSelector = (_: State, props: ContextRouter): string =>
   props.match.params.id || '0'
@@ -118,12 +119,11 @@ export const addressEntitiesSelector = createSelector(
 export const useLabelsSelector = createSelector(
   zoomSelector,
   centerSelector,
-  (zoom, center) => (zoom < CITY_ZOOM && isInSlovakia(center))
+  (zoom, center) => zoom < CITY_ZOOM && isInSlovakia(center)
 )
 
-export const addressEntitiesIdsSelector = createSelector(
-  addressEntitiesSelector,
-  (entities) => values(entities).map((v) => v.id) : []
+export const addressEntitiesIdsSelector = createSelector(addressEntitiesSelector, (entities) =>
+  entities.map((v) => v.id)
 )
 
 type SuperCluster = {
@@ -156,7 +156,7 @@ type EntitiesRequestParams = {
 }
 
 const getClusters = (mapOptions: MapOptions, addresses): Array<SuperCluster> => {
-  const _clusterOptions = (mapOptions.zoom > 18) ? clusterOptionsCloser : clusterOptions
+  const _clusterOptions = mapOptions.zoom > 18 ? clusterOptionsCloser : clusterOptions
   const clusters = supercluster(addresses, _clusterOptions)
   return clusters(mapOptions)
 }
@@ -197,8 +197,7 @@ const createLabels = (mapOptions: MapOptions): Array<MapCluster> => {
         points: [],
         setZoomTo: CITY_ZOOM,
         isLabel: true,
-      })
-      )
+      }))
     }
   }
   return labels
@@ -207,9 +206,8 @@ export const clustersSelector = createSelector(
   mapOptionsSelector,
   addressesSelector,
   useLabelsSelector,
-  (mapOptions, addresses, useLabels) => useLabels
-    ? createLabels(mapOptions)
-    : createClusters(mapOptions, addresses)
+  (mapOptions, addresses, useLabels) =>
+    useLabels ? createLabels(mapOptions) : createClusters(mapOptions, addresses)
 )
 
 const requestParamsSelector = createSelector(
