@@ -2,7 +2,7 @@
 import React from 'react'
 import {receiveData} from '../actions/sharedActions'
 import {setEntityDetails} from '../actions/publicActions'
-import {EntityDetailLoading} from '../components/Loading/Loading'
+import {ModalLoading} from '../components/Loading/Loading'
 import type {Company, NewEntityDetail} from '../state'
 import type {Dispatch} from '../types/reduxTypes'
 import type {ObjectMap} from '../types/commonTypes'
@@ -61,6 +61,7 @@ export const entitySearchProvider = (query: string) => ({
 
 export const entityDetailProvider = (eid: number | number[], needed: boolean = true) => {
   const requestPrefix = `${process.env.REACT_APP_API_URL || ''}`
+
   return {
     ref: `entityDetail-${eid.toString()}`,
     getData: [
@@ -72,7 +73,7 @@ export const entityDetailProvider = (eid: number | number[], needed: boolean = t
     ],
     onData: [dispatchEntityDetails],
     keepAliveFor: 60 * 60 * 1000,
-    loadingComponent: <EntityDetailLoading />,
+    loadingComponent: <ModalLoading />,
     needed,
   }
 }

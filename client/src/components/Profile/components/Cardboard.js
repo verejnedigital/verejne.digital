@@ -10,7 +10,7 @@ type CardboardProps = {
 
 const Cardboard = ({politician}: CardboardProps) => (
   <div className="profile-cardboard">
-    <img className="picture" src={politician.picture} alt="profilephoto" />
+    <img className="picture" src={politician.picture || '/politician_default.png'} alt="profilephoto" />
     <div>
       <h3 className="name">
         {politician.firstname} {politician.surname}, {politician.title}

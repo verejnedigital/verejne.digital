@@ -28,6 +28,14 @@ const Landing = () => (
         </Col>
         <Col md="6" lg="3">
           <Card
+            to="/profil"
+            title="Profil"
+            text="Majetok verejných funkcionárov podľa priznaní a katastra."
+            imgSrc={profilyIcon}
+          />
+        </Col>
+        <Col md="6" lg="3">
+          <Card
             to="/prepojenia"
             title="Prepojenia"
             text="Aké sú vzťahy medzi firmami a osobami?"
@@ -41,15 +49,7 @@ const Landing = () => (
             text="Do ktorých výziev sa prihlásiť a ktoré sú podozrivé?"
             imgSrc={obstaravaniaIcon}
           />
-        </Col>
-        <Col md="6" lg="3">
-          <Card
-            to="/profil"
-            title="Profily"
-            text="Majetok verejných funkcionárov podľa priznaní a katastra."
-            imgSrc={profilyIcon}
-          />
-        </Col>
+        </Col>        
       </Row>
     </Container>
     <footer className="landing-footer">
