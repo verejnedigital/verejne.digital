@@ -5,17 +5,17 @@ import {compose, withHandlers} from 'recompose'
 import EntitySearchResult from '../EntitySearchResult/EntitySearchResult'
 import {
   entitySearchValueSelector,
-  entitySearchModalOpenSelector,
+  entitySearchOpenSelector,
   entitySearchEidsSelector,
   entitySearchForSelector,
 } from '../../../selectors'
-import {toggleModalOpen, setEntitySearchFor, toggleDrawer} from '../../../actions/publicActions'
+import {toggleEntitySearchOpen, setEntitySearchFor, toggleDrawer} from '../../../actions/publicActions'
 import {updateValue} from '../../../actions/sharedActions'
 import './EntitySearch.css'
 
 type EntitySearchProps = {|
-  entitySearchModalOpen: boolean,
-  toggleModalOpen: () => void,
+  entitySearchOpen: boolean,
+  toggleEntitySearchOpen: () => void,
   className: string,
   entitySearchValue: string,
   setEntitySearchValue: (updateValue: string) => void,
@@ -25,8 +25,8 @@ type EntitySearchProps = {|
 |}
 
 const EntitySearch = ({
-  entitySearchModalOpen,
-  toggleModalOpen,
+  entitySearchOpen,
+  toggleEntitySearchOpen,
   className,
   entitySearchValue,
   setEntitySearchValue,
@@ -46,7 +46,7 @@ const EntitySearch = ({
   return (
     <div className="search-results">
       <div className="search-results-header">
-        <button type="button" className="close" onClick={toggleModalOpen}>
+        <button type="button" className="close" onClick={toggleEntitySearchOpen}>
           <span>&times;</span>
         </button>
         {entitySearchFor && `${plurality(entitySearchEids.length)} pre "${entitySearchFor}".`}
@@ -63,11 +63,11 @@ export default compose(
   connect(
     (state) => ({
       entitySearchValue: entitySearchValueSelector(state),
-      entitySearchModalOpen: entitySearchModalOpenSelector(state),
+      entitySearchOpen: entitySearchOpenSelector(state),
       entitySearchEids: entitySearchEidsSelector(state),
       entitySearchFor: entitySearchForSelector(state),
     }),
-    {toggleModalOpen, setEntitySearchFor, updateValue, toggleDrawer}
+    {toggleEntitySearchOpen, setEntitySearchFor, updateValue, toggleDrawer}
   ),
   withHandlers({
     findEntities: ({setEntitySearchFor, entitySearchValue, toggleDrawer}) => (e) => {
