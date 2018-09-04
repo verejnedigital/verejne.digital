@@ -1,7 +1,7 @@
 // @flow
 import React from 'react'
 import {compose, withHandlers} from 'recompose'
-import {Input, Form, FormGroup, InputGroup, InputGroupAddon, Button} from 'reactstrap'
+import {FormGroup} from 'reactstrap'
 import {connect} from 'react-redux'
 import {geocodeByAddress, getLatLng} from 'react-places-autocomplete'
 import ArrowRightIcon from 'react-icons/lib/fa/angle-double-right'
@@ -10,29 +10,23 @@ import Drawer from 'rc-drawer'
 import 'rc-drawer/assets/index.css'
 import './Sidebar.css'
 
-import SearchIcon from 'react-icons/lib/fa/search'
-import ModalIcon from 'react-icons/lib/fa/clone'
 import EntitySearch from '../EntitySearch/EntitySearch'
+import EntitySearchAutocomplete from '../EntitySearchAutocomplete/EntitySearchAutocomplete'
 
 import {
   zoomToLocation,
-  toggleEntitySearchOpen,
-  setEntitySearchFor,
   toggleDrawer,
   setDrawer,
-  closeAddressDetail,
-  toggleModalOpen,
 } from '../../../actions/publicActions'
 import {updateValue} from '../../../actions/sharedActions'
 import {
   autocompleteValueSelector,
   autocompleteOptionsSelector,
   openedAddressDetailSelector,
-  entitySearchValueSelector,
   drawerOpenSelector,
   entitySearchOpenSelector,
 } from '../../../selectors'
-import {ENTITY_CLOSE_ZOOM, FIND_ENTITY_TITLE} from '../../../constants'
+import {ENTITY_CLOSE_ZOOM} from '../../../constants'
 import AddressDetail from './../Map/AddressDetail/AddressDetail'
 import PlacesAutocomplete from '../../PlacesAutocomplete/PlacesAutocomplete'
 
@@ -53,12 +47,7 @@ type ContentProps = {
   setAutocompleteValue: (value: string) => void,
   setZoomToLocation: (value: string, id: string) => void,
   autocompleteOptions: Bound,
-  toggleModalOpen: () => void,
-  toggleDrawer: () => void,
   openedAddressIds: Array<number>,
-  entitySearchValue: string,
-  setEntitySearchValue: (e: Event) => void,
-  findEntities: (e: Event) => void,
   entitySearchOpen: boolean,
 }
 
@@ -88,39 +77,12 @@ const _Content = ({
   setAutocompleteValue,
   setZoomToLocation,
   autocompleteOptions,
-  toggleDrawer,
   openedAddressIds,
-  entitySearchValue,
-  setEntitySearchValue,
-  findEntities,
   entitySearchOpen,
-  toggleModalOpen,
 }: ContentProps) => (
 
   <React.Fragment>
-    <Form onSubmit={findEntities}>
-      <FormGroup>
-        <InputGroup>
-          <Input
-            className="entity-input"
-            type="text"
-            placeholder={FIND_ENTITY_TITLE}
-            value={entitySearchValue}
-            onChange={setEntitySearchValue}
-          />
-          <InputGroupAddon addonType="append">
-            <Button color="primary" onClick={findEntities}>
-              <SearchIcon />
-            </Button>
-          </InputGroupAddon>
-          <InputGroupAddon addonType="append">
-            <Button color="primary" onClick={toggleModalOpen}>
-              <ModalIcon />
-            </Button>
-          </InputGroupAddon>
-        </InputGroup>
-      </FormGroup>
-    </Form>
+    <EntitySearchAutocomplete />
     <FormGroup>
       <PlacesAutocomplete
         value={autocompleteValue}
@@ -142,35 +104,16 @@ const Content = compose(
       autocompleteValue: autocompleteValueSelector(state),
       autocompleteOptions: autocompleteOptionsSelector(state),
       openedAddressIds: openedAddressDetailSelector(state),
-      entitySearchValue: entitySearchValueSelector(state),
       entitySearchOpen: entitySearchOpenSelector(state),
     }),
     {
       updateValue,
       zoomToLocation,
-      toggleEntitySearchOpen,
-      setEntitySearchFor,
-      toggleDrawer,
-      closeAddressDetail,
-      toggleModalOpen,
     }
   ),
   withHandlers({
-    findEntities: ({toggleEntitySearchOpen, setEntitySearchFor, entitySearchValue, toggleDrawer, closeAddressDetail}) => (e) => {
-      e.preventDefault()
-      toggleEntitySearchOpen()
-      closeAddressDetail()
-      setEntitySearchFor(entitySearchValue)
-      toggleDrawer()
-    },
     setAutocompleteValue: ({updateValue}) => (value) =>
       updateValue(['publicly', 'autocompleteValue'], value, 'Set autocomplete value'),
-    setEntitySearchValue: ({updateValue}) => (e) =>
-      updateValue(
-        ['publicly', 'entitySearchValue'],
-        e.target.value,
-        'Set entity search field value'
-      ),
     setZoomToLocation: ({zoomToLocation, updateValue}) => (value, id) => {
       updateValue(['publicly', 'autocompleteValue'], value, 'Set autocomplete value')
       geocodeByAddress(value)
@@ -204,7 +147,7 @@ export default compose(
       drawerOpen: drawerOpenSelector(state),
       renderDrawer: window.innerWidth < 576,
     }),
-    {updateValue, zoomToLocation, toggleEntitySearchOpen, setEntitySearchFor, toggleDrawer, setDrawer}
+    {updateValue, zoomToLocation, toggleDrawer, setDrawer}
   ),
   withHandlers({
     toggleDrawer: ({toggleDrawer}) => () => {
