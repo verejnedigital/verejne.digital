@@ -12,6 +12,8 @@ import {withAutosize} from '../../../../utils'
 import {ListGroup, Button} from 'reactstrap'
 import {map, chunk, flatten} from 'lodash'
 import ListRow from './ListRow'
+import type {State} from '../../../../state'
+import type {AutoSizeProps} from '../../../../utils'
 import './AddressDetail.css'
 
 type Entity = {
@@ -20,19 +22,30 @@ type Entity = {
   name: string,
 }
 
-type AddressDetailProps = {|
+type OwnProps = {
+  addressIds: Array<number>,
+}
+type StateProps = {
   entities: Array<Entity>,
   addressId: number,
   onClick: (e: Event) => void,
   hasStateTraders: boolean,
   width: number,
   height: number,
-|}
+  closeAddressDetail: () => void,
+  toggleEntityInfo: (id: number) => void,
+}
+
+type AddressDetailProps = OwnProps &
+  StateProps &
+  AutoSizeProps & {
+    onClick: (e: Event) => void,
+  }
 
 const DETAILS_HEADER_HEIGHT = 37
 
-class AddressDetail extends React.Component {
-  constructor(props) {
+class AddressDetail extends React.Component<AddressDetailProps> {
+  constructor(props: AddressDetailProps) {
     super(props)
     if (props.entities.length === 1) {
       props.toggleEntityInfo(props.entities[0].id)
@@ -45,7 +58,10 @@ class AddressDetail extends React.Component {
           Close detail
         </Button>
       </div>
-      <ListGroup className="address-detail-list" style={{maxHeight: this.props.height - DETAILS_HEADER_HEIGHT}}>
+      <ListGroup
+        className="address-detail-list"
+        style={{maxHeight: this.props.height - DETAILS_HEADER_HEIGHT}}
+      >
         {map(this.props.entities, (e) => <ListRow entity={e} key={e.id} />)}
       </ListGroup>
     </div>
@@ -53,16 +69,17 @@ class AddressDetail extends React.Component {
 }
 export default compose(
   connect(
-    (state) => ({
+    (state: State) => ({
       entities: addressEntitiesSelector(state),
       entitiesIds: addressEntitiesIdsSelector(state),
     }),
     {
-      closeAddressDetail, toggleEntityInfo,
+      closeAddressDetail,
+      toggleEntityInfo,
     }
   ),
-  withDataProviders(({addressIds}) =>
-    flatten(addressIds.map((singleId) => [addressEntitiesProvider(singleId)]))
+  withDataProviders(({addressIds}: OwnProps) =>
+    flatten(addressIds.map((singleId: number) => [addressEntitiesProvider(singleId)]))
   ),
   withDataProviders(
     ({entitiesIds}) =>
@@ -71,9 +88,7 @@ export default compose(
         : []
   ),
   withHandlers({
-    onClick: ({closeAddressDetail}) => (event) => {
-      closeAddressDetail()
-    },
+    onClick: ({closeAddressDetail}: StateProps) => closeAddressDetail,
   }),
   withAutosize // Note: Solves auto height for entities list
 )(AddressDetail)
