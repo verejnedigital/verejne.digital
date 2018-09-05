@@ -1,62 +1,69 @@
 @import "../../../variables.scss";
+
 .cluster-marker {
-    border-radius: 50%;
-    border: 3px solid $cluster-marker-border;
-    background-color: $marker-color;
-    text-align: center;
-    color: $marker-color !important;
+  border-radius: 50%;
+  border: 3px solid $cluster-marker-border;
+  background-color: $marker-color;
+  text-align: center;
+  color: $marker-color !important;
 }
 
 .simple-marker {
-    background: url('../../../../assets/mapIcon.svg') no-repeat;
-    background-size: contain;
-    transform: translate(0,-50%);
-    &:hover {
-        transform: translate(0,-50%) scale(1.2);
-        transition: 0.2s ease;
-    }
+  background: url('../../../../assets/mapIcon.svg') no-repeat;
+  background-size: contain;
+  transform: translate(0, -50%);
+
+  &:hover {
+    transform: translate(0, -50%) scale(1.2);
+    transition: .2s ease;
+  }
 }
 
 .selected {
-    background: white !important;
-    border-radius: 100%;
-    box-shadow: 0 4px 12px darken($shadow-color, 20%);
+  background: white !important;
+  border-radius: 100%;
+  box-shadow: 0 4px 12px darken($shadow-color, 20%);
 }
-.map-label{
-    border-radius: .4em;
-    border: 3px solid $cluster-marker-border;
-    background-color: $marker-color;
-    text-align: center;
-    width: auto;
-    height: auto;
-    padding: 0.3em;
-    transform: translate(-50%,-50%);
-    &:hover {
-        transform: translate(-50%,-50%) scale(1.2);
-        transition: 0.2s ease;
-    }
+
+.map-label {
+  border-radius: .4em;
+  border: 3px solid $cluster-marker-border;
+  background-color: $marker-color;
+  text-align: center;
+  width: auto;
+  height: auto;
+  padding: .3em;
+  transform: translate(-50%, -50%);
+
+  &:hover {
+    transform: translate(-50%, -50%) scale(1.2);
+    transition: .2s ease;
+  }
 }
+
 .company-marker {
+  display: flex;
+
+  svg {
+    width: 50%;
+    height: 50%;
     display: flex;
-    svg {
-        width: 50%;
-        height: 50%;
-        display: flex;
-        margin: auto;
-    }
-    svg {
-        color: $marker-color !important;
-    }
-    &.politician svg {
-        color: $orange-color !important;
-    }
-    &.government svg {
-        background-color: $marker-color !important;
-        border-radius: 50%;
-    }
-    &.politician-government svg {
-        color: $orange-color !important;
-        background-color: $orange-color !important;
-        border-radius: 50%;
-    }
+    margin: auto;
+    color: $marker-color !important;
+  }
+
+  &.politician svg {
+    color: $orange-color !important;
+  }
+
+  &.government svg {
+    background-color: $marker-color !important;
+    border-radius: 50%;
+  }
+
+  &.politician-government svg {
+    color: $orange-color !important;
+    background-color: $orange-color !important;
+    border-radius: 50%;
+  }
 }
