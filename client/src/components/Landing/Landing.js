@@ -54,17 +54,35 @@ const Landing = () => (
     </Container>
     <footer className="landing-footer">
       <div className="container">
+
+        <div className="float-md-left">
+          <ul className="list-inline landing-footer-text">
+            <li className="list-inline-item list-inline-item-text">
+              <a
+                href="https://medium.com/@verejne.digital/o-%C4%8Do-ide-verejne-digital-14a1c6dcbe09"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                O projekte
+              </a>
+            </li>
+            <li className="list-inline-item list-inline-item-text">
+              <a
+                href="http://www.facebook.com/verejne.digital"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Kontaktujte nás cez facebook
+              </a>
+            </li>
+          </ul>
+        </div>
         <div className="float-md-right">
-          <span className="partners"> Partneri projektu </span>
+          <span className="gray"> Partneri projektu </span>
           <ul className="list-inline">
             <li className="list-inline-item">
               <a href="https://www.zastavmekorupciu.sk/">
                 <img src="/nzk.png" alt="Nadácia Zastavme Korupciu" />
-              </a>
-            </li>
-            <li className="list-inline-item">
-              <a href="https://www.chcemvediet.sk/">
-                <img src="/chv.png" alt="chcemvediet.sk" />
               </a>
             </li>
             <li className="list-inline-item">
@@ -83,27 +101,18 @@ const Landing = () => (
               </a>
             </li>
           </ul>
+          <div className="prevadzkovatel gray">
+            Prevádzkovateľ:
+            <br />
+            <a
+              href="http://chcemvediet.sk"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <img className="prevadzkovatel-logo" src="/chv.png" alt="chcemvediet.sk" />
+            </a>
+          </div>
         </div>
-        <ul className="float-md-left list-inline landing-footer-text">
-          <li className="list-inline-item list-inline-item-text">
-            <a
-              href="https://medium.com/@verejne.digital/o-%C4%8Do-ide-verejne-digital-14a1c6dcbe09"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              O projekte
-            </a>
-          </li>
-          <li className="list-inline-item list-inline-item-text">
-            <a
-              href="http://www.facebook.com/verejne.digital"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Kontaktujte nás cez facebook
-            </a>
-          </li>
-        </ul>
       </div>
     </footer>
   </div>
