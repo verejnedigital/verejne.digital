@@ -2,6 +2,12 @@
 import {dispatchReceivedData} from './dataProvidersUtils'
 import {DEFAULT_PROVIDER_KEEP_ALIVE} from '../constants'
 import {mapObjToId} from '../utils'
+import {updateValue} from '../actions/sharedActions'
+import type {NoticeNew} from '../state'
+import type {Dispatch} from '../types/reduxTypes'
+
+const dispatchNoticesList = () => (ref: string, data: Array<NoticeNew>, dispatch: Dispatch) =>
+  dispatch(updateValue(['notices', 'list'], data, ref))
 
 export const noticesProvider = () => ({
   ref: 'notices',
@@ -12,7 +18,7 @@ export const noticesProvider = () => ({
       accept: 'application/json',
     },
   ],
-  onData: [dispatchReceivedData, ['notices', 'list']],
+  onData: [dispatchNoticesList],
   keepAliveFor: DEFAULT_PROVIDER_KEEP_ALIVE,
 })
 
