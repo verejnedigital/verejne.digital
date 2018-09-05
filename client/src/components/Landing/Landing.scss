@@ -32,11 +32,11 @@
 
 .landing-footer {
   background: $footer-background;
-  height: 100px;
+  height: auto;
   width: 100%;
   text-align: center;
 
-  .footer-text {
+  .landing-footer-text {
     padding-top: 10px;
   }
 
@@ -45,6 +45,12 @@
     padding-left: 0.5rem;
   }
 }
-.partners {
+.gray {
   color: rgb(165,165,165);
+}
+.prevadzkovatel {
+  transform: translateY(-0.5rem);
+  .prevadzkovatel-logo {
+    transform: translateY(-0.5rem);
+  }
 }
