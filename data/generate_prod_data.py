@@ -18,7 +18,7 @@ from db import DatabaseConnection
 
 def ExtractDescriptionFromBody(body):
     """ Input is the raw body of raw_notice.
-    This method extracts description from it and returns it. 
+    This method extracts description from it and returns it.
     """
     if body is None: return None
     root = ET.fromstring(body)
@@ -34,12 +34,12 @@ def StripHtml(text):
     """ Input is html fragment. Output is text without html tags. """
     if (text is None):
         return ""
-    p = re.compile(r'<.*?>')    
+    p = re.compile(r'<.*?>')
     return HTMLParser.HTMLParser().unescape(p.sub('', text)).replace(u'\xa0', u' ')
 
 def CreateAndSetProdSchema(db, prod_schema_name):
     """ Initialized schema with core prod tables: Entities and Address.
-    
+
     Creates tabales under given scheman (which is created) in the given db
     connection.
 
@@ -72,7 +72,7 @@ def CreateAndSetProdSchema(db, prod_schema_name):
             CREATE INDEX ON Entities(name);
             CREATE INDEX ON Entities(address_id);
         """)
-        
+
 
 # TODO(rasto): refactor this method: split it into individual parts, so that
 # the main ProcessSource is short without deep nesting
@@ -107,7 +107,7 @@ def ProcessSource(db_prod, geocoder, entities, config, test_mode):
         if supplier_eid is not None:
             columns += ["supplier_eid"]
             values += [supplier_eid]
- 
+
         if all(v is None for v in values):
             # Ignore this entry, all meaningful values are None
             return
@@ -145,7 +145,7 @@ def ProcessSource(db_prod, geocoder, entities, config, test_mode):
                         values.append(None)
                 columns_per_year.append("year")
                 values.append(year)
-                AddValuesToTable(columns_per_year, values, eid)    
+                AddValuesToTable(columns_per_year, values, eid)
         else:
             values = [row[column] for column in columns]
             AddValuesToTable(columns, values, eid, supplier_eid)
@@ -193,14 +193,14 @@ def ProcessSource(db_prod, geocoder, entities, config, test_mode):
                     missed += 1
                     continue
             found += 1;
-            
+
             eid = None
             if config.get("no_entity_id"):
                 # TODO(rasto): is the address lookup necessary here?
                 eid = None
             else:
                 eid = entities.GetEntity(row["ico"], name, addressId)
-            
+
             if found % 20000 == 0:
                 print "Progress:", found
                 sys.stdout.flush()
@@ -211,7 +211,7 @@ def ProcessSource(db_prod, geocoder, entities, config, test_mode):
                 eid2 = entities.GetEidForOrgId(row["eid_relation"])
                 if eid2 is None:
                   continue
-                row["eid_relation"] = eid2 
+                row["eid_relation"] = eid2
             if config.get("extract_description_from_body"):
                 row["body"] = ExtractDescriptionFromBody(row["body"])
             supplier_eid = None
@@ -230,7 +230,7 @@ def ProcessSource(db_prod, geocoder, entities, config, test_mode):
                 supplier_name = ""
                 if "supplier_name" in row and not row["supplier_name"] is None:
                     supplier_name = row["supplier_name"]
-                supplier_eid = entities.GetEntity(row["supplier_ico"], supplier_name, supplier_address_id)    
+                supplier_eid = entities.GetEntity(row["supplier_ico"], supplier_name, supplier_address_id)
             if table_config.get("strip_html"):
                 for strip_html_column in table_config["strip_html"]:
                     if row.get(strip_html_column):
@@ -301,6 +301,7 @@ def main(args_dict):
     db_address_cache.close()
     if test_mode:
         db_prod.conn.rollback()
+        print('[OK] Rolled back database changes (test mode)')
     else:
         db_prod.commit()
         db_prod.close()
