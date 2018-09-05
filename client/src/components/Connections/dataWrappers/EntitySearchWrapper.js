@@ -7,7 +7,6 @@ import type {ComponentType} from 'react'
 export type EntitySearchProps = {
   entitySearch1: string,
   entitySearch2: string,
-  showGraph: boolean,
 }
 
 const EntitySearchWrapper = (WrappedComponent: ComponentType<*>) => {
@@ -18,7 +17,6 @@ const EntitySearchWrapper = (WrappedComponent: ComponentType<*>) => {
         {...props}
         entitySearch1={query.eid1 || ''}
         entitySearch2={query.eid2 || ''}
-        showGraph={query.graph === 'true'}
       />
     )
   }
