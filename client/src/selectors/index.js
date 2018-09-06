@@ -102,6 +102,7 @@ export const openedAddressDetailSelector = (state: State): Array<number> => stat
 export const entitiesSelector = (state: State) => state.entities
 export const entitySearchSelector = (state: State, query: string): SearchedEntity =>
   state.entitySearch[query]
+export const entitySearchesSelector = (state: State): Array<SearchedEntity> => state.entitySearch
 export const allEntityDetailsSelector = (state: State): ObjectMap<NewEntityDetail> =>
   state.entityDetails
 export const entityDetailSelector = (state: State, eid: number): NewEntityDetail | null => {
@@ -263,7 +264,11 @@ export const entitySearchValueSelector = (state: State) => state.publicly.entity
 export const entitySearchOpenSelector = (state: State) => state.publicly.entitySearchOpen
 export const entitySearchModalOpenSelector = (state: State) => state.publicly.entityModalOpen
 export const entitySearchForSelector = (state: State) => state.publicly.entitySearchFor
-export const entitySearchEidsSelector = (state: State) => state.publicly.entitySearchEids
+export const entitySearchEidsSelector = createSelector(
+  entitySearchesSelector,
+  entitySearchForSelector,
+  (searches, query): Array<number> => (searches[query] && searches[query].eids) || []
+)
 
 export const drawerOpenSelector = (state: State) => state.publicly.drawerOpen
 export const selectedLocationSelector = (state: State) => state.publicly.selectedLocation

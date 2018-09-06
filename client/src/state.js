@@ -325,7 +325,6 @@ export type State = {|
     +entitySearchOpen: boolean,
     +entityModalOpen: boolean,
     +entitySearchFor: string,
-    +entitySearchEids: Array<number>,
     +showInfo: any, //TODO: TBD
     +openedAddressDetail: Array<number>,
     +drawerOpen: boolean,
@@ -361,7 +360,6 @@ const getInitialState = (): State => ({
     entitySearchOpen: false,
     entityModalOpen: false,
     entitySearchFor: '',
-    entitySearchEids: [],
     showInfo: {},
     openedAddressDetail: [],
     drawerOpen: false,
