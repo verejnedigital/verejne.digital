@@ -17,12 +17,9 @@
   max-width: 20vw;
 }
 
-.company-customer span {
-  max-width: 10vw;
-}
-
 a.company-link:not([href]) {
   color: $blue-color;
+  cursor: pointer;
 
   &:hover {
     color: darken($blue-color, 10%);

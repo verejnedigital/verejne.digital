@@ -49,15 +49,13 @@ export const searchFilteredNoticesSelector = createSelector(
   noticesSearchQuerySelector,
   (notices: ObjectMap<Notice>, query): Array<Notice> => {
     const filteredNotices = filter(notices, (notice) => {
-      const similarity =
-        notice.kandidati.length > 0 ? Math.round(notice.kandidati[0].score * 100) : '?'
       return (
         normalizeName(
-          notice.customer
-            .concat(notice.price_num.toString())
-            .concat(notice.title)
-            .concat(notice.kandidati[0].name)
-            .concat(similarity.toString())
+          notice.title
+            //.concat(notice.price_num.toString())
+            .concat(notice.supplier_name || notice.best_supplier_name)
+            .concat(Math.round(notice.best_similarity * 100).toString())
+            .concat(notice.name)
         ).indexOf(query) > -1
       )
     })
@@ -66,7 +64,7 @@ export const searchFilteredNoticesSelector = createSelector(
 )
 export const dateSortedNoticesSelector = createSelector(
   searchFilteredNoticesSelector,
-  (data: Array<Notice>) => sortBy(data, ['bulletin_year', 'bulletin_month', 'bulletin_day'])
+  (data: Array<Notice>) => sortBy(data, ['bulletin_year'])
 )
 export const nameSortedNoticesSelector = createSelector(
   searchFilteredNoticesSelector,
@@ -79,13 +77,6 @@ export const locationSearchSelector = (_: State, props: ContextRouter) =>
 export const noticesOrderingSelector = createSelector(
   locationSearchSelector,
   (query): NoticesOrdering => query.ordering || 'date'
-)
-
-// not the most elegant, but presently we need the whole list
-// sorted by date anyway
-export const newestBulletinDateSelector = createSelector(
-  dateSortedNoticesSelector,
-  (notices) => (notices[0] ? notices[0].bulletin_date : '')
 )
 
 export const noticesLengthSelector = createSelector(searchFilteredNoticesSelector, (notices) => {

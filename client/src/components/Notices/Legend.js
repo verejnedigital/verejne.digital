@@ -1,8 +1,9 @@
+// @flow
 import React, {Fragment} from 'react'
 
 import './Legend.css'
 import './LegendSymbols.css'
-import {formatSimilarCount, formatSimilarPercent, getWarningSymbol} from './LegendSymbols'
+import {formatSimilarPercent, getWarningSymbol} from './LegendSymbols'
 import {Row, Col} from 'reactstrap'
 
 const Legend = () => (
@@ -13,13 +14,6 @@ const Legend = () => (
       </Col>
     </Row>
     <Row tag="dl">
-      <Col tag="dt" xs="2" className="text-right px-0">
-        {formatSimilarCount(4)}
-      </Col>
-      <Col tag="dd" xs="10">
-        počet podobných obstarávaní
-      </Col>
-
       <Col tag="dt" xs="2" className="text-right px-0">
         {formatSimilarPercent(19)}
       </Col>
