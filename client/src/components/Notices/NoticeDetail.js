@@ -6,17 +6,17 @@ import {withDataProviders} from 'data-provider'
 import {noticeDetailProvider} from '../../dataProviders/noticesDataProviders'
 import {noticeDetailSelector} from '../../selectors'
 import ExternalLink from '../shared/ExternalLink'
-import {getSuspectLevelLimit} from './utilities'
 import {ShowNumberCurrency} from '../../services/utilities'
 import CompaniesTable from './CompaniesTable'
+import CompanyDetails from '../shared/CompanyDetails'
 import './NoticeDetail.css'
 import NoticeInformation from './NoticeInformation'
 import {Container} from 'reactstrap'
 
-import type {Notice, State} from '../../state'
+import type {NoticeDetail, State} from '../../state'
 
 export type NoticeDetailProps = {
-  notice: Notice,
+  notice: NoticeDetail,
   match: {
     params: {
       id: string,
@@ -24,8 +24,8 @@ export type NoticeDetailProps = {
   },
 }
 
-const NoticeDetail = ({notice}: NoticeDetailProps) => {
-  const bulletin = notice.bulletin_date ? (
+const _NoticeDetail = ({notice}: NoticeDetailProps) => {
+  const bulletin = notice.bulletin_published_on ? (
     <span>
       <ExternalLink
         url={`https://www.uvo.gov.sk/evestnik?poradie=${notice.bulletin_number}&year=${
@@ -34,27 +34,26 @@ const NoticeDetail = ({notice}: NoticeDetailProps) => {
       >
         {`${notice.bulletin_number}/${notice.bulletin_year}`}
       </ExternalLink>
-      <strong>({notice.bulletin_date})</strong>
+      <strong>({notice.bulletin_published_on})</strong>
     </span>
   ) : null
 
-  const estimate =
-    notice.price_num >= 5 ? (
-      <Fragment>
-        <ShowNumberCurrency num={getSuspectLevelLimit(notice, -1)} key="currency-1" />
-        {' - '}
-        <ShowNumberCurrency num={getSuspectLevelLimit(notice, 1)} key="currency-2" />
-      </Fragment>
-    ) : null
+  const estimate = notice.price_est_low ? (
+    <Fragment>
+      <ShowNumberCurrency num={notice.price_est_low} key="currency-1" />
+      {' - '}
+      <ShowNumberCurrency num={notice.price_est_high} key="currency-2" />
+    </Fragment>
+  ) : null
 
   const noticeDetailInformations = [
     {
       label: 'Popis',
-      body: notice.text,
+      body: notice.body,
     },
     {
       label: 'Objednávateľ',
-      body: notice.customer,
+      body: notice.name,
     },
     {
       label: 'Vestník',
@@ -62,11 +61,19 @@ const NoticeDetail = ({notice}: NoticeDetailProps) => {
     },
     {
       label: 'Vyhlásená cena',
-      body: <ShowNumberCurrency num={notice.price} />,
+      body: (
+        <ShowNumberCurrency
+          num={notice.total_final_value_amount || notice.estimated_value_amount}
+        />
+      ),
     },
     {
       label: 'Náš odhad',
       body: estimate,
+    },
+    {
+      label: 'Výherca',
+      body: notice.supplier_name,
     },
   ].filter((item) => item.body !== null)
 
@@ -74,9 +81,15 @@ const NoticeDetail = ({notice}: NoticeDetailProps) => {
     <Container tag="article" className="notice-detail">
       <h1 className="notice-detail-title">{notice.title}</h1>
       <NoticeInformation data={noticeDetailInformations} />
-      <div className="notice-detail-table">
-        <CompaniesTable item={notice} />
-      </div>
+      {notice.supplier_name ? (
+        <div className="notice-detail-table">
+          <CompanyDetails useNewApi eid={notice.supplier_eid} />
+        </div>
+      ) : (
+        <div className="notice-detail-table">
+          <CompaniesTable item={notice} />
+        </div>
+      )}
     </Container>
   )
 }
@@ -88,4 +101,4 @@ export default compose(
   connect((state: State, props: NoticeDetailProps) => ({
     notice: noticeDetailSelector(state, props),
   }))
-)(NoticeDetail)
+)(_NoticeDetail)
