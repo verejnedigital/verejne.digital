@@ -169,7 +169,9 @@ class InfoNotice(MyServer):
         """
         SELECT
           eid,
+          e1.name,
           supplier_eid,
+          e2.name as supplier_name,
           Notices.notice_id,
           contract_id,
           title,
@@ -186,6 +188,7 @@ class InfoNotice(MyServer):
           total_final_value_currency,
           body,
           best_supplier,
+          e3.name as best_supplier_name,
           best_similarity,
           candidates,
           similarities,
@@ -202,6 +205,18 @@ class InfoNotice(MyServer):
           NoticeBulletins
         ON
           Notices.bulletin_issue_id = NoticeBulletins.bulletin_id
+        JOIN
+          Entities as e1
+        ON
+          e1.id = Notices.eid
+        LEFT JOIN
+          Entities as e2
+        ON
+          e2.id = Notices.supplier_eid
+        LEFT JOIN
+          Entities as e3
+        ON
+          e3.id = NoticesExtras.best_supplier
         WHERE
           Notices.notice_id=%s;
         """,
@@ -212,6 +227,34 @@ class InfoNotice(MyServer):
     if len(rows) == 0:
       self.abort(404, detail='Notice with provided `id` not found.')
     notice = rows[0]
+    
+    candidates = db.query(
+        """
+        SELECT
+          notice_id,
+          eid,
+          e1.name,
+          supplier_eid,
+          e2.name as supplier_name,
+          title,
+          total_final_value_amount
+        FROM
+          Notices
+        JOIN
+          Entities as e1
+        ON
+          e1.id = Notices.eid
+        LEFT JOIN
+          Entities as e2
+        ON
+          e2.id = Notices.supplier_eid
+        WHERE
+          notice_id in (SELECT unnest(candidates) from NoticesExtras WHERE notice_id = %s);
+        """,
+        [notice_id]
+    )
+    if len(candidates) > 0:
+        notice["candidates_extra"] = candidates 
 
     # Return information about the notice as a JSON:
     self.returnJSON(notice)
