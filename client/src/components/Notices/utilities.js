@@ -7,7 +7,8 @@ export function getWarning(item: Notice) {
   return item.estimated_value_amount &&
     item.price_est_low &&
     item.price_est_high &&
-    (item.estimated_value_amount < item.price_est_low || item.price_est > item.price_est_high)
+    (item.estimated_value_amount < item.price_est_low ||
+      item.estimated_value_amount > item.price_est_high)
     ? getWarningSymbol(1)
     : null
 }

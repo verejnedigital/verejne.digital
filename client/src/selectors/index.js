@@ -52,7 +52,6 @@ export const searchFilteredNoticesSelector = createSelector(
       return (
         normalizeName(
           notice.title
-            //.concat(notice.price_num.toString())
             .concat(notice.supplier_name || notice.best_supplier_name)
             .concat(Math.round(notice.best_similarity * 100).toString())
             .concat(notice.name)
@@ -89,7 +88,8 @@ export const zoomSelector = (state: State): number => state.mapOptions.zoom
 export const boundsSelector = (state: State): ?MapBounds => state.mapOptions.bounds
 export const addressesSelector = (state: State) => state.addresses
 export const showInfoSelector = (state: State) => state.publicly.showInfo
-export const openedAddressDetailSelector = (state: State): Array<number> => state.publicly.openedAddressDetail
+export const openedAddressDetailSelector = (state: State): Array<number> =>
+  state.publicly.openedAddressDetail
 export const entitiesSelector = (state: State) => state.entities
 export const entitySearchSelector = (state: State, query: string): SearchedEntity =>
   state.entitySearch[query]
@@ -104,7 +104,8 @@ export const entityDetailSelector = (state: State, eid: number): NewEntityDetail
 export const addressEntitiesSelector = createSelector(
   entitiesSelector,
   openedAddressDetailSelector,
-  (entities, addressIds : Array<number>) => filter(entities, (entity) => addressIds.includes(entity.addressId))
+  (entities, addressIds: Array<number>) =>
+    filter(entities, (entity) => addressIds.includes(entity.addressId))
 )
 
 export const useLabelsSelector = createSelector(
@@ -169,15 +170,17 @@ const createClusters = (mapOptions: MapOptions, addresses): Array<MapCluster> =>
 const createLabels = (mapOptions: MapOptions): Array<MapCluster> => {
   let labels = []
   if (mapOptions.zoom <= WORLD_ZOOM) {
-    labels = [{
-      lat: SLOVAKIA_COORDINATES[0],
-      lng: SLOVAKIA_COORDINATES[1],
-      numPoints: 0,
-      id: 'SLOVAKIA',
-      points: [],
-      setZoomTo: COUNTRY_ZOOM,
-      isLabel: true,
-    }]
+    labels = [
+      {
+        lat: SLOVAKIA_COORDINATES[0],
+        lng: SLOVAKIA_COORDINATES[1],
+        numPoints: 0,
+        id: 'SLOVAKIA',
+        points: [],
+        setZoomTo: COUNTRY_ZOOM,
+        isLabel: true,
+      },
+    ]
   } else {
     if (mapOptions.zoom < CITY_ZOOM) {
       labels = SLOVAKIA_CITIES.map((city) => ({

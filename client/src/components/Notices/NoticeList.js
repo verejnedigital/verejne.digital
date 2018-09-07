@@ -106,7 +106,7 @@ export default compose(
   ),
   withHandlers({
     updateSearchValue: (props: NoticeListProps) => (e: Event) => {
-      const target = e.target
+      const {target} = e
       if (target instanceof HTMLInputElement) {
         props.updateValue(['notices', 'searchQuery'], target.value)
       }

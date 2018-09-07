@@ -27,7 +27,6 @@ const _Company = ({
   toggleSupplier,
   toggleCustomer,
 }: Props) => {
-  similarity = Math.round(similarity * 100)
   return (
     <Fragment>
       <tr className="company">
@@ -54,7 +53,7 @@ const _Company = ({
           <strong>{localeNumber(item.total_final_value_amount)}</strong>
         </td>
         <td className="text-center">
-          <span className="similarity">{formatSimilarPercent(similarity)}</span>
+          <span className="similarity">{formatSimilarPercent(Math.round(similarity * 100))}</span>
         </td>
       </tr>
       {showSupplierInfo && (
@@ -76,10 +75,10 @@ const _Company = ({
 }
 
 export default compose(
-  withState('showSupplierInfo', 'toggleSupplier', false),
-  withState('showCustomerInfo', 'toggleCustomer', false),
+  withState('showSupplierInfo', 'setSupplier', false),
+  withState('showCustomerInfo', 'setCustomer', false),
   withHandlers({
-    toggleSupplier: ({toggleSupplier}) => () => toggleSupplier((current) => !current),
-    toggleCustomer: ({toggleCustomer}) => () => toggleCustomer((current) => !current),
+    toggleSupplier: ({setSupplier}) => () => setSupplier((current) => !current),
+    toggleCustomer: ({setCustomer}) => () => setCustomer((current) => !current),
   })
 )(_Company)

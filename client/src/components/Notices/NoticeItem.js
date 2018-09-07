@@ -25,7 +25,6 @@ const _NoticeItem = ({
   toggleSupplier,
   toggleCustomer,
 }: Props) => {
-  const similarity = Math.round(item.best_similarity * 100)
   return (
     <Fragment>
       <tr className="notice-item">
@@ -44,12 +43,22 @@ const _NoticeItem = ({
           </a>
         </td>
         <td>
-          <a className="notice-item-link" onClick={toggleSupplier}>
-            {showSupplierInfo ? <span>[&minus;]</span> : '[+]'}{' '}
-            {item.supplier_name || item.best_supplier_name}
-          </a>
+          {item.best_supplier_name && (
+            <a className="notice-item-link" onClick={toggleSupplier}>
+              {showSupplierInfo ? <span>[&minus;]</span> : '[+]'} {item.best_supplier_name}
+            </a>
+          )}
         </td>
-        <td className="text-right">{similarity ? formatSimilarPercent(similarity) : 'ukončené'}</td>
+        <td>
+          {item.supplier_name && (
+            <a className="notice-item-link" onClick={toggleSupplier}>
+              {showSupplierInfo ? <span>[&minus;]</span> : '[+]'} {item.supplier_name}
+            </a>
+          )}
+        </td>
+        <td className="text-right">
+          {item.best_similarity ? formatSimilarPercent(Math.round(item.best_similarity * 100)) : ''}
+        </td>
       </tr>
       {showSupplierInfo && (
         <tr>
@@ -70,10 +79,10 @@ const _NoticeItem = ({
 }
 
 export default compose(
-  withState('showSupplierInfo', 'toggleSupplier', false),
-  withState('showCustomerInfo', 'toggleCustomer', false),
+  withState('showSupplierInfo', 'setSupplier', false),
+  withState('showCustomerInfo', 'setCustomer', false),
   withHandlers({
-    toggleSupplier: ({toggleSupplier}) => () => toggleSupplier((current) => !current),
-    toggleCustomer: ({toggleCustomer}) => () => toggleCustomer((current) => !current),
+    toggleSupplier: ({setSupplier}) => () => setSupplier((current) => !current),
+    toggleCustomer: ({setCustomer}) => () => setCustomer((current) => !current),
   })
 )(_NoticeItem)
