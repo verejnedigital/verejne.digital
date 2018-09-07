@@ -47,7 +47,7 @@ export const companyDetailProvider = (eid: number, needed: boolean = true) => {
   }
 }
 
-export const entitySearchProvider = (query: string) => ({
+export const entitySearchProvider = (query: string, modalLoading: boolean = false) => ({
   ref: `entitySearch-${query}`,
   getData: [
     fetch,
@@ -57,6 +57,8 @@ export const entitySearchProvider = (query: string) => ({
     },
   ],
   onData: [dispatchEntitySearch, query],
+  keepAliveFor: 60 * 60 * 1000,
+  loadingComponent: modalLoading ? <ModalLoading /> : undefined,
 })
 
 export const entityDetailProvider = (eid: number | number[], needed: boolean = true) => {

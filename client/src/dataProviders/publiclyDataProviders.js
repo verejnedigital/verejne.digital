@@ -1,12 +1,7 @@
 // @flow
-import React from 'react'
-import {setEntitySearchEids, setAddresses, setEntities} from '../actions/publicActions'
-import {ModalLoading} from '../components/Loading/Loading'
+import {setAddresses, setEntities} from '../actions/publicActions'
 import type {Address, NewEntity} from '../state'
 import type {Dispatch} from '../types/reduxTypes'
-
-const dispatchSearchEids = () => (ref: string, data: Array<{eid: number}>, dispatch: Dispatch) =>
-  dispatch(setEntitySearchEids(data))
 
 const dispatchAddresses = () => (ref: string, data: Address[], dispatch: Dispatch) => {
   dispatch(setAddresses(data))
@@ -45,20 +40,5 @@ export const addressEntitiesProvider = (addressId: number) => {
     ],
     onData: [dispatchEntities],
     keepAliveFor: 60 * 60 * 1000,
-  }
-}
-
-export const entitiesSearchResultEidsProvider = (query: string) => {
-  return {
-    ref: query,
-    getData: [
-      fetch,
-      `${process.env.REACT_APP_API_URL || ''}/api/v/searchEntityByName?name=${query}`,
-      {
-        accept: 'application/json',
-      },
-    ],
-    onData: [dispatchSearchEids],
-    loadingComponent: <ModalLoading />,
   }
 }
