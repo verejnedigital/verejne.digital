@@ -4,7 +4,6 @@ import CompanyDetails from '../CompanyDetails'
 import {compose, withState, withHandlers} from 'recompose'
 import {Button} from 'reactstrap'
 import type {StateUpdater} from '../../../types/commonTypes'
-import './RecursiveInfo.css'
 
 type RecursiveInfoProps = {|
   name: string,
