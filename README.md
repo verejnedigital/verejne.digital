@@ -1,5 +1,5 @@
 # verejne.digital
-Projekt [verejne.digital](https://verejne.digital?about) má za cieľ aplikovať umelú inteligenciu na dáta zverejňované slovenskými verejnými inštitúciami.
+Projekt [verejne.digital](https://verejne.digital?about) má za cieľ aplikovať umelú inteligenciu na dáta zverejňované slovenskými verejnými inštitúciami. Projekt [verejne.digital](https://verejne.digital?about) je vyvíjaný občianskym združením [ChcemVediet.sk](https://www.chcemvediet.sk).
 
 ## Hranie sa s dátami
 
