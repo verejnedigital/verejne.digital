@@ -5,48 +5,54 @@ import {withHandlers, compose} from 'recompose'
 import FaIconCircle from 'react-icons/lib/fa/circle-o'
 import classnames from 'classnames'
 
-import {ENTITY_ZOOM, ENTITY_CLOSE_ZOOM} from '../../../../constants'
-import {openAddressDetail, zoomToLocation, setDrawer, setModal} from '../../../../actions/publicActions'
-import {openedAddressDetailSelector} from '../../../../selectors'
+import {ENTITY_CLOSE_ZOOM} from '../../../../constants'
+import {openAddressDetail, zoomToLocation, setDrawer, setEntitySearchOpen, deselectLocation} from '../../../../actions/publicActions'
+import {
+  zoomSelector,
+  openedAddressDetailSelector,
+  selectedLocationSelector,
+} from '../../../../selectors'
 import Marker from '../Marker/Marker'
 import './ClusterMarker.css'
 
-import type {CompanyEntity} from '../../../../state'
+import type {Center} from '../../../../state'
 import type {MapCluster} from '../../../../selectors'
 import type {Thunk} from '../../../../types/reduxTypes'
 
 type ClusterMarkerProps = {
   zoom: number,
-  selectEntity: (entity: CompanyEntity) => Thunk,
+  selectedLocation: Center,
   zoomToLocation: ({lat: number, lng: number}) => Thunk,
   cluster: MapCluster,
   onClick: () => void,
-  openedAddressId: number,
+  openedAddressIds: Array<number>,
 }
-
+const clusterIsOnSelectedLocation = (selectedLocation, point) => (
+  (selectedLocation !== null)
+    && (point.lat === selectedLocation.lat)
+    && (point.lng === selectedLocation.lng)
+)
 const ClusterMarker = ({
   cluster,
   zoom,
-  selectEntity,
+  selectedLocation,
   zoomToLocation,
   onClick,
-  openedAddressId,
+  openedAddressIds,
 }: ClusterMarkerProps) => {
-  const MarkerText = <span className="marker__text">{cluster.numPoints}</span>
-  let className, children
-  const selected = cluster.numPoints === 1 && cluster.points[0].address_id === openedAddressId
-  if (zoom < ENTITY_ZOOM) {
-    className = cluster.numPoints === 1 ? 'simple-marker' : 'cluster-marker'
-    children = cluster.numPoints !== 1 && <span className="marker__text">{cluster.numPoints}</span>
-  } else {
-    //TODO: fix classnames after the api provides enough information
-    className = classnames({
-      'company-marker': cluster.numPoints === 1,
-      'cluster-marker': cluster.numPoints > 1,
-      'government': cluster.points[0].tradewithgovernment,
-    })
-    children = cluster.numPoints === 1 ? <FaIconCircle size="18" /> : MarkerText
-  }
+  let className
+  const selected = cluster.numPoints === 1 &&
+  ((openedAddressIds.includes(cluster.points[0].address_id)
+    || clusterIsOnSelectedLocation(selectedLocation, {lat: cluster.points[0].lat, lng: cluster.points[0].lng})))
+  className = classnames({
+    'simple-marker': cluster.isLabel,
+    'company-marker': cluster.numPoints === 1,
+    'cluster-marker': cluster.numPoints > 1,
+    'government': !cluster.isLabel && cluster.points[0].tradewithgovernment,
+  })
+  const children = cluster.numPoints === 1
+    ? <FaIconCircle size="18" />
+    : !cluster.isLabel ? <span className="marker__text">{cluster.numPoints}</span> : <div />
   className = classnames(className, {selected})
   return (
     <Marker className={className} onClick={onClick}>
@@ -58,24 +64,45 @@ const ClusterMarker = ({
 export default compose(
   connect(
     (state) => ({
-      openedAddressId: openedAddressDetailSelector(state),
+      openedAddressIds: openedAddressDetailSelector(state),
+      zoom: zoomSelector(state),
+      selectedLocation: selectedLocationSelector(state),
     }),
     {
       openAddressDetail,
       zoomToLocation,
       setDrawer,
-      setModal,
+      setEntitySearchOpen,
+      deselectLocation,
     }
   ),
   withHandlers({
-    onClick: ({cluster, zoomToLocation, openAddressDetail, setDrawer, setModal}) => (event) => {
+    onClick: ({
+      deselectLocation,
+      zoom,
+      cluster,
+      zoomToLocation,
+      openAddressDetail,
+      setDrawer,
+      setEntitySearchOpen,
+    }) => (event) => {
       if (cluster.numPoints === 1) {
-        openAddressDetail(cluster.points[0].address_id)
+        openAddressDetail([cluster.points[0].address_id])
         setDrawer(true)
-        setModal(false)
-        zoomToLocation({lat: cluster.lat, lng: cluster.lng}, ENTITY_CLOSE_ZOOM)
+        setEntitySearchOpen(false)
+        zoomToLocation({lat: cluster.lat, lng: cluster.lng}, Math.max(ENTITY_CLOSE_ZOOM, zoom))
+        deselectLocation()
       } else {
-        zoomToLocation({lat: cluster.lat, lng: cluster.lng})
+        if (zoom < 22) {
+          zoomToLocation({lat: cluster.lat, lng: cluster.lng}, cluster.setZoomTo)
+          deselectLocation()
+        } else {
+          openAddressDetail(cluster.points.map((point) => point.address_id))
+          setDrawer(true)
+          setEntitySearchOpen(false)
+          zoomToLocation({lat: cluster.lat, lng: cluster.lng}, Math.max(ENTITY_CLOSE_ZOOM, zoom))
+          deselectLocation()
+        }
       }
     },
   })

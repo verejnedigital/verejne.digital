@@ -1,7 +1,8 @@
 import React from 'react'
+import {withHandlers} from 'recompose'
 import {NavLink} from 'react-router-dom'
 
-const Politician = ({politician}) => (
+const Politician = ({politician, useDefaultPicture}) => (
   <tr className="table-line">
     <td className="number-column">{politician.order}.</td>
     <td>
@@ -9,6 +10,7 @@ const Politician = ({politician}) => (
         alt="foto"
         className="thumb-photo"
         src={`https://verejne.digital/img/nrsr/${politician.surname}_${politician.firstname}.jpg`}
+        onError={useDefaultPicture}
       />
     </td>
     <td className="text-left">
@@ -26,4 +28,8 @@ const Politician = ({politician}) => (
   </tr>
 )
 
-export default Politician
+export default withHandlers({
+  useDefaultPicture: () => (e) => {
+    e.target.src = '/politician_default_s.png'
+  },
+})(Politician)

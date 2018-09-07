@@ -72,7 +72,7 @@ function sortListPoliticians(res) {
 }
 
 export function listPoliticians(cb) {
-  fetch(`/api/k/list_politicians?cachebreak`, {
+  fetch(`/api/k/list_politicians?mps_only=true`, {
     accept: 'application/json',
   }).then(checkStatus)
     .then(parseJSON)

@@ -32,17 +32,28 @@
 
 .landing-footer {
   background: $footer-background;
-  height: 100px;
+  height: auto;
   width: 100%;
   text-align: center;
 
-  .footer-text {
+  .landing-footer-text {
     padding-top: 10px;
   }
 
   .list-inline-item-text ~ .list-inline-item-text {
     border-left: 2px solid $card-border;
-    padding-left: 0.5rem;
+    padding-left: .5rem;
   }
 }
 
+.gray {
+  color: rgb(165, 165, 165);
+}
+
+.prevadzkovatel {
+  transform: translateY(-.5rem);
+
+  .prevadzkovatel-logo {
+    transform: translateY(-.5rem);
+  }
+}

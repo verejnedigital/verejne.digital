@@ -10,8 +10,9 @@ class Entities:
   surnames = {}
   titles = []
   db = None
+  entities = 0
 
-  def __init__(self, db):
+  def __init__(self, db = None):
       self.db = db
       self.read_surnames()
       self.read_titles()
@@ -156,31 +157,25 @@ class Entities:
     self.ico2eid[ico] = eid  
     
   def AddNewEntity(self, ico, name, address_id):
+    self.entities += 1
     if address_id is None:
         return None
-    eid = self.db.add_values("Entities", [name, address_id])
-    if ico is None:
-      self.eid2name[eid] = name
-      if address_id in self.address2eid:
-        self.address2eid[address_id].append(eid)
-      else:
-        self.address2eid[address_id] = [eid]
-    else:  
+    if not self.db is None:
+      eid = self.db.add_values("Entities", [name, address_id])
+    else:
+      eid = self.entities
+    self.eid2name[eid] = name
+    if address_id in self.address2eid:
+      self.address2eid[address_id].append(eid)
+    else:
+      self.address2eid[address_id] = [eid]
+    if not ico is None:  
       self.AddICO(eid, ico)
     return eid
     
   def GetEntity(self, ico, name, address_id):
     eid = None
-    if ico is None:
-      # Ak je to osoba
-      eid = self.ExistsPerson(name, address_id)    
-      # Ak sme osobu nasli tak ju vratime
-      if eid >= 0:
-        return eid
-      else:
-        eid = self.AddNewEntity(ico, name, address_id)
-        return eid
-    else: 
+    if not ico is None:
       # Skontrolujme ci je ICO int!
       if not isinstance(ico, (int, long)):
         raise ValueError('ICO must be an integer')
@@ -189,9 +184,18 @@ class Entities:
       # Ak sme ICO nasli tak ho vratime
       if eid >= 0:
         return eid
-      else:
-        eid = self.AddNewEntity(ico, name, address_id)
-        return eid
+    # self.Ak je to osoba
+    eid = self.ExistsPerson(name, address_id)    
+    # Ak sme osobu nasli tak ju vratime
+    if eid >= 0:
+      # v pripade ze sme nasli match na osobu o ktorej sme predtym nevedeli
+      # ale uz vieme ico, tak si ho zapamatame
+      if not ico is None:
+        self.AddICO(eid, ico)
+      return eid
+    else:
+      eid = self.AddNewEntity(ico, name, address_id)
+      return eid
   
 if __name__ == '__main__':
     e = Entities()
@@ -201,3 +205,8 @@ if __name__ == '__main__':
     print '$',e.GetEntity(None, 'Richard Fico', 77)
     print '$',e.GetEntity(None, 'MUDr Richard Fico', 77)
     print '$',e.GetEntity(None, 'MUDr Richard Fico - zmrzlina', 77)
+    print '$',e.GetEntity(241, 'Arnold Novak - zmrzlina', 77)
+    print '$',e.GetEntity(None, 'Arnold Novak', 77)
+    print '$',e.GetEntity(None, 'Beta Novakova', 77)
+    print '$',e.GetEntity(416, 'Ing. Beta Novakova', 77)
+    print '$',e.GetEntity(416, 'Ing. Beta Novakova Csc.', 87)

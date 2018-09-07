@@ -2,9 +2,10 @@
 import React from 'react'
 import {connect} from 'react-redux'
 import {compose} from 'redux'
+import {branch} from 'recompose'
 import {withDataProviders} from 'data-provider'
 import {entitySearchForSelector, entitySearchEidsSelector} from '../../../selectors'
-import {entitiesSearchResultEidsProvider} from '../../../dataProviders/publiclyDataProviders'
+import {entitySearchProvider, entityDetailProvider} from '../../../dataProviders/sharedDataProviders'
 import EntitySearchResultItem from '../EntitySearchResultItem/EntitySearchResultItem'
 
 type Props = {
@@ -12,17 +13,28 @@ type Props = {
   entitySearchEids: Array<number>,
 }
 
-const EntitySearchResult = ({entitySearchEids}: Props) =>
-  entitySearchEids
-    ? entitySearchEids.map((eid: number, index: number) => (
-      <EntitySearchResultItem key={index} eid={eid} />
-    ))
-    : null
+const EntitySearchResult = ({entitySearchEids}: Props) => (
+  entitySearchEids.map((eid) =>
+    <EntitySearchResultItem key={eid} eid={eid} />
+  )
+)
 
 export default compose(
   connect((state) => ({
     searchFor: entitySearchForSelector(state),
     entitySearchEids: entitySearchEidsSelector(state),
   })),
-  withDataProviders(({searchFor}) => [entitiesSearchResultEidsProvider(searchFor)])
+  withDataProviders(
+    ({searchFor, entitySearchEids}) => [
+      entitySearchProvider(searchFor, true),
+    ]
+  ),
+  branch(
+    ({entitySearchEids}) => entitySearchEids.length > 0,
+    withDataProviders(
+      ({entitySearchEids}) => [
+        entityDetailProvider(entitySearchEids),
+      ]
+    ),
+  ),
 )(EntitySearchResult)

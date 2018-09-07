@@ -3,17 +3,21 @@ import {createSelector} from 'reselect'
 import qs from 'qs'
 import {
   clusterOptions,
+  clusterOptionsCloser,
   ENTITY_ZOOM,
   SUB_CITY_ZOOM,
   CITY_ZOOM,
   DEFAULT_ENTITIES_REQUEST_PARAMS,
+  COUNTRY_ZOOM,
+  WORLD_ZOOM,
+  SLOVAKIA_COORDINATES,
+  SLOVAKIA_CITIES,
 } from '../constants'
-import {values, normalizeName} from '../utils'
+import {isInSlovakia, normalizeName} from '../utils'
+import {hasTradeWithState} from './utils'
 import {sortBy, filter} from 'lodash'
 import supercluster from 'points-cluster'
-
 import type {ContextRouter} from 'react-router-dom'
-import type {ObjectMap} from '../types/commonTypes'
 import type {NoticesOrdering} from '../components/Notices/NoticeList'
 import type {NoticeDetailProps} from '../components/Notices/NoticeDetail'
 import type {
@@ -24,7 +28,10 @@ import type {
   Company,
   NewEntityDetail,
   Notice,
+  SearchedEntity,
 } from '../state'
+import type {ObjectMap} from '../types/commonTypes'
+
 export const paramsIdSelector = (_: State, props: ContextRouter): string =>
   props.match.params.id || '0'
 
@@ -91,19 +98,33 @@ export const zoomSelector = (state: State): number => state.mapOptions.zoom
 export const boundsSelector = (state: State): ?MapBounds => state.mapOptions.bounds
 export const addressesSelector = (state: State) => state.addresses
 export const showInfoSelector = (state: State) => state.publicly.showInfo
-export const openedAddressDetailSelector = (state: State) => state.publicly.openedAddressDetail
+export const openedAddressDetailSelector = (state: State): Array<number> => state.publicly.openedAddressDetail
 export const entitiesSelector = (state: State) => state.entities
 export const entitySearchSelector = (state: State, query: string): SearchedEntity =>
   state.entitySearch[query]
+export const entitySearchesSelector = (state: State): Array<SearchedEntity> => state.entitySearch
 export const allEntityDetailsSelector = (state: State): ObjectMap<NewEntityDetail> =>
   state.entityDetails
-export const entityDetailSelector = (state: State, eid: number): NewEntityDetail | null =>
-  eid ? state.entityDetails[eid.toString()] : null
+export const entityDetailSelector = (state: State, eid: number): NewEntityDetail | null => {
+  if (!eid) return null
+  const entityDetails = state.entityDetails[eid.toString()]
+  return {...entityDetails, tradesWithState: hasTradeWithState(entityDetails)}
+}
 
 export const addressEntitiesSelector = createSelector(
   entitiesSelector,
   openedAddressDetailSelector,
-  (entities, addressId) => filter(entities, (entity) => entity.addressId === addressId)
+  (entities, addressIds : Array<number>) => filter(entities, (entity) => addressIds.includes(entity.addressId))
+)
+
+export const useLabelsSelector = createSelector(
+  zoomSelector,
+  centerSelector,
+  (zoom, center) => zoom < CITY_ZOOM && isInSlovakia(center)
+)
+
+export const addressEntitiesIdsSelector = createSelector(addressEntitiesSelector, (entities) =>
+  entities.map((v) => v.id)
 )
 
 type SuperCluster = {
@@ -122,6 +143,8 @@ export type MapCluster = {
   numPoints: number,
   id: string,
   points: Array<any>,
+  setZoomTo: number,
+  isLabel: boolean,
 }
 
 type EntitiesRequestParams = {
@@ -134,7 +157,8 @@ type EntitiesRequestParams = {
 }
 
 const getClusters = (mapOptions: MapOptions, addresses): Array<SuperCluster> => {
-  const clusters = supercluster(addresses, clusterOptions)
+  const _clusterOptions = mapOptions.zoom > 18 ? clusterOptionsCloser : clusterOptions
+  const clusters = supercluster(addresses, _clusterOptions)
   return clusters(mapOptions)
 }
 
@@ -147,14 +171,44 @@ const createClusters = (mapOptions: MapOptions, addresses): Array<MapCluster> =>
       numPoints,
       id: `${i}`,
       points,
+      isLabel: false,
+      setZoomTo: Math.min(mapOptions.zoom + 2, 22),
     })
   )
 }
-
+const createLabels = (mapOptions: MapOptions): Array<MapCluster> => {
+  let labels = []
+  if (mapOptions.zoom <= WORLD_ZOOM) {
+    labels = [{
+      lat: SLOVAKIA_COORDINATES[0],
+      lng: SLOVAKIA_COORDINATES[1],
+      numPoints: 0,
+      id: 'SLOVAKIA',
+      points: [],
+      setZoomTo: COUNTRY_ZOOM,
+      isLabel: true,
+    }]
+  } else {
+    if (mapOptions.zoom < CITY_ZOOM) {
+      labels = SLOVAKIA_CITIES.map((city) => ({
+        lat: city.coord[1],
+        lng: city.coord[0],
+        numPoints: 0,
+        id: city.name,
+        points: [],
+        setZoomTo: CITY_ZOOM,
+        isLabel: true,
+      }))
+    }
+  }
+  return labels
+}
 export const clustersSelector = createSelector(
   mapOptionsSelector,
   addressesSelector,
-  (mapOptions, addresses) => createClusters(mapOptions, addresses)
+  useLabelsSelector,
+  (mapOptions, addresses, useLabels) =>
+    useLabels ? createLabels(mapOptions) : createClusters(mapOptions, addresses)
 )
 
 const requestParamsSelector = createSelector(
@@ -207,8 +261,14 @@ export const autocompleteOptionsSelector = createSelector(boundsSelector, (bound
 })
 
 export const entitySearchValueSelector = (state: State) => state.publicly.entitySearchValue
-export const entitySearchModalOpenSelector = (state: State) => state.publicly.entitySearchModalOpen
+export const entitySearchOpenSelector = (state: State) => state.publicly.entitySearchOpen
+export const entitySearchModalOpenSelector = (state: State) => state.publicly.entityModalOpen
 export const entitySearchForSelector = (state: State) => state.publicly.entitySearchFor
-export const entitySearchEidsSelector = (state: State) => state.publicly.entitySearchEids
+export const entitySearchEidsSelector = createSelector(
+  entitySearchesSelector,
+  entitySearchForSelector,
+  (searches, query): Array<number> => (searches[query] && searches[query].eids) || []
+)
 
 export const drawerOpenSelector = (state: State) => state.publicly.drawerOpen
+export const selectedLocationSelector = (state: State) => state.publicly.selectedLocation

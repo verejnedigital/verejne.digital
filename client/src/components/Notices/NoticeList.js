@@ -21,7 +21,7 @@ import type {ContextRouter} from 'react-router-dom'
 import type {Dispatch} from '../../types/reduxTypes'
 import type {Notice, State} from '../../state'
 
-import Legend from './Legend'
+import NoticeSidebar from './NoticeSidebar'
 import Bulletin from './Bulletin'
 import {Input, FormText, Row, Col, Container} from 'reactstrap'
 import './NoticeList.css'
@@ -67,31 +67,7 @@ const NoticeList = ({
     <Container fluid className="notice-list">
       <Row>
         <Col xl="3" tag="aside" className="notice-list-sidebar">
-          <Row>
-            <Col sm={{size: 10, offset: 2}}>
-              <h2 className="notice-list-title">Aktuálne obstarávania</h2>
-              <p className="notice-list-text">
-                Našim cieľom je identifikovať a osloviť najvhodnejších uchádzačov, ktorí by sa mali
-                zapojiť do verejných obstarávaní. <a href=".">Viac info</a>
-              </p>
-            </Col>
-          </Row>
-          <hr />
-          <Legend />
-          <hr />
-          <Row>
-            <Col sm={{size: 10, offset: 2}}>
-              <div className="fbfooter">
-                <iframe
-                  src="https://www.facebook.com/plugins/like.php?href=https%3A%2F%2Fwww.facebook.com%2Fverejne.digital&width=111&layout=button_count&action=like&size=small&show_faces=true&share=true&height=46&appId="
-                  className="fbIframe"
-                  title="facebook"
-                  scrolling="no"
-                  frameBorder="0"
-                />
-              </div>
-            </Col>
-          </Row>
+          <NoticeSidebar />
         </Col>
         <Col xl={{size: 9, offset: 3}}>
           <Input

@@ -279,25 +279,43 @@ def _add_notices_largest(db, eIDs, result, max_per_eID):
 
 # --- MAIN METHOD ---
 def get_GetInfos(db, eIDs):
-    # Parameters
+    """Returns information about entities with the given eIDs.
+
+    Args:
+      db: An open database connection with `search_path` set to the
+          current production schema.
+      eIDs: A list of integers, the entity IDs ("eIDs") for which
+          information is being requested.
+    Returns:
+      Dictionary of the form {eID: information}, where `information`
+      is itself a dictionary mapping keys to corresponding values
+      about the entity with id `eID`.
+    """
+
+    # Parameters controlling how much information to return:
     max_eufunds_largest = 15
     max_contracts_recents = 5
     max_contracts_largest = 15
     max_notices_recent = 5
 
-    # Initialise result dictionary
+    # Initialise result dictionary:
     result = {eID: {} for eID in eIDs}
 
-    # Query the database for basic entity information
+    # If the input list `eIDs` is empty, return straight away. This is
+    # necessary as PostgreSQL doesn't handle an empty WHERE IN clause.
+    if len(eIDs) == 0:
+        return result
+
+    # Query the database for basic entity information:
     q = """
         SELECT
-            entities.id AS eid, entities.name, address.lat, address.lng, address.address
+          entities.id AS eid, entities.name, address.lat, address.lng, address.address
         FROM
-            entities
+          entities
         JOIN
-            address ON address.id=entities.address_id
+          address ON address.id=entities.address_id
         WHERE
-            entities.id IN %s
+          entities.id IN %s
         ;"""
     q_data = [tuple(eIDs)]
     for row in db.query(q, q_data):
@@ -335,7 +353,7 @@ def get_GetInfos(db, eIDs):
             stakeholdertypes.stakeholder_type_id =
                 related.stakeholder_type_id
           WHERE
-            related.eid IN %s
+            related.eid IN %s AND related.eid<>related.eid_relation
           UNION
           SELECT
             related.eid_relation AS source,
@@ -350,7 +368,7 @@ def get_GetInfos(db, eIDs):
             stakeholdertypes.stakeholder_type_id =
                 related.stakeholder_type_id
           WHERE
-            related.eid_relation IN %s
+            related.eid_relation IN %s AND related.eid<>related.eid_relation
         ),
         grouped AS (
           /* Group edges going from same souce to same destination. */

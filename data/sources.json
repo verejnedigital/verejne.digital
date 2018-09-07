@@ -64,7 +64,7 @@
         "path": "/tmp/source_internal_profil.sql.gz",
         "schemas":
         [
-            "kataster"
+            "profil"
         ],
         "type": "SQL"
     }

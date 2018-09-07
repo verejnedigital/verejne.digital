@@ -59,16 +59,35 @@ export const zoomToLocation = (center: Center, withZoom?: number): Thunk => (
   const zoom = withZoom || zoomSelector(getState()) + 1
   dispatch(setMapOptions({...mapOptionsSelector(state), zoom, center: [center.lat, center.lng]}))
 }
+export const makeLocationSelected = (point: Center) => ({
+  type: 'Make Location Selected',
+  path: ['publicly', 'selectedLocation'],
+  payload: point,
+  reducer: () => point,
+})
 
-export const toggleModalOpen = () => ({
-  type: 'Toggle modal open',
-  path: ['publicly', 'entitySearchModalOpen'],
+export const toggleEntitySearchOpen = () => ({
+  type: 'Toggle sidebar search open',
+  path: ['publicly', 'entitySearchOpen'],
   reducer: (open: boolean) => !open,
 })
 
-export const setModal = (open: boolean) => ({
-  type: 'Set modal',
-  path: ['publicly', 'entitySearchModalOpen'],
+export const deselectLocation = () => ({
+  type: 'Unselect Location',
+  path: ['publicly', 'selectedLocation'],
+  payload: null,
+  reducer: () => null,
+})
+
+export const toggleModalOpen = () => ({
+  type: 'Toggle modal open',
+  path: ['publicly', 'entityModalOpen'],
+  reducer: (open: boolean) => !open,
+})
+
+export const setEntitySearchOpen = (open: boolean) => ({
+  type: 'Set entity search open',
+  path: ['publicly', 'entitySearchOpen'],
   reducer: () => open,
 })
 
@@ -79,29 +98,22 @@ export const setEntitySearchFor = (searchFor: string) => ({
   reducer: () => searchFor,
 })
 
-export const setEntitySearchEids = (eids: Array<{eid: number}>) => ({
-  type: 'Set entity search eids',
-  path: ['publicly', 'entitySearchEids'],
-  payload: eids,
-  reducer: (): Array<number> => eids.map((e) => e.eid),
-})
-
 export const toggleEntityInfo = (eid: number) => ({
   type: 'Toggle entity info',
   path: ['publicly', 'showInfo', eid],
   reducer: (open: boolean): boolean => !open,
 })
 
-export const openAddressDetail = (addressId: number) => ({
+export const openAddressDetail = (addressIds: Array<number>) => ({
   type: 'Open address detail',
   path: ['publicly', 'openedAddressDetail'],
-  reducer: () => addressId,
+  reducer: () => addressIds,
 })
 
 export const closeAddressDetail = () => ({
   type: 'Close address detail',
   path: ['publicly', 'openedAddressDetail'],
-  reducer: () => null,
+  reducer: () => [],
 })
 
 export const toggleDrawer = () => ({

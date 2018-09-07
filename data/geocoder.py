@@ -12,12 +12,14 @@ class Geocoder:
     db_address_id = None
     cache = {}
     cache_key_hints = {}
+    formatted_address_to_lat_lng = {}
     cache_miss = 0
     cache_hit = 0
     api_lookups = 0
     api_lookup_fails = 0
     missing_key_hint = 0
     has_key_hint = 0
+    adjust_point = 0
     geocode_key = None
     test_mode = False
 
@@ -50,7 +52,7 @@ class Geocoder:
                 self.AddToCache(
                         row["address"].encode("utf8"),
                         row["formatted_address"].encode("utf8"), 
-                        row["lat"], row["lng"]
+                        row["lat"], row["lng"], update_formatted_address=True
                 )
             print "Finished pre-processing geocoder input cache, size =", len(self.cache)
 
@@ -66,7 +68,7 @@ class Geocoder:
             print "Finished reading key hints, size =", len(self.cache_key_hints)
  
 
-    def AddToCache(self, address, formatted_address, lat, lng):
+    def AddToCache(self, address, formatted_address, lat, lng, update_formatted_address):
         " Add one entry to the cache. The function takes care of generating proper keys"
         keys = set(
                 list(self.GetKeysForAddress(address)) +
@@ -76,6 +78,8 @@ class Geocoder:
         # it between instances
         for key in keys:
             self.cache[key] = (lat, lng, formatted_address)
+        if update_formatted_address:
+            self.formatted_address_to_lat_lng[formatted_address] = (lat, lng)
         if (len(self.cache) < 10):
             print address, formatted_address, lat, lng
             print self.cache.keys()
@@ -209,7 +213,7 @@ class Geocoder:
         lng = result["geometry"]["location"]["lng"]
         formatted_address = result["formatted_address"].encode("utf8")
         # Add to cache and add to the database
-        self.AddToCache(address, formatted_address, lat, lng)
+        self.AddToCache(address, formatted_address, lat, lng, update_formatted_address=False)
         self.db_address_cache.add_values(
             "Cache",
             [address, formatted_address, lat, lng, json.dumps(api_response["results"])]
@@ -221,18 +225,40 @@ class Geocoder:
         """ Get AddressId for a given string. If the address is not in the cache
         returns None and writes address into the list of address to be processed.
         """
-        #print "Geocoding", address
+
+
+        def GetAddressDataForKey(key):
+            """ For a given key, lookups lat, lng, formatted address in the caches.
+            Returns None if missing, otherwise returns (lat, lng, formatted_address).
+            """
+            if not key in self.cache:
+                self.cache_miss += 1
+                return None
+            self.cache_hit += 1
+            lat, lng, formatted_address = self.cache[key]
+            # If we have a different (lat, lng) mapping to the same formatted address
+            # which is very close, use that one instead. This helps if geocoding output
+            # changes slightly to merge different points to the same AddressID.
+            if formatted_address in self.formatted_address_to_lat_lng:
+                new_lat, new_lng = self.formatted_address_to_lat_lng[formatted_address]
+                if abs(new_lat - lat) < 0.01 and abs(new_lng - lng) < 0.01:
+                    if lat != new_lat or lng != new_lng:
+                        self.adjust_point += 1
+                        if self.adjust_point < 10:
+                            print "Adjust point", lat, lng, new_lat, new_lng, formatted_address
+                    lat = new_lat
+                    lng = new_lng
+            return lat, lng, formatted_address
+
         def LookupKeysInCache(keys):
             """ Check whether some key is in the cache. If so, return the
             (Address.id, matching_key) for the matching lat, lng. If no entry in Address
             exists with the matching lat, lng, create one.
             """
             for key in keys:
-                if not key in self.cache:
-                    self.cache_miss += 1
-                    continue
-                self.cache_hit += 1
-                lat, lng, formatted_address = self.cache[key]
+                address_data = GetAddressDataForKey(key)
+                if address_data is None: continue
+                lat, lng, formatted_address = address_data
                 # print address, " -> ", lat, lng, formatted_address
                 with self.db_address_id.dict_cursor() as cur_id:
                     cur_id.execute(
@@ -289,3 +315,4 @@ class Geocoder:
         print "API_LOOKUP_FAILS", self.api_lookup_fails
         print "HAS KEY HINT", self.has_key_hint
         print "MISSING KEY HINT", self.missing_key_hint
+        print "ADJUST POINT", self.adjust_point

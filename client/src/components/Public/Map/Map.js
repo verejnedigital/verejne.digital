@@ -7,6 +7,7 @@ import {
   addressesSelector,
   clustersSelector,
   addressesUrlSelector,
+  useLabelsSelector,
 } from '../../../selectors'
 import {setMapOptions} from '../../../actions/publicActions'
 import './GoogleMap.css'
@@ -19,7 +20,10 @@ import {withDataProviders} from 'data-provider'
 import {addressesProvider} from '../../../dataProviders/publiclyDataProviders'
 import {withRouter} from 'react-router-dom'
 import qs from 'qs'
-import {DEFAULT_MAP_CENTER, COUNTRY_ZOOM} from '../../../constants'
+import {
+  DEFAULT_MAP_CENTER,
+  COUNTRY_ZOOM,
+} from '../../../constants'
 import {withSideEffects} from '../../../utils'
 
 import type {MapOptions, CompanyEntity} from '../../../state'
@@ -28,6 +32,7 @@ import type {GenericAction} from '../../../types/reduxTypes'
 import type {RouterHistory} from 'react-router'
 
 type Props = {
+  useLabels: boolean,
   zoom: number,
   center: [number, number],
   entities: Array<CompanyEntity>,
@@ -38,11 +43,11 @@ type Props = {
 }
 
 // NOTE: there can be multiple points on the map on the same location...
-const Map = ({zoom, center, clusters, onChange}: Props) => {
+const Map = ({useLabels, zoom, center, clusters, onChange}: Props) => {
   return (
     <div className="google-map-wrapper">
       <GoogleMap center={center} zoom={zoom} onChange={onChange}>
-        {map(clusters, (cluster, i) => (
+        {map(clusters, (cluster, i: number) => (
           <ClusterMarker
             key={i}
             cluster={cluster}
@@ -81,11 +86,16 @@ export default compose(
     addresses: addressesSelector(state),
     clusters: clustersSelector(state),
     addressesUrl: addressesUrlSelector(state),
+    useLabels: useLabelsSelector(state),
   })),
-  withDataProviders(({addressesUrl}) => [addressesProvider(addressesUrl)]),
+  withDataProviders(({useLabels, addressesUrl}) => useLabels ? [] : [addressesProvider(addressesUrl)]),
   withHandlers({
     onChange: (props) => (options) => {
-      props.setMapOptions(options)
+      const newOptions = {zoom: options.zoom,
+        center: [options.center.lat, options.center.lng],
+        bounds: options.bounds,
+      }
+      props.setMapOptions(newOptions)
       props.history.replace(
         `?lat=${+options.center.lat.toFixed(6)}&lng=${+options.center.lng.toFixed(6)}&zoom=${
           options.zoom
