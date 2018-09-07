@@ -353,7 +353,7 @@ def get_GetInfos(db, eIDs):
             stakeholdertypes.stakeholder_type_id =
                 related.stakeholder_type_id
           WHERE
-            related.eid IN %s AND related.eid<>retlated.eid_relation
+            related.eid IN %s AND related.eid<>related.eid_relation
           UNION
           SELECT
             related.eid_relation AS source,
