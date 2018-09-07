@@ -60,7 +60,7 @@ const _NoticeDetail = ({notice}: NoticeDetailProps) => {
       body: bulletin,
     },
     {
-      label: 'Vyhlásená cena',
+      label: notice.total_final_value_amount ? 'Konečná cena' : 'Vyhlásená cena',
       body: (
         <ShowNumberCurrency
           num={notice.total_final_value_amount || notice.estimated_value_amount}
