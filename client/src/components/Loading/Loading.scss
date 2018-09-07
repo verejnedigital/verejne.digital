@@ -1,24 +1,29 @@
 .loading {
-    display: flex;
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    svg {
-        margin: auto;
-    }
-}
-.loadingsmall {
-    width: 100%;
-    height: 100%;
-    svg {
-        margin: auto;
-    }
-}
-.loading-modal {
+  display: flex;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+
+  svg {
     margin: auto;
-    svg {
-        display: block;
-        margin-left: auto;
-        margin-right: auto;
-    }
+  }
+}
+
+.loadingsmall {
+  width: 100%;
+  height: 100%;
+
+  svg {
+    margin: auto;
+  }
+}
+
+.loading-modal {
+  margin: auto;
+
+  svg {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
 }

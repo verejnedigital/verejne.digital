@@ -1,15 +1,7 @@
 // @flow
-import React from 'react'
-import {setEntitySearchEids, setEntitySearchSuggestionEids, setAddresses, setEntities} from '../actions/publicActions'
-import {ModalLoading} from '../components/Loading/Loading'
+import {setAddresses, setEntities} from '../actions/publicActions'
 import type {Address, NewEntity} from '../state'
 import type {Dispatch} from '../types/reduxTypes'
-
-const dispatchSearchEids = () => (ref: string, data: Array<{eid: number}>, dispatch: Dispatch) =>
-  dispatch(setEntitySearchEids(data))
-
-const dispatchSearchSuggestionEids = () => (ref: string, data: Array<{eid: number}>, dispatch: Dispatch) =>
-  dispatch(setEntitySearchSuggestionEids(data))
 
 const dispatchAddresses = () => (ref: string, data: Address[], dispatch: Dispatch) => {
   dispatch(setAddresses(data))
@@ -48,21 +40,5 @@ export const addressEntitiesProvider = (addressId: number) => {
     ],
     onData: [dispatchEntities],
     keepAliveFor: 60 * 60 * 1000,
-  }
-}
-
-export const entitiesSearchResultEidsProvider = (query: string, autocomplete: boolean = false) => {
-  return {
-    ref: `${autocomplete ? 'autocomplete:' : ''}${query}`,
-    getData: [
-      fetch,
-      `${process.env.REACT_APP_API_URL || ''}/api/v/searchEntityByName?name=${query}`,
-      {
-        accept: 'application/json',
-      },
-    ],
-    onData: [autocomplete ? dispatchSearchSuggestionEids : dispatchSearchEids],
-    loadingComponent: <ModalLoading />,
-    needed: !autocomplete,
   }
 }

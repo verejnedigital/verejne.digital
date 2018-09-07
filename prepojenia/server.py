@@ -117,7 +117,7 @@ def initialise_app(max_relations_to_load):
   # Retrieve list of relationship edges:
   q = """
       SELECT eid, eid_relation, stakeholder_type_id
-      FROM related
+      FROM related WHERE eid <> eid_relation
       LIMIT %s;
       """
   q_data = [max_relations_to_load]

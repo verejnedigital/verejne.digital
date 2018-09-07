@@ -1,17 +1,52 @@
 1_rpo:
     source_schema: "ekosystem_rpo"
-    command:   "select distinct on(organizations.id) organizations.id as org_id,organization_identifier_entries.ipo as ico,organization_name_entries.name, organizations.established_on,organizations.terminated_on,concat_ws(' ',organization_address_entries.formatted_address,organization_address_entries.street,COALESCE(organization_address_entries.building_number,cast(organization_address_entries.reg_number as text)),organization_address_entries.postal_code,organization_address_entries.municipality,organization_address_entries.country) as address from organizations,organization_identifier_entries,organization_name_entries,organization_address_entries where organizations.id=organization_identifier_entries.organization_id and organizations.id=organization_name_entries.organization_id and organizations.id=organization_address_entries.organization_id"
+    command: "
+        SELECT DISTINCT ON(organizations.id)
+          organizations.id AS org_id,
+          organization_identifier_entries.ipo AS ico,
+          organization_name_entries.name,
+          organizations.established_on,
+          organizations.terminated_on,
+          concat_ws(' ',
+            organization_address_entries.formatted_address,
+            organization_address_entries.street,
+            COALESCE(
+              organization_address_entries.building_number,
+              cast(organization_address_entries.reg_number AS text)
+            ),
+            organization_address_entries.postal_code,
+            organization_address_entries.municipality,
+            organization_address_entries.country
+          ) AS address,
+          organization_legal_form_entries.legal_form_id AS legal_form_id
+        FROM
+          organizations,
+          organization_identifier_entries,
+          organization_name_entries,
+          organization_address_entries,
+          organization_legal_form_entries
+        WHERE
+          organizations.id=organization_identifier_entries.organization_id
+          AND
+          organizations.id=organization_name_entries.organization_id
+          AND
+          organizations.id=organization_address_entries.organization_id
+          AND
+          organizations.id=organization_legal_form_entries.organization_id
+        "
     save_org_id: true
     tables:
             CompanyInfo:
-                    columns: ["ico", "established_on", "terminated_on"]
+                    columns: ["ico", "established_on",
+                              "terminated_on", "legal_form_id"]
                     create_command: "
                        CREATE TABLE CompanyInfo (
                                 id SERIAL PRIMARY KEY,
                                 eid INTEGER REFERENCES Entities(id),
                                 ico INT8,
                                 established_on DATE,
-                                terminated_on DATE
+                                terminated_on DATE,
+                                legal_form_id INTEGER
                        );
                        CREATE UNIQUE INDEX ON CompanyInfo(eid);
                        CREATE UNIQUE INDEX ON CompanyInfo(ico);
@@ -23,13 +58,15 @@
     use_org_id_as_eid_relation: true
     tables:
             Related:
-                    columns: ["stakeholder_type_id", "eid_relation"]
+                    columns: ["stakeholder_type_id", "eid_relation", "effective_from", "effective_to"]
                     create_command: "
                        CREATE TABLE Related (
                                 id SERIAL PRIMARY KEY,
                                 eid INTEGER REFERENCES Entities(id),
                                 stakeholder_type_id INT4,
-                                eid_relation INTEGER REFERENCES Entities(id)
+                                effective_from date,
+                                effective_to date,
+                                eid_relation INTEGER REFERENCES Entities(id),
                        );
                        CREATE INDEX ON Related(eid);
                        CREATE INDEX ON Related(eid_relation);
@@ -112,7 +149,7 @@
 
 6_contracts:
     source_schema: "ekosystem_CRZ"
-    command:   "select id as contract_id, contract_identifier, contract_price_amount, contract_price_total_amount, signed_on, effective_from, effective_to, status_id, contracting_authority_name as name, contracting_authority_formatted_address as address, CASE WHEN contracting_authority_cin~E'^[\\\\d\\\\s]+$' THEN CAST(replace(contracting_authority_cin,' ','') as bigint) ELSE NULL END as ico, supplier_name, CASE WHEN supplier_cin~E'^[\\\\d\\\\s]+$' THEN CAST(replace(supplier_cin,' ','') as bigint) ELSE NULL END as supplier_ico, supplier_formatted_address as supplier_address from contracts"
+    command:   "select id as contract_id, contract_identifier, contract_price_amount, contract_price_total_amount, signed_on, effective_from, effective_to, status_id, contracting_authority_name as name, contracting_authority_formatted_address as address, contracting_authority_cin as ico, supplier_name, supplier_cin as supplier_ico, supplier_formatted_address as supplier_address from contracts"
     supplier_eid: true
     tables:
             Contracts:
@@ -140,7 +177,7 @@
 
 7_eufunds:
     source_schema: "KamIduEurofondy"
-    command: "select subject_title as name, CAST(subject_company_no as bigint) as ico, title, description, link, CAST(price as numeric), state, call_state, call_title from kamidueurofondy"
+    command: "select subject_title as name, CAST(nullif(subject_company_no,'') as bigint) as ico, title, description, link, CAST(nullif(price,'') as numeric) as price, state, call_state, call_title from kamidueurofondy"
     tables:
         EUFunds:
             columns: ["title", "description", "link", "price", "state", "call_state", "call_title"]
@@ -160,6 +197,7 @@
                        CREATE INDEX ON EUFunds(eid);
                        CREATE UNIQUE INDEX ON EUFunds(eid,link,price);
                     "
+
 8_stakeholder_types:
     source_schema: "ekosystem_rpo"
     command:   "select id as stakeholder_type_id, name as stakeholder_type_text from stakeholder_types"
@@ -174,6 +212,23 @@
                                 stakeholder_type_text text
                        );
                        CREATE INDEX ON StakeholderTypes(stakeholder_type_id)
+                    "
+
+9_profil_mapping:
+    source_schema: "internal_profil"
+    command: "select persons.id as profil_id,concat_ws(' ', persons.firstname, persons.surname) as name, concat_ws(' ', addresses.street, addresses.houseno, addresses.municipality, addresses.state) as address, null as ico from persons join personaddresses on personaddresses.personid = persons.id join addresses on addresses.id = personaddresses.addressid"
+    tables:
+            ProfilMapping:
+                     columns: ["profil_id"]
+                     create_command: "
+                       CREATE TABLE ProfilMapping (
+                                id SERIAL PRIMARY KEY,
+                                eid INTEGER REFERENCES Entities(id),
+                                profil_id INTEGER
+                       );
+                       CREATE INDEX ON ProfilMapping(eid);
+                       CREATE INDEX ON ProfilMapping(profil_id);
+                       CREATE UNIQUE INDEX ON ProfilMapping(eid, profil_id);
                     "
 
 post_processing_1_trade_with_government:
@@ -191,4 +246,3 @@ post_processing_1_trade_with_government:
                        );
                        CREATE INDEX ON TradeWithGovernment(address_id);
                     "
-

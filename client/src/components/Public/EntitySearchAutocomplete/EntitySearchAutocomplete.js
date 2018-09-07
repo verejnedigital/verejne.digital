@@ -5,19 +5,12 @@ import {withDataProviders} from 'data-provider'
 import {Form, InputGroup, InputGroupAddon, Button} from 'reactstrap'
 import {connect} from 'react-redux'
 
-import classnames from 'classnames'
-import './EntitySearchAutocomplete.css'
-
-import SearchIcon from 'react-icons/lib/fa/search'
-import ModalIcon from 'react-icons/lib/fa/clone'
-import Autocomplete from 'react-autocomplete'
-
 import {
-  toggleModalOpen,
-  setModal,
   setEntitySearchValue,
   setEntitySearchFor,
+  toggleModalOpen,
   setDrawer,
+  setEntitySearchOpen,
   closeAddressDetail,
 } from '../../../actions/publicActions'
 import {
@@ -25,21 +18,34 @@ import {
   entitySearchSuggestionsSelector,
   entitySearchSuggestionEidsSelector,
 } from '../../../selectors'
-import {entitiesSearchResultEidsProvider} from '../../../dataProviders/publiclyDataProviders'
-import {entityDetailProvider} from '../../../dataProviders/sharedDataProviders'
+import {
+  entitySearchProvider,
+  entityDetailProvider,
+} from '../../../dataProviders/sharedDataProviders'
+
+import classnames from 'classnames'
+import './EntitySearchAutocomplete.css'
+
+import SearchIcon from 'react-icons/lib/fa/search'
+import ModalIcon from 'react-icons/lib/fa/clone'
+import Autocomplete from 'react-autocomplete'
+
 import {FIND_ENTITY_TITLE} from '../../../constants'
 import type NewEntityDetail from '../../../state'
 
 type Props = {
-  toggleModalOpen: () => void,
-  setModal: (open: boolean) => void,
-  setDrawer: (open: boolean) => void,
   entitySearchValue: string,
+  suggestionEids: Array<number>,
   suggestions: Array<NewEntityDetail>,
-  setEntitySearchValue: (e: Event) => void,
-  onChangeHandler: (e: Event) => void,
-  onSelectHandler: (e: Event) => void,
+  setEntitySearchValue: (value: string) => void,
+  setEntitySearchFor: (value: string) => void,
+  toggleModalOpen: () => void,
+  setDrawer: (open: boolean) => void,
+  setEntitySearchOpen: (open: boolean) => void,
+  closeAddressDetail: () => void,
   findEntities: (e: Event) => void,
+  onSelectHandler: (e: Event) => void,
+  onChangeHandler: (e: Event) => void,
   getItemValue: (entity: NewEntityDetail) => string,
   renderItem: (entity: NewEntityDetail, isHighlighted: boolean) => any,
 }
@@ -52,13 +58,18 @@ const menuStyle = {
 }
 
 const EntitySearchAutocomplete = ({
-  toggleModalOpen,
   entitySearchValue,
-  setEntitySearchValue,
+  suggestionEids,
   suggestions,
-  onChangeHandler,
-  onSelectHandler,
+  setEntitySearchValue,
+  setEntitySearchFor,
+  toggleModalOpen,
+  setDrawer,
+  setEntitySearchOpen,
+  closeAddressDetail,
   findEntities,
+  onSelectHandler,
+  onChangeHandler,
   getItemValue,
   renderItem,
 }: Props) => (
@@ -75,6 +86,7 @@ const EntitySearchAutocomplete = ({
         inputProps={{
           id: 'entity-input',
           className: 'form-control',
+          type: 'text',
           placeholder: FIND_ENTITY_TITLE,
         }}
         renderMenu={function(items, value, style) {
@@ -104,43 +116,42 @@ export default compose(
     }),
     {
       setEntitySearchValue,
-      toggleModalOpen,
-      setModal,
       setEntitySearchFor,
+      toggleModalOpen,
       setDrawer,
+      setEntitySearchOpen,
       closeAddressDetail,
     }
   ),
   withHandlers({
     findEntities: ({
-      setModal,
-      setEntitySearchFor,
       entitySearchValue,
-      setDrawer,
+      setEntitySearchFor,
       closeAddressDetail,
+      setEntitySearchOpen,
+      setDrawer,
     }) => (e) => {
       e.preventDefault()
-      setModal(true)
-      closeAddressDetail()
       setEntitySearchFor(entitySearchValue)
-      setDrawer(false)
-    },
-    onChangeHandler: ({setEntitySearchValue}) => (e) => {
-      setEntitySearchValue(e.target.value)
+      closeAddressDetail()
+      setEntitySearchOpen(true)
+      setDrawer(true)
     },
     onSelectHandler: ({
       setEntitySearchValue,
       setEntitySearchFor,
-      entitySearchModalOpen,
-      setModal,
       closeAddressDetail,
+      setEntitySearchOpen,
       setDrawer,
     }) => (name, entity) => {
       setEntitySearchValue(name)
       setEntitySearchFor(name)
-      setModal(true)
       closeAddressDetail()
-      setDrawer(false)
+      setEntitySearchOpen(true)
+      setDrawer(true)
+    },
+    onChangeHandler: ({setEntitySearchValue}) => (e) => {
+      setEntitySearchValue(e.target.value)
     },
     getItemValue: () => (entity) => (entity.name ? entity.name : ''),
     renderItem: () => (entity, isHighlighted) => (
@@ -151,8 +162,12 @@ export default compose(
   }),
   withDataProviders(
     ({entitySearchValue, suggestionEids}) => [
-      entitiesSearchResultEidsProvider(entitySearchValue, true),
-      entityDetailProvider(suggestionEids, false),
+      entitySearchProvider(entitySearchValue, false, false),
+      ...(suggestionEids.length > 0
+        ? [entityDetailProvider(suggestionEids, false)]
+        : []
+      ),
     ]
   ),
 )(EntitySearchAutocomplete)
+

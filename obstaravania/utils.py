@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from data_model import Firma, Obstaravanie, Firma, Candidate, Notification
-import db
+import db_old
 from dateutil.parser import parse
 import json
 import os
@@ -18,11 +18,11 @@ def NormalizeIco(ico):
 def IcoToLatLngMap():
     output_map = {}
     for table in ["orsresd_data", "firmy_data", "new_orsr_data"]:
-        with db.getCursor() as cur:
+        with db_old.getCursor() as cur:
             sql = "SELECT ico, lat, lng FROM " + table + \
                   " JOIN entities on entities.id = " + table + ".id" + \
                   " WHERE ico IS NOT NULL"
-            db.execute(cur, sql)
+            db_old.execute(cur, sql)
             for row in cur: output_map[int(row["ico"])] = (row["lat"], row["lng"])
     return output_map
 
@@ -32,9 +32,9 @@ def getColumnForTableIco(table, column, ico):
           " JOIN entities ON entities.id = " + table + ".id" + \
           " WHERE ico = %s" + \
           " LIMIT 1"
-    with db.getCursor() as cur:
+    with db_old.getCursor() as cur:
         try:
-            cur = db.execute(cur, sql, [ico])
+            cur = db_old.execute(cur, sql, [ico])
             row = cur.fetchone()
             if row is None: return None
             return row[column]
@@ -69,7 +69,7 @@ def obstaravanieToJson(obstaravanie, candidates, full_candidates=1, compute_rang
         current["text"] = "N/A"
     else:
         current["text"] = obstaravanie.description
-    
+
     if obstaravanie.title is not None:
         current["title"] = obstaravanie.title
     if (obstaravanie.bulletin_year is not None):
@@ -107,14 +107,14 @@ def obstaravanieToJson(obstaravanie, candidates, full_candidates=1, compute_rang
             "price": getValue(c.reason),
             "score": c.score} for c in obstaravanie.candidates[:full_candidates]]
         for c in obstaravanie.candidates[full_candidates:candidates]:
-            current["kandidati"].append([]) 
+            current["kandidati"].append([])
     return current
 
 def getAddressJson(eid):
     # json with all geocoded data
     j = {}
-    with db.getCursor() as cur:
-        cur = db.execute(cur, "SELECT json FROM entities WHERE eid=%s", [eid])
+    with db_old.getCursor() as cur:
+        cur = db_old.execute(cur, "SELECT json FROM entities WHERE eid=%s", [eid])
         row = cur.fetchone()
         if row is None: return None
         j = json.loads(row["json"])
@@ -124,7 +124,7 @@ def getAddressJson(eid):
         try:
             for component in json[0]["address_components"]:
                 if typeName in component["types"]:
-                    return component["long_name"]        
+                    return component["long_name"]
             return ""
         except:
             return ""
@@ -135,7 +135,7 @@ def getAddressJson(eid):
         "street": (
             getComponent(j, "street_address") +
             getComponent(j, "route") +
-            getComponent(j, "intersection") + 
+            getComponent(j, "intersection") +
             " " + getComponent(j, "street_number")
         ),
         "city": getComponent(j, "locality"),

@@ -2,17 +2,16 @@ import React from 'react'
 import {connect} from 'react-redux'
 import {compose} from 'redux'
 import {withHandlers} from 'recompose'
-import {withDataProviders} from 'data-provider'
 import CircleIcon from 'react-icons/lib/fa/circle-o'
+import FilledCircleIcon from 'react-icons/lib/fa/circle'
 import SearchIcon from 'react-icons/lib/fa/search'
 import {ListGroupItem} from 'reactstrap'
 import {
   toggleEntityInfo,
-  toggleModalOpen,
+  toggleEntitySearchOpen,
   setEntitySearchFor,
 } from '../../../../actions/publicActions'
 import {updateValue} from '../../../../actions/sharedActions'
-import {entityDetailProvider} from '../../../../dataProviders/sharedDataProviders'
 import {entityDetailSelector} from '../../../../selectors'
 import Info from '../../../shared/Info/Info'
 
@@ -32,14 +31,14 @@ const _DetailedInfo = ({toggleEntityInfo, data}: DetailedInfoProps) => (
   </ListGroupItem>
 )
 
+const TradeIcon = ({filled}) => filled ?
+  <FilledCircleIcon size="10" className="list-row-icon" /> :
+  <CircleIcon size="10" className="list-row-icon" />
+
 const DetailedInfo = compose(
-  connect(
-    (state, {id}) => ({
-      data: entityDetailSelector(state, id),
-    }),
+  connect(null,
     {toggleEntityInfo}
   ),
-  withDataProviders(({id}) => [entityDetailProvider(id)]),
   withHandlers({
     toggleEntityInfo: ({toggleEntityInfo, id}) => () => {
       toggleEntityInfo(id)
@@ -47,13 +46,13 @@ const DetailedInfo = compose(
   })
 )(_DetailedInfo)
 
-const ListRow = ({entity, toggleEntityInfo, showInfo, openModalSearch}) =>
+const ListRow = ({entity, toggleEntityInfo, showInfo, openModalSearch, entityDetails}) =>
   showInfo ? (
-    <DetailedInfo id={entity.id} />
+    <DetailedInfo id={entity.id} data={entityDetails} />
   ) : (
     <ListGroupItem action className="list-row">
       <span className="list-row-toggler" onClick={toggleEntityInfo}>
-        <CircleIcon size="10" className="list-row-icon" />
+        <TradeIcon filled={entityDetails.tradesWithState} />
         <span>{entity.name}</span>
       </span>
       <SearchIcon size="16" className="search-icon float-right mr-3" onClick={openModalSearch} />
@@ -64,17 +63,18 @@ export default compose(
   connect(
     (state, {entity}) => ({
       showInfo: state.publicly.showInfo[entity.id],
+      entityDetails: entityDetailSelector(state, entity.id),
     }),
-    {toggleEntityInfo, toggleModalOpen, setEntitySearchFor, updateValue}
+    {toggleEntityInfo, toggleEntitySearchOpen, setEntitySearchFor, updateValue}
   ),
   withHandlers({
     toggleEntityInfo: ({toggleEntityInfo, entity}) => () => {
       toggleEntityInfo(entity.id)
     },
-    openModalSearch: ({entity, toggleModalOpen, setEntitySearchFor, updateValue}) => () => {
+    openModalSearch: ({entity, toggleEntitySearchOpen, setEntitySearchFor, updateValue}) => () => {
       setEntitySearchFor(entity.name)
       updateValue(['publicly', 'entitySearchValue'], entity.name, 'Set entity search field value')
-      toggleModalOpen()
+      toggleEntitySearchOpen()
     },
   })
 )(ListRow)

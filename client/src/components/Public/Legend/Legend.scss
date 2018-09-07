@@ -1,57 +1,58 @@
 @import "../../variables.scss";
+
 .legend {
-    position: absolute;
-    background: white;
-    padding: 0.3rem;
-    right: 1.3rem;
-    bottom: 2rem;
-    //width: 11.3rem;
-    //height: 10.3rem;
-    border: 1px solid $border-color;
-    box-shadow: 0 4px 12px 0 $shadow-color;
-    &__Header {
-        display: flex;
-    }
-    p {
-        text-align: left;
-        font-size: 0.8rem;
-        margin-bottom: 0;
-    }
+  position: absolute;
+  background: white;
+  padding: .3rem;
+  right: 1.3rem;
+  bottom: 2rem;
+  //width: 11.3rem;
+  //height: 10.3rem;
+  border: 1px solid $border-color;
+  box-shadow: 0 4px 12px 0 $shadow-color;
+
+  &__Header {
+    display: flex;
+  }
+
+  p {
+    text-align: left;
+    font-size: .8rem;
+    margin-bottom: 0;
+  }
 }
 
 button.legend {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .svg {
-    color: $blue-color;
-    margin-right: 0.2rem;
+  color: $blue-color;
+  margin-right: .2rem;
 }
 
 .orange {
-    color: $orange-color;
+  color: $orange-color;
 }
 
 .map-icon-image {
-    width: 1rem;
-    height: 1rem;
+  width: 1rem;
+  height: 1rem;
 }
 
 .legend-marker {
-    position: relative;
-    border-radius: 50%;
-    border: 3px solid $cluster-marker-border;
-    background-color: $marker-color;
-    text-align: center;
-    color: $marker-color !important;
-    width: 1rem;
-    height: 1rem;
-    font-size: 0.7rem !important;
-    font-weight: bold;
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    color: #fff !important;
-    border-radius: 50%;
-    margin-right: 0.1rem;
+  position: relative;
+  border-radius: 50%;
+  border: 3px solid $cluster-marker-border;
+  background-color: $marker-color;
+  text-align: center;
+  width: 1rem;
+  height: 1rem;
+  font-size: .7rem !important;
+  font-weight: bold;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff !important;
+  margin-right: .1rem;
 }

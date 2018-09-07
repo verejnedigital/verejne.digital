@@ -2,10 +2,10 @@
 import React from 'react'
 import {connect} from 'react-redux'
 import {compose} from 'redux'
+import {branch} from 'recompose'
 import {withDataProviders} from 'data-provider'
 import {entitySearchForSelector, entitySearchEidsSelector} from '../../../selectors'
-import {entitiesSearchResultEidsProvider} from '../../../dataProviders/publiclyDataProviders'
-import {entityDetailProvider} from '../../../dataProviders/sharedDataProviders'
+import {entitySearchProvider, entityDetailProvider} from '../../../dataProviders/sharedDataProviders'
 import EntitySearchResultItem from '../EntitySearchResultItem/EntitySearchResultItem'
 
 type Props = {
@@ -26,7 +26,15 @@ export default compose(
   })),
   withDataProviders(
     ({searchFor, entitySearchEids}) => [
-      entitiesSearchResultEidsProvider(searchFor),
-      entityDetailProvider(entitySearchEids),
-    ])
+      entitySearchProvider(searchFor, true),
+    ]
+  ),
+  branch(
+    ({entitySearchEids}) => entitySearchEids.length > 0,
+    withDataProviders(
+      ({entitySearchEids}) => [
+        entityDetailProvider(entitySearchEids),
+      ]
+    ),
+  ),
 )(EntitySearchResult)

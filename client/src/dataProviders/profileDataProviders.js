@@ -7,7 +7,7 @@ export const politiciansProvider = () => ({
   ref: 'politicians',
   getData: [
     fetch,
-    `${process.env.REACT_APP_API_URL || ''}/api/k/list_politicians?cachebreak3`,
+    `${process.env.REACT_APP_API_URL || ''}/api/k/list_politicians?cachebreak4`,
     {
       accept: 'application/json',
     },

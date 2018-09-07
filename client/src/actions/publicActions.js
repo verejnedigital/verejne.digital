@@ -59,16 +59,35 @@ export const zoomToLocation = (center: Center, withZoom?: number): Thunk => (
   const zoom = withZoom || zoomSelector(getState()) + 1
   dispatch(setMapOptions({...mapOptionsSelector(state), zoom, center: [center.lat, center.lng]}))
 }
+export const makeLocationSelected = (point: Center) => ({
+  type: 'Make Location Selected',
+  path: ['publicly', 'selectedLocation'],
+  payload: point,
+  reducer: () => point,
+})
 
-export const toggleModalOpen = () => ({
-  type: 'Toggle modal open',
-  path: ['publicly', 'entitySearchModalOpen'],
+export const toggleEntitySearchOpen = () => ({
+  type: 'Toggle sidebar search open',
+  path: ['publicly', 'entitySearchOpen'],
   reducer: (open: boolean) => !open,
 })
 
-export const setModal = (open: boolean) => ({
-  type: 'Set modal',
-  path: ['publicly', 'entitySearchModalOpen'],
+export const deselectLocation = () => ({
+  type: 'Unselect Location',
+  path: ['publicly', 'selectedLocation'],
+  payload: null,
+  reducer: () => null,
+})
+
+export const toggleModalOpen = () => ({
+  type: 'Toggle modal open',
+  path: ['publicly', 'entityModalOpen'],
+  reducer: (open: boolean) => !open,
+})
+
+export const setEntitySearchOpen = (open: boolean) => ({
+  type: 'Set entity search open',
+  path: ['publicly', 'entitySearchOpen'],
   reducer: () => open,
 })
 
@@ -77,13 +96,6 @@ export const setEntitySearchFor = (searchFor: string) => ({
   path: ['publicly', 'entitySearchFor'],
   payload: searchFor,
   reducer: () => searchFor,
-})
-
-export const setEntitySearchEids = (eids: Array<{eid: number}>) => ({
-  type: 'Set entity search eids',
-  path: ['publicly', 'entitySearchEids'],
-  payload: eids,
-  reducer: (): Array<number> => eids.map((e) => e.eid),
 })
 
 export const toggleEntityInfo = (eid: number) => ({
@@ -121,11 +133,4 @@ export const setEntitySearchValue = (value: string) => ({
   path: ['publicly', 'entitySearchValue'],
   payload: value,
   reducer: () => value,
-})
-
-export const setEntitySearchSuggestionEids = (eids: Array<{eid: number}>) => ({
-  type: 'Set entity search suggestion eids',
-  path: ['publicly', 'entitySearchSuggestionEids'],
-  payload: eids,
-  reducer: (): Array<number> => eids.map((e) => e.eid),
 })
