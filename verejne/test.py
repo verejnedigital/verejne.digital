@@ -1,16 +1,18 @@
+"""Unit tests for backend application verejne's API calls.
+
+Run all unit tests from command line as:
+  . venv/bin/activate
+  python test.py
+To run an individual unit test only, run (for example):
+  python test.py TestHandlers.test_getEntities
+"""
+
 import json
 import unittest
 import webapp2
 
 import server
 
-
-""" Unit testing of backend application verejne.
-    Run all unit tests from command line as:
-        python test.py
-    To run an individual unit test only, run (for example):
-        python test.py TestHandlers.test_getEntities
-"""
 
 def _request_json(url, test_handler):
     """ Utility method to check a JSON is returned from the given URL """

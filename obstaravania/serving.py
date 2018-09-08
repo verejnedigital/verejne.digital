@@ -169,29 +169,56 @@ class InfoNotice(MyServer):
         """
         SELECT
           eid,
+          e1.name,
           supplier_eid,
-          notice_id,
+          e2.name as supplier_name,
+          Notices.notice_id,
           contract_id,
           title,
           estimated_value_amount,
           estimated_value_currency,
-          bulletin_issue_id,
+          Notices.bulletin_issue_id,
+          year as bulletin_year,
+          number as bulletin_number,
+          to_char(published_on,'DD.MM.YYYY') as bulletin_published_on,
+          source_url as bulletin_source_url,
           notice_type_id,
           short_description,
           total_final_value_amount,
           total_final_value_currency,
-          body --,
-          --best_supplier,
-          --best_similarity,
-          --candidates,
-          --similarities,
-          --price_est,
-          --price_est_low,
-          --price_est_high
+          body,
+          best_supplier,
+          e3.name as best_supplier_name,
+          best_similarity,
+          candidates,
+          similarities,
+          price_est,
+          price_est_low,
+          price_est_high
         FROM
           Notices
+        JOIN
+          NoticesExtras
+        ON
+          Notices.notice_id = NoticesExtras.notice_id
+        JOIN
+          NoticeBulletins
+        ON
+          Notices.bulletin_issue_id = NoticeBulletins.bulletin_id
+        JOIN
+          Entities as e1
+        ON
+          e1.id = Notices.eid
+        LEFT JOIN
+          Entities as e2
+        ON
+          e2.id = Notices.supplier_eid
+        LEFT JOIN
+          Entities as e3
+        ON
+          e3.id = NoticesExtras.best_supplier
         WHERE
-          notice_id=%s;
+          Notices.notice_id=%s;
         """,
         [notice_id]
     )
@@ -200,6 +227,34 @@ class InfoNotice(MyServer):
     if len(rows) == 0:
       self.abort(404, detail='Notice with provided `id` not found.')
     notice = rows[0]
+    
+    candidates = db.query(
+        """
+        SELECT
+          notice_id,
+          eid,
+          e1.name,
+          supplier_eid,
+          e2.name as supplier_name,
+          title,
+          total_final_value_amount
+        FROM
+          Notices
+        JOIN
+          Entities as e1
+        ON
+          e1.id = Notices.eid
+        LEFT JOIN
+          Entities as e2
+        ON
+          e2.id = Notices.supplier_eid
+        WHERE
+          notice_id in (SELECT unnest(candidates) from NoticesExtras WHERE notice_id = %s);
+        """,
+        [notice_id]
+    )
+    if len(candidates) > 0:
+        notice["candidates_extra"] = candidates 
 
     # Return information about the notice as a JSON:
     self.returnJSON(notice)
@@ -213,30 +268,53 @@ class ListNotices(MyServer):
         """
         SELECT
           eid,
+          e1.name,
           supplier_eid,
-          notice_id,
+          e2.name as supplier_name,
+          Notices.notice_id,
           contract_id,
           title,
           estimated_value_amount,
           estimated_value_currency,
-          bulletin_issue_id,
+          Notices.bulletin_issue_id,
+          year as bulletin_year,
+          number as bulletin_number,
+          to_char(published_on,'DD.MM.YYYY') as bulletin_published_on,
+          source_url as bulletin_source_url,
           notice_type_id,
-          short_description,
           total_final_value_amount,
           total_final_value_currency,
-          body --,
-          --best_supplier,
-          --best_similarity,
-          --candidates,
-          --similarities,
-          --price_est,
-          --price_est_low,
-          --price_est_high
+          best_supplier,
+          e3.name as best_supplier_name,
+          best_similarity,
+          price_est,
+          price_est_low,
+          price_est_high
         FROM
           Notices
+        JOIN
+          NoticesExtras
+        ON
+          Notices.notice_id = NoticesExtras.notice_id
+        JOIN
+          NoticeBulletins
+        ON
+          Notices.bulletin_issue_id = NoticeBulletins.bulletin_id
+        JOIN
+          Entities as e1
+        ON
+          e1.id = Notices.eid
+        LEFT JOIN
+          Entities as e2
+        ON
+          e2.id = Notices.supplier_eid
+        LEFT JOIN
+          Entities as e3
+        ON
+          e3.id = NoticesExtras.best_supplier
         ORDER BY
           bulletin_issue_id DESC
-        LIMIT 100;
+        LIMIT 300;
         """)
     self.returnJSON(rows)
 

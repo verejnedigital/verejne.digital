@@ -1,7 +1,6 @@
 // @flow
 import React from 'react'
 import Loading from './components/Loading/Loading'
-import {AutoSizer} from 'react-virtualized'
 import {get, set, pickBy as _pickBy} from 'lodash'
 import produce from 'immer'
 import {stringify, parse} from 'qs'
@@ -11,8 +10,12 @@ import type {SegmentReducer, Path} from './types/reduxTypes'
 import {SLOVAKIA_BOUNDS} from './constants'
 
 export const isInSlovakia = (center: [number, number]): boolean => {
-  return (center[0] > SLOVAKIA_BOUNDS[0][1]) && (center[0] < SLOVAKIA_BOUNDS[1][1]) &&
-    (center[1] > SLOVAKIA_BOUNDS[0][0]) && (center[1] < SLOVAKIA_BOUNDS[1][0])
+  return (
+    center[0] > SLOVAKIA_BOUNDS[0][1] &&
+    center[0] < SLOVAKIA_BOUNDS[1][1] &&
+    center[1] > SLOVAKIA_BOUNDS[0][0] &&
+    center[1] < SLOVAKIA_BOUNDS[1][0]
+  )
 }
 
 const normalizeObjBeforeMap = (data: Array<Object> | Object): Array<Object> =>
@@ -115,16 +118,9 @@ export const withSideEffects = <P: Object>(sideEffectsFunc: SideEffectsFunc<P>) 
 }
 
 // flow cannot handle pickBy when there are values of different types in obj
-export const pickBy = <T: {}>(obj: T, predicate: (value: any) => boolean): T => _pickBy(obj, predicate)
+export const pickBy = <T: {}>(obj: T, predicate: (value: any) => boolean): T =>
+  _pickBy(obj, predicate)
 
 // https://github.com/facebook/flow/issues/2221#issuecomment-372112477
 // there is no nice way to handle object.values in flow currently - use this instead
 export const values = <T>(obj: {[string]: T}): Array<T> => Object.keys(obj).map((k) => obj[k])
-
-export const withAutosize = (BaseComponent) => (props) => (
-  <AutoSizer>
-    {({height, width}) => (height !== 0 && width !== 0) &&
-      <BaseComponent {...props} height={height} witdth={width} />
-    }
-  </AutoSizer>
-)

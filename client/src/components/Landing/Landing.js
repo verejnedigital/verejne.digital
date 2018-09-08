@@ -49,48 +49,70 @@ const Landing = () => (
             text="Do ktorých výziev sa prihlásiť a ktoré sú podozrivé?"
             imgSrc={obstaravaniaIcon}
           />
-        </Col>        
+        </Col>
       </Row>
     </Container>
     <footer className="landing-footer">
       <div className="container">
-        <ul className="float-md-right list-inline">
-          <li className="list-inline-item">
-            <a href="https://www.zastavmekorupciu.sk/">
-              <img src="/nzk.png" alt="Nadácia Zastavme Korupciu" />
-            </a>
-          </li>
-          <li className="list-inline-item">
-            <a href="https://slovensko.digital/">
-              <img src="/slovenko.png" alt="slovenko.digital" />
-            </a>
-          </li>
-          <li className="list-inline-item">
-            <a href="https://www.finstat.sk/">
-              <img src="/finstat.png" alt="FinStat" />
-            </a>
-          </li>
-        </ul>
-        <ul className="float-md-left list-inline landing-footer-text">
-          <li className="list-inline-item list-inline-item-text">
+
+        <div className="float-md-left">
+          <ul className="list-inline landing-footer-text">
+            <li className="list-inline-item list-inline-item-text">
+              <a
+                href="https://medium.com/@verejne.digital/o-%C4%8Do-ide-verejne-digital-14a1c6dcbe09"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                O projekte
+              </a>
+            </li>
+            <li className="list-inline-item list-inline-item-text">
+              <a
+                href="http://www.facebook.com/verejne.digital"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Kontaktujte nás cez facebook
+              </a>
+            </li>
+          </ul>
+        </div>
+        <div className="float-md-right">
+          <span className="gray"> Partneri projektu </span>
+          <ul className="list-inline">
+            <li className="list-inline-item">
+              <a href="https://www.zastavmekorupciu.sk/">
+                <img src="/nzk.png" alt="Nadácia Zastavme Korupciu" />
+              </a>
+            </li>
+            <li className="list-inline-item">
+              <a href="https://slovensko.digital/">
+                <img src="/slovenko.png" alt="slovenko.digital" />
+              </a>
+            </li>
+            <li className="list-inline-item">
+              <a href="https://www.finstat.sk/">
+                <img src="/finstat.png" alt="FinStat" />
+              </a>
+            </li>
+            <li className="list-inline-item">
+              <a href="https://vacuumlabs.com/">
+                <img src="/vl.png" alt="VacuumLabs" />
+              </a>
+            </li>
+          </ul>
+          <div className="prevadzkovatel gray">
+            Prevádzkovateľ:
+            <br />
             <a
-              href="https://medium.com/@verejne.digital/o-%C4%8Do-ide-verejne-digital-14a1c6dcbe09"
+              href="http://chcemvediet.sk"
               target="_blank"
               rel="noopener noreferrer"
             >
-              O projekte
+              <img className="prevadzkovatel-logo" src="/chv.png" alt="chcemvediet.sk" />
             </a>
-          </li>
-          <li className="list-inline-item list-inline-item-text">
-            <a
-              href="http://www.facebook.com/verejne.digital"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Kontaktujte nás cez facebook
-            </a>
-          </li>
-        </ul>
+          </div>
+        </div>
       </div>
     </footer>
   </div>

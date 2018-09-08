@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+"""Runs the server for backend application `verejne`."""
 import argparse
 import db_old
 import simplejson as json
@@ -16,26 +17,24 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../data
 from db import DatabaseConnection
 
 
-# TODO: add proper logging
-def log(s):
-    print("LOG: %s" % (s))
-
-
-########################################
-# Implementation of the server hooks
-########################################
-# All individual hooks inherit from this class outputting jsons
-# Actual work of subclasses is done in method process.
-# TODO: move this to a lib directory
 class MyServer(webapp2.RequestHandler):
-    def returnJSON(self,j):
+    """Abstract class defining a server hook.
+
+    All individual hooks inherit from this class and implement the
+    method `get` performing the actual logic of the computation.
+    """
+
+    def get(self):
+        raise NotImplementedError('Must implement method `get`.')
+
+    def returnJSON(self, j):
         self.response.headers['Content-Type'] = 'application/json'
         self.response.write(json.dumps(j, separators=(',',':')))
 
 
 class GetAddresses(MyServer):
     def get(self):
-        # Parse URL parameters
+        # Parse URL parameters:
         try:
             lat1 = float(self.request.GET['lat1'])
             lat2 = float(self.request.GET['lat2'])
@@ -47,22 +46,25 @@ class GetAddresses(MyServer):
         except:
             self.abort(400, detail='Could not parse parameters')
 
-        # Find addresses within the specified rectangle
+        # Find addresses within the specified rectangle:
         q = """
             SELECT
               id AS address_id,
               lat,
               lng,
-              EXISTS (SELECT 1 FROM tradewithgovernment
-                      WHERE address_id=id LIMIT 1)
-              AS tradewithgovernment
+              address_flags.trade_with_government,
+              address_flags.political_entity,
+              address_flags.contact_with_politics
             FROM address
+            LEFT JOIN address_flags
+              ON address_flags.address_id=address.id
             WHERE  '(%s, %s), (%s, %s)'::box @> point(lat, lng)
             LIMIT 1500;
             """
         q_data = (lat1, lng1, lat2, lng2)
         response = webapp2.get_app().registry['db'].query(q, q_data)
         self.returnJSON(response)
+
 
 class GetEntitiesAtAddressId(MyServer):
     def get(self):
@@ -80,6 +82,7 @@ class GetEntitiesAtAddressId(MyServer):
         q_data = [address_id]
         response = webapp2.get_app().registry['db'].query(q, q_data)
         self.returnJSON(response)
+
 
 class GetEntities(MyServer):
     def get(self):
@@ -115,6 +118,7 @@ class GetRelated(MyServer):
 
         entities = webapp2.get_app().registry['entities']
         self.returnJSON(entities.getRelated(eid))
+
 
 # Read info from all info tables and returns all related entities for the given eid
 class GetInfo(MyServer):
@@ -226,6 +230,7 @@ class SearchEntity(MyServer):
                     pass
             self.returnJSON(result)
 
+
 class SearchEntityByNameAndAddress(MyServer):
     """ Server hook allowing to search for entities by name and address
         (given in text format). Returns a list of dictionaries, with each
@@ -261,6 +266,7 @@ class SearchEntityByNameAndAddress(MyServer):
                     pass
             self.returnJSON(result)
 
+
 # For given ico, find the corresponding eid and redirect to to its url.
 # If no matching entity found redirect to default
 class IcoRedirect(MyServer):
@@ -289,7 +295,7 @@ class IcoRedirect(MyServer):
             self.abort(400, detail="Could not parse parameter 'ico' as an integer")
 
         eid = self.getEidForIco(ico)
-        log("icoredirect " + str(ico) + " " + str(eid))
+        print("LOG: icoredirect " + str(ico) + " " + str(eid))
         entities = webapp2.get_app().registry['entities']
         if (eid is None) or (not eid in entities.eid_to_index):
             return self.redirect("/")

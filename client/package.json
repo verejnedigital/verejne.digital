@@ -27,7 +27,6 @@
     "react-redux": "^5.0.7",
     "react-router-dom": "^4.2.2",
     "react-scripts": "1.1.4",
-    "react-virtualized": "^9.20.1",
     "reactstrap": "^6.0.1",
     "recompose": "^0.27.0",
     "redux": "^4.0.0",
@@ -43,7 +42,9 @@
     "build": "npm-run-all build-css build-js",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
-    "fix": "prettier-eslint --write \"src/**/*.{js,jsx,json,scss}\"",
+    "fix-js": "prettier-eslint --write \"src/**/*.{js,jsx,json}\"",
+    "fix-scss": "stylelint \"src/**/*.scss\" --fix",
+    "fix": "npm-run-all fix-js fix-scss",
     "build-css": "node-sass-chokidar src/ -o src/",
     "watch-css": "node-sass-chokidar src/ -o src/ --watch --recursive",
     "flow": "python3 ./check_flow.py & flow & flow-coverage-report || exit 0"
@@ -58,7 +59,9 @@
     "flow-coverage-report": "^0.5.0",
     "prettier-eslint": "^8.8.1",
     "prettier-eslint-cli": "^4.7.1",
-    "redux-logger": "^3.0.6"
+    "redux-logger": "^3.0.6",
+    "stylelint": "^9.5.0",
+    "stylelint-config-standard": "^18.2.0"
   },
   "flow-coverage-report": {
     "includeGlob": [

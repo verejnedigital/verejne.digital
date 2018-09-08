@@ -3,7 +3,7 @@
 .profile-header {
   padding: 20px;
   padding-top: $navbar-height + 20;
-  margin-bottom: 0px;
+  margin-bottom: 0;
   text-align: center;
 
   .sub-title {
@@ -49,7 +49,8 @@
       }
 
       &:focus {
-        box-shadow: inset 0 1px 1px $input-inset-shadow-color,
+        box-shadow:
+          inset 0 1px 1px $input-inset-shadow-color,
           0 0 8px $input-shadow-color;
       }
     }

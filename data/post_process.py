@@ -1,3 +1,4 @@
+"""Performs post processing on the latest prod schema."""
 import argparse
 import os
 import sys
@@ -8,9 +9,9 @@ from intelligence import embed
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../data/db')))
 from db import DatabaseConnection
 
-"""
-Script to run post processing on the latest prod schema.
-"""
+import utils
+
+
 class Notice:
     idx = None
     embedding = None
@@ -48,14 +49,13 @@ class Notice:
         return mean, price_low, price_high
 
 
-def notices_create_extra_table(db):
-    """Creates table NoticesExtraData that will contain extra data."""
-    db.execute(
-        """
-        DROP TABLE IF EXISTS NoticesExtraData;
-        CREATE TABLE NoticesExtraData (
+def notices_create_extra_table(db, test_mode):
+    """Creates table NoticesExtras that will contain extra data."""
+    table_name_suffix = "_test" if test_mode else ""
+    command = """
+        CREATE TABLE NoticesExtras""" + table_name_suffix + """ (
           id SERIAL PRIMARY KEY,
-          notice_id INTEGER References Notices(id),
+          notice_id INTEGER,
           embedding FLOAT[],
           best_supplier INTEGER References Entities(id),
           best_similarity FLOAT,
@@ -65,9 +65,12 @@ def notices_create_extra_table(db):
           price_est_low FLOAT,
           price_est_high FLOAT
         );
-        CREATE INDEX ON NoticesExtraData (notice_id);
+        CREATE INDEX ON NoticesExtras""" + table_name_suffix + """ (notice_id);
         """
-    )
+    if test_mode:
+        print(command)
+    db.execute(command)
+
 
 
 def arrayize(a, type_str="float"):
@@ -83,11 +86,12 @@ def nullize(x):
     return "NULL" if x is None else str(x)
 
 
-def notices_insert_into_extra_table(db, notices):
+def notices_insert_into_extra_table(db, notices, test_mode):
+    table_name_suffix = "_test" if test_mode else ""
     with db.dict_cursor() as cur:
         for notice in notices:
             price, price_low, price_high = notice.get_price_range()
-            cur.execute("INSERT INTO NoticesExtraData(notice_id, embedding, best_supplier,"
+            cur.execute("INSERT INTO NoticesExtras" + table_name_suffix + "(notice_id, embedding, best_supplier,"
                         + " best_similarity, candidates, similarities, price_est, price_est_low, price_est_high) VALUES ( "
                         + str(notice.idx) + ", " + arrayize(notice.embedding) + ", " + nullize(notice.best_supplier)
                         + ", " + nullize(notice.best_similarity) + ", " + arrayize(notice.candidates)
@@ -98,7 +102,7 @@ def notices_insert_into_extra_table(db, notices):
 def notices_find_candidates(notices):
     for notice in notices:
         if notice.idx % 1000 == 0:
-            print "progress:", notice.idx, len(notices)
+            print "progress:", notice.idx, len(notices)*3
         # If we do not know the winner already
         if notice.supplier is None:
             # try all other candidates, but keep only similar
@@ -116,8 +120,8 @@ def notices_find_candidates(notices):
     return notices
 
 
-def post_process_notices(db, test_mode):
-    notices_create_extra_table(db)
+def _post_process_notices(db, test_mode):
+    notices_create_extra_table(db, test_mode)
     text_embedder = embed.FakeTextEmbedder()
     ids = []
     texts = []
@@ -127,7 +131,7 @@ def post_process_notices(db, test_mode):
         test_mode_suffix = " LIMIT 100" if test_mode else ""
         cur.execute("""
             SELECT
-                id,
+                notice_id,
                 concat_ws(' ', title, short_description) as text,
                 supplier_eid,
                 total_final_value_amount as price
@@ -135,12 +139,19 @@ def post_process_notices(db, test_mode):
         """)
         for row in cur:
             notices.append(
-                Notice(row["id"],
+                Notice(row["notice_id"],
                        text_embedder.embed([row["text"]])[0],
                        row["supplier_eid"],
                        row["price"]))
     notices = notices_find_candidates(notices)
-    notices_insert_into_extra_table(db, notices)
+    notices_insert_into_extra_table(db, notices, test_mode)
+
+
+def _post_process_flags(db, test_mode):
+    """Precompute entity flags and address flags."""
+    path_script = os.path.join(
+        "prod_generation", "compute_entity_and_address_flags.sql")
+    utils.execute_script(db, path_script)
 
 
 def do_post_processing(db, test_mode=False):
@@ -159,7 +170,8 @@ def do_post_processing(db, test_mode=False):
           side effects is desired.
     """
     print('[OK] Postprocessing...')
-    post_process_notices(db, test_mode)
+    _post_process_flags(db, test_mode)
+    _post_process_notices(db, test_mode)
 
 
 def main(args_dict):
@@ -184,6 +196,7 @@ def main(args_dict):
 
     if test_mode:
         db.conn.rollback()
+        print('[OK] Rolled back changes (test mode).')
     else:
         db.commit()
     db.close()
