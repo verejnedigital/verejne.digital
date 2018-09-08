@@ -1,3 +1,4 @@
+"""Performs post processing on the latest prod schema."""
 import argparse
 import os
 import sys
@@ -8,9 +9,9 @@ from intelligence import embed
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../data/db')))
 from db import DatabaseConnection
 
-"""
-Script to run post processing on the latest prod schema.
-"""
+import utils
+
+
 class Notice:
     idx = None
     embedding = None
@@ -49,9 +50,9 @@ class Notice:
 
 
 def notices_create_extra_table(db, test_mode):
-    table_name_suffix = "_test" if test_mode else ""
     """Creates table NoticesExtras that will contain extra data."""
-    command = """ 
+    table_name_suffix = "_test" if test_mode else ""
+    command = """
         CREATE TABLE NoticesExtras""" + table_name_suffix + """ (
           id SERIAL PRIMARY KEY,
           notice_id INTEGER,
@@ -66,7 +67,8 @@ def notices_create_extra_table(db, test_mode):
         );
         CREATE INDEX ON NoticesExtras""" + table_name_suffix + """ (notice_id);
         """
-    print command    
+    if test_mode:
+        print(command)
     db.execute(command)
 
 
@@ -118,7 +120,7 @@ def notices_find_candidates(notices):
     return notices
 
 
-def post_process_notices(db, test_mode):
+def _post_process_notices(db, test_mode):
     notices_create_extra_table(db, test_mode)
     text_embedder = embed.FakeTextEmbedder()
     ids = []
@@ -145,6 +147,13 @@ def post_process_notices(db, test_mode):
     notices_insert_into_extra_table(db, notices, test_mode)
 
 
+def _post_process_flags(db, test_mode):
+    """Precompute entity flags and address flags."""
+    path_script = os.path.join(
+        "prod_generation", "compute_entity_and_address_flags.sql")
+    utils.execute_script(db, path_script)
+
+
 def do_post_processing(db, test_mode=False):
     """Performs post processing on the provided database `db`.
 
@@ -161,7 +170,8 @@ def do_post_processing(db, test_mode=False):
           side effects is desired.
     """
     print('[OK] Postprocessing...')
-    post_process_notices(db, test_mode)
+    _post_process_flags(db, test_mode)
+    _post_process_notices(db, test_mode)
 
 
 def main(args_dict):
@@ -186,6 +196,7 @@ def main(args_dict):
 
     if test_mode:
         db.conn.rollback()
+        print('[OK] Rolled back changes (test mode).')
     else:
         db.commit()
     db.close()
