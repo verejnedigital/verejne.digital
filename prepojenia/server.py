@@ -52,25 +52,35 @@ class MyServer(webapp2.RequestHandler):
     except:
       self.abort(400, detail='Could not parse start and/or end eIDs')
 
-  def _name_subgraph_vertices(self, subgraph):
-    """Endows vertices in a subgraph with entity names."""
+  def _add_entity_info_to_vertices(self, vertices):
+    """Endows vertices with information about their entities."""
 
     # No work to be done if the subgraph is empty. This is necessary
     # as PostgreSQL does not handle an empty WHERE IN clause.
-    if len(subgraph['vertices']) == 0:
+    if len(vertices) == 0:
       return
 
     db = webapp2.get_app().registry['db']
-    vertices_eids = [v['eid'] for v in subgraph['vertices']]
+    vertices_eids = [v['eid'] for v in vertices]
     q = """
-        SELECT id AS eid, name FROM entities
+        SELECT
+          entities.id AS eid,
+          entities.name,
+          entity_flags.trade_with_government AS trade_with_government,
+          entity_flags.political_entity AS political_entity,
+          entity_flags.contact_with_politics AS contact_with_politics
+        FROM entities
+        LEFT JOIN entity_flags ON entity_flags.eid=entities.id
         WHERE entities.id IN %s;
         """
     q_data = [tuple(vertices_eids)]
-    rows = db.query(q, q_data)
-    eid_to_name = {row['eid']: row['name'] for row in rows}
-    for vertex in subgraph['vertices']:
-      vertex['entity_name'] = eid_to_name[vertex['eid']]
+    eid_to_entity = {row['eid']: row for row in db.query(q, q_data)}
+    for vertex in vertices:
+      entity = eid_to_entity[vertex['eid']]
+      vertex['entity_name'] = entity['name']
+      for key in ['trade_with_government', 'political_entity',
+                  'contact_with_politics']:
+        vertex[key] = entity[key]
 
   def returnJSON(self,j):
     self.response.headers['Content-Type'] = 'application/json'
@@ -124,7 +134,7 @@ class Subgraph(MyServer):
       start, end, max_distance, tolerance)
 
     # Endow returning vertices with corresponding entity names:
-    self._name_subgraph_vertices(subgraph)
+    self._add_entity_info_to_vertices(subgraph['vertices'])
 
     self.returnJSON(subgraph)
 
@@ -153,7 +163,7 @@ class NotableConnections(MyServer):
       start, notable_eids, radius, max_explore, max_path_vertices)
 
     # Endow returning vertices with corresponding entity names:
-    self._name_subgraph_vertices(subgraph)
+    self._add_entity_info_to_vertices(subgraph['vertices'])
 
     self.returnJSON(subgraph)
 
