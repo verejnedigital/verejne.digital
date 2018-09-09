@@ -1,3 +1,5 @@
+"""Defines the class Relations, representing a graph of entities."""
+
 import collections
 import heapq
 import Queue
@@ -5,14 +7,20 @@ import random
 
 
 class Relations:
-  """Represents a collection of relations between Entities."""
+  """Represents a collection of relations between Entities.
+
+  The collection of relations is represented as a directed graph with
+  multiple edge types. Entities correspond to vertices of the graph,
+  and there is one directed edge set for each relationship type
+  between Entities.
+  """
 
   def __init__(self, edge_list):
     """Constructs a Relations object.
 
     Args:
-      edge_list: Python list of tuples (u, v, l) representing directed
-                 edges form u to v of length l.
+      edge_list: List of tuples (u, v, t) representing directed edges
+          from u to v of edge type t.
     """
 
     # Sort the edges lexicographically and for each source node store
@@ -118,7 +126,8 @@ class Relations:
     return path
 
   def _outgoing_edges(self, vertex):
-    """Returns an iterator over edges leaving from vertex."""
+    """Returns an iterator over edges leaving from `vertex`."""
+
     if vertex not in self.start_index:
       return
     from_index = self.start_index[vertex]
@@ -130,7 +139,8 @@ class Relations:
       yield edge
 
   def _neighbourhood_bfs(self, start, radius):
-    """Returns all vertices within radius steps from start."""
+    """Returns all vertices within `radius` steps from `start`."""
+
     queue = collections.deque((vertex, 0) for vertex in set(start))
     neighbourhood = {vertex: 0 for vertex in start}
     while len(queue) >= 1:
@@ -140,6 +150,83 @@ class Relations:
           neighbourhood[target] = distance + 1
           queue.appendleft((target, distance + 1))
     return neighbourhood
+
+  def _get_spanning_subgraph(self, vertices_eids):
+    """Returns dict describing subgraph spanned by `vertices_eids`."""
+
+    assert isinstance(vertices_eids, set)
+    vertices = [{'eid': eid} for eid in vertices_eids]
+    edges = [(vertex, target, edge_type)
+             for vertex in vertices_eids
+             for _, target, edge_type in self._outgoing_edges(vertex)
+             if target in vertices_eids]
+    return {'vertices': vertices, 'edges': edges}
+
+  def get_interesting_neighbourhood_subgraph(
+      self, start, interesting_eids, max_distance,
+      num_nodes_terminate):
+    """Returns a subgraph that is a neighbourhood of `start`.
+
+    Args:
+      start: Iterable of eIDs specifying the entities of interest
+          around which to search. Usually this will be a collection of
+          eIDs returned by a search for a name.
+      interesting_eids: Set of eIDs representing "interesting"
+          entities. Usually these will be political entities (known
+          politicians and political parties).
+      max_distance: Maximum distance form `start` to explore.
+      num_nodes_terminate: If the subgraph order reaches or exceeds
+          `num_nodes_terminate`, the exploration may terminate. The
+          distance currently being explored will be finished, however.
+    Returns:
+      Subgraph containing all nodes in `start` and all shortest paths
+      between `start` and `interesting_eids` that are within
+      `max_distance` from `start` (modulo the `num_nodes_terminate`
+      parameter, see above).
+    """
+
+    # Initialise search:
+    distance = {eid: 0 for eid in start}
+    included = set(start)
+    queue = [eid for eid in set(start)]
+    num_included = len(included)
+
+    # Iterate through the queue in FIFO order:
+    queue_index = 0
+    last_distance = 0
+    while queue_index < len(queue):
+      vertex = queue[queue_index]
+      vertex_distance = distance[vertex]
+
+      # If new distance is starting, determine the subgraph that
+      # would be returned if we terminated now:
+      if vertex_distance > last_distance:
+        for i in range(len(queue) - 1, -1, -1):
+          if queue[i] not in included:
+            for _, target, _ in self._outgoing_edges(queue[i]):
+              if (target in included) and (
+                  distance[target] == distance[queue[i]] + 1):
+                included.add(queue[i])
+                num_included += 1
+                break
+        if num_included >= num_nodes_terminate:
+          break
+
+      if vertex_distance >= max_distance:
+        break
+
+      # Continue processing current distance by appending unvisited
+      # neighbours to the queue.
+      for _, target, _ in self._outgoing_edges(vertex):
+        if target not in distance:
+          distance[target] = vertex_distance + 1
+          if target in interesting_eids:
+            included.add(target)
+          queue.append(target)
+
+      queue_index += 1
+
+    return self._get_spanning_subgraph(included)
 
   def subgraph(self, set_A, set_B, max_distance, tolerance):
     """Returns a subgraph containing connections between A and B.
@@ -171,7 +258,7 @@ class Relations:
     if dist_AB > max_distance:
       return {'vertices': [], 'edges': []}
 
-    # Determine subgraph's vertices (eIDs)
+    # Determine subgraph's vertices (eIDs):
     vertices_eids = set()
     vertices_eids.update(set_A)
     vertices_eids.update(set_B)
@@ -179,19 +266,9 @@ class Relations:
       if (v in dists_B) and (dists_A[v] + dists_B[v] <= dist_AB + tolerance):
         vertices_eids.add(v)
 
-    # Build vertices dictionary:
-    vertices = []
-    for eid in vertices_eids:
-      vertices.append({
-          'eid': eid,
-          'distance_from_A': dists_A.get(eid, None),
-          'distance_from_B': dists_B.get(eid, None),
-      })
-
-    # Build subgraph's edges
-    edges = []
-    for v1, v2, length in self.edges:
-      if (v1 in vertices_eids) and (v2 in vertices_eids):
-        edges.append((v1, v2, length))
-
-    return {'vertices': vertices, 'edges': edges}
+    # Build and return the spanning subgraph:
+    subgraph = self._get_spanning_subgraph(vertices_eids)
+    for vertex in subgraph['vertices']:
+      vertex['distance_from_A'] = dists_A.get(vertex['eid'], None)
+      vertex['distance_from_B'] = dists_B.get(vertex['eid'], None)
+    return subgraph

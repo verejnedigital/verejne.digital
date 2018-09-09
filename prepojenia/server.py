@@ -68,16 +68,43 @@ class Neighbourhood(MyServer):
 
 class Subgraph(MyServer):
   def get(self):
-    # Compute the subgraph to return:
-    start, end = self.parse_start_end()
     relations = webapp2.get_app().registry['relations']
-    max_distance = 4
-    tolerance = 1
-    response = relations.subgraph(start, end, max_distance, tolerance)
+    db = webapp2.get_app().registry['db']
+
+    # Compute the subgraph to return:
+    if 'eid2' in self.request.GET:
+      # If parameter eid2 is provided, return the subgraph between
+      # eid1 and eid2.
+      start, end = self.parse_start_end()
+      max_distance = 4
+      tolerance = 1
+      response = relations.subgraph(
+        start, end, max_distance, tolerance)
+    else:
+      # If parameter eid2 is not provided, compute an "interesting"
+      # neighbourhood subgraph around eid1.
+      try:
+        start = [int(x)
+                 for x in (self.request.GET['eid1'].split(','))[:50]]
+      except:
+        self.abort(400, detail='Could not parse parameter eid1.')
+
+      # Retrieve set of political entities:
+      rows = db.query("""
+          SELECT eid FROM entity_flags
+          WHERE political_entity=TRUE;
+      """)
+      interesting_eids = set(row["eid"] for row in rows)
+      print('[OK] Received %d interesting eIDs.' % (
+        len(interesting_eids)))
+
+      num_nodes_terminate = 20
+      max_distance = 4
+      response = relations.get_interesting_neighbourhood_subgraph(
+        start, interesting_eids, max_distance, num_nodes_terminate)
 
     # Endow returning vertices with corresponding entity names:
     if len(response['vertices']) >= 1:
-      db = webapp2.get_app().registry['db']
       vertices_eids = [v['eid'] for v in response['vertices']]
       q = """
           SELECT id AS eid, name FROM entities
