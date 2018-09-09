@@ -90,7 +90,8 @@ class TestHandlers(unittest.TestCase):
 def main():
     # Initialise app
     serving_directory = '/service/verejne_prod/data/'
-    server.initialise_app(serving_directory)
+    disable_old_database = True
+    server.initialise_app(serving_directory, disable_old_database)
 
     # Start unit tests
     unittest.main()
