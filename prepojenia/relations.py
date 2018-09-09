@@ -164,7 +164,7 @@ class Relations:
 
   def get_interesting_neighbourhood_subgraph(
       self, start, interesting_eids, max_distance,
-      num_nodes_terminate):
+      max_num_nodes_to_explore):
     """Returns a subgraph that is a neighbourhood of `start`.
 
     Args:
@@ -175,58 +175,60 @@ class Relations:
           entities. Usually these will be political entities (known
           politicians and political parties).
       max_distance: Maximum distance form `start` to explore.
-      num_nodes_terminate: If the subgraph order reaches or exceeds
-          `num_nodes_terminate`, the exploration may terminate. The
-          distance currently being explored will be finished, however.
+      max_num_nodes_to_explore: Maximum number of distinct nodes the
+          BFS will encounter before terminating. Tweak this parameter
+          to get sufficiently fast responses from the APIs.
     Returns:
       Subgraph containing all nodes in `start` and all shortest paths
       between `start` and `interesting_eids` that are within
-      `max_distance` from `start` (modulo the `num_nodes_terminate`
-      parameter, see above).
+      `max_distance` from `start` and BFS reaches them before
+      exhausing the budget of `max_num_nodes_to_explore`.
     """
 
     # Initialise search:
     distance = {eid: 0 for eid in start}
     included = set(start)
     queue = [eid for eid in set(start)]
-    num_included = len(included)
 
     # Iterate through the queue in FIFO order:
     queue_index = 0
     last_distance = 0
-    while queue_index < len(queue):
+    while (queue_index < len(queue)) and (
+        len(queue) < max_num_nodes_to_explore):
       vertex = queue[queue_index]
       vertex_distance = distance[vertex]
-
-      # If new distance is starting, determine the subgraph that
-      # would be returned if we terminated now:
-      if vertex_distance > last_distance:
-        for i in range(len(queue) - 1, -1, -1):
-          if queue[i] not in included:
-            for _, target, _ in self._outgoing_edges(queue[i]):
-              if (target in included) and (
-                  distance[target] == distance[queue[i]] + 1):
-                included.add(queue[i])
-                num_included += 1
-                break
-        if num_included >= num_nodes_terminate:
-          break
-
       if vertex_distance >= max_distance:
         break
 
-      # Continue processing current distance by appending unvisited
-      # neighbours to the queue.
+      # Iterate through unseen neighbours of `vertex`:
       for _, target, _ in self._outgoing_edges(vertex):
         if target not in distance:
           distance[target] = vertex_distance + 1
+
+          # If the newly discovered vertex is interesting, mark it:
           if target in interesting_eids:
             included.add(target)
-          queue.append(target)
+            queue.append(target)
+          # If the newly discovered vertex is not interesting itself,
+          # only add if not yet at maximum distance:
+          elif (vertex_distance + 1 < max_distance):
+            queue.append(target)
 
       queue_index += 1
 
-    return self._get_spanning_subgraph(included)
+    # Flag vertices on shortest paths to interesting entities:
+    for i in range(len(queue) - 1, -1, -1):
+      if queue[i] not in included:
+        for _, target, _ in self._outgoing_edges(queue[i]):
+          if (target in included) and (
+              distance[target] == distance[queue[i]] + 1):
+            included.add(queue[i])
+            break
+
+    subgraph = self._get_spanning_subgraph(included)
+    for vertex in subgraph['vertices']:
+      vertex['distance'] = distance[vertex['eid']]
+    return subgraph
 
   def subgraph(self, set_A, set_B, max_distance, tolerance):
     """Returns a subgraph containing connections between A and B.
