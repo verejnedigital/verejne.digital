@@ -60,23 +60,27 @@ class TestHandlers(unittest.TestCase):
   def test_subgraph(self):
     url = '/subgraph?eid1=3264887&eid2=706143,1184394,1662599,1703776,2349437,3135421'
     content = _request_json(url, self)
-    print('Subgraph:\n%s' % (content))
-    self.assertTrue(content)
+    self.assertIsInstance(content, dict)
+    self.assertTrue('vertices' in content)
+    self.assertTrue('edges' in content)
+    print('Subgraph (|V|=%d, |E|=%d):\n%s' % (
+      len(content['vertices']), len(content['edges']), content))
 
-  def test_interesting_neighbourhood_subgraph(self):
-    url = '/subgraph?eid1=294113'
+  def test_notable_connections(self):
+    url = '/notable_connections?eid=294113'
     content = _request_json(url, self)
     self.assertIsInstance(content, dict)
     self.assertTrue('vertices' in content)
     self.assertTrue('edges' in content)
-    print('Subgraph with %d vertices and %d edges:\n%s' % (
+    print('NotableConnections subgraph (|V|=%d, |E|=%d):\n%s' % (
       len(content['vertices']), len(content['edges']), content))
 
 
 def main():
   max_relations_to_load = 123456789
+  disable_old_database = True
 
-  server.initialise_app(max_relations_to_load)
+  server.initialise_app(max_relations_to_load, disable_old_database)
   unittest.main()
 
 

@@ -162,39 +162,39 @@ class Relations:
              if target in vertices_eids]
     return {'vertices': vertices, 'edges': edges}
 
-  def get_interesting_neighbourhood_subgraph(
-      self, start, interesting_eids, max_distance,
-      max_num_nodes_to_explore):
+  def get_notable_connections_subgraph(
+      self, start, notable_eids, max_distance,
+      max_nodes_to_explore, max_path_vertices):
     """Returns a subgraph that is a neighbourhood of `start`.
 
     Args:
       start: Iterable of eIDs specifying the entities of interest
           around which to search. Usually this will be a collection of
           eIDs returned by a search for a name.
-      interesting_eids: Set of eIDs representing "interesting"
-          entities. Usually these will be political entities (known
-          politicians and political parties).
+      notable_eids: Set of eIDs representing "notable" entities.
+          Usually these will be political entities (known politicians
+          and political parties).
       max_distance: Maximum distance form `start` to explore.
-      max_num_nodes_to_explore: Maximum number of distinct nodes the
-          BFS will encounter before terminating. Tweak this parameter
-          to get sufficiently fast responses from the APIs.
+      max_nodes_to_explore: Maximum number of distinct nodes the BFS
+          will encounter before terminating. Tweak this parameter to
+          get sufficiently fast responses from the APIs.
+      max_path_vertices: Maximum number of vertices to include that
+          are neither in `start`, nor "notable."
     Returns:
       Subgraph containing all nodes in `start` and all shortest paths
-      between `start` and `interesting_eids` that are within
-      `max_distance` from `start` and BFS reaches them before
-      exhausing the budget of `max_num_nodes_to_explore`.
+      between `start` and `notable_eids` that are within
+      `max_distance` from `start`, up to the constraints imposed by
+      the `max_nodes_to_explore` and `max_path_vertices` parameters.
     """
 
     # Initialise search:
     distance = {eid: 0 for eid in start}
-    included = set(start)
     queue = [eid for eid in set(start)]
 
     # Iterate through the queue in FIFO order:
     queue_index = 0
-    last_distance = 0
     while (queue_index < len(queue)) and (
-        len(queue) < max_num_nodes_to_explore):
+        len(queue) < max_nodes_to_explore):
       vertex = queue[queue_index]
       vertex_distance = distance[vertex]
       if vertex_distance >= max_distance:
@@ -204,30 +204,47 @@ class Relations:
       for _, target, _ in self._outgoing_edges(vertex):
         if target not in distance:
           distance[target] = vertex_distance + 1
-
-          # If the newly discovered vertex is interesting, mark it:
-          if target in interesting_eids:
-            included.add(target)
-            queue.append(target)
-          # If the newly discovered vertex is not interesting itself,
-          # only add if not yet at maximum distance:
-          elif (vertex_distance + 1 < max_distance):
-            queue.append(target)
+          queue.append(target)
+          if len(queue) == max_nodes_to_explore:
+            break
 
       queue_index += 1
 
-    # Flag vertices on shortest paths to interesting entities:
+    # Flag vertices on shortest paths to "notable" entities:
+    on_shortest_path = set()
     for i in range(len(queue) - 1, -1, -1):
-      if queue[i] not in included:
-        for _, target, _ in self._outgoing_edges(queue[i]):
-          if (target in included) and (
-              distance[target] == distance[queue[i]] + 1):
-            included.add(queue[i])
+      vertex = queue[i]
+      if vertex not in on_shortest_path:
+        # Check if `vertex` itself is notable:
+        if vertex in notable_eids:
+          on_shortest_path.add(vertex)
+          continue
+        # Check if `vertex` is on a shortest path to a notable eid:
+        for _, target, _ in self._outgoing_edges(vertex):
+          if (target in on_shortest_path) and (
+              distance[target] == distance[vertex] + 1):
+            on_shortest_path.add(vertex)
             break
 
-    subgraph = self._get_spanning_subgraph(included)
+    # Determine vertices to be included in the subgraph:
+    subgraph_vertices = set(start)
+    for vertex in queue:
+      if vertex in notable_eids:
+        subgraph_vertices.add(vertex)
+    num_path_vertices = 0
+    for vertex in queue:
+      if (vertex not in subgraph_vertices) and (
+          vertex in on_shortest_path):
+        subgraph_vertices.add(vertex)
+        num_path_vertices += 1
+        if num_path_vertices >= max_path_vertices:
+          break
+
+    # Construct and return the subgraph:
+    subgraph = self._get_spanning_subgraph(subgraph_vertices)
     for vertex in subgraph['vertices']:
       vertex['distance'] = distance[vertex['eid']]
+      vertex['notable'] = vertex['eid'] in notable_eids
     return subgraph
 
   def subgraph(self, set_A, set_B, max_distance, tolerance):
