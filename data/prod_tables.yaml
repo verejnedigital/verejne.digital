@@ -230,19 +230,3 @@
                        CREATE INDEX ON ProfilMapping(profil_id);
                        CREATE UNIQUE INDEX ON ProfilMapping(eid, profil_id);
                     "
-
-post_processing_1_trade_with_government:
-    source_schema: ""
-    command: "select offset 1"
-    tables:
-        TradeWithGovernment:
-            columns: []
-            create_command: "
-                       CREATE TABLE TradeWithGovernment AS
-                       select distinct address_id from entities where id in (
-                           select supplier_eid from Notices union
-                           select supplier_eid from Contracts union
-                           select eid from EUFunds
-                       );
-                       CREATE INDEX ON TradeWithGovernment(address_id);
-                    "

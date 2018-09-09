@@ -63,6 +63,15 @@ class TestHandlers(unittest.TestCase):
     print('Subgraph:\n%s' % (content))
     self.assertTrue(content)
 
+  def test_interesting_neighbourhood_subgraph(self):
+    url = '/subgraph?eid1=294113'
+    content = _request_json(url, self)
+    self.assertIsInstance(content, dict)
+    self.assertTrue('vertices' in content)
+    self.assertTrue('edges' in content)
+    print('Subgraph with %d vertices and %d edges:\n%s' % (
+      len(content['vertices']), len(content['edges']), content))
+
 
 def main():
   max_relations_to_load = 123456789
