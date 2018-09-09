@@ -98,10 +98,10 @@ class Subgraph(MyServer):
       print('[OK] Received %d interesting eIDs.' % (
         len(interesting_eids)))
 
-      num_nodes_terminate = 20
-      max_distance = 4
+      max_distance = 5
+      max_nodes_to_explore = 5000
       response = relations.get_interesting_neighbourhood_subgraph(
-        start, interesting_eids, max_distance, num_nodes_terminate)
+        start, interesting_eids, max_distance, max_nodes_to_explore)
 
     # Endow returning vertices with corresponding entity names:
     if len(response['vertices']) >= 1:
