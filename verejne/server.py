@@ -318,23 +318,28 @@ app = webapp2.WSGIApplication([
 ], debug=False)
 
 
-def initialise_app(serving_directory):
-    """ Procedure for initialising the app with precomputed values that
-        are shared across different requests. The registry property is
-        intended for this purpose, in order to avoid global variables.
+def initialise_app(serving_directory, disable_old_database=False):
+    """Precomputes values shared across requests to this app.
+
+    The registry property is intended for storing these precomputed
+    values, so as to avoid global variables.
     """
 
-    # database
+    # Connect to the database:
     db = DatabaseConnection(path_config='db_config.yaml')
     schema = db.get_latest_schema('prod_')
     db.execute('SET search_path to ' + schema + ';')
     app.registry['db'] = db
 
-    # data_sources
+    # For faster unit testing:
+    if disable_old_database:
+        return
+
+    # Load (old) data sources:
     data_sources = yaml_load('datasources.yaml')
     app.registry['data_sources'] = data_sources
 
-    # entities
+    # Load (old) entities:
     entities = Entities()
     entities.loadFromDirectory(serving_directory)
     app.registry['entities'] = entities
@@ -356,11 +361,13 @@ def main(args_dict):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--listen',
-                        default='127.0.0.1:8080',
-                        help='host:port to listen on')
-    parser.add_argument('--serving_directory',
-                        default='/data/www/verejne.digital/serving/prod/',
-                        help='Directory with serving data')
+    parser.add_argument(
+        '--listen',
+        default='127.0.0.1:8080',
+        help='host:port to listen on')
+    parser.add_argument(
+        '--serving_directory',
+        default='/data/www/verejne.digital/serving/prod/',
+        help='Directory with serving data')
     args_dict = vars(parser.parse_args())
     main(args_dict)
