@@ -90,6 +90,8 @@ const EntitySearchAutocomplete = ({
           placeholder: FIND_ENTITY_TITLE,
         }}
         renderMenu={function(items, value, style) {
+          // this.menuStyle is react-autocomplete's default
+          // we're using menuStyle to partially override it
           return <div className="menu" style={{...style, ...this.menuStyle, ...menuStyle}} children={items} />
         }}
       />
