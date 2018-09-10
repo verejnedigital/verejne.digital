@@ -29,6 +29,11 @@ export const ModalLoading = () => (
     {console.log(LOADING_CIRCLE_COLOR)}
   </div>
 )
+export const GraphLoading = () => (
+  <div className="loading-graph">
+    <LoadingComponent type="tail_spin" width={250} height={250} fill={LOADING_CIRCLE_COLOR} />
+  </div>
+)
 export default defaultProps({
   width: 250,
   height: 250,
