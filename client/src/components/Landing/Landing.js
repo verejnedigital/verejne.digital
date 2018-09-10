@@ -55,7 +55,7 @@ const Landing = () => (
     <footer className="landing-footer">
       <div className="container">
 
-        <div className="float-md-left">
+        <div className="float-lg-left">
           <ul className="list-inline landing-footer-text">
             <li className="list-inline-item list-inline-item-text">
               <a
@@ -77,41 +77,44 @@ const Landing = () => (
             </li>
           </ul>
         </div>
-        <div className="float-md-right">
-          <span className="gray"> Partneri projektu </span>
+        <div className="float-lg-right">
           <ul className="list-inline">
             <li className="list-inline-item">
-              <a href="https://www.zastavmekorupciu.sk/">
-                <img src="/nzk.png" alt="Nadácia Zastavme Korupciu" />
-              </a>
+              <span className="gray"> Partneri projektu </span>
+              <ul className="list-inline">
+                <li className="list-inline-item">
+                  <a href="https://www.zastavmekorupciu.sk/">
+                    <img src="/nzk.png" alt="Nadácia Zastavme Korupciu" />
+                  </a>
+                </li>
+                <li className="list-inline-item">
+                  <a href="https://slovensko.digital/">
+                    <img src="/slovenko.png" alt="slovenko.digital" />
+                  </a>
+                </li>
+                <li className="list-inline-item">
+                  <a href="https://www.finstat.sk/">
+                    <img src="/finstat.png" alt="FinStat" />
+                  </a>
+                </li>
+                <li className="list-inline-item">
+                  <a href="https://vacuumlabs.com/">
+                    <img src="/vl.png" alt="VacuumLabs" />
+                  </a>
+                </li>
+              </ul>
             </li>
             <li className="list-inline-item">
-              <a href="https://slovensko.digital/">
-                <img src="/slovenko.png" alt="slovenko.digital" />
-              </a>
-            </li>
-            <li className="list-inline-item">
-              <a href="https://www.finstat.sk/">
-                <img src="/finstat.png" alt="FinStat" />
-              </a>
-            </li>
-            <li className="list-inline-item">
-              <a href="https://vacuumlabs.com/">
-                <img src="/vl.png" alt="VacuumLabs" />
-              </a>
+              <span className="gray"> Prevádzkovateľ: </span>
+              <ul className="list-inline">
+                <li className="list-inline-item">
+                  <a href="http://chcemvediet.sk" target="_blank" rel="noopener noreferrer">
+                    <img src="/chv.png" alt="chcemvediet.sk" />
+                  </a>
+                </li>
+              </ul>
             </li>
           </ul>
-          <div className="prevadzkovatel gray">
-            Prevádzkovateľ:
-            <br />
-            <a
-              href="http://chcemvediet.sk"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <img className="prevadzkovatel-logo" src="/chv.png" alt="chcemvediet.sk" />
-            </a>
-          </div>
         </div>
       </div>
     </footer>
