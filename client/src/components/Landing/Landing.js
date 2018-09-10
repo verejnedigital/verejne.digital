@@ -54,8 +54,7 @@ const Landing = () => (
     </Container>
     <footer className="landing-footer">
       <div className="container">
-
-        <div className="float-lg-left">
+        <div className="float-md-left">
           <ul className="list-inline landing-footer-text">
             <li className="list-inline-item list-inline-item-text">
               <a
