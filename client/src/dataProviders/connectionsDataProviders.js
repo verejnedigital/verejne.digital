@@ -1,6 +1,8 @@
 // @flow
+import React from 'react'
 import type {Dispatch} from '../types/reduxTypes'
 import {receiveData} from '../actions/sharedActions'
+import {GraphLoading} from '../components/Loading/Loading'
 
 const dispatchConnectionData = (eid1: number | number[], eid2: number | number[]) => (
   ref: string,
@@ -60,4 +62,5 @@ export const connectionSubgraphProvider = (
   ],
   onData: [dispatchSubgraphData, eid1, eid2, transformer],
   keepAliveFor: 60 * 60 * 1000,
+  loadingComponent: <GraphLoading />,
 })
