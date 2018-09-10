@@ -18,6 +18,7 @@
     "qs": "^6.5.2",
     "rc-drawer": "^1.7.3",
     "react": "^16.3.2",
+    "react-autocomplete": "^1.8.1",
     "react-dom": "^16.3.2",
     "react-graph-vis": "^1.0.2",
     "react-icons": "^2.2.7",

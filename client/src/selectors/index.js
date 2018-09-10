@@ -263,6 +263,18 @@ export const entitySearchEidsSelector = createSelector(
   entitySearchForSelector,
   (searches, query): Array<number> => (searches[query] && searches[query].eids) || []
 )
+export const entitySearchSuggestionEidsSelector = createSelector(
+  entitySearchesSelector,
+  entitySearchValueSelector,
+  (searches, query): Array<number> => (searches[query] && searches[query].eids) || []
+)
+export const entitySearchSuggestionsSelector = createSelector(
+  allEntityDetailsSelector,
+  entitySearchSuggestionEidsSelector,
+  (details, eids): Array<NewEntityDetail> => {
+    return eids.map((eid) => ({eid, ...details[eid]}))
+  }
+)
 
 export const drawerOpenSelector = (state: State) => state.publicly.drawerOpen
 export const selectedLocationSelector = (state: State) => state.publicly.selectedLocation
