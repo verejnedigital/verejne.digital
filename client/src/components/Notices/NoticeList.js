@@ -7,7 +7,6 @@ import {withRouter} from 'react-router-dom'
 import {withDataProviders} from 'data-provider'
 import {noticesProvider} from '../../dataProviders/noticesDataProviders'
 import {
-  newestBulletinDateSelector,
   dateSortedNoticesSelector,
   noticesLengthSelector,
   locationSearchSelector,
@@ -30,17 +29,16 @@ export type NoticesOrdering = 'title' | 'date'
 
 export type NoticeListProps = {
   dispatch: Dispatch,
-  newestBulletinDate: string,
   dateSortedNotices: Array<Notice>,
   noticesLength: number,
   query: Object,
   searchValue: string,
-  updateSearchValue: () => void,
+  updateSearchValue: (e: Event) => void,
+  updateValue: (Array<string>, string) => void,
 } & ContextRouter
 
 const NoticeList = ({
   dispatch,
-  newestBulletinDate,
   dateSortedNotices,
   noticesLength,
   location,
@@ -48,13 +46,14 @@ const NoticeList = ({
   query,
   searchValue,
   updateSearchValue,
+  updateValue,
 }: NoticeListProps) => {
   let items = []
   if (dateSortedNotices.length > 0) {
     items = groupBy(dateSortedNotices, (item) => `${item.bulletin_number}/${item.bulletin_year}`)
   }
 
-  const plurality = (count) => {
+  const plurality = (count: number): string => {
     if (count === 1) {
       return `Nájdený ${count} výsledok`
     } else if (count > 1 && count < 5) {
@@ -85,7 +84,7 @@ const NoticeList = ({
                 items={bulletin}
                 number={bulletin[0].bulletin_number}
                 year={bulletin[0].bulletin_year}
-                date={bulletin[0].bulletin_date}
+                date={bulletin[0].bulletin_published_on}
               />
             ))}
         </Col>
@@ -100,15 +99,17 @@ export default compose(
     (state: State, props: NoticeListProps) => ({
       dateSortedNotices: dateSortedNoticesSelector(state, props),
       noticesLength: noticesLengthSelector(state, props),
-      newestBulletinDate: newestBulletinDateSelector(state, props),
       query: locationSearchSelector(state, props),
       searchValue: noticesSearchQuerySelector(state),
     }),
     {updateValue}
   ),
   withHandlers({
-    updateSearchValue: (props) => (e) => {
-      props.updateValue(['notices', 'searchQuery'], e.target.value)
+    updateSearchValue: (props: NoticeListProps) => (e: Event) => {
+      const {target} = e
+      if (target instanceof HTMLInputElement) {
+        props.updateValue(['notices', 'searchQuery'], target.value)
+      }
       if (props.history.location.search !== '') props.history.push({})
     },
   }),

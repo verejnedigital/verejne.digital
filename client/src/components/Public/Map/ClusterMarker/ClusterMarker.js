@@ -48,7 +48,7 @@ const ClusterMarker = ({
     'simple-marker': cluster.isLabel,
     'company-marker': cluster.numPoints === 1,
     'cluster-marker': cluster.numPoints > 1,
-    'government': !cluster.isLabel && cluster.points[0].tradewithgovernment,
+    'government': !cluster.isLabel && cluster.points[0].trade_with_government,
   })
   const children = cluster.numPoints === 1
     ? <FaIconCircle size="18" />

@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+"""Runs the server for backend application `prepojenia`."""
 import argparse
 import json
 import os
@@ -13,12 +14,34 @@ from db import DatabaseConnection
 from relations import Relations
 
 
-# All individual hooks inherit from this class
-# Actual work of subclasses is done in method get
 class MyServer(webapp2.RequestHandler):
-  def returnJSON(self,j):
-    self.response.headers['Content-Type'] = 'application/json'
-    self.response.write(json.dumps(j, separators=(',',':')))
+  """Abstract request handler, to be subclasses by server hooks."""
+
+  def get(self):
+    """Implements actual hook logic and responds to requests."""
+    raise NotImplementedError('Must implement method `get`.')
+
+  def _parse_int(self, parameter, default=None):
+    """Attempts to parse an integer GET `parameter`."""
+    if default and (parameter not in self.request.GET):
+      return default
+    try:
+      value = int(self.request.GET[parameter])
+    except:
+      self.abort(400, detail='Could not parse param `%s` as int' % (
+        parameter))
+    return value
+
+  def _parse_eid_list(self, parameter, limit=50):
+    """Parses eids from comma-separated GET string `parameter`."""
+    try:
+      eids = [
+        int(x)
+        for x in (self.request.GET[parameter].split(','))[:limit]
+      ]
+    except:
+      self.abort(400, detail='Could not parse %s' % (parameter))
+    return eids
 
   def parse_start_end(self):
     """Parses parameters from comma-separated integer list format."""
@@ -28,6 +51,40 @@ class MyServer(webapp2.RequestHandler):
       return start, end
     except:
       self.abort(400, detail='Could not parse start and/or end eIDs')
+
+  def _add_entity_info_to_vertices(self, vertices):
+    """Endows vertices with information about their entities."""
+
+    # No work to be done if the subgraph is empty. This is necessary
+    # as PostgreSQL does not handle an empty WHERE IN clause.
+    if len(vertices) == 0:
+      return
+
+    db = webapp2.get_app().registry['db']
+    vertices_eids = [v['eid'] for v in vertices]
+    q = """
+        SELECT
+          entities.id AS eid,
+          entities.name,
+          entity_flags.trade_with_government AS trade_with_government,
+          entity_flags.political_entity AS political_entity,
+          entity_flags.contact_with_politics AS contact_with_politics
+        FROM entities
+        LEFT JOIN entity_flags ON entity_flags.eid=entities.id
+        WHERE entities.id IN %s;
+        """
+    q_data = [tuple(vertices_eids)]
+    eid_to_entity = {row['eid']: row for row in db.query(q, q_data)}
+    for vertex in vertices:
+      entity = eid_to_entity[vertex['eid']]
+      vertex['entity_name'] = entity['name']
+      for key in ['trade_with_government', 'political_entity',
+                  'contact_with_politics']:
+        vertex[key] = entity[key]
+
+  def returnJSON(self,j):
+    self.response.headers['Content-Type'] = 'application/json'
+    self.response.write(json.dumps(j, separators=(',',':')))
 
 
 class Connection(MyServer):
@@ -56,40 +113,59 @@ class ShortestPath(MyServer):
 
 class Neighbourhood(MyServer):
   def get(self):
-    try:
-      start = [int(x) for x in (self.request.GET['eid'].split(','))[:50]]
-      cap = int(self.request.GET['cap'])
-    except:
-      self.abort(400, detail='Could not parse parameters')
+    start = self._parse_eid_list('eid')
+    cap = self._parse_int('cap')
     relations_old = webapp2.get_app().registry['relations_old']
-    response = relations_old.dijkstra(start, [], cap=cap, return_all=True)
+    response = relations_old.dijkstra(
+      start, [], cap=cap, return_all=True)
     self.returnJSON(response)
 
 
 class Subgraph(MyServer):
   def get(self):
-    # Compute the subgraph to return:
-    start, end = self.parse_start_end()
     relations = webapp2.get_app().registry['relations']
+
+    # Compute the subgraph to return:
+    start = self._parse_eid_list('eid1')
+    end = self._parse_eid_list('eid2')
     max_distance = 4
     tolerance = 1
-    response = relations.subgraph(start, end, max_distance, tolerance)
+    subgraph = relations.subgraph(
+      start, end, max_distance, tolerance)
 
     # Endow returning vertices with corresponding entity names:
-    if len(response['vertices']) >= 1:
-      db = webapp2.get_app().registry['db']
-      vertices_eids = [v['eid'] for v in response['vertices']]
-      q = """
-          SELECT id AS eid, name FROM entities
-          WHERE entities.id IN %s;
-          """
-      q_data = [tuple(vertices_eids)]
-      rows = db.query(q, q_data)
-      eid_to_name = {row['eid']: row['name'] for row in rows}
-      for vertex in response['vertices']:
-        vertex['entity_name'] = eid_to_name[vertex['eid']]
+    self._add_entity_info_to_vertices(subgraph['vertices'])
 
-    self.returnJSON(response)
+    self.returnJSON(subgraph)
+
+
+class NotableConnections(MyServer):
+  """Returns subgraphs of connections to "notable" entities."""
+
+  def get(self):
+    relations = webapp2.get_app().registry['relations']
+    notable_eids = webapp2.get_app().registry['notable_eids']
+
+    # Parse URL parameters:
+    start = self._parse_eid_list('eid')
+    radius = self._parse_int('radius', default=5)
+    max_explore = self._parse_int('max_explore', default=5000)
+    max_path_vertices = self._parse_int('max_path_vertices',
+                                        default=20)
+
+    max_explore_limit = 100000
+    if max_explore > max_explore_limit:
+      self.abort(400, detail='Param `max_explore` must be <= %d' % (
+        max_explore_limit))
+
+    # Build subgraph of connections to notable entities:
+    subgraph = relations.get_notable_connections_subgraph(
+      start, notable_eids, radius, max_explore, max_path_vertices)
+
+    # Endow returning vertices with corresponding entity names:
+    self._add_entity_info_to_vertices(subgraph['vertices'])
+
+    self.returnJSON(subgraph)
 
 
 app = webapp2.WSGIApplication([
@@ -98,21 +174,12 @@ app = webapp2.WSGIApplication([
     ('/shortest', ShortestPath),
     ('/neighbourhood', Neighbourhood),
     ('/subgraph', Subgraph),
+    ('/notable_connections', NotableConnections),
 ], debug=False)
 
 
-def initialise_app(max_relations_to_load):
-  """Precomputes values shared across requests to this app.
-
-  The registry property is intended for storing these precomputed
-  values, so as to avoid global variables.
-  """
-
-  # Connect to the database:
-  db = DatabaseConnection(path_config='db_config.yaml')
-  schema = db.get_latest_schema('prod_')
-  db.execute('SET search_path to ' + schema + ';')
-  app.registry['db'] = db
+def _initialise_relations(db, max_relations_to_load):
+  """Returns Relations object build from edges in database `db`."""
 
   # Retrieve list of relationship edges:
   q = """
@@ -128,10 +195,44 @@ def initialise_app(max_relations_to_load):
       (row['eid'], row['eid_relation'], +1 * edge_type))
     edge_list.append(
       (row['eid_relation'], row['eid'], -1 * edge_type))
+  print('[OK] Received %d edges.' % (len(edge_list)))
 
-  # Construct Relations object from the edge list:
-  relations = Relations(edge_list)
-  app.registry['relations'] = relations
+  # Construct and return Relations object from the edge list:
+  return Relations(edge_list)
+
+
+def _initialise_notable_eids(db):
+  """Returns set of eids corresponding to "notable" entities."""
+
+  rows = db.query("""
+      SELECT eid FROM entity_flags
+      WHERE political_entity=TRUE;
+  """)
+  notable_eids = set(row["eid"] for row in rows)
+  print('[OK] Received %d notable eIDs.' % (len(notable_eids)))
+  return notable_eids
+
+
+def initialise_app(max_relations_to_load, disable_old_database=False):
+  """Precomputes values shared across requests to this app.
+
+  The registry property is intended for storing these precomputed
+  values, so as to avoid global variables.
+  """
+
+  # Connect to the database:
+  db = DatabaseConnection(path_config='db_config.yaml')
+  schema = db.get_latest_schema('prod_')
+  db.execute('SET search_path to ' + schema + ';')
+  app.registry['db'] = db
+
+  app.registry['relations'] = _initialise_relations(
+    db, max_relations_to_load)
+  app.registry['notable_eids'] = _initialise_notable_eids(db)
+
+  # TEMP: For faster unit testing:
+  if disable_old_database:
+    return
 
   # TEMP: Construct Relations using old database data:
   db_old = DatabaseConnection(path_config='db_config_old.yaml', search_path='mysql')

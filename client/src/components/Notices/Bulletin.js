@@ -1,3 +1,4 @@
+// @flow
 import React from 'react'
 import './Legend.css'
 import './LegendSymbols.css'
@@ -30,14 +31,14 @@ const Bulletin = ({items, number, year, date}: Props) => (
     <Table responsive className="bulletin-table">
       <thead>
         <tr>
-          <th />
           <th>Názov obstarávania</th>
           <th>Objednávateľ</th>
           <th>Kto by sa mal prihlásiť</th>
+          <th>Výherca</th>
           <th className="text-right">Pod.</th>
         </tr>
       </thead>
-      <tbody>{items.map((item) => <NoticeItem key={item.id} item={item} />)}</tbody>
+      <tbody>{items.map((item) => <NoticeItem key={item.notice_id} item={item} />)}</tbody>
     </Table>
   </div>
 )

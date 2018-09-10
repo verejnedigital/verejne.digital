@@ -1,7 +1,8 @@
+// @flow
 import React, {Fragment} from 'react'
 import './LegendSymbols.css'
 import {getWarning} from './utilities'
-import {formatSimilarCount, formatSimilarPercent} from './LegendSymbols'
+import {formatSimilarPercent} from './LegendSymbols'
 import CompanyDetails from '../shared/CompanyDetails'
 import {Link} from 'react-router-dom'
 import {compose, withState, withHandlers} from 'recompose'
@@ -12,39 +13,64 @@ import './NoticeItem.css'
 
 type Props = {|
   item: Notice,
-  toggledOn: boolean,
-  toggle: (e: Event) => void,
+  showSupplierInfo: boolean,
+  showCustomerInfo: boolean,
+  toggleSupplier: () => void,
+  toggleCustomer: () => void,
 |}
-const _NoticeItem = ({item, toggledOn, toggle}: Props) => {
-  const {kandidati} = item
-  const similarity = kandidati.length > 0 ? Math.round(kandidati[0].score * 100) : '?'
-  const showCompanyDetail = toggledOn && kandidati[0].eid
-
+const _NoticeItem = ({
+  item,
+  showSupplierInfo,
+  showCustomerInfo,
+  toggleSupplier,
+  toggleCustomer,
+}: Props) => {
   return (
     <Fragment>
       <tr className="notice-item">
-        <td className="text-right notice-item-count">{formatSimilarCount(kandidati.length)}</td>
         <td className="notice-item-title">
-          <Link title={item.title} className="nowrap-ellipsis" to={`/obstaravania/${item.id}`}>
-            {item.title}
-          </Link>{' '}
-          {getWarning(item)}
+          <Link
+            title={item.title}
+            className="nowrap-ellipsis"
+            to={`/obstaravania/${item.notice_id}`}
+          >
+            {getWarning(item)} {item.title}
+          </Link>
         </td>
         <td>
-           <span title={item.customer}>{item.customer}</span>
-        </td>
-        <td>
-          <a className="notice-item-link" onClick={toggle}>
-            {showCompanyDetail ? <span>[&minus;]</span> : '[+]'}{' '}
-            {kandidati[0].name ? kandidati[0].name : '?'}
+          <a className="notice-item-link" onClick={toggleCustomer}>
+            {showCustomerInfo ? <span>[&minus;]</span> : '[+]'} {item.name}
           </a>
         </td>
-        <td className="text-right">{formatSimilarPercent(similarity)}</td>
+        <td>
+          {item.best_supplier_name && (
+            <a className="notice-item-link" onClick={toggleSupplier}>
+              {showSupplierInfo ? <span>[&minus;]</span> : '[+]'} {item.best_supplier_name}
+            </a>
+          )}
+        </td>
+        <td>
+          {item.supplier_name && (
+            <a className="notice-item-link" onClick={toggleSupplier}>
+              {showSupplierInfo ? <span>[&minus;]</span> : '[+]'} {item.supplier_name}
+            </a>
+          )}
+        </td>
+        <td className="text-right">
+          {item.best_similarity ? formatSimilarPercent(Math.round(item.best_similarity * 100)) : ''}
+        </td>
       </tr>
-      {showCompanyDetail && (
+      {showSupplierInfo && (
         <tr>
           <td colSpan={5}>
-            <CompanyDetails eid={kandidati[0].eid} />
+            <CompanyDetails eid={item.supplier_eid || item.best_supplier} useNewApi />
+          </td>
+        </tr>
+      )}
+      {showCustomerInfo && (
+        <tr>
+          <td colSpan={5}>
+            <CompanyDetails eid={item.eid} useNewApi />
           </td>
         </tr>
       )}
@@ -53,8 +79,10 @@ const _NoticeItem = ({item, toggledOn, toggle}: Props) => {
 }
 
 export default compose(
-  withState('toggledOn', 'toggle', false),
+  withState('showSupplierInfo', 'setSupplier', false),
+  withState('showCustomerInfo', 'setCustomer', false),
   withHandlers({
-    toggle: ({toggle}) => (e) => toggle((current) => !current),
+    toggleSupplier: ({setSupplier}) => () => setSupplier((current) => !current),
+    toggleCustomer: ({setCustomer}) => () => setCustomer((current) => !current),
   })
 )(_NoticeItem)

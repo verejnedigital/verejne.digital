@@ -43,20 +43,20 @@ const PlacesAutocomplete = (props: Props) => {
               autoFocus: true,
             })}
           />
-          <div className="autocomplete__suggestions">
-            {suggestions.map((suggestion, i) => {
+          {suggestions.length > 0 && <div className="autocomplete__suggestions">
+            {suggestions.map((suggestion) => {
               const className = classnames(
                 'autocomplete__suggestions__item',
                 suggestion.active && 'autocomplete__suggestions__item--active'
               )
               return (
-                <div {...getSuggestionItemProps(suggestion, {className})} key={i}>
+                <div {...getSuggestionItemProps(suggestion, {className})} key={suggestion.id}>
                   <strong>{suggestion.formattedSuggestion.mainText}</strong>{' '}
                   <small>{suggestion.formattedSuggestion.secondaryText}</small>
                 </div>
               )
             })}
-          </div>
+          </div>}
         </div>
       )}
     </GoogleAutocomplete>

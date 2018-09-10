@@ -309,10 +309,16 @@ def get_GetInfos(db, eIDs):
     # Query the database for basic entity information:
     q = """
         SELECT
-          entities.id AS eid, entities.name, address.lat, address.lng, address.address
+          entities.id AS eid, entities.name AS name,
+          address.lat, address.lng, address.address,
+          entity_flags.trade_with_government AS trade_with_government,
+          entity_flags.political_entity AS political_entity,
+          entity_flags.contact_with_politics AS contact_with_politics
         FROM
           entities
-        JOIN
+        LEFT JOIN
+          entity_flags ON entity_flags.eid=entities.id
+        LEFT JOIN
           address ON address.id=entities.address_id
         WHERE
           entities.id IN %s
@@ -354,6 +360,7 @@ def get_GetInfos(db, eIDs):
                 related.stakeholder_type_id
           WHERE
             related.eid IN %s
+            AND related.eid<>related.eid_relation
           UNION
           SELECT
             related.eid_relation AS source,
@@ -369,6 +376,7 @@ def get_GetInfos(db, eIDs):
                 related.stakeholder_type_id
           WHERE
             related.eid_relation IN %s
+            AND related.eid<>related.eid_relation
         ),
         grouped AS (
           /* Group edges going from same souce to same destination. */
