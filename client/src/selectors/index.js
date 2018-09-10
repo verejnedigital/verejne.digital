@@ -278,3 +278,14 @@ export const entitySearchSuggestionsSelector = createSelector(
 
 export const drawerOpenSelector = (state: State) => state.publicly.drawerOpen
 export const selectedLocationSelector = (state: State) => state.publicly.selectedLocation
+
+export const connectionDetailSelector = (
+  state: State,
+  eids1: Array<number>,
+  eids2: Array<number>,
+) => {
+  const query = `${eids1.join()}-${eids2.join()}`
+  return state.connections.detail[query]
+    ? state.connections.detail[query].ids
+    : []
+}
