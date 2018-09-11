@@ -82,29 +82,33 @@ const Landing = () => (
               <span className="gray"> Partneri projektu </span>
               <ul className="list-inline">
                 <li className="list-inline-item">
-                  <a href="https://www.zastavmekorupciu.sk/">
+                  <a
+                    href="https://www.zastavmekorupciu.sk/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
                     <img src="/nzk.png" alt="Nadácia Zastavme Korupciu" />
                   </a>
                 </li>
                 <li className="list-inline-item">
-                  <a href="https://slovensko.digital/">
+                  <a href="https://slovensko.digital/" target="_blank" rel="noopener noreferrer">
                     <img src="/slovenko.png" alt="slovenko.digital" />
                   </a>
                 </li>
                 <li className="list-inline-item">
-                  <a href="https://www.finstat.sk/">
+                  <a href="https://www.finstat.sk/" target="_blank" rel="noopener noreferrer">
                     <img src="/finstat.png" alt="FinStat" />
                   </a>
                 </li>
                 <li className="list-inline-item">
-                  <a href="https://vacuumlabs.com/">
+                  <a href="https://vacuumlabs.com/" target="_blank" rel="noopener noreferrer">
                     <img src="/vl.png" alt="VacuumLabs" />
                   </a>
                 </li>
               </ul>
             </li>
             <li className="list-inline-item">
-              <span className="gray"> Prevádzkovateľ: </span>
+              <span className="gray"> Prevádzkovateľ </span>
               <ul className="list-inline">
                 <li className="list-inline-item">
                   <a href="http://chcemvediet.sk" target="_blank" rel="noopener noreferrer">
