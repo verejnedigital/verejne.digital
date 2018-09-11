@@ -9,6 +9,6 @@ export function getWarning(item: Notice) {
     item.price_est_high &&
     (item.estimated_value_amount < item.price_est_low ||
       item.estimated_value_amount > item.price_est_high)
-    ? getWarningSymbol(1)
+    ? getWarningSymbol(1, 'Vyhlásená cena nezodpovedá nášmu odhadu')
     : null
 }

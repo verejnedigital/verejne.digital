@@ -6,6 +6,7 @@ import {withDataProviders} from 'data-provider'
 import {noticeDetailProvider} from '../../dataProviders/noticesDataProviders'
 import {noticeDetailSelector} from '../../selectors'
 import ExternalLink from '../shared/ExternalLink'
+import {getWarning} from './utilities'
 import {ShowNumberCurrency} from '../../services/utilities'
 import CompaniesTable from './CompaniesTable'
 import CompanyDetails from '../shared/CompanyDetails'
@@ -62,9 +63,11 @@ const _NoticeDetail = ({notice}: NoticeDetailProps) => {
     {
       label: notice.total_final_value_amount ? 'Konečná cena' : 'Vyhlásená cena',
       body: (
-        <ShowNumberCurrency
-          num={notice.total_final_value_amount || notice.estimated_value_amount}
-        />
+        <Fragment>
+          <ShowNumberCurrency
+            num={notice.total_final_value_amount || notice.estimated_value_amount}
+          /> {getWarning(notice)}
+        </Fragment>
       ),
     },
     {

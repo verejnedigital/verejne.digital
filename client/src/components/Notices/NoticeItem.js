@@ -29,12 +29,13 @@ const _NoticeItem = ({
     <Fragment>
       <tr className="notice-item">
         <td className="notice-item-title">
+          {getWarning(item)}
           <Link
             title={item.title}
             className="nowrap-ellipsis"
             to={`/obstaravania/${item.notice_id}`}
           >
-            {getWarning(item)} {item.title}
+            {item.title}
           </Link>
         </td>
         <td>

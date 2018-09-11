@@ -4,11 +4,19 @@ import ExclamationTriangle from 'react-icons/lib/fa/exclamation-triangle'
 import classnames from 'classnames'
 import React from 'react'
 
-export function getWarningSymbol(level: number) {
+export function getWarningSymbol(level: number, title: string | null = null) {
   if (level < 0) {
-    return <QuestionCircle className={classnames('warning', `warning${level}`)} />
+    return (
+      <div className="warning-symbol" title={title}>
+        <QuestionCircle className={classnames('warning', `warning${level}`)} />
+      </div>
+    )
   } else if (level > 0) {
-    return <ExclamationTriangle className={classnames('warning', `warning-${level}`)} />
+    return (
+      <div className="warning-symbol" title={title}>
+        <ExclamationTriangle className={classnames('warning', `warning-${level}`)} />
+      </div>
+    )
   } else {
     return ''
   }
