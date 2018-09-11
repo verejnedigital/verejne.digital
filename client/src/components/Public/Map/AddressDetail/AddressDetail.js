@@ -12,7 +12,6 @@ import {ListGroup, Button} from 'reactstrap'
 import {map, chunk, flatten} from 'lodash'
 import ListRow from './ListRow'
 import type {State} from '../../../../state'
-import type {AutoSizeProps} from '../../../../utils'
 import './AddressDetail.css'
 
 type Entity = {
@@ -82,5 +81,5 @@ export default compose(
   ),
   withHandlers({
     onClick: ({closeAddressDetail}: StateProps) => closeAddressDetail,
-  }),
+  })
 )(AddressDetail)

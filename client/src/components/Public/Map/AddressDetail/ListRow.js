@@ -2,8 +2,6 @@ import React from 'react'
 import {connect} from 'react-redux'
 import {compose} from 'redux'
 import {withHandlers} from 'recompose'
-import CircleIcon from 'react-icons/lib/fa/circle-o'
-import FilledCircleIcon from 'react-icons/lib/fa/circle'
 import SearchIcon from 'react-icons/lib/fa/search'
 import {ListGroupItem} from 'reactstrap'
 import {
@@ -14,11 +12,11 @@ import {
 import {updateValue} from '../../../../actions/sharedActions'
 import {entityDetailSelector} from '../../../../selectors'
 import Info from '../../../shared/Info/Info'
+import CircleIcon from '../../../shared/CircleIcon'
 
 import type {NewEntityDetail} from '../../../../state'
 
 import './ListRow.css'
-
 
 type DetailedInfoProps = {|
   toggleEntityInfo: (id: number) => void,
@@ -31,14 +29,8 @@ const _DetailedInfo = ({toggleEntityInfo, data}: DetailedInfoProps) => (
   </ListGroupItem>
 )
 
-const TradeIcon = ({filled}) => filled ?
-  <FilledCircleIcon size="10" className="list-row-icon" /> :
-  <CircleIcon size="10" className="list-row-icon" />
-
 const DetailedInfo = compose(
-  connect(null,
-    {toggleEntityInfo}
-  ),
+  connect(null, {toggleEntityInfo}),
   withHandlers({
     toggleEntityInfo: ({toggleEntityInfo, id}) => () => {
       toggleEntityInfo(id)
@@ -52,7 +44,7 @@ const ListRow = ({entity, toggleEntityInfo, showInfo, openModalSearch, entityDet
   ) : (
     <ListGroupItem action className="list-row">
       <span className="list-row-toggler" onClick={toggleEntityInfo}>
-        <TradeIcon filled={entityDetails.tradesWithState} />
+        <CircleIcon data={entityDetails} className="list-row-icon" size="10" />
         <span>{entity.name}</span>
       </span>
       <SearchIcon size="16" className="search-icon float-right mr-3" onClick={openModalSearch} />
