@@ -134,6 +134,9 @@ export default compose(
       setDrawer,
     }) => (e) => {
       e.preventDefault()
+      if (entitySearchValue.trim() === '') {
+        return
+      }
       setEntitySearchFor(entitySearchValue)
       closeAddressDetail()
       setEntitySearchOpen(true)
@@ -164,7 +167,10 @@ export default compose(
   }),
   withDataProviders(
     ({entitySearchValue, suggestionEids}) => [
-      entitySearchProvider(entitySearchValue, false, false),
+      ...(entitySearchValue.trim() !== ''
+        ? [entitySearchProvider(entitySearchValue, false, false)]
+        : []
+      ),
       ...(suggestionEids.length > 0
         ? [entityDetailProvider(suggestionEids, false)]
         : []

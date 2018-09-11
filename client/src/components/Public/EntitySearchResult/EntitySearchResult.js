@@ -25,7 +25,7 @@ export default compose(
     entitySearchEids: entitySearchEidsSelector(state),
   })),
   branch(
-    ({searchFor}) => searchFor,
+    ({searchFor}) => searchFor.trim() !== '',
     withDataProviders(
       ({searchFor}) => [
         entitySearchProvider(searchFor, true),
