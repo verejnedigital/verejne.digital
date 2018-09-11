@@ -229,6 +229,9 @@ export type Connections = {
 
 export type Address = {
   address_id: number,
+  political_entity: boolean,
+  contact_with_politics: boolean,
+  trade_with_government: boolean,
   lat: number,
   lng: number,
 }
@@ -336,7 +339,9 @@ export type NewEntityDetail = {
   contracts: Contracts,
   notices: Notices,
   related: RelatedEntity[],
-  tradeWithState?: boolean,
+  political_entity: boolean,
+  contact_with_politics: boolean,
+  trade_with_government: boolean,
 }
 
 // Each property must begin with '+' to be made read only and each object

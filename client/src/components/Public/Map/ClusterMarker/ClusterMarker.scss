@@ -21,7 +21,7 @@
 
 .selected {
   background: white !important;
-  border-radius: 100%;
+  border-radius: 50%;
   box-shadow: 0 4px 12px darken($shadow-color, 20%);
 }
 
@@ -43,27 +43,10 @@
 
 .company-marker {
   display: flex;
+  justify-content: center;
+  align-self: center;
 
   svg {
-    width: 50%;
-    height: 50%;
-    display: flex;
-    margin: auto;
-    color: $marker-color !important;
-  }
-
-  &.politician svg {
-    color: $orange-color !important;
-  }
-
-  &.government svg {
-    background-color: $marker-color !important;
-    border-radius: 50%;
-  }
-
-  &.politician-government svg {
-    color: $orange-color !important;
-    background-color: $orange-color !important;
-    border-radius: 50%;
+    transform: scale(0.9);
   }
 }

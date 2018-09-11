@@ -2,16 +2,22 @@
 import React from 'react'
 import {connect} from 'react-redux'
 import {withHandlers, compose} from 'recompose'
-import FaIconCircle from 'react-icons/lib/fa/circle-o'
 import classnames from 'classnames'
 
 import {ENTITY_CLOSE_ZOOM} from '../../../../constants'
-import {openAddressDetail, zoomToLocation, setDrawer, setEntitySearchOpen, deselectLocation} from '../../../../actions/publicActions'
+import {
+  openAddressDetail,
+  zoomToLocation,
+  setDrawer,
+  setEntitySearchOpen,
+  deselectLocation,
+} from '../../../../actions/publicActions'
 import {
   zoomSelector,
   openedAddressDetailSelector,
   selectedLocationSelector,
 } from '../../../../selectors'
+import CircleIcon from '../../../shared/CircleIcon'
 import Marker from '../Marker/Marker'
 import './ClusterMarker.css'
 
@@ -27,11 +33,10 @@ type ClusterMarkerProps = {
   onClick: () => void,
   openedAddressIds: Array<number>,
 }
-const clusterIsOnSelectedLocation = (selectedLocation, point) => (
-  (selectedLocation !== null)
-    && (point.lat === selectedLocation.lat)
-    && (point.lng === selectedLocation.lng)
-)
+const clusterIsOnSelectedLocation = (selectedLocation, point) =>
+  selectedLocation !== null &&
+  point.lat === selectedLocation.lat &&
+  point.lng === selectedLocation.lng
 const ClusterMarker = ({
   cluster,
   zoom,
@@ -40,20 +45,27 @@ const ClusterMarker = ({
   onClick,
   openedAddressIds,
 }: ClusterMarkerProps) => {
-  let className
-  const selected = cluster.numPoints === 1 &&
-  ((openedAddressIds.includes(cluster.points[0].address_id)
-    || clusterIsOnSelectedLocation(selectedLocation, {lat: cluster.points[0].lat, lng: cluster.points[0].lng})))
-  className = classnames({
+  const selected =
+    cluster.numPoints === 1 &&
+    (openedAddressIds.includes(cluster.points[0].address_id) ||
+      clusterIsOnSelectedLocation(selectedLocation, {
+        lat: cluster.points[0].lat,
+        lng: cluster.points[0].lng,
+      }))
+  const className = classnames({
     'simple-marker': cluster.isLabel,
     'company-marker': cluster.numPoints === 1,
     'cluster-marker': cluster.numPoints > 1,
-    'government': !cluster.isLabel && cluster.points[0].trade_with_government,
+    selected,
   })
-  const children = cluster.numPoints === 1
-    ? <FaIconCircle size="18" />
-    : !cluster.isLabel ? <span className="marker__text">{cluster.numPoints}</span> : <div />
-  className = classnames(className, {selected})
+  const children =
+    cluster.numPoints === 1 ? (
+      <CircleIcon className="company-marker" data={cluster.points[0]} size="18" />
+    ) : !cluster.isLabel ? (
+      <span className="marker__text">{cluster.numPoints}</span>
+    ) : (
+      <div />
+    )
   return (
     <Marker className={className} onClick={onClick}>
       {children}

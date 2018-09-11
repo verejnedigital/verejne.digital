@@ -1,6 +1,5 @@
 // @flow
 import React, {Fragment} from 'react'
-import Circle from 'react-icons/lib/fa/circle-o'
 import {Container} from 'reactstrap'
 import {Link} from 'react-router-dom'
 import classnames from 'classnames'
@@ -22,6 +21,7 @@ import Eurofunds from './Eurofunds'
 import Relations from './Relations'
 import Trend from './Trend'
 import ExternalLink from '../ExternalLink'
+import CircleIcon from '.././CircleIcon'
 import mapIcon from '../../../assets/mapIcon.svg'
 import type {NewEntityDetail, Center} from '../../../state'
 import type {FinancialData} from '../../../services/utilities'
@@ -110,8 +110,8 @@ const Findata = ({data}: {data: FinancialData}) => {
 const Info = ({data, canClose, onClose, showOnMap, className}: InfoProps) => (
   <Container className={classnames(className, {closable: canClose}, 'info')}>
     <div className="info-header">
-      <h3 onClick={onClose}>
-        <Circle aria-hidden="true" />&nbsp;{data.name}&nbsp;
+      <h3 onClick={onClose} >
+        <CircleIcon data={data} />&nbsp;{data.name}&nbsp;
       </h3>
       <Link
         to={`/verejne?lat=${data.lat}&lng=${data.lng}&zoom=${ENTITY_CLOSE_ZOOM}`}

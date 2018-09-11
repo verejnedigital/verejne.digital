@@ -14,7 +14,6 @@ import {
   SLOVAKIA_CITIES,
 } from '../constants'
 import {isInSlovakia, normalizeName} from '../utils'
-import {hasTradeWithState} from './utils'
 import {sortBy, filter} from 'lodash'
 import supercluster from 'points-cluster'
 import type {ContextRouter} from 'react-router-dom'
@@ -98,8 +97,7 @@ export const allEntityDetailsSelector = (state: State): ObjectMap<NewEntityDetai
   state.entityDetails
 export const entityDetailSelector = (state: State, eid: number): NewEntityDetail | null => {
   if (!eid) return null
-  const entityDetails = state.entityDetails[eid.toString()]
-  return {...entityDetails, tradesWithState: hasTradeWithState(entityDetails)}
+  return state.entityDetails[eid.toString()]
 }
 
 export const addressEntitiesSelector = createSelector(

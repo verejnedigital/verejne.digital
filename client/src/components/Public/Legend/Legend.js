@@ -37,14 +37,18 @@ const Legend = ({legendOpen, toggleLegend}: Props) =>
         <FilledCircleIcon className="svg" />
         Obchod so štátom
       </p>
-      {/*<p>
+      <p>
         <CircleIcon className="svg orange" />
         Kontakt s politikou
       </p>
       <p>
+        <FilledCircleIcon className="svg purple" />
+        Politik
+      </p>
+      <p>
         <FilledCircleIcon className="svg orange" />
         Kontakt s politikou a obchod so štátom
-      </p>*/}
+      </p>
       <p>
         <img src={MapIcon} className="map-icon-image" alt="mapIconImage" />
         Okres / mestská časť
@@ -63,6 +67,6 @@ const Legend = ({legendOpen, toggleLegend}: Props) =>
 export default compose(
   withState('legendOpen', 'setLegendOpen', true),
   withHandlers({
-    toggleLegend: ({setLegendOpen}) => setLegendOpen((current: boolean) => !current),
+    toggleLegend: ({setLegendOpen}) => () => setLegendOpen((current: boolean) => !current),
   })
 )(Legend)
