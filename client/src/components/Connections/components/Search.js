@@ -24,12 +24,15 @@ type Props = {
   ContextRouter
 
 const _searchConnection = (props: Props) => {
-  if (props.searchValue1.trim() === '' || props.searchValue2.trim() === '') {
-    return
+  if (props.searchValue1.trim() !== '' && props.searchValue2.trim().length === 0) {
+    props.history.push(
+      `/prepojenia?eid1=${props.searchValue1.trim()}`
+    )
+  } else if (props.searchValue1.trim() !== '' && props.searchValue2.trim().length > 0) {
+    props.history.push(
+      `/prepojenia?eid1=${props.searchValue1.trim()}&eid2=${props.searchValue2.trim()}`
+    )
   }
-  props.history.push(
-    `/prepojenia?eid1=${props.searchValue1.trim()}&eid2=${props.searchValue2.trim()}`
-  )
 }
 
 const Search = ({
@@ -42,10 +45,10 @@ const Search = ({
 }: Props) => (
   <div>
     <h2>Vyhľadaj</h2>
-    <p>najkratšie spojenie medzi dvojicou:</p>
+    <p>zaujímavé spojenia jednotlivca alebo najkratšie spojenie medzi dvojicou:</p>
     <Form>
       <FormGroup>
-        <Label for="searchValue1">Prvá firma/osoba</Label>
+        <Label for="searchValue1">Prvá firma/osoba*</Label>
         <Input
           id="searchValue1"
           type="text"
