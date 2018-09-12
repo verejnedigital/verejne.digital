@@ -7,7 +7,7 @@ import {withDataProviders} from 'data-provider'
 import {isNil} from 'lodash'
 import type {ComponentType} from 'react'
 import type {ObjectMap} from '../../../types/commonTypes'
-import {connectionSubgraphProvider} from '../../../dataProviders/connectionsDataProviders'
+import {connectionSubgraphProvider, notableConnectionSubgraphProvider} from '../../../dataProviders/connectionsDataProviders'
 import {entityDetailProvider} from '../../../dataProviders/sharedDataProviders'
 import {allEntityDetailsSelector} from '../../../selectors'
 import {addEdgeIfMissing} from '../components/graph/utils'
@@ -42,7 +42,7 @@ type RawNode = {
 type RawEdge = [number, number]
 
 function findGroup(data: NewEntityDetail) {
-  const politician = false // no data in new API yet // isPolitician(data)
+  const politician = false //TODO no data in new API yet // isPolitician(data)
   const withContracts = data.notices && data.notices.count > 0
   return politician && withContracts
     ? 'politContracts'
@@ -66,7 +66,9 @@ function enhanceGraph(
     from,
     to,
     // primary edges (corresponding to the 1 shortest connection found) are wider
-    width: primaryConnEids.indexOf(from) !== -1 && primaryConnEids.indexOf(to) !== -1 ? 5 : 1,
+    width: primaryConnEids &&
+      primaryConnEids.indexOf(from) !== -1 &&
+      primaryConnEids.indexOf(to) !== -1 ? 5 : 1,
   }))
 
   // adds entity info to graph
@@ -89,7 +91,6 @@ function enhanceGraph(
       ...props,
       id,
       label: bold(poi, `${entity.name} (${entity.related.length})`),
-      value: entity.related.length,
       group: findGroup(entity),
       shape: poi ? 'box' : (entity.companyinfo || {}).terminated_on ? 'diamond' : 'dot',
       leaf: false,
@@ -107,7 +108,7 @@ function transformRaw(rawGraph: {vertices: Array<RawNode>, edges: Array<RawEdge>
 
   rawNodes.forEach((n: RawNode) => {
     // skip nodes that are not connected to the other end
-    if (n.distance_from_A == null || n.distance_from_B == null) {
+    if (n.distance === undefined && (n.distance_from_A == null || n.distance_from_B == null)) {
       return
     }
     nodes.push({
@@ -131,16 +132,21 @@ const ConnectionWrapper = (WrappedComponent: ComponentType<*>) => {
     isNil(props.subgraph) ? null : <WrappedComponent {...props} />
 
   return branch(
-    ({entity1, entity2}: EntityProps) => entity1.eids.length > 0 && entity2.eids.length > 0,
+    ({entity1, entity2}: EntityProps) => entity1.eids.length > 0,
     compose(
       withDataProviders(({entity1, entity2}: EntityProps) => [
-        connectionSubgraphProvider(entity1.eids, entity2.eids, transformRaw),
+        entity2.query.length > 0 ?
+          connectionSubgraphProvider(entity1.eids, entity2.eids, transformRaw)
+          : notableConnectionSubgraphProvider(entity1.eids, transformRaw),
       ]),
       // TODO extract selectors
       connect((state: State, props: EntityProps & ConnectionProps) => ({
         selectedEids: state.connections.selectedEids,
         subgraph: enhanceGraph(
-          state.connections.subgraph[`${props.entity1.eids.join()}-${props.entity2.eids.join()}`]
+          (props.entity2.query.length > 0 ?
+            state.connections.subgraph[`${props.entity1.eids.join()}-${props.entity2.eids.join()}`]
+            : state.connections.subgraph[`${props.entity1.eids.join()}`]
+          )
             .data,
           allEntityDetailsSelector(state),
           props.connections
