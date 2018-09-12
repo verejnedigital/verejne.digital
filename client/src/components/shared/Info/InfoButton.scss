@@ -11,6 +11,12 @@
 
   > li {
     margin-bottom: .5rem;
+
+    > * {
+      white-space: normal;
+      text-align: left;
+    }
+
   }
 }
 
