@@ -23,7 +23,7 @@
 .search-results-panel {
   position: relative;
   background: white;
-  padding: 1rem;
+  padding: .5rem .75rem;
   max-height: calc(100vh - 300px);
 
   @media screen and (max-width: 576px) {
