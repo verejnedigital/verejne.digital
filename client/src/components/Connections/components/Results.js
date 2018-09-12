@@ -20,17 +20,16 @@ type Props = EntitySearchProps & EntityProps & ConnectionProps & StateProps
 
 const Results = (props: Props) => (
   <div>
-    {props.entitySearch2 &&
-    <div className="showGraphButtonWrap">
-      <Button color="primary" onClick={props.toggleGraphShown} className="showGraphButton">
-        {props.graphShown ? 'Skryť graf' : 'Zobraziť graf'}
-      </Button>
-    </div>
-    }
+    {props.entitySearch2 && (
+      <div className="showGraphButtonWrap">
+        <Button color="primary" onClick={props.toggleGraphShown} className="showGraphButton">
+          {props.graphShown ? 'Skryť graf' : 'Zobraziť graf'}
+        </Button>
+      </div>
+    )}
     {(props.graphShown || !props.entitySearch2) && <Subgraph preloadNodes {...props} />}
     {props.entitySearch2 &&
-      props.connections.map((connEid) => <InfoLoader key={connEid} eid={connEid} hasConnectLine />)
-    }
+      props.connections.map((connEid) => <InfoLoader key={connEid} eid={connEid} hasConnectLine />)}
   </div>
 )
 
@@ -47,9 +46,8 @@ export default compose(
       ConnectionWrapper,
       branch(
         ({connections, entitySearch2}: ConnectionProps & EntitySearchProps) =>
-          connections.length === 0 &&
-          entitySearch2.length > 0,
-        renderComponent(EmptyResults),
+          connections.length === 0 && entitySearch2.length > 0,
+        renderComponent(EmptyResults)
       )
     ),
     renderComponent(BeforeResults)

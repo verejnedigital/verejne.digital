@@ -183,9 +183,10 @@ export default compose(
       if (!nodes.length) {
         return
       }
-      const subgraphId = props.entity2.query.length > 0 ?
-        `${props.entity1.eids.join()}-${props.entity2.eids.join()}`
-        : `${props.entity1.eids.join()}`
+      const subgraphId =
+        props.entity2.query.length > 0
+          ? `${props.entity1.eids.join()}-${props.entity2.eids.join()}`
+          : `${props.entity1.eids.join()}`
       const clickedEid = getNodeEid(nodes[0])
 
       if (props.entityDetails[clickedEid.toString()]) {
@@ -204,9 +205,10 @@ export default compose(
         return
       }
       if (checkShaking(pointer.canvas)) {
-        const subgraphId = props.entity2.query.length > 0 ?
-          `${props.entity1.eids.join()}-${props.entity2.eids.join()}`
-          : `${props.entity1.eids.join()}`
+        const subgraphId =
+          props.entity2.query.length > 0
+            ? `${props.entity1.eids.join()}-${props.entity2.eids.join()}`
+            : `${props.entity1.eids.join()}`
         props.updateValue(
           ['connections', 'subgraph', subgraphId, 'data'],
           removeNodes(props.subgraph, nodes.map(getNodeEid), true)

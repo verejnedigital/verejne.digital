@@ -17,19 +17,17 @@ export type ConnectionProps = {
 
 const ConnectionWrapper = (WrappedComponent: ComponentType<*>) => {
   const wrapped = (props: ConnectionProps & EntityProps) =>
-    isNil(props.connections) && props.entity2.query.length > 0
-      ? null
-      : <WrappedComponent {...props} />
+    isNil(props.connections) && props.entity2.query.length > 0 ? null : (
+      <WrappedComponent {...props} />
+    )
 
   return compose(
     branch(
       ({entity1, entity2}: EntityProps) =>
-        entity1.eids.length > 0 &&
-        entity2.query.length > 0 &&
-        entity2.eids.length > 0,
+        entity1.eids.length > 0 && entity2.query.length > 0 && entity2.eids.length > 0,
       withDataProviders((props: EntityProps) => [
         connectionDetailProvider(props.entity1.eids, props.entity2.eids),
-      ]),
+      ])
     ),
     connect((state: State, props: EntityProps) => ({
       connections: connectionDetailSelector(state, props.entity1.eids, props.entity2.eids),
