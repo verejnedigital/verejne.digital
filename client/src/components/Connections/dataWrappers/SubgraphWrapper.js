@@ -7,7 +7,10 @@ import {withDataProviders} from 'data-provider'
 import {isNil} from 'lodash'
 import type {ComponentType} from 'react'
 import type {ObjectMap} from '../../../types/commonTypes'
-import {connectionSubgraphProvider, notableConnectionSubgraphProvider} from '../../../dataProviders/connectionsDataProviders'
+import {
+  connectionSubgraphProvider,
+  notableConnectionSubgraphProvider,
+} from '../../../dataProviders/connectionsDataProviders'
 import {entityDetailProvider} from '../../../dataProviders/sharedDataProviders'
 import {allEntityDetailsSelector} from '../../../selectors'
 import {addEdgeIfMissing} from '../components/graph/utils'
@@ -36,8 +39,9 @@ export type SubgraphProps = {
 type RawNode = {
   eid: number,
   entity_name: string,
-  distance_from_A: number,
-  distance_from_B: number,
+  distance_from_A?: number,
+  distance_from_B?: number,
+  distance: number,
 }
 type RawEdge = [number, number]
 
@@ -66,9 +70,10 @@ function enhanceGraph(
     from,
     to,
     // primary edges (corresponding to the 1 shortest connection found) are wider
-    width: primaryConnEids &&
-      primaryConnEids.indexOf(from) !== -1 &&
-      primaryConnEids.indexOf(to) !== -1 ? 5 : 1,
+    width:
+      primaryConnEids && primaryConnEids.indexOf(from) !== -1 && primaryConnEids.indexOf(to) !== -1
+        ? 5
+        : 1,
   }))
 
   // adds entity info to graph
@@ -135,19 +140,20 @@ const ConnectionWrapper = (WrappedComponent: ComponentType<*>) => {
     ({entity1, entity2}: EntityProps) => entity1.eids.length > 0,
     compose(
       withDataProviders(({entity1, entity2}: EntityProps) => [
-        entity2.query.length > 0 ?
-          connectionSubgraphProvider(entity1.eids, entity2.eids, transformRaw)
+        entity2.query.length > 0
+          ? connectionSubgraphProvider(entity1.eids, entity2.eids, transformRaw)
           : notableConnectionSubgraphProvider(entity1.eids, transformRaw),
       ]),
       // TODO extract selectors
       connect((state: State, props: EntityProps & ConnectionProps) => ({
         selectedEids: state.connections.selectedEids,
         subgraph: enhanceGraph(
-          (props.entity2.query.length > 0 ?
-            state.connections.subgraph[`${props.entity1.eids.join()}-${props.entity2.eids.join()}`]
+          (props.entity2.query.length > 0
+            ? state.connections.subgraph[
+              `${props.entity1.eids.join()}-${props.entity2.eids.join()}`
+            ]
             : state.connections.subgraph[`${props.entity1.eids.join()}`]
-          )
-            .data,
+          ).data,
           allEntityDetailsSelector(state),
           props.connections
         ),
