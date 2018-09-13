@@ -3,15 +3,24 @@
 .navbar {
   box-shadow: 0 4px 12px 0 $shadow-color;
   background: $component-background;
-  padding-top: 0;
-  padding-bottom: 0;
+  padding: 0 ;
   height: $navbar-height;
-  z-index: 1; // this is to show box-shadow without being fixed
+  z-index: 1000;
 }
 
 .navbar-brand {
+  margin-left: 1rem;
   padding: .5rem 0;
   font-family: Source Code Pro, monospace;
+}
+
+.collapse.show, .collapsing {
+  box-shadow: 0 8px 12px -4px $shadow-color;
+}
+
+.nav-item {
+  padding: 0 1rem;
+  background: $component-background;
 }
 
 .nav-link {
@@ -30,6 +39,7 @@
 
 .navbar-toggler {
   margin: .5rem 0;
+  margin-right: 1rem;
   width: 2rem;
   height: 2rem;
   font-size: .8rem;
