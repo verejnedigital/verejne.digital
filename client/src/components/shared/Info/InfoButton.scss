@@ -8,15 +8,27 @@
 
 .info-button-list {
   margin-top: 1rem;
+  margin-bottom: 0;
 
   > li {
-    margin-bottom: .5rem;
-
-    > * {
-      white-space: normal;
-      text-align: left;
-    }
-
+    border-bottom: 1px solid $border-color;
+    padding: 0.25rem 0;
+  }
+  > * .btn {
+    white-space: normal;
+    text-align: left;
+  }
+  > li:last-child {
+    border-bottom: none;
   }
 }
 
+.info-badge {
+  position: relative;
+  bottom: 0.05rem;
+  top: auto !important;
+}
+
+.info-badge.info-badge-number {
+  bottom: 0.065rem;
+}
