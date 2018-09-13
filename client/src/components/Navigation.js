@@ -54,7 +54,7 @@ class Navigation extends Component {
             <NavLink to="/obstaravania" className="nav-link">
               Obstarávania
             </NavLink>
-          </NavItem>          
+          </NavItem>
         </Nav>
         <Nav className="ml-auto" navbar>
           <NavItem>
