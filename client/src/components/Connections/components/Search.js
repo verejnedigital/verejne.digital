@@ -3,10 +3,8 @@ import React from 'react'
 import {withRouter} from 'react-router-dom'
 import {withHandlers, withState} from 'recompose'
 import {compose} from 'redux'
-import {connect} from 'react-redux'
 import {Form, FormGroup, Label, Input, Button} from 'reactstrap'
 import type {ContextRouter} from 'react-router'
-import {updateValue} from '../../../actions/sharedActions'
 import EntitySearchWrapper, {type EntitySearchProps} from '../dataWrappers/EntitySearchWrapper'
 import './Search.css'
 
@@ -24,12 +22,14 @@ type Props = {
   ContextRouter
 
 const _searchConnection = (props: Props) => {
-  if (props.searchValue1.trim() !== '' && props.searchValue2.trim().length === 0) {
-    props.history.push(`/prepojenia?eid1=${props.searchValue1.trim()}`)
-  } else if (props.searchValue1.trim() !== '' && props.searchValue2.trim().length > 0) {
-    props.history.push(
-      `/prepojenia?eid1=${props.searchValue1.trim()}&eid2=${props.searchValue2.trim()}`
-    )
+  if (props.searchValue1.trim() !== '') {
+    if (props.searchValue2.trim() !== '') {
+      props.history.push(
+        `/prepojenia?eid1=${props.searchValue1.trim()}&eid2=${props.searchValue2.trim()}`
+      )
+    } else {
+      props.history.push(`/prepojenia?eid1=${props.searchValue1.trim()}`)
+    }
   }
 }
 
@@ -80,7 +80,6 @@ export default compose(
   EntitySearchWrapper,
   withState('searchValue1', 'setSearchValue1', ({entitySearch1}) => entitySearch1),
   withState('searchValue2', 'setSearchValue2', ({entitySearch2}) => entitySearch2),
-  connect(null, {updateValue}),
   withHandlers({
     setSearchValue1: ({setSearchValue1}) => (e) => setSearchValue1(e.target.value),
     setSearchValue2: ({setSearchValue2}) => (e) => setSearchValue2(e.target.value),
