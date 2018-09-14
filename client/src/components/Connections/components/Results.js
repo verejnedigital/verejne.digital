@@ -7,7 +7,7 @@ import ConnectionWrapper, {type ConnectionProps} from '../dataWrappers/Connectio
 import EntityWrapper, {type EntityProps} from '../dataWrappers/EntityWrapper'
 import EntitySearchWrapper, {type EntitySearchProps} from '../dataWrappers/EntitySearchWrapper'
 import InfoLoader from './InfoLoader'
-import BeforeResults from './BeforeResults'
+import {BeforeResults, EmptyResults} from './DummyResults'
 import Subgraph from './Subgraph'
 import './Results.css'
 
@@ -39,7 +39,14 @@ export default compose(
   branch(
     ({entitySearch1, entitySearch2}: EntitySearchProps) =>
       entitySearch1 !== '' && entitySearch2 !== '',
-    compose(EntityWrapper, ConnectionWrapper),
+    compose(
+      EntityWrapper,
+      ConnectionWrapper,
+      branch(
+        ({connections}: ConnectionProps) => connections.length === 0,
+        renderComponent(EmptyResults),
+      )
+    ),
     renderComponent(BeforeResults)
   )
 )(Results)

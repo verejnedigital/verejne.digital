@@ -116,6 +116,9 @@ export default compose(
   withHandlers({
     findEntities: ({setEntitySearchFor, entitySearchValue, toggleDrawer}) => (e) => {
       e.preventDefault()
+      if (entitySearchValue.trim() === '') {
+        return
+      }
       setEntitySearchFor(entitySearchValue)
       toggleDrawer()
     },

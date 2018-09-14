@@ -127,3 +127,10 @@ export const setDrawer = (open: boolean) => ({
   path: ['publicly', 'drawerOpen'],
   reducer: () => open,
 })
+
+export const setEntitySearchValue = (value: string) => ({
+  type: 'Set entity search field value',
+  path: ['publicly', 'entitySearchValue'],
+  payload: value,
+  reducer: () => value,
+})

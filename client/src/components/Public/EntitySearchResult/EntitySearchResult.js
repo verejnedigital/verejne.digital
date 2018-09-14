@@ -24,10 +24,13 @@ export default compose(
     searchFor: entitySearchForSelector(state),
     entitySearchEids: entitySearchEidsSelector(state),
   })),
-  withDataProviders(
-    ({searchFor, entitySearchEids}) => [
-      entitySearchProvider(searchFor, true),
-    ]
+  branch(
+    ({searchFor}) => searchFor.trim() !== '',
+    withDataProviders(
+      ({searchFor}) => [
+        entitySearchProvider(searchFor, true),
+      ]
+    ),
   ),
   branch(
     ({entitySearchEids}) => entitySearchEids.length > 0,

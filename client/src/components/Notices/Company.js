@@ -1,3 +1,4 @@
+// @flow
 import React, {Fragment} from 'react'
 import {Link} from 'react-router-dom'
 import {compose, withState, withHandlers} from 'recompose'
@@ -11,41 +12,61 @@ import './Company.css'
 
 type Props = {|
   item: Candidate,
-  toggledOn: boolean,
-  toggle: (e: Event) => void,
+  similarity: number,
+  showSupplierInfo: boolean,
+  showCustomerInfo: boolean,
+  toggleSupplier: () => void,
+  toggleCustomer: () => void,
 |}
 
-const _Company = ({item, toggledOn, toggle}: Props) => {
-  const showCompanyDetails = toggledOn && item.eid
+const _Company = ({
+  item,
+  similarity,
+  showSupplierInfo,
+  showCustomerInfo,
+  toggleSupplier,
+  toggleCustomer,
+}: Props) => {
   return (
     <Fragment>
       <tr className="company">
         <td className="text-nowrap">
-          <a key="close" className="company-link" onClick={toggle}>
-            {showCompanyDetails ? <Fragment>[&minus;]</Fragment> : '[+]'} {item.name}
+          <a className="company-link" onClick={toggleSupplier}>
+            {showSupplierInfo ? <Fragment>[&minus;]</Fragment> : '[+]'} {item.supplier_name}
           </a>
         </td>
         <td className="company-title">
-          <Link className="nowrap-ellipsis" to={`/obstaravania/${item.id}`} title={item.title}>
+          <Link
+            className="nowrap-ellipsis"
+            to={`/obstaravania/${item.notice_id}`}
+            title={item.title}
+          >
             {item.title}
           </Link>
         </td>
-        <td className="company-customer">
-          <span className="nowrap-ellipsis" title={item.customer}>
-            {item.customer}
-          </span>
+        <td>
+          <a className="company-link" onClick={toggleCustomer}>
+            {showCustomerInfo ? <Fragment>[&minus;]</Fragment> : '[+]'} {item.name}
+          </a>
         </td>
         <td className="text-nowrap text-right">
-          <strong>{localeNumber(item.price)}</strong>
+          <strong>{localeNumber(item.total_final_value_amount)}</strong>
         </td>
         <td className="text-center">
-          <span className="similarity">{formatSimilarPercent(Math.round(item.score * 100))}</span>
+          <span className="similarity">{formatSimilarPercent(Math.round(similarity * 100))}</span>
         </td>
       </tr>
-      {showCompanyDetails && (
+      {showSupplierInfo && (
         <tr>
           <td colSpan={5}>
-            <CompanyDetails key="company" eid={item.eid} />
+            <CompanyDetails eid={item.supplier_eid} useNewApi />
+          </td>
+        </tr>
+      )}
+      {showCustomerInfo && (
+        <tr>
+          <td colSpan={5}>
+            <CompanyDetails eid={item.eid} useNewApi />
           </td>
         </tr>
       )}
@@ -54,8 +75,10 @@ const _Company = ({item, toggledOn, toggle}: Props) => {
 }
 
 export default compose(
-  withState('toggledOn', 'toggle', false),
+  withState('showSupplierInfo', 'setSupplier', false),
+  withState('showCustomerInfo', 'setCustomer', false),
   withHandlers({
-    toggle: ({toggle}) => (e) => toggle((current) => !current),
+    toggleSupplier: ({setSupplier}) => () => setSupplier((current) => !current),
+    toggleCustomer: ({setCustomer}) => () => setCustomer((current) => !current),
   })
 )(_Company)

@@ -1,0 +1,26 @@
+@import "../variables.scss";
+
+.circle-icon {
+  color: $blue-color;
+
+  &.politician svg, &.politician.government svg {
+    color: purple;
+    background-color: purple;
+    border-radius: 50%;
+  }
+
+  &.politics svg {
+    color: $orange-color;
+  }
+
+  &.government svg{
+    background-color: $blue-color;
+    border-radius: 50%;
+  }
+
+  &.politics.government svg{
+    color: $orange-color;
+    background-color: $orange-color;
+    border-radius: 50%;
+  }
+}

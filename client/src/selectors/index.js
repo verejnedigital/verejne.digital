@@ -14,7 +14,6 @@ import {
   SLOVAKIA_CITIES,
 } from '../constants'
 import {isInSlovakia, normalizeName} from '../utils'
-import {hasTradeWithState} from './utils'
 import {sortBy, filter} from 'lodash'
 import supercluster from 'points-cluster'
 import type {ContextRouter} from 'react-router-dom'
@@ -49,15 +48,12 @@ export const searchFilteredNoticesSelector = createSelector(
   noticesSearchQuerySelector,
   (notices: ObjectMap<Notice>, query): Array<Notice> => {
     const filteredNotices = filter(notices, (notice) => {
-      const similarity =
-        notice.kandidati.length > 0 ? Math.round(notice.kandidati[0].score * 100) : '?'
       return (
         normalizeName(
-          notice.customer
-            .concat(notice.price_num.toString())
-            .concat(notice.title)
-            .concat(notice.kandidati[0].name)
-            .concat(similarity.toString())
+          notice.title
+            .concat(notice.supplier_name || notice.best_supplier_name)
+            .concat(Math.round(notice.best_similarity * 100).toString())
+            .concat(notice.name)
         ).indexOf(query) > -1
       )
     })
@@ -66,7 +62,7 @@ export const searchFilteredNoticesSelector = createSelector(
 )
 export const dateSortedNoticesSelector = createSelector(
   searchFilteredNoticesSelector,
-  (data: Array<Notice>) => sortBy(data, ['bulletin_year', 'bulletin_month', 'bulletin_day'])
+  (data: Array<Notice>) => sortBy(data, ['bulletin_year'])
 )
 export const nameSortedNoticesSelector = createSelector(
   searchFilteredNoticesSelector,
@@ -81,13 +77,6 @@ export const noticesOrderingSelector = createSelector(
   (query): NoticesOrdering => query.ordering || 'date'
 )
 
-// not the most elegant, but presently we need the whole list
-// sorted by date anyway
-export const newestBulletinDateSelector = createSelector(
-  dateSortedNoticesSelector,
-  (notices) => (notices[0] ? notices[0].bulletin_date : '')
-)
-
 export const noticesLengthSelector = createSelector(searchFilteredNoticesSelector, (notices) => {
   return notices.length
 })
@@ -98,7 +87,8 @@ export const zoomSelector = (state: State): number => state.mapOptions.zoom
 export const boundsSelector = (state: State): ?MapBounds => state.mapOptions.bounds
 export const addressesSelector = (state: State) => state.addresses
 export const showInfoSelector = (state: State) => state.publicly.showInfo
-export const openedAddressDetailSelector = (state: State): Array<number> => state.publicly.openedAddressDetail
+export const openedAddressDetailSelector = (state: State): Array<number> =>
+  state.publicly.openedAddressDetail
 export const entitiesSelector = (state: State) => state.entities
 export const entitySearchSelector = (state: State, query: string): SearchedEntity =>
   state.entitySearch[query]
@@ -107,14 +97,14 @@ export const allEntityDetailsSelector = (state: State): ObjectMap<NewEntityDetai
   state.entityDetails
 export const entityDetailSelector = (state: State, eid: number): NewEntityDetail | null => {
   if (!eid) return null
-  const entityDetails = state.entityDetails[eid.toString()]
-  return {...entityDetails, tradesWithState: hasTradeWithState(entityDetails)}
+  return state.entityDetails[eid.toString()]
 }
 
 export const addressEntitiesSelector = createSelector(
   entitiesSelector,
   openedAddressDetailSelector,
-  (entities, addressIds : Array<number>) => filter(entities, (entity) => addressIds.includes(entity.addressId))
+  (entities, addressIds: Array<number>) =>
+    filter(entities, (entity) => addressIds.includes(entity.addressId))
 )
 
 export const useLabelsSelector = createSelector(
@@ -179,15 +169,17 @@ const createClusters = (mapOptions: MapOptions, addresses): Array<MapCluster> =>
 const createLabels = (mapOptions: MapOptions): Array<MapCluster> => {
   let labels = []
   if (mapOptions.zoom <= WORLD_ZOOM) {
-    labels = [{
-      lat: SLOVAKIA_COORDINATES[0],
-      lng: SLOVAKIA_COORDINATES[1],
-      numPoints: 0,
-      id: 'SLOVAKIA',
-      points: [],
-      setZoomTo: COUNTRY_ZOOM,
-      isLabel: true,
-    }]
+    labels = [
+      {
+        lat: SLOVAKIA_COORDINATES[0],
+        lng: SLOVAKIA_COORDINATES[1],
+        numPoints: 0,
+        id: 'SLOVAKIA',
+        points: [],
+        setZoomTo: COUNTRY_ZOOM,
+        isLabel: true,
+      },
+    ]
   } else {
     if (mapOptions.zoom < CITY_ZOOM) {
       labels = SLOVAKIA_CITIES.map((city) => ({
@@ -269,6 +261,29 @@ export const entitySearchEidsSelector = createSelector(
   entitySearchForSelector,
   (searches, query): Array<number> => (searches[query] && searches[query].eids) || []
 )
+export const entitySearchSuggestionEidsSelector = createSelector(
+  entitySearchesSelector,
+  entitySearchValueSelector,
+  (searches, query): Array<number> => (searches[query] && searches[query].eids) || []
+)
+export const entitySearchSuggestionsSelector = createSelector(
+  allEntityDetailsSelector,
+  entitySearchSuggestionEidsSelector,
+  (details, eids): Array<NewEntityDetail> => {
+    return eids.map((eid) => ({eid, ...details[eid]}))
+  }
+)
 
 export const drawerOpenSelector = (state: State) => state.publicly.drawerOpen
 export const selectedLocationSelector = (state: State) => state.publicly.selectedLocation
+
+export const connectionDetailSelector = (
+  state: State,
+  eids1: Array<number>,
+  eids2: Array<number>,
+) => {
+  const query = `${eids1.join()}-${eids2.join()}`
+  return state.connections.detail[query]
+    ? state.connections.detail[query].ids
+    : []
+}

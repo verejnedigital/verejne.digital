@@ -1,14 +1,15 @@
+// @flow
 import React from 'react'
 import {compose, branch, renderNothing} from 'recompose'
 import {Table} from 'reactstrap'
 import Company from './Company'
 
-import type {Notice} from '../../state'
+import type {NoticeDetail} from '../../state'
 
 import './CompaniesTable.css'
 
 type Props = {|
-  item: Notice,
+  item: NoticeDetail,
 |}
 
 const _CompaniesTable = ({item}: Props) => {
@@ -23,12 +24,16 @@ const _CompaniesTable = ({item}: Props) => {
           <th>Čo podobné vyhral</th>
           <th>Objednávateľ</th>
           <th className="text-right">Cena €</th>
-          <th title="Podobnosť">Pod.</th>
+          <th title="Podobnosť" className="text-center">
+            Pod.
+          </th>
         </tr>
       </thead>
       <tbody>
-        {item.kandidati.length > 0 ? (
-          item.kandidati.map((item) => <Company key={item.id} item={item} />)
+        {item.candidates_extra && item.candidates_extra.length > 0 ? (
+          item.candidates_extra.map((candidate, i) => (
+            <Company key={candidate.notice_id} item={candidate} similarity={item.similarities[i]} />
+          ))
         ) : (
           <tr>
             <td colSpan={5} className="text-center">

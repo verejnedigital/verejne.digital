@@ -3,33 +3,71 @@ import {SLOVAKIA_COORDINATES} from './constants'
 import type {ObjectMap} from './types/commonTypes'
 
 export type Candidate = {
-  id: number,
-  eid: number,
-  customer: string,
-  ico: string,
   name: string,
   title: string,
-  text: string,
-  price: number,
-  score: number,
+  total_final_value_amount: number,
+  eid: number,
+  supplier_name: string,
+  supplier_eid: number,
+  notice_id: number
 }
 
-export type Notice = {|
-  id: number,
-  customer: string,
-  bulletin_number: number,
+export type Notice = {
+  price_est: number,
+  total_final_value_amount:	number,
+  bulletin_source_url: string,
+  best_similarity: number,
+  notice_type_id: number,
+  contract_id: number,
   title: string,
-  text: string,
-  price: number,
-  price_stdev: number,
-  bulletin_day: number,
-  bulletin_month: number,
+  bulletin_issue_id: number,
+  supplier_eid: number,
+  bulletin_number: number,
+  best_supplier_name: string,
+  supplier_name: string,
+  best_supplier: number,
+  price_est_low: number,
+  notice_id: number,
   bulletin_year: number,
-  bulletin_date: string, // string representation of day/month/year
-  kandidati: Array<Candidate>,
-  price_num: number,
-  price_avg: number,
-|}
+  name: string,
+  price_est_high: number,
+  estimated_value_amount: number,
+  eid: number,
+  estimated_value_currency: string,
+  bulletin_published_on: string,
+  total_final_value_currency: string
+}
+
+export type NoticeDetail = {
+  price_est: number,
+  total_final_value_amount: number,
+  candidates_extra: Array<Candidate>,
+  bulletin_source_url: string,
+  best_similarity: number,
+  notice_type_id: number,
+  contract_id: number,
+  title: string,
+  similarities: Array<number>,
+  bulletin_issue_id: number,
+  candidates: Array<number>,
+  short_description: string,
+  supplier_eid: number,
+  body: string,
+  bulletin_number: number,
+  best_supplier_name: string,
+  supplier_name: string,
+  total_final_value_currency: string,
+  best_supplier: number,
+  price_est_low: number,
+  notice_id: number,
+  bulletin_year: number,
+  name: string,
+  price_est_high: number,
+  estimated_value_amount: number,
+  eid: number,
+  estimated_value_currency: string,
+  bulletin_published_on: string
+}
 
 export type PoliticianDetail = {|
   picture: string,
@@ -191,6 +229,9 @@ export type Connections = {
 
 export type Address = {
   address_id: number,
+  political_entity: boolean,
+  contact_with_politics: boolean,
+  trade_with_government: boolean,
   lat: number,
   lng: number,
 }
@@ -298,7 +339,9 @@ export type NewEntityDetail = {
   contracts: Contracts,
   notices: Notices,
   related: RelatedEntity[],
-  tradeWithState?: boolean,
+  political_entity: boolean,
+  contact_with_politics: boolean,
+  trade_with_government: boolean,
 }
 
 // Each property must begin with '+' to be made read only and each object
