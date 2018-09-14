@@ -15,13 +15,19 @@ import './Profile.css'
 
 import type {State, Politician} from '../../state'
 
-export type ProfileProps = {
+export type UnenhancedProfileProps = {
   query: string,
   politicians: Array<Politician>,
   updateQuery: (e: Event) => void,
 }
 
-const Profile = ({query, politicians, updateQuery}: ProfileProps) => (
+type ProfileProps = {
+  query: string,
+  updateValue: Function,
+  props: UnenhancedProfileProps,
+}
+
+const UnenhancedProfile = ({query, politicians, updateQuery}: UnenhancedProfileProps) => (
   <Container className="Profile">
     <Row tag="header" key="header" className="header profile-header">
       <Col>
@@ -66,7 +72,7 @@ const Profile = ({query, politicians, updateQuery}: ProfileProps) => (
   </Container>
 )
 
-export default compose(
+const Profile: HOC<*, ProfileProps> = compose(
   withDataProviders(() => [politiciansProvider()]),
   connect(
     (state: State) => ({
@@ -80,4 +86,6 @@ export default compose(
       props.updateValue(['profile', 'query'], e.target.value)
     },
   })
-)(Profile)
+)(UnenhancedProfile)
+
+export default Profile

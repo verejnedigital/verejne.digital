@@ -1,7 +1,6 @@
-// @flow
 import React from 'react'
 import {withRouter} from 'react-router-dom'
-import {withHandlers, withState} from 'recompose'
+import {withHandlers, withState, type HOC} from 'recompose'
 import {compose} from 'redux'
 import {connect} from 'react-redux'
 import {Form, FormGroup, Label, Input, Button} from 'reactstrap'
@@ -13,7 +12,7 @@ import './Search.css'
 type EmptyHandler = () => void
 type EventHandler = (e: Event) => void
 
-type Props = {
+type SearchProps = {
   searchValue1: string,
   searchValue2: string,
   setSearchValue1: EventHandler,
@@ -23,7 +22,16 @@ type Props = {
 } & EntitySearchProps &
   ContextRouter
 
-const _searchConnection = (props: Props) => {
+type EnhancedSearchProps = {
+  entitySearch1: string,
+  entitySearch2: string,
+  setSearchValue1: EventHandler,
+  setSearchValue2: EventHandler,
+  e: Event,
+  props: SearchProps,
+}
+
+const _searchConnection = (props: SearchProps) => {
   if (props.searchValue1.trim() === '' || props.searchValue2.trim() === '') {
     return
   }
@@ -32,14 +40,14 @@ const _searchConnection = (props: Props) => {
   )
 }
 
-const Search = ({
+const UnenhancedSearch = ({
   searchValue1,
   searchValue2,
   setSearchValue1,
   setSearchValue2,
   searchOnEnter,
   searchConnection,
-}: Props) => (
+}: SearchProps) => (
   <div>
     <h2>Vyhľadaj</h2>
     <p>najkratšie spojenie medzi dvojicou:</p>
@@ -74,7 +82,7 @@ const Search = ({
   </div>
 )
 
-export default compose(
+const Search: HOC<*, EnhancedSearchProps> = compose(
   withRouter,
   EntitySearchWrapper,
   withState('searchValue1', 'setSearchValue1', ({entitySearch1}) => entitySearch1),
@@ -83,11 +91,13 @@ export default compose(
   withHandlers({
     setSearchValue1: ({setSearchValue1}) => (e) => setSearchValue1(e.target.value),
     setSearchValue2: ({setSearchValue2}) => (e) => setSearchValue2(e.target.value),
-    searchOnEnter: (props: Props) => (e) => {
+    searchOnEnter: (props) => (e) => {
       if (e.key === 'Enter') {
         _searchConnection(props)
       }
     },
-    searchConnection: (props: Props) => () => _searchConnection(props),
+    searchConnection: (props) => () => _searchConnection(props),
   })
-)(Search)
+)(UnenhancedSearch)
+
+export default Search
