@@ -46,15 +46,15 @@ type RawNode = {
 type RawEdge = [number, number]
 
 function findGroup(data: NewEntityDetail) {
-  const politician = false //TODO no data in new API yet // isPolitician(data)
-  const withContracts = data.notices && data.notices.count > 0
-  return politician && withContracts
-    ? 'politContracts'
-    : politician
-      ? 'politician'
-      : withContracts
+  return data.political_entity
+    ? 'politician'
+    : data.trade_with_government && data.contact_with_politics
+      ? 'politContracts'
+      : data.trade_with_government
         ? 'contracts'
-        : 'normal'
+        : data.contact_with_politics
+          ? 'politTies'
+          : 'normal'
 }
 
 function bold(makeBold: boolean, str: string) {
