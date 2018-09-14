@@ -92,7 +92,8 @@ export const openedAddressDetailSelector = (state: State): Array<number> =>
 export const entitiesSelector = (state: State) => state.entities
 export const entitySearchSelector = (state: State, query: string): SearchedEntity =>
   state.entitySearch[query]
-export const entitySearchesSelector = (state: State): Array<SearchedEntity> => state.entitySearch
+export const entitySearchesSelector = (state: State): ObjectMap<SearchedEntity> =>
+  state.entitySearch
 export const allEntityDetailsSelector = (state: State): ObjectMap<NewEntityDetail> =>
   state.entityDetails
 export const entityDetailSelector = (state: State, eid: number): NewEntityDetail | null => {
@@ -270,6 +271,16 @@ export const entitySearchEidsSelector = createSelector(
   entitySearchForSelector,
   (searches, query): Array<number> => (searches[query] && searches[query].eids) || []
 )
+export const sortedEntitySearchDetailsSelector = createSelector(
+  entitySearchEidsSelector,
+  allEntityDetailsSelector,
+  (eids, entityDetails): Array<NewEntityDetail> =>
+    sortBy(map(eids, (eid) => entityDetails[eid.toString()]), [
+      'political_entity',
+      'contact_with_politics',
+      'trade_with_government',
+    ]).reverse()
+)
 export const entitySearchSuggestionEidsSelector = createSelector(
   entitySearchesSelector,
   entitySearchValueSelector,
@@ -279,7 +290,7 @@ export const entitySearchSuggestionsSelector = createSelector(
   allEntityDetailsSelector,
   entitySearchSuggestionEidsSelector,
   (details, eids): Array<NewEntityDetail> => {
-    return eids.map((eid) => ({eid, ...details[eid]}))
+    return eids.map((eid) => ({eid, ...details[eid.toString()]}))
   }
 )
 
@@ -289,10 +300,8 @@ export const selectedLocationSelector = (state: State) => state.publicly.selecte
 export const connectionDetailSelector = (
   state: State,
   eids1: Array<number>,
-  eids2: Array<number>,
+  eids2: Array<number>
 ) => {
   const query = `${eids1.join()}-${eids2.join()}`
-  return state.connections.detail[query]
-    ? state.connections.detail[query].ids
-    : []
+  return state.connections.detail[query] ? state.connections.detail[query].ids : []
 }

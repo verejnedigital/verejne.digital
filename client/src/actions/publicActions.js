@@ -41,7 +41,8 @@ export const setEntityDetails = (
   reducer: (state) => ({
     ...state,
     ...keyBy(map(entityDetails, (e, key) => ({...e, eid: Number.parseInt(key, 10)})), (e) =>
-      e.eid.toString()),
+      e.eid.toString()
+    ),
   }),
 })
 

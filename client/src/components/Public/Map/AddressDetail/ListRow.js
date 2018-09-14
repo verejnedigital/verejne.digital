@@ -61,9 +61,18 @@ export default compose(
     toggleEntityInfo: ({toggleEntityInfo, entityDetail}) => () => {
       toggleEntityInfo(entityDetail.eid)
     },
-    openModalSearch: ({entityDetail, toggleEntitySearchOpen, setEntitySearchFor, updateValue}) => () => {
+    openModalSearch: ({
+      entityDetail,
+      toggleEntitySearchOpen,
+      setEntitySearchFor,
+      updateValue,
+    }) => () => {
       setEntitySearchFor(entityDetail.name)
-      updateValue(['publicly', 'entitySearchValue'], entityDetail.name, 'Set entity search field value')
+      updateValue(
+        ['publicly', 'entitySearchValue'],
+        entityDetail.name,
+        'Set entity search field value'
+      )
       toggleEntitySearchOpen()
     },
   })
