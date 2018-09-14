@@ -10,7 +10,6 @@ import {
   setEntitySearchFor,
 } from '../../../../actions/publicActions'
 import {updateValue} from '../../../../actions/sharedActions'
-import {entityDetailSelector} from '../../../../selectors'
 import Info from '../../../shared/Info/Info'
 import CircleIcon from '../../../shared/CircleIcon'
 
@@ -19,7 +18,7 @@ import type {NewEntityDetail} from '../../../../state'
 import './ListRow.css'
 
 type DetailedInfoProps = {|
-  toggleEntityInfo: (id: number) => void,
+  toggleEntityInfo: (eid: number) => void,
   data: NewEntityDetail,
 |}
 
@@ -32,20 +31,20 @@ const _DetailedInfo = ({toggleEntityInfo, data}: DetailedInfoProps) => (
 const DetailedInfo = compose(
   connect(null, {toggleEntityInfo}),
   withHandlers({
-    toggleEntityInfo: ({toggleEntityInfo, id}) => () => {
-      toggleEntityInfo(id)
+    toggleEntityInfo: ({toggleEntityInfo, eid}) => () => {
+      toggleEntityInfo(eid)
     },
   })
 )(_DetailedInfo)
 
-const ListRow = ({entity, toggleEntityInfo, showInfo, openModalSearch, entityDetails}) =>
+const ListRow = ({entityDetail, toggleEntityInfo, showInfo, openModalSearch}) =>
   showInfo ? (
-    <DetailedInfo id={entity.id} data={entityDetails} />
+    <DetailedInfo eid={entityDetail.eid} data={entityDetail} />
   ) : (
     <ListGroupItem action className="list-row">
       <span className="list-row-toggler" onClick={toggleEntityInfo}>
-        <CircleIcon data={entityDetails} className="list-row-icon" size="10" />
-        <span>{entity.name}</span>
+        <CircleIcon data={entityDetail} className="list-row-icon" size="10" />
+        <span>{entityDetail.name}</span>
       </span>
       <SearchIcon size="16" className="search-icon float-right mr-3" onClick={openModalSearch} />
     </ListGroupItem>
@@ -53,19 +52,18 @@ const ListRow = ({entity, toggleEntityInfo, showInfo, openModalSearch, entityDet
 
 export default compose(
   connect(
-    (state, {entity}) => ({
-      showInfo: state.publicly.showInfo[entity.id],
-      entityDetails: entityDetailSelector(state, entity.id),
+    (state, {entityDetail}) => ({
+      showInfo: state.publicly.showInfo[entityDetail.eid],
     }),
     {toggleEntityInfo, toggleEntitySearchOpen, setEntitySearchFor, updateValue}
   ),
   withHandlers({
-    toggleEntityInfo: ({toggleEntityInfo, entity}) => () => {
-      toggleEntityInfo(entity.id)
+    toggleEntityInfo: ({toggleEntityInfo, entityDetail}) => () => {
+      toggleEntityInfo(entityDetail.eid)
     },
-    openModalSearch: ({entity, toggleEntitySearchOpen, setEntitySearchFor, updateValue}) => () => {
-      setEntitySearchFor(entity.name)
-      updateValue(['publicly', 'entitySearchValue'], entity.name, 'Set entity search field value')
+    openModalSearch: ({entityDetail, toggleEntitySearchOpen, setEntitySearchFor, updateValue}) => () => {
+      setEntitySearchFor(entityDetail.name)
+      updateValue(['publicly', 'entitySearchValue'], entityDetail.name, 'Set entity search field value')
       toggleEntitySearchOpen()
     },
   })

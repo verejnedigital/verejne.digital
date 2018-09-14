@@ -1,5 +1,5 @@
 // @flow
-import {fromPairs} from 'lodash'
+import {fromPairs, keyBy, map} from 'lodash'
 import {zoomSelector, mapOptionsSelector} from '../selectors'
 import type {ObjectMap} from '../types/commonTypes'
 import type {
@@ -40,7 +40,8 @@ export const setEntityDetails = (
   payload: entityDetails,
   reducer: (state) => ({
     ...state,
-    ...entityDetails,
+    ...keyBy(map(entityDetails, (e, key) => ({...e, eid: Number.parseInt(key, 10)})), (e) =>
+      e.eid.toString()),
   }),
 })
 
