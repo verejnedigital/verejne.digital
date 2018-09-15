@@ -8,6 +8,7 @@ class Entities:
   # They can be empty, or loaded with data from database.
   address2eid = {}
   eid2name = {}
+  eid_to_parsed_name = {}
   ico2eid = {}
   org2eid = {}
   surnames = {}
@@ -26,29 +27,29 @@ class Entities:
   def GetEidForOrgId(self, org_id):
       return self.org2eid.get(org_id)
 
-  def is_merge_desired(self, plain_name1, plain_name2):
-      """ Input:
-          plain_names: plain string names, which needs to be parsed by
-                       parse_entity_name
-          Output:
-          True iff the two names have equal surnames and
-              last first names are equal.
+  def is_merge_desired(
+      self, plain_name1, parsed_name1, plain_name2, parsed_name2):
+      """Determines if two entities should be merged into one.
+
+      Args:
+        plain_name1: A string; unparsed name of entity 1.
+        parsed_name1: An entity_tools.ParsedName of entity 1.
+        plain_name2: A string; unparsed name of entity 2.
+        parsed_name2: An entity_tools.ParsedName of entity 2.
+      Returns:
+        True iff the two names have equal surnames and their last
+        firstnames also match. Note this is a transitive relation.
       """
       if plain_name1 == plain_name2:
         return True
-      name1 = entity_tools.parse_entity_name(
-        plain_name1, self.surnames, self.titles)
-      name2 = entity_tools.parse_entity_name(
-        plain_name2, self.surnames, self.titles)
 
-      if (name1 is None) or (name2 is None):
+      if (parsed_name1 is None) or (parsed_name2 is None):
           return False
-      if (name1.surname != name2.surname):
+      if (parsed_name1.surname != parsed_name2.surname):
           return False
 
-      fns1 = name1.firstnames
-      fns2 = name2.firstnames
-      # Transitive relation: last first names match
+      fns1 = parsed_name1.firstnames
+      fns2 = parsed_name2.firstnames
       return fns1[-1] == fns2[-1]
 
   def ExistsICO(self, ico):
@@ -56,18 +57,23 @@ class Entities:
       return self.ico2eid[ico]
     return -1
 
-  def ExistsPerson(self, name, address_id):
+  def ExistsPerson(self, name, parsed_name, address_id):
     if not address_id in self.address2eid:
       return -1
     for candidate in self.address2eid[address_id]:
-      if self.is_merge_desired(name, self.eid2name[candidate]):
+      if self.is_merge_desired(
+          name,
+          parsed_name,
+          self.eid2name[candidate],
+          self.eid_to_parsed_name[candidate]
+      ):
         return candidate
     return -1
 
   def AddICO(self, eid, ico):
     self.ico2eid[ico] = eid
 
-  def AddNewEntity(self, ico, name, address_id):
+  def AddNewEntity(self, ico, name, parsed_name, address_id):
     self.entities += 1
     if address_id is None:
         return None
@@ -76,6 +82,7 @@ class Entities:
     else:
       eid = self.entities
     self.eid2name[eid] = name
+    self.eid_to_parsed_name[eid] = parsed_name
     if address_id in self.address2eid:
       self.address2eid[address_id].append(eid)
     else:
@@ -96,7 +103,9 @@ class Entities:
       if eid >= 0:
         return eid
     # self.Ak je to osoba
-    eid = self.ExistsPerson(name, address_id)
+    parsed_name = entity_tools.parse_entity_name(
+        name, self.surnames, self.titles)
+    eid = self.ExistsPerson(name, parsed_name, address_id)
     # Ak sme osobu nasli tak ju vratime
     if eid >= 0:
       # v pripade ze sme nasli match na osobu o ktorej sme predtym nevedeli
@@ -105,7 +114,7 @@ class Entities:
         self.AddICO(eid, ico)
       return eid
     else:
-      eid = self.AddNewEntity(ico, name, address_id)
+      eid = self.AddNewEntity(ico, name, parsed_name, address_id)
       return eid
 
 
