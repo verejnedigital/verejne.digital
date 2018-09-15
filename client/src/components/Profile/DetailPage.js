@@ -81,7 +81,7 @@ const DetailPage = ({
         </h1>
       </Col>
     </Row>
-    <Cardboard key="cardboard" politician={politician} />,
+    <Cardboard key="cardboard" politician={politician} />
     <Row tag="article" key="politician" className="profile">
       <Col tag="section">
         {politician.entities && values(politician.entities)[0] &&

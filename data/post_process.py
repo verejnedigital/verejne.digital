@@ -9,6 +9,8 @@ from intelligence import embed
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../data/db')))
 from db import DatabaseConnection
 
+from prod_generation import post_process_neighbours
+
 import utils
 
 
@@ -147,8 +149,14 @@ def _post_process_notices(db, test_mode):
     notices_insert_into_extra_table(db, notices, test_mode)
 
 
+def _post_process_neighbours(db, test_mode):
+    """Adds edges between neighbours."""
+    post_process_neighbours.add_family_and_neighbour_edges(
+        db, test_mode)
+
+
 def _post_process_flags(db, test_mode):
-    """Precompute entity flags and address flags."""
+    """Precomputes entity flags and address flags."""
     path_script = os.path.join(
         "prod_generation", "compute_entity_and_address_flags.sql")
     utils.execute_script(db, path_script)
@@ -170,6 +178,10 @@ def do_post_processing(db, test_mode=False):
           side effects is desired.
     """
     print('[OK] Postprocessing...')
+
+    # Order matters: post processing neighbours creates edges that
+    # can be exploited when post processing flags, for example.
+    _post_process_neighbours(db, test_mode)
     _post_process_flags(db, test_mode)
     _post_process_notices(db, test_mode)
 

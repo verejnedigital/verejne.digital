@@ -79,7 +79,7 @@ const Landing = () => (
         <div className="float-lg-right">
           <ul className="list-inline">
             <li className="list-inline-item">
-              <span className="gray"> Partneri projektu </span>
+              <span className="gray">Partneri</span>
               <ul className="list-inline">
                 <li className="list-inline-item">
                   <a
@@ -108,7 +108,7 @@ const Landing = () => (
               </ul>
             </li>
             <li className="list-inline-item">
-              <span className="gray"> Prevádzkovateľ </span>
+              <span className="gray">Prevádzkovateľ</span>
               <ul className="list-inline">
                 <li className="list-inline-item">
                   <a href="http://chcemvediet.sk" target="_blank" rel="noopener noreferrer">
