@@ -53,7 +53,7 @@
     },
     {
         "delimiter": "|",
-        "description": "Register Partnerov Verejného Sektora",
+        "description": "Register partnerov verejného sektora (RPVS)",
         "name": "rpvs",
         "path": "/tmp/source_rpvs.csv",
         "table_name": "rpvs",
