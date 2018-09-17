@@ -36,7 +36,6 @@ ParsedName = collections.namedtuple(
 )
 
 
-# TODO(matejbalog): Check equivalence with the version in entities.py.
 def parse_entity_name(entity_name, surnames, titles, verbose=False):
   """Parses an entity name into a ParsedName, or returns None."""
 

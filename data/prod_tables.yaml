@@ -54,11 +54,55 @@
 
 2_related:
     source_schema: "ekosystem_rpo"
-    command:   "select organization_id as eid_relation,stakeholder_type_id,ico,concat_ws(' ',full_name,person_given_name,person_family_name) as name,concat_ws(' ',address_formatted,address_street,COALESCE(address_building_number,cast(address_reg_number as text)),address_postal_code,address_municipality,address_country) as address,effective_from,effective_to from organization_stakeholder_entries UNION select organization_id as org_id,stakeholder_type_id,ico,concat_ws(' ',full_name,person_given_name,person_family_name) as name,concat_ws(' ',address_formatted,address_street,COALESCE(address_building_number,cast(address_reg_number as text)),address_postal_code,address_municipality,address_country) as address,effective_from,effective_to from organization_statutory_entries"
+    command:   "
+        SELECT
+          organization_id as eid_relation,
+          stakeholder_type_id,
+          ico,
+          concat_ws(' ',
+            full_name, person_given_name, person_family_name
+          ) AS name,
+          concat_ws(' ',
+            address_formatted,
+            address_street,
+            COALESCE(address_building_number, cast(address_reg_number as text)),
+            address_postal_code,
+            address_municipality,
+            address_country
+          ) AS address,
+          effective_from,
+          effective_to
+        FROM organization_stakeholder_entries
+        UNION
+        SELECT
+          organization_id as org_id,
+          stakeholder_type_id,
+          ico,
+          concat_ws(' ',
+            full_name, person_given_name, person_family_name
+          ) AS name,
+          concat_ws(' ',
+            address_formatted,
+            address_street,
+            COALESCE(address_building_number, cast(address_reg_number as text)),
+            address_postal_code,
+            address_municipality,
+            address_country
+          ) AS address,
+          effective_from,
+          effective_to
+        FROM
+          organization_statutory_entries
+        "
     use_org_id_as_eid_relation: true
     tables:
             Related:
-                    columns: ["stakeholder_type_id", "eid_relation", "effective_from", "effective_to"]
+                    columns: [
+                      "stakeholder_type_id",
+                      "eid_relation",
+                      "effective_from",
+                      "effective_to"
+                    ]
                     create_command: "
                        CREATE TABLE Related (
                                 id SERIAL PRIMARY KEY,

@@ -4,6 +4,7 @@ import six
 import tqdm
 
 import entity_tools
+import graph_tools
 import utils
 
 
@@ -38,37 +39,6 @@ def _are_surnames_similar(surname1, surname2):
     return True
 
   return False
-
-
-def _add_or_get_edge_type(db, edge_type_name):
-  """Returns id of edge type with given name, creating if needed."""
-
-  # Query edge types:
-  edge_types = db.query("""
-      SELECT stakeholder_type_id, stakeholder_type_text
-      FROM stakeholdertypes;
-      """)
-  edge_type_name_to_index = {edge_type["stakeholder_type_text"]:
-                             edge_type["stakeholder_type_id"]
-                             for edge_type in edge_types}
-
-  # Find or create edge type for presumed family members:
-  if edge_type_name in edge_type_name_to_index:
-    edge_type_index = edge_type_name_to_index[edge_type_name]
-  else:
-    edge_type_index = max(edge_type["stakeholder_type_id"]
-                          for edge_type in edge_types) + 1
-    db.execute("""
-        INSERT INTO stakeholdertypes(
-          stakeholder_type_id,
-          stakeholder_type_text
-        ) VALUES (%s, %s);""",
-        [edge_type_index, edge_type_name]
-    )
-
-  print('%sEdge type name "%s" has index %d' % (
-      LOG_PREFIX, edge_type_name, edge_type_index))
-  return edge_type_index
 
 
 def add_family_and_neighbour_edges(db, test_mode):
@@ -141,8 +111,10 @@ def add_family_and_neighbour_edges(db, test_mode):
       LOG_PREFIX, len(edges_family), len(edges_neighbours)))
 
   # Get edge type indices for the new edge types:
-  edge_type_family = _add_or_get_edge_type(db, "Pravdepodobne rodina")
-  edge_type_neighbour = _add_or_get_edge_type(db, "Susedia")
+  edge_type_family = graph_tools.add_or_get_edge_type(
+      db, "Pravdepodobne rodina", LOG_PREFIX)
+  edge_type_neighbour = graph_tools.add_or_get_edge_type(
+      db, "Susedia", LOG_PREFIX)
 
   # Remove any existing edges of these edge types:
   q_data = [edge_type_family, edge_type_neighbour]
