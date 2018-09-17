@@ -74,7 +74,7 @@ const EntitySearchAutocomplete = ({
   renderItem,
 }: Props) => (
   <Form onSubmit={findEntities}>
-    <InputGroup>
+    <InputGroup className="autocomplete-holder">
       <Autocomplete
         getItemValue={getItemValue}
         items={suggestions}
@@ -92,7 +92,13 @@ const EntitySearchAutocomplete = ({
         renderMenu={function(items, value, style) {
           // this.menuStyle is react-autocomplete's default
           // we're using menuStyle to partially override it
-          return <div className="menu" style={{...style, ...this.menuStyle, ...menuStyle}} children={items} />
+          return (
+            <div
+              className="autocomplete-suggestions-menu"
+              style={{...style, ...this.menuStyle, ...menuStyle}}
+              children={items}
+            />
+          )
         }}
       />
       <InputGroupAddon addonType="append">
@@ -160,22 +166,21 @@ export default compose(
     },
     getItemValue: () => (entity) => (entity.name ? entity.name : ''),
     renderItem: () => (entity, isHighlighted) => (
-      <div key={entity.eid} className={entity.name && classnames('item', isHighlighted && 'item--active')} >
+      <div
+        key={entity.eid}
+        className={
+          entity.name &&
+          classnames('autocomplete-item', isHighlighted && 'autocomplete-item--active')
+        }
+      >
         <strong>{entity.name ? entity.name : ''}</strong>
       </div>
     ),
   }),
-  withDataProviders(
-    ({entitySearchValue, suggestionEids}) => [
-      ...(entitySearchValue.trim() !== ''
-        ? [entitySearchProvider(entitySearchValue, false, false)]
-        : []
-      ),
-      ...(suggestionEids.length > 0
-        ? [entityDetailProvider(suggestionEids, false)]
-        : []
-      ),
-    ]
-  ),
+  withDataProviders(({entitySearchValue, suggestionEids}) => [
+    ...(entitySearchValue.trim() !== ''
+      ? [entitySearchProvider(entitySearchValue, false, false)]
+      : []),
+    ...(suggestionEids.length > 0 ? [entityDetailProvider(suggestionEids, false)] : []),
+  ])
 )(EntitySearchAutocomplete)
-
