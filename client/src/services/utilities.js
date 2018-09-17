@@ -160,21 +160,6 @@ export function showContractStatus(statusId: number) {
   return contractStatuses[statusId.toString()] || 'Neznáme'
 }
 
-export function showRelationType(typeId: number, typeText: string) {
-  if (typeId == null) {
-    return 'Neznáme'
-  }
-  return `${typeText || 'Neznáme'} ${typeId > 0 ? '>' : '<'}`
-}
-
-export function getRelationTitle(typeId: number, name1: string, name2: string) {
-  return typeId != null
-    ? typeId > 0
-      ? name1.concat(' zastupuje túto funkciu v ').concat(name2)
-      : name2.concat(' zastupuje túto funkciu v ').concat(name1)
-    : 'Spojenie neznáme'
-}
-
 function padIco(ico?: number | string) {
   // TODO remove null checks when `extractIco` is removed
   return ico != null ? padStart(ico.toString(), 8, '0') : ''

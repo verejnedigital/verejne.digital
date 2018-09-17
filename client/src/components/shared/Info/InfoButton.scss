@@ -27,8 +27,11 @@
   position: relative;
   bottom: 0.05rem;
   top: auto !important;
-}
-
-.info-badge.info-badge-number {
-  bottom: 0.065rem;
+  &.info-badge-number {
+    bottom: 0.065rem;
+  }
+  &.info-badge.badge {
+    white-space: normal;
+    text-align: left;
+  }
 }
