@@ -273,4 +273,5 @@
                        CREATE INDEX ON ProfilMapping(eid);
                        CREATE INDEX ON ProfilMapping(profil_id);
                        CREATE UNIQUE INDEX ON ProfilMapping(eid, profil_id);
+                       REFRESH MATERIALIZED VIEW entities_search;
                     "
