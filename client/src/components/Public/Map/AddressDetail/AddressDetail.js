@@ -14,7 +14,6 @@ import ListRow from './ListRow'
 import type {State, NewEntity} from '../../../../state'
 import './AddressDetail.css'
 
-
 type OwnProps = {
   addressIds: Array<number>,
 }
