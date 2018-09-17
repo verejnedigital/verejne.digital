@@ -63,7 +63,6 @@ class TestHandlers(unittest.TestCase):
   def test_asset_declarations(self):
     content = _request_json('/asset_declarations?id=717', self)
     self.assertIsInstance(content, list)
-    self.assertTrue(content)
     print('AssetDeclarations returned %d declarations.' % (
         len(content)))
 

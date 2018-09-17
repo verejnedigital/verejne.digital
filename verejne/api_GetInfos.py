@@ -313,13 +313,16 @@ def get_GetInfos(db, eIDs):
           address.lat, address.lng, address.address,
           entity_flags.trade_with_government AS trade_with_government,
           entity_flags.political_entity AS political_entity,
-          entity_flags.contact_with_politics AS contact_with_politics
+          entity_flags.contact_with_politics AS contact_with_politics,
+          profilmapping.profil_id AS profil_id
         FROM
           entities
         LEFT JOIN
           entity_flags ON entity_flags.eid=entities.id
         LEFT JOIN
           address ON address.id=entities.address_id
+        LEFT JOIN
+          profilmapping ON profilmapping.eid=entities.id
         WHERE
           entities.id IN %s
         ;"""
@@ -328,6 +331,8 @@ def get_GetInfos(db, eIDs):
         eID = row['eid']
         result[eID] = row
         del result[eID]['eid']
+        if not result[eID]['profil_id']:
+          del result[eID]['profil_id']
         result[eID]['related'] = []
 
     # Add information from other production tables
