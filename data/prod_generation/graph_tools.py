@@ -28,5 +28,5 @@ def add_or_get_edge_type(db, edge_type_name, log_prefix=""):
     )
 
   print('%sEdge type name "%s" has index %d' % (
-      log_prefix, edge_type_name, edge_type_index))
+      log_prefix, edge_type_name.encode("utf-8"), edge_type_index))
   return edge_type_index

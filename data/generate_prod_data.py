@@ -2,7 +2,6 @@
 import argparse
 import os
 import sys
-import tqdm
 import yaml
 import re
 import HTMLParser
@@ -251,7 +250,7 @@ def ProcessSource(db_prod, geocoder, entities, config, test_mode):
 def process_source_rpvs(db_source, db_prod, geocoder, entities, test_mode):
   log_prefix = "[source_rpvs] "
 
-  # Connect to the source schema:
+  # Set search path to latest source_rpvs schema:
   source_schema_name = db_source.get_latest_schema('source_rpvs')
   db_source.execute('SET search_path="' + source_schema_name + '";')
   print("%ssource_schema_name=%s" % (log_prefix, source_schema_name))
@@ -277,89 +276,49 @@ def process_source_rpvs(db_source, db_prod, geocoder, entities, test_mode):
         rpvs
       """ + (" LIMIT 1000;" if test_mode else ";")
   )
-  print("%sRetrieved %d rows from table `rpvs`." % (
-      log_prefix, len(rows)))
-
-  # TODO: These should be collected by the Entities and Geocoder classes.
-  # Collect statistics about matching:
-  missed = 0
-  found = 0
-  empty = 0
-  missed_eid = 0
-  found_eid = 0
-  missed_addresses = set([])
+  print("%sFound %d rows in table `rpvs`." % (log_prefix, len(rows)))
 
   # Construct set of edges between partners and beneficiaries. This
   # needs to be a set to satisfy a UNIQUE constraint on `related`.
   edges = set()
-  for row in tqdm.tqdm(rows, desc=log_prefix):
+  for row in rows:
 
-    # Attempt to geocode the address:
+    # Geocode beneficiary's address:
     kuv_address = row["kuv_address"]
     kuv_address_id = geocoder.GetAddressId(kuv_address.encode("utf8"))
     if kuv_address_id is None:
-
-      # <statistics>
-      if kuv_address == "":
-        empty += 1
-      else:
-        if test_mode and missed < 10:
-          print("%sMISSING ADDRESS %s" % (
-              log_prefix, kuv_address.encode("utf8")))
-        missed_addresses.add(kuv_address)
-        missed += 1
-      # </statistics>
-
       continue
 
-    # <statistics>
-    found += 1;
-    # </statistics>
-
-    # Attempt to match an existing entity, or create a new one:
+    # Match or create an entity for the beneficiary:
     kuv_name = row["kuv_name"]
     eid_kuv = entities.GetEntity(None, kuv_name, kuv_address_id)
     if eid_kuv is None:
-      missed_eid += 1
       continue
 
+    # Match entity for the partner:
     try:
       partner_ico = int(row["partner_ico"])
     except ValueError:
       continue
     eid_partner = entities.GetEidForOrgId(partner_ico)
     if eid_partner is None:
-      print("%sEntity not found for partner_ico=%d" % (
-          log_prefix, partner_ico))
       continue
 
-    found_eid += 1
-
+    # Save the edge:
     edges.add((eid_partner, eid_kuv))
   print("%sCollected %d edges" % (log_prefix, len(edges)))
-
-  # <statistics>
-  print "FOUND", found
-  print "MISSED", missed
-  print "EMPTY", empty
-  print "MISSED UNIQUE", len(missed_addresses)
-  print "FOUND EID", found_eid
-  print "MISSED EID", missed_eid
-  # </statistics>
 
   # Create an edge type for `konecny uzivatel vyhod`:
   edge_type_id = graph_tools.add_or_get_edge_type(
       db_prod, u"Konečný užívateľ výhod", log_prefix)
 
   # Insert edges into table `related`:
-  query = """
+  with db_prod.cursor() as cur:
+    cur.executemany("""
       INSERT INTO related(eid, eid_relation, stakeholder_type_id)
       VALUES (%s, %s, %s);
-  """
-  query_data = [(source, target, edge_type_id)
-                for source, target in edges]
-  with db_prod.cursor() as cur:
-    cur.executemany(query, query_data)
+      """, [(source, target, edge_type_id) for source, target in edges]
+    )
 
 
 def main(args_dict):

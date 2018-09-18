@@ -1,7 +1,6 @@
 """Adds edges between family members at the same address."""
 
 import six
-import tqdm
 
 import entity_tools
 import graph_tools
@@ -62,8 +61,7 @@ def add_family_and_neighbour_edges(db, test_mode):
   suffix = ' LIMIT 50000;' if test_mode else ';'
   query = 'SELECT id, name FROM entities' + suffix
   with db.get_server_side_cursor(query) as cur:
-    desc = LOG_PREFIX + 'Parsing entity names'
-    for eid, name in tqdm.tqdm(cur, desc=desc):
+    for eid, name in cur:
       parsed = entity_tools.parse_entity_name(
           name, surnames, titles, verbose=False)
       if parsed:
@@ -82,8 +80,7 @@ def add_family_and_neighbour_edges(db, test_mode):
     """ + suffix, buffer_size=10000)
 
   # Iterate through entity groups sharing the same Address:
-  desc = LOG_PREFIX + 'Addresses'
-  for row in tqdm.tqdm(cur, desc=desc):
+  for row in cur:
     eids = row[0]
 
     # Iterate through distinct pairs of entities in this group:
