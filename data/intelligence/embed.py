@@ -25,7 +25,65 @@ class TextEmbedder:
         return embeddings
 """
 
+from gensim.models import KeyedVectors
+import string
 import numpy as np
+from string import maketrans
+
+def tokenize(text):
+    return text.encode("utf-8").translate(string.maketrans('',''),string.punctuation).lower().split()
+
+class Word2VecEmbedder:
+    sk_model = None
+    word_frequency = {}
+    count_words = 0
+    dimension = 300
+
+    def __init__(self, all_texts):
+        # Creating the model
+        print "Reading the pretrained model for Word2VecEmbedder"
+        self.sk_model = KeyedVectors.load_word2vec_format('/data/verejne/datautils/embedding_data/slovak.vec')
+        print "Model contains", len(self.sk_model.vocab), "tokens"
+        self.dimension = len(self.sk_model["auto"])
+        print "Dimension of embedding of 'auto' is", self.dimension
+        # Create frequecny table for words
+        if all_texts is None:
+            return
+        for text in all_texts:
+            words = tokenize(text)
+            if len(words) == 0 or words is None:
+                return
+            for word in words:
+                self.count_words +=1
+                if word in self.word_frequency:
+                    self.word_frequency[word] += 1
+                else:
+                    self.word_frequency[word] = 1
+        print "Frequency table ready. Number of words:", self.count_words, "Number of distinct words:", len(self.word_frequency)
+
+    def multiplier(self, word):
+        if self.count_words == 0:
+            return 1
+        if word in self.word_frequency:
+            return 1.0 * self.word_frequency[word] / self.count_words
+        else:
+            return 1.0 / self.count_words
+
+    def embed(self, texts):
+        embeddings = []
+        if texts is None:
+            return
+        for text in texts:
+            embedding = np.zeros(self.dimension)
+            words = tokenize(text)
+            if len(words) == 0 or words is None:
+                return
+            for word in words:
+                if word in self.sk_model:
+                    embedding = np.add(embedding, np.multiply(self.multiplier(word), self.sk_model[word]))
+            embeddings.append(embedding)
+        return embeddings
+
 
 # Using fake embedder until tensorflow starts to work.
 class FakeTextEmbedder:
@@ -45,6 +103,15 @@ class FakeTextEmbedder:
 def main(args_dict):
     text_embedder = FakeTextEmbedder()
     text_embedder.embed(["How are you?", "What is the time?", "What time it is?"])
+
+    texts = ["auto Je doma.", "Auto! doma", "Kupujem traktor", "Dovolenkujem na Madagaskare"]
+    word2vec_embedder = Word2VecEmbedder(texts)
+    embeddings = word2vec_embedder.embed(texts)
+    print 'Similarities:'
+    for emb1, text1 in zip(embeddings, texts):
+        for emb2, text2 in zip(embeddings, texts):
+            similarity = np.inner(emb1, emb2) / (np.linalg.norm(emb1) * np.linalg.norm(emb2))
+            print similarity, text1, ' ----', text2
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()

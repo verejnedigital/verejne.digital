@@ -124,6 +124,7 @@ def notices_find_candidates(notices):
 
 def _post_process_notices(db, test_mode):
     notices_create_extra_table(db, test_mode)
+    # Default text embedder is the random one. For not test mode we set the real one later.
     text_embedder = embed.FakeTextEmbedder()
     ids = []
     texts = []
@@ -139,6 +140,13 @@ def _post_process_notices(db, test_mode):
                 total_final_value_amount as price
             FROM Notices""" + test_mode_suffix + """;
         """)
+        # In production we use the real embedder.
+        # Note that you can test changes in Word2VecEmbedder directly in intelligence/embed.py
+        if not test_mode:
+            all_texts = []
+            for row in cur:
+                all_texts.append(row["text"])
+            text_embedder = embed.Word2VecEmbedder(all_texts)
         for row in cur:
             notices.append(
                 Notice(row["notice_id"],
