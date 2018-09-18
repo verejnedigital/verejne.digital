@@ -173,7 +173,7 @@
 
 5_company_financials:
     source_schema: "finstat"
-    command:   "select CAST(ico as bigint),nazov as name,CAST(CAST(nullif(trzby_2017,'') as float) as bigint) as revenue_2017, CAST(CAST(nullif(trzby_2016,'') as float) as bigint) as revenue_2016, CAST(CAST(nullif(trzby_2015,'') as float) as bigint) as revenue_2015, CAST(CAST(nullif(trzby_2014,'') as float) as bigint) as revenue_2014, CAST(CAST(nullif(zisk_2017,'') as float) as bigint) as profit_2014, CAST(CAST(nullif(zisk_2016,'') as float) as bigint) as profit_2016, CAST(CAST(nullif(zisk_2015,'') as float) as bigint) as profit_2015, CAST(CAST(nullif(zisk_2014,'') as float) as bigint) as profit_2014, kategoria_poctu_zamestnancov_2015 as employees_2015, kategoria_poctu_zamestnancov_2014 as employees_2014 from company_stats"
+    command:   "select CAST(ico as bigint),nazov as name,CAST(CAST(nullif(trzby_2017,'') as float) as bigint) as revenue_2017, CAST(CAST(nullif(trzby_2016,'') as float) as bigint) as revenue_2016, CAST(CAST(nullif(trzby_2015,'') as float) as bigint) as revenue_2015, CAST(CAST(nullif(trzby_2014,'') as float) as bigint) as revenue_2014, CAST(CAST(nullif(zisk_2017,'') as float) as bigint) as profit_2017, CAST(CAST(nullif(zisk_2016,'') as float) as bigint) as profit_2016, CAST(CAST(nullif(zisk_2015,'') as float) as bigint) as profit_2015, CAST(CAST(nullif(zisk_2014,'') as float) as bigint) as profit_2014, kategoria_poctu_zamestnancov_2016 as employees_2016, kategoria_poctu_zamestnancov_2015 as employees_2015, kategoria_poctu_zamestnancov_2014 as employees_2014 from company_stats"
     tables:
             CompanyFinancials:
                     columns: ["revenue", "profit", "employees"]
@@ -273,4 +273,5 @@
                        CREATE INDEX ON ProfilMapping(eid);
                        CREATE INDEX ON ProfilMapping(profil_id);
                        CREATE UNIQUE INDEX ON ProfilMapping(eid, profil_id);
+                       REFRESH MATERIALIZED VIEW entities_search;
                     "
