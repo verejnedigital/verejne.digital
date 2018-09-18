@@ -309,8 +309,12 @@ def get_GetInfos(db, eIDs):
     # Query the database for basic entity information:
     q = """
         SELECT
-          entities.id AS eid, entities.name AS name,
-          address.lat, address.lng, address.address,
+          entities.id AS eid,
+          entities.name AS name,
+          entities.address_id AS address_id,
+          address.lat,
+          address.lng,
+          address.address,
           entity_flags.trade_with_government AS trade_with_government,
           entity_flags.political_entity AS political_entity,
           entity_flags.contact_with_politics AS contact_with_politics,
