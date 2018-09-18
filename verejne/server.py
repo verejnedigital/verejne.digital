@@ -194,7 +194,7 @@ class SearchEntityByName(MyServer):
             self.abort(400, detail="Unable to parse input text")
 
         q = """
-            SELECT DISTINCT id AS eid FROM entity_name_search
+            SELECT DISTINCT id AS eid FROM entities_search
             WHERE search_vector @@ plainto_tsquery(unaccent(%s))
             LIMIT 20
             """
