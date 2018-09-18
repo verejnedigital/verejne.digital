@@ -48,7 +48,7 @@ def CreateAndSetProdSchema(db, prod_schema_name):
     """
     with db.dict_cursor() as cur:
         cur.execute("CREATE SCHEMA %s", [AsIs(prod_schema_name)])
-        cur.execute("SET search_path = public,%s", [AsIs(prod_schema_name)])
+        cur.execute("SET search_path = %s,public", [AsIs(prod_schema_name)])
         # TODO: read this from a config
         # TODO: index on lat, lng
         cur.execute("""
