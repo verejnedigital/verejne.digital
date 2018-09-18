@@ -323,7 +323,7 @@ def initialise_app(serving_directory, disable_old_database=False):
     # Connect to the database:
     db = DatabaseConnection(path_config='db_config.yaml')
     schema = db.get_latest_schema('prod_')
-    db.execute('SET search_path to ' + schema + ';')
+    db.execute('SET search_path to ' + schema + ',public;')
     app.registry['db'] = db
 
     # For faster unit testing:
