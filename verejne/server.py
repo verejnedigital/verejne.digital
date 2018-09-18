@@ -193,14 +193,9 @@ class SearchEntityByName(MyServer):
         except:
             self.abort(400, detail="Unable to parse input text")
 
-        # Find entities with the given name in the database.
-        # TODO: Add support for partial match and with unaccent. E.g. sth like:
-        #    SELECT DISTINCT id AS eid FROM entities
-        #    WHERE to_tsvector('unaccent', name) @@ plainto_tsquery('unaccent', %s)
-        #    LIMIT 20
         q = """
-            SELECT DISTINCT id AS eid FROM entities
-            WHERE name=%s
+            SELECT DISTINCT id AS eid FROM entity_name_search
+            WHERE search_vector @@ plainto_tsquery(unaccent(%s))
             LIMIT 20
             """
 
