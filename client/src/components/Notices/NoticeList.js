@@ -15,7 +15,7 @@ import {
 import {groupBy, map} from 'lodash'
 
 import {updateValue} from '../../actions/sharedActions'
-
+import {resultPlurality} from '../../services/utilities'
 import type {ContextRouter} from 'react-router-dom'
 import type {Dispatch} from '../../types/reduxTypes'
 import type {Notice, State} from '../../state'
@@ -48,19 +48,10 @@ const NoticeList = ({
   updateSearchValue,
   updateValue,
 }: NoticeListProps) => {
-  let items = []
-  if (dateSortedNotices.length > 0) {
-    items = groupBy(dateSortedNotices, (item) => `${item.bulletin_number}/${item.bulletin_year}`)
-  }
-
-  const plurality = (count: number): string => {
-    if (count === 1) {
-      return `Nájdený ${count} výsledok`
-    } else if (count > 1 && count < 5) {
-      return `Nájdené ${count} výsledky`
-    }
-    return `Nájdených ${count} výsledkov`
-  }
+  const items =
+    dateSortedNotices.length > 0
+      ? groupBy(dateSortedNotices, (item) => `${item.bulletin_number}/${item.bulletin_year}`)
+      : []
 
   return (
     <Container fluid className="notice-list">
@@ -76,7 +67,9 @@ const NoticeList = ({
             value={searchValue}
             onChange={updateSearchValue}
           />
-          <FormText>{searchValue && `${plurality(noticesLength)} pre "${searchValue}".`}</FormText>
+          <FormText>
+            {searchValue && `${resultPlurality(noticesLength)} pre "${searchValue}".`}
+          </FormText>
           {noticesLength >= 1 &&
             map(items, (bulletin, index) => (
               <Bulletin

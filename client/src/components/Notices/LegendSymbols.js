@@ -4,7 +4,7 @@ import ExclamationTriangle from 'react-icons/lib/fa/exclamation-triangle'
 import classnames from 'classnames'
 import React from 'react'
 
-export function getWarningSymbol(level: number, title: string | null = null) {
+export const getWarningSymbol = (level: number, title: string | null = null) => {
   if (level < 0) {
     return (
       <div className="warning-symbol" title={title}>
@@ -22,7 +22,7 @@ export function getWarningSymbol(level: number, title: string | null = null) {
   }
 }
 
-export function formatSimilarPercent(value: number) {
+export const formatSimilarPercent = (value: number) => {
   let style
   if (value > 75) style = 'similarity-high'
   else if (value > 50) style = 'similarity-medium'
@@ -32,10 +32,8 @@ export function formatSimilarPercent(value: number) {
   return <span className={classnames('similarity', style)}>{value}%</span>
 }
 
-export function formatSimilarCount(value: number) {
-  return (
-    <span className="similar-count" title={value}>
-      {value > 20 ? '20+' : value}
-    </span>
-  )
-}
+export const formatSimilarCount = (value: number) => (
+  <span className="similar-count" title={value}>
+    {value > 20 ? '20+' : value}
+  </span>
+)

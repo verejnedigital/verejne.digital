@@ -5,7 +5,7 @@ import {Row, Col} from 'reactstrap'
 import Legend from './Legend'
 import './NoticeSidebar.css'
 
-export default () => (
+const NoticeSidebar = () => (
   <Fragment>
     <Row>
       <Col sm={{size: 10, offset: 2}}>
@@ -34,3 +34,5 @@ export default () => (
     </Row>
   </Fragment>
 )
+
+export default NoticeSidebar

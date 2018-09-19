@@ -13,11 +13,7 @@ import './Sidebar.css'
 import EntitySearch from '../EntitySearch/EntitySearch'
 import EntitySearchAutocomplete from '../EntitySearchAutocomplete/EntitySearchAutocomplete'
 
-import {
-  zoomToLocation,
-  toggleDrawer,
-  setDrawer,
-} from '../../../actions/publicActions'
+import {zoomToLocation, toggleDrawer, setDrawer} from '../../../actions/publicActions'
 import {updateValue} from '../../../actions/sharedActions'
 import {
   autocompleteValueSelector,
@@ -45,7 +41,7 @@ type Bound = {|
 type ContentProps = {
   autocompleteValue: string,
   setAutocompleteValue: (value: string) => void,
-  setZoomToLocation: (value: string, id: string) => void,
+  setZoomToLocation: (value: string, id: ?string) => void,
   autocompleteOptions: Bound,
   openedAddressIds: Array<number>,
   entitySearchOpen: boolean,
@@ -80,7 +76,6 @@ const _Content = ({
   openedAddressIds,
   entitySearchOpen,
 }: ContentProps) => (
-
   <React.Fragment>
     <FormGroup>
       <EntitySearchAutocomplete />
@@ -96,7 +91,8 @@ const _Content = ({
       />
     </FormGroup>
     {entitySearchOpen && <EntitySearch />}
-    {(openedAddressIds != null && openedAddressIds.length !== 0) && <AddressDetail addressIds={openedAddressIds} />}
+    {openedAddressIds != null &&
+      openedAddressIds.length !== 0 && <AddressDetail addressIds={openedAddressIds} />}
   </React.Fragment>
 )
 

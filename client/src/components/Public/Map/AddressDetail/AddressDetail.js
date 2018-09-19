@@ -39,25 +39,27 @@ type AddressDetailProps = OwnProps &
 
 const DETAILS_HEADER_HEIGHT = 37
 
-class AddressDetail extends React.Component<AddressDetailProps> {
+class AddressDetail extends React.PureComponent<AddressDetailProps> {
   constructor(props: AddressDetailProps) {
     super(props)
     if (props.entities.length === 1) {
       props.toggleEntityInfo(props.entities[0].id)
     }
   }
-  render = () => (
-    <div className="address-detail">
-      <div className="address-detail-header" style={{height: DETAILS_HEADER_HEIGHT}}>
-        <Button color="link" onClick={this.props.onClick}>
-          Close detail
-        </Button>
+  render() {
+    return (
+      <div className="address-detail">
+        <div className="address-detail-header" style={{height: DETAILS_HEADER_HEIGHT}}>
+          <Button color="link" onClick={this.props.onClick}>
+            Close detail
+          </Button>
+        </div>
+        <ListGroup className="address-detail-list">
+          {map(this.props.entities, (e) => <ListRow entity={e} key={e.id} />)}
+        </ListGroup>
       </div>
-      <ListGroup className="address-detail-list">
-        {map(this.props.entities, (e) => <ListRow entity={e} key={e.id} />)}
-      </ListGroup>
-    </div>
-  )
+    )
+  }
 }
 export default compose(
   connect(
