@@ -160,13 +160,6 @@ export function showContractStatus(statusId: number) {
   return contractStatuses[statusId.toString()] || 'Neznáme'
 }
 
-export function showRelationType(typeId: number, typeText: string) {
-  if (typeId == null) {
-    return 'Neznáme'
-  }
-  return `${typeText || 'Neznáme'} ${typeId > 0 ? '>' : '<'}`
-}
-
 function padIco(ico?: number | string) {
   // TODO remove null checks when `extractIco` is removed
   return ico != null ? padStart(ico.toString(), 8, '0') : ''
