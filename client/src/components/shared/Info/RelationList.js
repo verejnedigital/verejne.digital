@@ -10,35 +10,32 @@ import type {RelatedEntity} from '../../../state'
 type RelationListProps = {
   data: Array<RelatedEntity>,
   name: string,
-  useNewApi: boolean,
 }
 
 type RelationItemProps = {
   related: RelatedEntity,
   name: string,
-  useNewApi: boolean,
 }
 
-export default ({data, name, useNewApi}: RelationListProps) => (
+export default ({data, name}: RelationListProps) => (
   <ul className="list-unstyled info-button-list">
     {orderBy(data, ['edge_types']).map((related: RelatedEntity) => (
-      <RelationItem key={related.eid} related={related} name={name} useNewApi={useNewApi} />
+      <RelationItem key={related.eid} related={related} name={name} />
     ))}
   </ul>
 )
 
-const RelationItem = ({related, name, useNewApi}: RelationItemProps) => (
+const RelationItem = ({related, name}: RelationItemProps) => (
   <li key={related.eid} className="">
     <RecursiveInfo
       name={related.name}
       eid={related.eid}
-      useNewApi={useNewApi}
-      badge={<TitleBadge key={related.eid} related={related} name={name} useNewApi={useNewApi} />}
+      badge={<TitleBadge key={related.eid} related={related} name={name} />}
     />
   </li>
 )
 
-const TitleBadge = ({related, name, useNewApi}: RelationItemProps) =>
+const TitleBadge = ({related, name}: RelationItemProps) =>
   related.edge_types.map((type: number, i: number) => (
     <Badge
       key={type}

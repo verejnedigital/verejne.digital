@@ -59,14 +59,14 @@ const _Company = ({
       {showSupplierInfo && (
         <tr>
           <td colSpan={5}>
-            <CompanyDetails eid={item.supplier_eid} useNewApi />
+            <CompanyDetails eid={item.supplier_eid} />
           </td>
         </tr>
       )}
       {showCustomerInfo && (
         <tr>
           <td colSpan={5}>
-            <CompanyDetails eid={item.eid} useNewApi />
+            <CompanyDetails eid={item.eid} />
           </td>
         </tr>
       )}

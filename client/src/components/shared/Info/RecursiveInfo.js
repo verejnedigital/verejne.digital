@@ -9,7 +9,6 @@ type RecursiveInfoProps = {|
   name: string,
   eid: number,
   badge: Node,
-  useNewApi: boolean,
   toggledOn: boolean,
   toggle: () => void,
 |}
@@ -18,9 +17,9 @@ type StateProps = {
   toggle: StateUpdater<boolean>,
 }
 
-const RecursiveInfo = ({name, eid, badge, useNewApi, toggledOn, toggle}: RecursiveInfoProps) => {
+const RecursiveInfo = ({name, eid, badge, toggledOn, toggle}: RecursiveInfoProps) => {
   if (toggledOn) {
-    return <CompanyDetails useNewApi={useNewApi} eid={eid} />
+    return <CompanyDetails eid={eid} />
   } else {
     return (
       <Fragment>

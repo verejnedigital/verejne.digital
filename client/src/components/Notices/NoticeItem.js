@@ -64,14 +64,14 @@ const _NoticeItem = ({
       {showSupplierInfo && (
         <tr>
           <td colSpan={5}>
-            <CompanyDetails eid={item.supplier_eid || item.best_supplier} useNewApi />
+            <CompanyDetails eid={item.supplier_eid || item.best_supplier} />
           </td>
         </tr>
       )}
       {showCustomerInfo && (
         <tr>
           <td colSpan={5}>
-            <CompanyDetails eid={item.eid} useNewApi />
+            <CompanyDetails eid={item.eid} />
           </td>
         </tr>
       )}

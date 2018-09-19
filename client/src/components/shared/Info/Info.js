@@ -151,7 +151,7 @@ const Info = ({data, canClose, onClose, showOnMap, className}: InfoProps) => (
       {data.contracts && data.contracts.count > 0 && <Contracts data={data.contracts} />}
       {data.notices && data.notices.count > 0 && <Notices data={data.notices} />}
       {data.eufunds && data.eufunds.eufunds_count > 0 && <Eurofunds data={data.eufunds} />}
-      {data.related.length > 0 && <Relations data={data.related} name={data.name} useNewApi />}
+      {data.related.length > 0 && <Relations data={data.related} name={data.name} />}
     </div>
   </Container>
 )
