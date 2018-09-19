@@ -8,7 +8,7 @@ import {entityDetailProvider} from '../../../../dataProviders/sharedDataProvider
 import {addressEntitiesSelector, addressEntitiesIdsSelector} from '../../../../selectors'
 import {MAX_ENTITY_REQUEST_COUNT} from '../../../../constants'
 import {closeAddressDetail, toggleEntityInfo} from '../../../../actions/publicActions'
-import {ListGroup, Button} from 'reactstrap'
+import {ListGroup} from 'reactstrap'
 import {map, chunk, flatten} from 'lodash'
 import ListRow from './ListRow'
 import type {State} from '../../../../state'
@@ -49,9 +49,9 @@ class AddressDetail extends React.Component<AddressDetailProps> {
   render = () => (
     <div className="address-detail">
       <div className="address-detail-header" style={{height: DETAILS_HEADER_HEIGHT}}>
-        <Button color="link" onClick={this.props.onClick}>
-          Close detail
-        </Button>
+        <button type="button" className="close" onClick={this.props.onClick}>
+          <span>&times;</span>
+        </button>
       </div>
       <ListGroup className="address-detail-list">
         {map(this.props.entities, (e) => <ListRow entity={e} key={e.id} />)}
