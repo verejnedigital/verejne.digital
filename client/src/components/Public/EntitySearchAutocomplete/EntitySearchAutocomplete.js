@@ -169,8 +169,7 @@ export default compose(
       <div
         key={entity.eid}
         className={
-          entity.name &&
-          classnames('autocomplete-item', isHighlighted && 'autocomplete-item--active')
+          classnames({'autocomplete-item': entity.name, 'autocomplete-item--active': isHighlighted})
         }
       >
         <strong>{entity.name ? entity.name : ''}</strong>
