@@ -5,13 +5,13 @@ import './Marker.css'
 
 import type {Node} from 'react'
 
-type Props = {
+type MarkerProps = {
   className?: string,
   children?: Node,
   onClick?: () => void,
 }
 
-const Marker = ({className, children, onClick}: Props) => (
+const Marker = ({className, children, onClick}: MarkerProps) => (
   <div className={classnames('marker', className)} onClick={onClick}>
     {children}
   </div>

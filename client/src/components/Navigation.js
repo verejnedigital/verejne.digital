@@ -1,18 +1,32 @@
+// @flow
 import React, {Component} from 'react'
 import {NavLink, withRouter} from 'react-router-dom'
 import {Collapse, Navbar, NavbarToggler, NavItem, Nav} from 'reactstrap'
 
 import FbIcon from 'react-icons/lib/fa/facebook-square'
 
+import type {RouterHistory, Location, Match} from 'react-router-dom'
+
 import './Navigation.css'
 
-class Navigation extends Component {
+type State = {
+  isOpen: boolean,
+  pathname: string,
+}
+
+type Props = {
+  history: RouterHistory,
+  location: Location,
+  match: Match,
+}
+
+class Navigation extends Component<Props, State> {
   state = {
     isOpen: false,
     pathname: this.props.location.pathname,
   }
 
-  static getDerivedStateFromProps(props, state) {
+  static getDerivedStateFromProps(props: Props, state: State) {
     // NOTE: We need to hide mobile menu when we navigate to other page.
     if (props.location.pathname !== state.pathname) {
       return {isOpen: false, pathname: props.location.pathname}

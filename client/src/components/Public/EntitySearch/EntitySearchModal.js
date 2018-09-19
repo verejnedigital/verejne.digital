@@ -27,6 +27,8 @@ import {toggleModalOpen, setEntitySearchFor, toggleDrawer} from '../../../action
 import {updateValue} from '../../../actions/sharedActions'
 import {FIND_ENTITY_TITLE} from '../../../constants'
 
+import type {State} from '../../../state'
+
 type EntitySearchProps = {|
   entitySearchModalOpen: boolean,
   toggleModalOpen: () => void,
@@ -105,7 +107,7 @@ const EntitySearchModal = ({
 
 export default compose(
   connect(
-    (state) => ({
+    (state: State) => ({
       entitySearchValue: entitySearchValueSelector(state),
       entitySearchModalOpen: entitySearchModalOpenSelector(state),
       entitySearchEids: entitySearchEidsSelector(state),

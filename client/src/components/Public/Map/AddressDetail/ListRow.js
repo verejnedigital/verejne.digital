@@ -1,3 +1,4 @@
+// @flow
 import React from 'react'
 import {connect} from 'react-redux'
 import {compose} from 'redux'
@@ -14,7 +15,7 @@ import {entityDetailSelector} from '../../../../selectors'
 import Info from '../../../shared/Info/Info'
 import CircleIcon from '../../../shared/CircleIcon'
 
-import type {NewEntityDetail} from '../../../../state'
+import type {NewEntity, NewEntityDetail, State} from '../../../../state'
 
 import './ListRow.css'
 
@@ -38,7 +39,21 @@ const DetailedInfo = compose(
   })
 )(_DetailedInfo)
 
-const ListRow = ({entity, toggleEntityInfo, showInfo, openModalSearch, entityDetails}) =>
+type ListRowProps = {
+  entity: NewEntity,
+  toggleEntityInfo: (id: number) => void,
+  showInfo: () => void,
+  openModalSearch: () => void,
+  entityDetails: NewEntityDetail,
+}
+
+const ListRow = ({
+  entity,
+  toggleEntityInfo,
+  showInfo,
+  openModalSearch,
+  entityDetails,
+}: ListRowProps) =>
   showInfo ? (
     <DetailedInfo id={entity.id} data={entityDetails} />
   ) : (
@@ -53,7 +68,7 @@ const ListRow = ({entity, toggleEntityInfo, showInfo, openModalSearch, entityDet
 
 export default compose(
   connect(
-    (state, {entity}) => ({
+    (state: State, {entity}) => ({
       showInfo: state.publicly.showInfo[entity.id],
       entityDetails: entityDetailSelector(state, entity.id),
     }),

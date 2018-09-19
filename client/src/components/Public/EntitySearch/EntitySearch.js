@@ -3,27 +3,25 @@ import React from 'react'
 import {connect} from 'react-redux'
 import {compose} from 'recompose'
 import EntitySearchResult from '../EntitySearchResult/EntitySearchResult'
-import {
-  entitySearchEidsSelector,
-  entitySearchForSelector,
-} from '../../../selectors'
+import {entitySearchEidsSelector, entitySearchForSelector} from '../../../selectors'
 import {toggleEntitySearchOpen} from '../../../actions/publicActions'
+
 import './EntitySearch.css'
 
-type EntitySearchProps = {|
-  toggleEntitySearchOpen: () => void,
-  className: string,
+import type {State} from '../../../state'
+
+type EntitySearchProps = {
+  toggleEntitySearchOpen: () => Object,
   entitySearchEids: Array<number>,
   entitySearchFor: string,
-|}
+}
 
 const EntitySearch = ({
   toggleEntitySearchOpen,
-  className,
   entitySearchEids,
   entitySearchFor,
 }: EntitySearchProps) => {
-  const plurality = (count: number) => {
+  const plurality = (count: number): string => {
     if (count === 1) {
       return `Nájdený ${count} výsledok`
     } else if (count > 1 && count < 5) {
@@ -50,7 +48,7 @@ const EntitySearch = ({
 
 export default compose(
   connect(
-    (state) => ({
+    (state: State) => ({
       entitySearchEids: entitySearchEidsSelector(state),
       entitySearchFor: entitySearchForSelector(state),
     }),

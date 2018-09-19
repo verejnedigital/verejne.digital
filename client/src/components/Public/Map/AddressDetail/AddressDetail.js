@@ -11,20 +11,15 @@ import {closeAddressDetail, toggleEntityInfo} from '../../../../actions/publicAc
 import {ListGroup, Button} from 'reactstrap'
 import {map, chunk, flatten} from 'lodash'
 import ListRow from './ListRow'
-import type {State} from '../../../../state'
+import type {State, NewEntity} from '../../../../state'
 import './AddressDetail.css'
 
-type Entity = {
-  addressId: number,
-  id: number,
-  name: string,
-}
 
 type OwnProps = {
   addressIds: Array<number>,
 }
 type StateProps = {
-  entities: Array<Entity>,
+  entities: Array<NewEntity>,
   addressId: number,
   onClick: (e: Event) => void,
   hasStateTraders: boolean,
