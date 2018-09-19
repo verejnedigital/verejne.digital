@@ -38,14 +38,22 @@ const RelationItem = ({related, name, useNewApi}: RelationItemProps) => (
   </li>
 )
 
-const TitleBadge = ({related, name, useNewApi}: RelationItemProps) =>
-  related.edge_types.map((type: number, i: number) => (
-    <Badge
-      key={type}
-      color={type > 0 ? 'dark' : 'secondary'}
-      title={getRelationTitle(type, name, related.name)}
-      className="mr-1 info-badge"
-    >
-      {showRelationType(type, related.edge_type_texts[i])}
-    </Badge>
-  ))
+const TitleBadge = ({related, name, useNewApi}: RelationItemProps) => {
+  const result = []
+  related.edge_types.forEach((type: number, i: number) => {
+    const duplicate : boolean = related.edge_types.includes(-type)
+    if (type >= 0 || !duplicate) {
+      result.push(
+        <Badge
+          key={type}
+          color={type > 0 ? 'dark' : 'secondary'}
+          title={getRelationTitle(type, name, related.name)}
+          className="mr-1 info-badge"
+        >
+          {showRelationType(type, related.edge_type_texts[i], !duplicate)}
+        </Badge>
+      )
+    }
+  })
+  return result
+}

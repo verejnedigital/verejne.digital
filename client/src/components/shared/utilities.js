@@ -1,8 +1,8 @@
-export function showRelationType(typeId: number, typeText: string) {
+export function showRelationType(typeId: number, typeText: string, arrow: boolean) {
   if (typeId == null) {
     return 'Neznáme'
   }
-  return `${typeText || 'Neznáme'} ${typeId > 0 ? '>' : '<'}`
+  return `${typeText || 'Neznáme'} ${arrow ? typeId > 0 ? '>' : '<' : ''}`
 }
 
 export function getRelationTitle(typeId: number, name1: string, name2: string) {
