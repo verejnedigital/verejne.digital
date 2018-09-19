@@ -105,6 +105,11 @@ const Landing = () => (
                     <img src="/vl.png" alt="VacuumLabs" />
                   </a>
                 </li>
+                <li className="list-inline-item">
+                  <a href="https://www.uvostat.sk" target="_blank" rel="noopener noreferrer">
+                    <img src="/uvo.png" alt="UVOstat" />
+                  </a>
+                </li>
               </ul>
             </li>
             <li className="list-inline-item">
