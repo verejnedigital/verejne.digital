@@ -1,10 +1,10 @@
 // @flow
-import React from 'react'
+import React, {Fragment} from 'react'
 import {Link, NavLink} from 'react-router-dom'
 import {compose} from 'redux'
 import {connect} from 'react-redux'
 import {stringify} from 'qs'
-import {values} from 'lodash'
+import {size, map} from 'lodash'
 import {withHandlers, withState} from 'recompose'
 import {withDataProviders} from 'data-provider'
 import {
@@ -43,7 +43,7 @@ import type {ParsedAssetDeclarationsType} from '../../types/profileTypes'
 export type ProfileDetailPageProps = {
   assetsYears: Array<string>,
   selectedYear: string,
-  assets: ParsedAssetDeclarationsType,
+  assets: ?ParsedAssetDeclarationsType,
   politician: PoliticianDetail,
   cadastral: CadastralData,
   paginatedCadastral: CadastralData,
@@ -84,10 +84,17 @@ const DetailPage = ({
     <Cardboard key="cardboard" politician={politician} />
     <Row tag="article" key="politician" className="profile">
       <Col tag="section">
-        {politician.entities && values(politician.entities)[0] &&
-        <section className="mb-4">
-          <Info data={values(politician.entities)[0]} className="bc-transparent" />
-        </section>}
+        {politician.entities &&
+          size(politician.entities) > 0 && (
+          <section className="mb-4">
+            <h5 className="ml-2">
+                Pozor, mozno iba {size(politician.entities) > 1 ? 'menovci' : 'menovec'}.
+            </h5>
+            {map(politician.entities, (e, i) => (
+              <Info key={i} data={e} className="bc-transparent" />
+            ))}
+          </section>
+        )}
         <div className="profile-tabs">
           {assetsYears.map((y) => (
             <Link
@@ -99,33 +106,37 @@ const DetailPage = ({
             </Link>
           ))}
         </div>
-        <section>
-          <DetailAsset
-            assets={assets.unmovable_assets}
-            year={selectedYear}
-            title="Majetkové priznanie: Nehnuteľnosti"
-            image={`https://verejne.digital/img/majetok/${politician.surname}_${
-              politician.firstname
-            }.png`}
-            source={assets.source}
-          />
-        </section>
-        <section>
-          <DetailAsset
-            assets={assets.movable_assets}
-            year={selectedYear}
-            title="Majetkové priznanie: Hnuteľný majetok"
-            source={assets.source}
-          />
-        </section>
-        <section>
-          <DetailAsset
-            assets={assets.income_assets}
-            year={selectedYear}
-            title="Majetkové priznanie: ostatné"
-            source={assets.source}
-          />
-        </section>
+        {assets && (
+          <Fragment>
+            <section>
+              <DetailAsset
+                assets={assets.unmovable_assets}
+                year={selectedYear}
+                title="Majetkové priznanie: Nehnuteľnosti"
+                image={`https://verejne.digital/img/majetok/${politician.surname}_${
+                  politician.firstname
+                }.png`}
+                source={assets.source}
+              />
+            </section>
+            <section>
+              <DetailAsset
+                assets={assets.movable_assets}
+                year={selectedYear}
+                title="Majetkové priznanie: Hnuteľný majetok"
+                source={assets.source}
+              />
+            </section>
+            <section>
+              <DetailAsset
+                assets={assets.income_assets}
+                year={selectedYear}
+                title="Majetkové priznanie: ostatné"
+                source={assets.source}
+              />
+            </section>
+          </Fragment>
+        )}
       </Col>
       <Col tag="section">
         <DetailCadastralTable
