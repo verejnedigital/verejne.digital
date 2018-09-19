@@ -41,8 +41,8 @@ const RelationItem = ({related, name, useNewApi}: RelationItemProps) => (
 const TitleBadge = ({related, name, useNewApi}: RelationItemProps) => {
   const result = []
   related.edge_types.forEach((type: number, i: number) => {
-    const duplicate : boolean = related.edge_types.includes(-type)
-    if (type >= 0 || !duplicate) {
+    const symmetric : boolean = related.edge_types.includes(-type)
+    if (type >= 0 || !symmetric) {
       result.push(
         <Badge
           key={type}
@@ -50,7 +50,7 @@ const TitleBadge = ({related, name, useNewApi}: RelationItemProps) => {
           title={getRelationTitle(type, name, related.name)}
           className="mr-1 info-badge"
         >
-          {showRelationType(type, related.edge_type_texts[i], !duplicate)}
+          {showRelationType(type, related.edge_type_texts[i], !symmetric)}
         </Badge>
       )
     }
