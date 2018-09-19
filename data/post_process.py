@@ -142,12 +142,13 @@ def _post_process_notices(db, test_mode):
         """)
         # In production we use the real embedder.
         # Note that you can test changes in Word2VecEmbedder directly in intelligence/embed.py
+        results = db_cursor.fetchall()
         if not test_mode:
             all_texts = []
-            for row in cur:
+            for row in results:
                 all_texts.append(row["text"])
             text_embedder = embed.Word2VecEmbedder(all_texts)
-        for row in cur:
+        for row in results:
             notices.append(
                 Notice(row["notice_id"],
                        text_embedder.embed([row["text"]])[0],
