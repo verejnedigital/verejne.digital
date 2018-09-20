@@ -19,6 +19,11 @@ type RelationItemProps = {
   useNewApi: boolean,
 }
 
+type TitleBadgeProps = {
+  related: RelatedEntity,
+  name: string,
+}
+
 export default ({data, name, useNewApi}: RelationListProps) => (
   <ul className="list-unstyled info-button-list">
     {orderBy(data, ['edge_types']).map((related: RelatedEntity) => (
@@ -38,7 +43,7 @@ const RelationItem = ({related, name, useNewApi}: RelationItemProps) => (
   </li>
 )
 
-const TitleBadge = ({related, name, useNewApi}: RelationItemProps) => {
+const TitleBadge = ({related, name}: TitleBadgeProps) => {
   const result = []
   related.edge_types.forEach((type: number, i: number) => {
     const symmetric : boolean = related.edge_types.includes(-type)
