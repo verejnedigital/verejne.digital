@@ -9,12 +9,12 @@ export type Candidate = {
   eid: number,
   supplier_name: string,
   supplier_eid: number,
-  notice_id: number
+  notice_id: number,
 }
 
 export type Notice = {
   price_est: number,
-  total_final_value_amount:	number,
+  total_final_value_amount: number,
   bulletin_source_url: string,
   best_similarity: number,
   notice_type_id: number,
@@ -35,7 +35,7 @@ export type Notice = {
   eid: number,
   estimated_value_currency: string,
   bulletin_published_on: string,
-  total_final_value_currency: string
+  total_final_value_currency: string,
 }
 
 export type NoticeDetail = {
@@ -66,7 +66,7 @@ export type NoticeDetail = {
   estimated_value_amount: number,
   eid: number,
   estimated_value_currency: string,
-  bulletin_published_on: string
+  bulletin_published_on: string,
 }
 
 export type Politician = {|
@@ -181,7 +181,7 @@ export type MapOptions = {
   bounds: ?MapBounds,
 }
 
-export type Center = {lat: number, lng: number}
+export type Center = {lat: number, lng: number, addressId?: number}
 
 export type SearchedEntity = {
   query: string,
@@ -373,7 +373,7 @@ export type State = {|
     +showInfo: any, //TODO: TBD
     +openedAddressDetail: Array<number>,
     +drawerOpen: boolean,
-    +selectedLocation: Center | null,
+    +selectedLocations: Center[],
   |},
   +mapOptions: MapOptions,
   +connections: Connections,
@@ -408,7 +408,7 @@ const getInitialState = (): State => ({
     showInfo: {},
     openedAddressDetail: [],
     drawerOpen: false,
-    selectedLocation: null,
+    selectedLocations: [],
   },
   mapOptions: {
     center: SLOVAKIA_COORDINATES,

@@ -20,7 +20,10 @@ import {withDataProviders} from 'data-provider'
 import {addressesProvider} from '../../../dataProviders/publiclyDataProviders'
 import {withRouter} from 'react-router-dom'
 import qs from 'qs'
-import {DEFAULT_MAP_CENTER, COUNTRY_ZOOM} from '../../../constants'
+import {
+  DEFAULT_MAP_CENTER,
+  COUNTRY_ZOOM,
+} from '../../../constants'
 import {withSideEffects} from '../../../utils'
 
 import type {MapOptions, CompanyEntity} from '../../../state'
@@ -77,13 +80,10 @@ export default compose(
     addressesUrl: addressesUrlSelector(state),
     useLabels: useLabelsSelector(state),
   })),
-  withDataProviders(
-    ({useLabels, addressesUrl}) => (useLabels ? [] : [addressesProvider(addressesUrl)])
-  ),
+  withDataProviders(({useLabels, addressesUrl}) => useLabels ? [] : [addressesProvider(addressesUrl)]),
   withHandlers({
     onChange: (props) => (options) => {
-      const newOptions = {
-        zoom: options.zoom,
+      const newOptions = {zoom: options.zoom,
         center: [options.center.lat, options.center.lng],
         bounds: options.bounds,
       }
