@@ -309,17 +309,24 @@ def get_GetInfos(db, eIDs):
     # Query the database for basic entity information:
     q = """
         SELECT
-          entities.id AS eid, entities.name AS name,
-          address.lat, address.lng, address.address,
+          entities.id AS eid,
+          entities.name AS name,
+          entities.address_id AS address_id,
+          address.lat,
+          address.lng,
+          address.address,
           entity_flags.trade_with_government AS trade_with_government,
           entity_flags.political_entity AS political_entity,
-          entity_flags.contact_with_politics AS contact_with_politics
+          entity_flags.contact_with_politics AS contact_with_politics,
+          profilmapping.profil_id AS profil_id
         FROM
           entities
         LEFT JOIN
           entity_flags ON entity_flags.eid=entities.id
         LEFT JOIN
           address ON address.id=entities.address_id
+        LEFT JOIN
+          profilmapping ON profilmapping.eid=entities.id
         WHERE
           entities.id IN %s
         ;"""
@@ -328,6 +335,8 @@ def get_GetInfos(db, eIDs):
         eID = row['eid']
         result[eID] = row
         del result[eID]['eid']
+        if not result[eID]['profil_id']:
+          del result[eID]['profil_id']
         result[eID]['related'] = []
 
     # Add information from other production tables
@@ -350,7 +359,8 @@ def get_GetInfos(db, eIDs):
             related.eid AS source,
             related.eid_relation AS target,
             +1 * related.stakeholder_type_id AS edge_type,
-            stakeholdertypes.stakeholder_type_text AS edge_type_text
+            stakeholdertypes.stakeholder_type_text AS edge_type_text,
+            related.effective_to AS effective_to
           FROM
             related
           LEFT JOIN
@@ -366,7 +376,8 @@ def get_GetInfos(db, eIDs):
             related.eid_relation AS source,
             related.eid AS target,
             -1 * related.stakeholder_type_id AS edge_type,
-            stakeholdertypes.stakeholder_type_text AS edge_type_text
+            stakeholdertypes.stakeholder_type_text AS edge_type_text,
+            related.effective_to AS effective_to
           FROM
             related
           LEFT JOIN
@@ -384,7 +395,8 @@ def get_GetInfos(db, eIDs):
             merged.source,
             merged.target,
             array_agg(merged.edge_type) AS edge_types,
-            array_agg(merged.edge_type_text) AS edge_type_texts
+            array_agg(merged.edge_type_text) AS edge_type_texts,
+            array_agg(merged.effective_to) AS edge_effective_to_dates
           FROM merged
           GROUP BY (merged.source, merged.target)
         )
@@ -393,19 +405,28 @@ def get_GetInfos(db, eIDs):
           grouped.target AS eid,
           grouped.edge_types,
           grouped.edge_type_texts,
+          grouped.edge_effective_to_dates,
           entities.name, address.lat, address.lng, address.address
         FROM
           grouped
-        JOIN
+        INNER JOIN
           entities ON entities.id=grouped.target
-        JOIN
+        INNER JOIN
           address ON address.id=entities.address_id
         ;
         """
     q_data = [tuple(eIDs), tuple(eIDs)]
     for row in db.query(q, q_data):
+        # Ensure JSON serialisability:
+        row['edge_effective_to_dates'] = [
+            datetime.datetime.strftime(date, '%Y-%m-%d') if date else ''
+            for date in row['edge_effective_to_dates']]
+
+        # Save the related entity:
         eID = row['eid_source']
         result[eID]['related'].append(row)
+
+        # Remove redundant information:
         del result[eID]['related'][-1]['eid_source']
 
     return result

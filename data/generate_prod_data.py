@@ -10,6 +10,7 @@ from psycopg2.extensions import AsIs
 
 import geocoder as geocoder_lib
 import entities
+from prod_generation import graph_tools
 import post_process
 from datetime import datetime
 
@@ -47,7 +48,7 @@ def CreateAndSetProdSchema(db, prod_schema_name):
     """
     with db.dict_cursor() as cur:
         cur.execute("CREATE SCHEMA %s", [AsIs(prod_schema_name)])
-        cur.execute("SET search_path = %s", [AsIs(prod_schema_name)])
+        cur.execute("SET search_path = %s,public", [AsIs(prod_schema_name)])
         # TODO: read this from a config
         # TODO: index on lat, lng
         cur.execute("""
@@ -71,6 +72,9 @@ def CreateAndSetProdSchema(db, prod_schema_name):
             );
             CREATE INDEX ON Entities(name);
             CREATE INDEX ON Entities(address_id);
+            CREATE MATERIALIZED VIEW entities_search AS SELECT id, to_tsvector('simple',unaccent(name)) as search_vector FROM entities WITH NO DATA;
+            CREATE INDEX ON entities_search(search_vector);
+            CREATE INDEX ON entities_search USING gin(search_vector);
         """)
 
 
@@ -123,8 +127,6 @@ def ProcessSource(db_prod, geocoder, entities, config, test_mode):
         with db_prod.dict_cursor() as cur:
             cur.execute(command,
                         [AsIs(table)] + values)
-
-
 
     def AddToTable(row, table, eid, years, supplier_eid=None):
         """ Add values for the given row into the supplementary table 'table'.
@@ -248,6 +250,80 @@ def ProcessSource(db_prod, geocoder, entities, config, test_mode):
     db_source.close()
 
 
+def process_source_rpvs(db_source, db_prod, geocoder, entities, test_mode):
+  log_prefix = "[source_rpvs] "
+
+  # Set search path to latest source_rpvs schema:
+  source_schema_name = db_source.get_latest_schema('source_rpvs')
+  db_source.execute('SET search_path="' + source_schema_name + '";')
+  print("%ssource_schema_name=%s" % (log_prefix, source_schema_name))
+
+  # Read relevant data from the source database:
+  rows = db_source.query("""
+      SELECT
+        concat_ws(' ',
+          kuv_title_front,
+          kuv_first_name,
+          kuv_last_name,
+          kuv_title_back,
+          kuv_public_figure
+        ) AS kuv_name,
+        concat_ws(' ',
+          kuv_address,
+          kuv_city,
+          kuv_psc,
+          kuv_country
+        ) AS kuv_address,
+        partner_ico
+      FROM
+        rpvs
+      """ + (" LIMIT 1000;" if test_mode else ";")
+  )
+  print("%sFound %d rows in table `rpvs`." % (log_prefix, len(rows)))
+
+  # Construct set of edges between partners and beneficiaries. This
+  # needs to be a set to satisfy a UNIQUE constraint on `related`.
+  edges = set()
+  for row in rows:
+
+    # Geocode beneficiary's address:
+    kuv_address = row["kuv_address"]
+    kuv_address_id = geocoder.GetAddressId(kuv_address.encode("utf8"))
+    if kuv_address_id is None:
+      continue
+
+    # Match or create an entity for the beneficiary:
+    kuv_name = row["kuv_name"]
+    eid_kuv = entities.GetEntity(None, kuv_name, kuv_address_id)
+    if eid_kuv is None:
+      continue
+
+    # Match entity for the partner:
+    try:
+      partner_ico = int(row["partner_ico"])
+    except ValueError:
+      continue
+    eid_partner = entities.GetEidForOrgId(partner_ico)
+    if eid_partner is None:
+      continue
+
+    # Save the edge:
+    edges.add((eid_partner, eid_kuv))
+  print("%sCollected %d edges" % (log_prefix, len(edges)))
+
+  # Create an edge type for `konecny uzivatel vyhod`:
+  edge_type_id = graph_tools.add_or_get_edge_type(
+      db_prod, u"Konečný užívateľ výhod", log_prefix)
+
+  # Insert edges into table `related`:
+  with db_prod.cursor() as cur:
+    cur.executemany("""
+      INSERT INTO related(eid, eid_relation, stakeholder_type_id)
+      VALUES (%s, %s, %s);
+      """, [(source, target, edge_type_id) for source, target in edges]
+    )
+
+
 def main(args_dict):
     test_mode = not args_dict['disable_test_mode']
     if test_mode:
@@ -272,6 +348,7 @@ def main(args_dict):
     geocoder = geocoder_lib.Geocoder(db_address_cache, db_prod, test_mode)
     # Initialize entity lookup
     entities_lookup = entities.Entities(db_prod)
+
     # Table prod_tables.yaml defines a specifications of SQL selects to read
     # source data and describtion of additional tables to be created.
     with open('prod_tables.yaml', 'r') as stream:
@@ -285,6 +362,12 @@ def main(args_dict):
         ProcessSource(db_prod, geocoder, entities_lookup, config_per_source, test_mode)
         print "GEOCODER STATS"
         geocoder.PrintStats()
+
+    # Process yaml-free sources:
+    db_source = DatabaseConnection(
+        path_config='db_config_update_source.yaml')
+    process_source_rpvs(db_source, db_prod, geocoder, entities_lookup, test_mode)
+    db_source.close()
 
     # Run post processing
     post_process.do_post_processing(db_prod, test_mode)

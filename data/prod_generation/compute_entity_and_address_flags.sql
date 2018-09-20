@@ -23,7 +23,6 @@ CREATE TABLE political_entities AS (
   LEFT JOIN companyinfo ON companyinfo.eid=entities.id
   LEFT JOIN profilmapping ON profilmapping.eid=entities.id
   WHERE
-    -- companyinfo.ico=0 OR
     companyinfo.legal_form_id=254 OR
     profilmapping.eid IS NOT NULL
 );

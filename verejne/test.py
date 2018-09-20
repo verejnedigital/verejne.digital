@@ -51,7 +51,7 @@ class TestHandlers(unittest.TestCase):
         print(content)
 
     def test_getInfos(self):
-        content = _request_json('/getInfos?eids=103,215521,82680,293097,389093,389094', self)
+        content = _request_json('/getInfos?eids=103,215521,82680,293097,389093,389094,2352916', self)
         self.assertTrue(content)
         print('===== getInfos response =====')
         print(json.dumps(content, indent=2))
@@ -69,7 +69,7 @@ class TestHandlers(unittest.TestCase):
         self.assertEqual(response.status_int, 302)
 
     def test_searchEntityByName(self):
-        content = _request_json('/searchEntityByName?name=stefan%20skrucany', self)
+        content = _request_json('/searchEntityByName?name=ladislav%20basternak', self)
         self.assertTrue(content)
         print('===== searchEntityByName response =====')
         print(content)

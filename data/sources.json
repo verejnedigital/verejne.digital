@@ -52,9 +52,17 @@
         "type": "CSV"
     },
     {
+        "delimiter": "|",
+        "description": "Register partnerov verejného sektora (RPVS)",
+        "name": "rpvs",
+        "path": "/tmp/source_rpvs.csv",
+        "table_name": "rpvs",
+        "type": "CSV"
+    },
+    {
         "description": "KamIduEurofondy.sk",
         "name": "KamIduEurofondy",
-        "path": "/tmp/data/source_KamIduEurofondy.json",
+        "path": "/tmp/source_KamIduEurofondy.json",
         "table_name": "kamidueurofondy",
         "type": "JSON"
     },

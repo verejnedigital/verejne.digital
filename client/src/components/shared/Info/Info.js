@@ -13,7 +13,11 @@ import {
 } from '../../../services/utilities'
 import {compose, withHandlers} from 'recompose'
 import {connect} from 'react-redux'
-import {zoomToLocation, toggleEntitySearchOpen, makeLocationSelected} from '../../../actions/publicActions'
+import {
+  zoomToLocation,
+  toggleEntitySearchOpen,
+  makeLocationSelected,
+} from '../../../actions/publicActions'
 import {ENTITY_CLOSE_ZOOM} from '../../../constants'
 import Contracts from './Contracts'
 import Notices from './Notices'
@@ -110,7 +114,7 @@ const Findata = ({data}: {data: FinancialData}) => {
 const Info = ({data, canClose, onClose, showOnMap, className}: InfoProps) => (
   <Container className={classnames(className, {closable: canClose}, 'info')}>
     <div className="info-header">
-      <h3 onClick={onClose} >
+      <h3 onClick={onClose}>
         <CircleIcon data={data} />&nbsp;{data.name}&nbsp;
       </h3>
       <Link
@@ -118,7 +122,12 @@ const Info = ({data, canClose, onClose, showOnMap, className}: InfoProps) => (
         title="Zobraz na mape"
         onClick={showOnMap}
       >
-        <img src={mapIcon} alt="MapMarker" style={{width: '16px', height: '25px'}} />
+        <img
+          src={mapIcon}
+          alt="MapMarker"
+          style={{width: '16px', height: '25px'}}
+          className="mb-2"
+        />
       </Link>
       {canClose && (
         <span className="info-close-button" onClick={onClose}>
@@ -142,7 +151,7 @@ const Info = ({data, canClose, onClose, showOnMap, className}: InfoProps) => (
       {data.contracts && data.contracts.count > 0 && <Contracts data={data.contracts} />}
       {data.notices && data.notices.count > 0 && <Notices data={data.notices} />}
       {data.eufunds && data.eufunds.eufunds_count > 0 && <Eurofunds data={data.eufunds} />}
-      {data.related.length > 0 && <Relations data={data.related} useNewApi />}
+      {data.related.length > 0 && <Relations data={data.related} name={data.name} useNewApi />}
     </div>
   </Container>
 )

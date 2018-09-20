@@ -10,21 +10,23 @@ type EurofundsProps = {|
   data: Eufunds,
 |}
 
+const buildEufund = (eufund: Eufund, i: number) => (
+  // no proper ID available
+  <li key={i}>
+    <ExternalLink url={eufund.link}>
+      {`${eufund.title}, `}
+      <ShowNumberCurrency num={eufund.price} />
+    </ExternalLink>
+  </li>
+)
+
 const Eurofunds = ({data}: EurofundsProps) => (
   <InfoButton
     label="Eurofondy"
     count={data.eufunds_count}
     priceSum={data.eufunds_price_sum}
     list={data.largest}
-    buildItem={(eufund: Eufund, i: number) => (
-      // no proper ID available
-      <li key={i}>
-        <ExternalLink url={eufund.link}>
-          {`${eufund.title}, `}
-          <ShowNumberCurrency num={eufund.price} />
-        </ExternalLink>
-      </li>
-    )}
+    buildItem={buildEufund}
   />
 )
 

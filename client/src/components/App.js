@@ -12,7 +12,7 @@ import Landing from './Landing/Landing'
 
 import './App.css'
 
-export default (props) => (
+const App = () => (
   <div className="application-container">
     <Route path="/:something" component={Navigation} />
     <div className="screen-container">
@@ -28,3 +28,5 @@ export default (props) => (
     </div>
   </div>
 )
+
+export default App

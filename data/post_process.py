@@ -9,6 +9,8 @@ from intelligence import embed
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../data/db')))
 from db import DatabaseConnection
 
+from prod_generation import post_process_neighbours
+
 import utils
 
 
@@ -122,33 +124,46 @@ def notices_find_candidates(notices):
 
 def _post_process_notices(db, test_mode):
     notices_create_extra_table(db, test_mode)
+    # Default text embedder is the random one. For not test mode we set the real one later.
     text_embedder = embed.FakeTextEmbedder()
     ids = []
     texts = []
     suppliers = []
     notices = []
-    with db.dict_cursor() as cur:
-        test_mode_suffix = " LIMIT 100" if test_mode else ""
-        cur.execute("""
-            SELECT
-                notice_id,
-                concat_ws(' ', title, short_description) as text,
-                supplier_eid,
-                total_final_value_amount as price
-            FROM Notices""" + test_mode_suffix + """;
-        """)
-        for row in cur:
-            notices.append(
-                Notice(row["notice_id"],
-                       text_embedder.embed([row["text"]])[0],
-                       row["supplier_eid"],
-                       row["price"]))
+
+    query = """
+      SELECT
+        notice_id,
+        concat_ws(' ', title, short_description) as text,
+        supplier_eid,
+        total_final_value_amount as price
+      FROM notices
+      """ + (" LIMIT 100;" if test_mode else ";")
+    rows = db.query(query)
+
+    # In production we use the real embedder.
+    # Note that you can test changes in Word2VecEmbedder directly in intelligence/embed.py
+    if not test_mode:
+        all_texts = [row["text"] for row in rows]
+        text_embedder = embed.Word2VecEmbedder(all_texts)
+    for row in rows:
+        notices.append(
+            Notice(row["notice_id"],
+                   text_embedder.embed([row["text"]])[0],
+                   row["supplier_eid"],
+                   row["price"]))
     notices = notices_find_candidates(notices)
     notices_insert_into_extra_table(db, notices, test_mode)
 
 
+def _post_process_neighbours(db, test_mode):
+    """Adds edges between neighbours."""
+    post_process_neighbours.add_family_and_neighbour_edges(
+        db, test_mode)
+
+
 def _post_process_flags(db, test_mode):
-    """Precompute entity flags and address flags."""
+    """Precomputes entity flags and address flags."""
     path_script = os.path.join(
         "prod_generation", "compute_entity_and_address_flags.sql")
     utils.execute_script(db, path_script)
@@ -170,6 +185,10 @@ def do_post_processing(db, test_mode=False):
           side effects is desired.
     """
     print('[OK] Postprocessing...')
+
+    # Order matters: post processing neighbours creates edges that
+    # can be exploited when post processing flags, for example.
+    _post_process_neighbours(db, test_mode)
     _post_process_flags(db, test_mode)
     _post_process_notices(db, test_mode)
 
