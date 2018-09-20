@@ -69,7 +69,7 @@ class TestHandlers(unittest.TestCase):
         self.assertEqual(response.status_int, 302)
 
     def test_searchEntityByName(self):
-        content = _request_json('/searchEntityByName?name=stefan%20skrucany', self)
+        content = _request_json('/searchEntityByName?name=ladislav%20basternak', self)
         self.assertTrue(content)
         print('===== searchEntityByName response =====')
         print(content)

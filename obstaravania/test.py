@@ -32,7 +32,7 @@ class TestHandlers(unittest.TestCase):
     print(content)
 
   def test_info_notice(self):
-    content = _request_json('/info_notice?id=155196', self)
+    content = _request_json('/info_notice?id=155828', self)
     self.assertIsInstance(content, dict)
     self.assertTrue(content)
     print('===== info_notice response =====')

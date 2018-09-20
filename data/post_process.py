@@ -130,30 +130,28 @@ def _post_process_notices(db, test_mode):
     texts = []
     suppliers = []
     notices = []
-    with db.dict_cursor() as cur:
-        test_mode_suffix = " LIMIT 100" if test_mode else ""
-        cur.execute("""
-            SELECT
-                notice_id,
-                concat_ws(' ', title, short_description) as text,
-                supplier_eid,
-                total_final_value_amount as price
-            FROM Notices""" + test_mode_suffix + """;
-        """)
-        # In production we use the real embedder.
-        # Note that you can test changes in Word2VecEmbedder directly in intelligence/embed.py
-        results = db_cursor.fetchall()
-        if not test_mode:
-            all_texts = []
-            for row in results:
-                all_texts.append(row["text"])
-            text_embedder = embed.Word2VecEmbedder(all_texts)
-        for row in results:
-            notices.append(
-                Notice(row["notice_id"],
-                       text_embedder.embed([row["text"]])[0],
-                       row["supplier_eid"],
-                       row["price"]))
+
+    query = """
+      SELECT
+        notice_id,
+        concat_ws(' ', title, short_description) as text,
+        supplier_eid,
+        total_final_value_amount as price
+      FROM notices
+      """ + (" LIMIT 100;" if test_mode else ";")
+    rows = db.query(query)
+
+    # In production we use the real embedder.
+    # Note that you can test changes in Word2VecEmbedder directly in intelligence/embed.py
+    if not test_mode:
+        all_texts = [row["text"] for row in rows]
+        text_embedder = embed.Word2VecEmbedder(all_texts)
+    for row in rows:
+        notices.append(
+            Notice(row["notice_id"],
+                   text_embedder.embed([row["text"]])[0],
+                   row["supplier_eid"],
+                   row["price"]))
     notices = notices_find_candidates(notices)
     notices_insert_into_extra_table(db, notices, test_mode)
 
