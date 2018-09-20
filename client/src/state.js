@@ -303,6 +303,7 @@ export type RelatedEntity = {
   name: string,
   edge_types: number[],
   edge_type_texts: string[],
+  edge_effective_to_dates: string[],
   lat: number,
   lng: number,
   address: string,
