@@ -1,7 +1,7 @@
 // @flow
 import React from 'react'
 import {connect} from 'react-redux'
-import {withHandlers, compose} from 'recompose'
+import {compose} from 'recompose'
 import {withDataProviders} from 'data-provider'
 import {addressEntitiesProvider} from '../../../../dataProviders/publiclyDataProviders'
 import {entityDetailProvider} from '../../../../dataProviders/sharedDataProviders'
@@ -26,16 +26,12 @@ type OwnProps = {
 type StateProps = {
   entities: Array<Entity>,
   addressId: number,
-  onClick: (e: Event) => void,
   hasStateTraders: boolean,
   closeAddressDetail: () => void,
   toggleEntityInfo: (id: number) => void,
 }
 
-type AddressDetailProps = OwnProps &
-  StateProps & {
-    onClick: (e: Event) => void,
-  }
+type AddressDetailProps = OwnProps & StateProps
 
 const DETAILS_HEADER_HEIGHT = 37
 
@@ -49,7 +45,7 @@ class AddressDetail extends React.Component<AddressDetailProps> {
   render = () => (
     <div className="address-detail">
       <div className="address-detail-header" style={{height: DETAILS_HEADER_HEIGHT}}>
-        <button type="button" className="close" onClick={this.props.onClick}>
+        <button type="button" className="close" onClick={this.props.closeAddressDetail}>
           <span>&times;</span>
         </button>
       </div>
@@ -79,7 +75,4 @@ export default compose(
         ? chunk(entitiesIds, MAX_ENTITY_REQUEST_COUNT).map((ids) => entityDetailProvider(ids))
         : []
   ),
-  withHandlers({
-    onClick: ({closeAddressDetail}: StateProps) => closeAddressDetail,
-  })
 )(AddressDetail)
