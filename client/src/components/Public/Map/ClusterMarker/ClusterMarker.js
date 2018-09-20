@@ -37,6 +37,7 @@ const clusterIsOnSelectedLocation = (selectedLocation, point) =>
   selectedLocation !== null &&
   point.lat === selectedLocation.lat &&
   point.lng === selectedLocation.lng
+
 const ClusterMarker = ({
   cluster,
   zoom,

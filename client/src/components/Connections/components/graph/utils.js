@@ -11,6 +11,7 @@ const variables = {
   blueColor: '#0062db',
   orangeColor: '#e55600',
   grayColor: '#6c8294',
+  purpleColor: 'purple',
 }
 
 export const options = {
@@ -36,6 +37,16 @@ export const options = {
       shapeProperties: {borderDashes: false},
     },
     politician: {
+      color: {
+        background: variables.purpleColor,
+        border: variables.purpleColor,
+        highlight: {background: variables.purpleColor, border: variables.purpleColor},
+      },
+      font: {color: variables.purpleColor},
+      borderWidth: 5,
+      shapeProperties: {borderDashes: false},
+    },
+    politTies: {
       color: {border: variables.orangeColor, highlight: {border: variables.orangeColor}},
       font: {color: variables.orangeColor},
       borderWidth: 5,

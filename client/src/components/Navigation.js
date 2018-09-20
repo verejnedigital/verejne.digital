@@ -27,60 +27,62 @@ class Navigation extends Component {
     }))
   }
 
-  render = () => (
-    <Navbar light expand="lg">
-      <NavLink to="/" className="navbar-brand">
-        <b>verejne</b>.digital
-      </NavLink>
-      <NavbarToggler onClick={this.toggle} />
-      <Collapse isOpen={this.state.isOpen} navbar>
-        <Nav navbar className="mr-auto">
-          <NavItem>
-            <NavLink to="/verejne" className="nav-link">
-              Verejné dáta
-            </NavLink>
-          </NavItem>
-          <NavItem>
-            <NavLink to="/profil" className="nav-link">
-              Profil
-            </NavLink>
-          </NavItem>
-          <NavItem>
-            <NavLink to="/prepojenia" className="nav-link">
-              Prepojenia
-            </NavLink>
-          </NavItem>
-          <NavItem>
-            <NavLink to="/obstaravania" className="nav-link">
-              Obstarávania
-            </NavLink>
-          </NavItem>
-        </Nav>
-        <Nav className="ml-auto" navbar>
-          <NavItem>
-            <a
-              href="https://medium.com/@verejne.digital/o-%C4%8Do-ide-verejne-digital-14a1c6dcbe09"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="nav-link"
-            >
-              O projekte
-            </a>
-          </NavItem>
-          <NavItem>
-            <a
-              href="http://www.facebook.com/verejne.digital"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="nav-link"
-            >
-              Kontakt <FbIcon />
-            </a>
-          </NavItem>
-        </Nav>
-      </Collapse>
-    </Navbar>
-  )
+  render() {
+    return (
+      <Navbar light expand="lg">
+        <NavLink to="/" className="navbar-brand">
+          <b>verejne</b>.digital
+        </NavLink>
+        <NavbarToggler onClick={this.toggle} />
+        <Collapse isOpen={this.state.isOpen} navbar>
+          <Nav navbar className="mr-auto">
+            <NavItem>
+              <NavLink to="/verejne" className="nav-link">
+                Verejné dáta
+              </NavLink>
+            </NavItem>
+            <NavItem>
+              <NavLink to="/profil" className="nav-link">
+                Profil
+              </NavLink>
+            </NavItem>
+            <NavItem>
+              <NavLink to="/prepojenia" className="nav-link">
+                Prepojenia
+              </NavLink>
+            </NavItem>
+            <NavItem>
+              <NavLink to="/obstaravania" className="nav-link">
+                Obstarávania
+              </NavLink>
+            </NavItem>
+          </Nav>
+          <Nav className="ml-auto" navbar>
+            <NavItem>
+              <a
+                href="https://medium.com/@verejne.digital/o-%C4%8Do-ide-verejne-digital-14a1c6dcbe09"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="nav-link"
+              >
+                O projekte
+              </a>
+            </NavItem>
+            <NavItem>
+              <a
+                href="http://www.facebook.com/verejne.digital"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="nav-link"
+              >
+                Kontakt <FbIcon />
+              </a>
+            </NavItem>
+          </Nav>
+        </Collapse>
+      </Navbar>
+    )
+  }
 }
 
 export default withRouter(Navigation)
