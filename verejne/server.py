@@ -195,7 +195,7 @@ class SearchEntityByName(MyServer):
 
         q = """
             SELECT DISTINCT id AS eid FROM entities_search
-            WHERE search_vector @@ plainto_tsquery(unaccent(%s))
+            WHERE search_vector @@ plainto_tsquery('simple', unaccent(%s))
             LIMIT 20
             """
 
