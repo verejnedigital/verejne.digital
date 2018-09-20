@@ -1,10 +1,10 @@
 // @flow
 import React, {Fragment} from 'react'
+import {Row, Col} from 'reactstrap'
 
+import {formatSimilarPercent, getWarningSymbol} from './LegendSymbols'
 import './Legend.css'
 import './LegendSymbols.css'
-import {formatSimilarPercent, getWarningSymbol} from './LegendSymbols'
-import {Row, Col} from 'reactstrap'
 
 const Legend = () => (
   <Fragment>

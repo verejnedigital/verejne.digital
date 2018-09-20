@@ -171,3 +171,12 @@ export function extractIco(data: Company) {
   )
   return icoSource ? padIco(data[icoSource][0].ico) : null
 }
+
+export const resultPlurality = (count: number): string => {
+  if (count === 1) {
+    return `Nájdený ${count} výsledok`
+  } else if (count > 1 && count < 5) {
+    return `Nájdené ${count} výsledky`
+  }
+  return `Nájdených ${count} výsledkov`
+}

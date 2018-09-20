@@ -5,7 +5,7 @@ import classnames from 'classnames'
 
 import './CircleIcon.css'
 
-type ownProps = {
+type OwnProps = {
   data: {
     trade_with_government: boolean,
     contact_with_politics: boolean,
@@ -15,16 +15,16 @@ type ownProps = {
   size?: string,
 }
 
-export default ({data, className, size = '16'}: ownProps) => {
-  return (
-    <span
-      className={classnames(className, 'circle-icon', {
-        government: data.trade_with_government,
-        politics: data.contact_with_politics,
-        politician: data.political_entity,
-      })}
-    >
-      <Circle size={size} />
-    </span>
-  )
-}
+const CircleIcon = ({data, className, size = '16'}: OwnProps) => (
+  <span
+    className={classnames(className, 'circle-icon', {
+      government: data.trade_with_government,
+      politics: data.contact_with_politics,
+      politician: data.political_entity,
+    })}
+  >
+    <Circle size={size} />
+  </span>
+)
+
+export default CircleIcon
