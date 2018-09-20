@@ -1,5 +1,5 @@
-export const showRelationType = (typeId: number, typeText: string) =>
-  typeId == null ? 'Neznáme' : `${typeText || 'Neznáme'} ${typeId > 0 ? '>' : '<'}`
+export const showRelationType = (typeId: number, typeText: string, arrow: boolean) =>
+  typeId == null ? 'Neznáme' : `${typeText || 'Neznáme'}${arrow ? typeId > 0 ? ' >' : ' <' : ''}`
 
 export const getRelationTitle = (typeId: number, name1: string, name2: string) =>
   typeId != null
