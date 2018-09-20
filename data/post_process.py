@@ -148,7 +148,7 @@ def _post_process_notices(db, test_mode):
         text_embedder = embed.Word2VecEmbedder(all_texts)
     for row in rows:
         embedding = text_embedder.embed([row["text"]])
-        if len(embedding) == 0:
+        if embedding is None or len(embedding) == 0:
             continue
         notices.append(
             Notice(row["notice_id"],
