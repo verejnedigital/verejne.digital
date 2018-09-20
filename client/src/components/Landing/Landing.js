@@ -78,7 +78,7 @@ const Landing = () => (
         </div>
         <div className="float-lg-right">
           <ul className="list-inline">
-            <li className="list-inline-item">
+            <li className="list-inline-item partners">
               <span className="gray">Partneri</span>
               <ul className="list-inline">
                 <li className="list-inline-item">
