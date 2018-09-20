@@ -4,7 +4,7 @@ import {Badge} from 'reactstrap'
 import {orderBy} from 'lodash'
 
 import RecursiveInfo from './RecursiveInfo'
-import {showRelationType, getRelationTitle} from '../utilities'
+import {showRelationType, getRelationTitle, getColor} from '../utilities'
 import type {RelatedEntity} from '../../../state'
 
 type RelationListProps = {
@@ -46,16 +46,21 @@ const RelationItem = ({related, name, useNewApi}: RelationItemProps) => (
 const TitleBadge = ({related, name}: TitleBadgeProps) => {
   const result = []
   related.edge_types.forEach((type: number, i: number) => {
-    const symmetric : boolean = related.edge_types.includes(-type)
+    const symmetric: boolean = related.edge_types.includes(-type)
     if (type >= 0 || !symmetric) {
       result.push(
         <Badge
           key={type}
-          color={type > 0 ? 'dark' : 'secondary'}
+          color={getColor(type, related.edge_effective_to_dates[i])}
           title={getRelationTitle(type, name, related.name, related.edge_effective_to_dates[i])}
           className="mr-1 info-badge"
         >
-          {showRelationType(type, related.edge_type_texts[i], !symmetric)}
+          {showRelationType(
+            type,
+            related.edge_type_texts[i],
+            related.edge_effective_to_dates[i],
+            !symmetric
+          )}
         </Badge>
       )
     }
