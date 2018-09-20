@@ -1,14 +1,14 @@
 // @flow
 import React from 'react'
 import {connect} from 'react-redux'
-import {withHandlers, compose} from 'recompose'
+import {compose} from 'recompose'
 import {withDataProviders} from 'data-provider'
 import {addressEntitiesProvider} from '../../../../dataProviders/publiclyDataProviders'
 import {entityDetailProvider} from '../../../../dataProviders/sharedDataProviders'
 import {sortedAddressEntityDetailsSelector, addressEntitiesIdsSelector} from '../../../../selectors'
 import {MAX_ENTITY_REQUEST_COUNT} from '../../../../constants'
 import {closeAddressDetail, toggleEntityInfo} from '../../../../actions/publicActions'
-import {ListGroup, Button} from 'reactstrap'
+import {ListGroup} from 'reactstrap'
 import {map, chunk, flatten} from 'lodash'
 import ListRow from './ListRow'
 import type {State, NewEntityDetail} from '../../../../state'
@@ -20,16 +20,12 @@ type OwnProps = {
 type StateProps = {
   entityDetails: Array<NewEntityDetail>,
   addressId: number,
-  onClick: (e: Event) => void,
   hasStateTraders: boolean,
   closeAddressDetail: () => void,
   toggleEntityInfo: (id: number) => void,
 }
 
-type AddressDetailProps = OwnProps &
-  StateProps & {
-    onClick: (e: Event) => void,
-  }
+type AddressDetailProps = OwnProps & StateProps
 
 const DETAILS_HEADER_HEIGHT = 37
 
@@ -40,21 +36,20 @@ class AddressDetail extends React.PureComponent<AddressDetailProps> {
       props.toggleEntityInfo(props.entityDetails[0].eid)
     }
   }
-  render() {
-    return (
-      <div className="address-detail">
-        <div className="address-detail-header" style={{height: DETAILS_HEADER_HEIGHT}}>
-          <Button color="link" onClick={this.props.onClick}>
-            Close detail
-          </Button>
-        </div>
-        <ListGroup className="address-detail-list">
-          {map(this.props.entityDetails, (e) => <ListRow entityDetail={e} key={e.eid} />)}
-        </ListGroup>
+  render = () => (
+    <div className="address-detail">
+      <div className="address-detail-header" style={{height: DETAILS_HEADER_HEIGHT}}>
+        <button type="button" className="close" onClick={this.props.closeAddressDetail}>
+          <span>&times;</span>
+        </button>
       </div>
-    )
-  }
+      <ListGroup className="address-detail-list">
+        {map(this.props.entityDetails, (e) => <ListRow entityDetail={e} key={e.eid} />)}
+      </ListGroup>
+    </div>
+  )
 }
+
 export default compose(
   connect(
     (state: State) => ({
@@ -75,7 +70,4 @@ export default compose(
         ? chunk(entitiesIds, MAX_ENTITY_REQUEST_COUNT).map((ids) => entityDetailProvider(ids))
         : []
   ),
-  withHandlers({
-    onClick: ({closeAddressDetail}: StateProps) => closeAddressDetail,
-  })
 )(AddressDetail)
