@@ -71,13 +71,14 @@ class Word2VecEmbedder:
 
     def embed(self, texts):
         embeddings = []
-        if texts is None:
+        if texts is None or len(texts) == 0:
             return
         for text in texts:
             embedding = np.zeros(self.dimension)
             words = tokenize(text)
-            if len(words) == 0 or words is None:
-                return
+            if words is None or len(words) == 0:
+                embeddings.append(embedding)
+                continue
             for word in words:
                 if word in self.sk_model:
                     embedding = np.add(embedding, np.multiply(self.multiplier(word), self.sk_model[word]))

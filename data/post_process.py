@@ -147,9 +147,12 @@ def _post_process_notices(db, test_mode):
         all_texts = [row["text"] for row in rows]
         text_embedder = embed.Word2VecEmbedder(all_texts)
     for row in rows:
+        embedding = text_embedder.embed([row["text"]])
+        if len(embedding) == 0:
+            continue
         notices.append(
             Notice(row["notice_id"],
-                   text_embedder.embed([row["text"]])[0],
+                   embedding[0],
                    row["supplier_eid"],
                    row["price"]))
     notices = notices_find_candidates(notices)
