@@ -46,6 +46,15 @@
   }
 }
 
+.partners {
+  &.list-inline-item:not(:last-child) {
+    margin-right: 1.5rem;
+    @media screen and (max-width: 767px) {
+      margin-right: 0 !important; 
+    }
+  }
+}
+
 .gray {
   color: rgb(165, 165, 165);
 }
