@@ -1,5 +1,14 @@
-export const showRelationType = (typeId: number, typeText: string, arrow: boolean) =>
-  typeId == null ? 'Neznáme' : `${typeText || 'Neznáme'}${arrow ? typeId > 0 ? ' >' : ' <' : ''}`
+export const showRelationType = (
+  typeId: number,
+  typeText: string,
+  typeDate: string,
+  arrow: boolean
+) =>
+  typeId == null
+    ? 'Neznáme'
+    : `${typeText || 'Neznáme'}${typeDate ? ' do '.concat(typeDate) : ''}${
+      arrow ? (typeId > 0 ? ' >' : ' <') : ''
+    }`
 
 export const getRelationTitle = (typeId: number, name1: string, name2: string, typeDate: string) =>
   typeId != null
@@ -19,3 +28,6 @@ export const getRelationTitle = (typeId: number, name1: string, name2: string, t
           .concat(' do ')
           .concat(typeDate)
     : 'Spojenie neznáme'
+
+export const getColor = (type: number, date: string) =>
+  date === '' ? (type >= 0 ? 'primary' : 'dark') : 'secondary'
