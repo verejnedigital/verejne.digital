@@ -47,9 +47,9 @@ class AddressDetail extends React.PureComponent<AddressDetailProps> {
         {map(this.props.entityDetails, (e) => <ListRow entityDetail={e} key={e.eid} />)}
       </ListGroup>
     </div>
-    )
-  }
+  )
 }
+
 export default compose(
   connect(
     (state: State) => ({
