@@ -342,7 +342,7 @@ export type NewEntityDetail = {
   political_entity: boolean,
   contact_with_politics: boolean,
   trade_with_government: boolean,
-  profil_id: number,
+  profil_id?: number,
 }
 
 // Each property must begin with '+' to be made read only and each object
