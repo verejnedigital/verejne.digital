@@ -5,26 +5,20 @@ import {withHandlers, compose} from 'recompose'
 import {withDataProviders} from 'data-provider'
 import {addressEntitiesProvider} from '../../../../dataProviders/publiclyDataProviders'
 import {entityDetailProvider} from '../../../../dataProviders/sharedDataProviders'
-import {addressEntitiesSelector, addressEntitiesIdsSelector} from '../../../../selectors'
+import {sortedAddressEntityDetailsSelector, addressEntitiesIdsSelector} from '../../../../selectors'
 import {MAX_ENTITY_REQUEST_COUNT} from '../../../../constants'
 import {closeAddressDetail, toggleEntityInfo} from '../../../../actions/publicActions'
 import {ListGroup, Button} from 'reactstrap'
 import {map, chunk, flatten} from 'lodash'
 import ListRow from './ListRow'
-import type {State} from '../../../../state'
+import type {State, NewEntityDetail} from '../../../../state'
 import './AddressDetail.css'
-
-type Entity = {
-  addressId: number,
-  id: number,
-  name: string,
-}
 
 type OwnProps = {
   addressIds: Array<number>,
 }
 type StateProps = {
-  entities: Array<Entity>,
+  entityDetails: Array<NewEntityDetail>,
   addressId: number,
   onClick: (e: Event) => void,
   hasStateTraders: boolean,
@@ -42,8 +36,8 @@ const DETAILS_HEADER_HEIGHT = 37
 class AddressDetail extends React.PureComponent<AddressDetailProps> {
   constructor(props: AddressDetailProps) {
     super(props)
-    if (props.entities.length === 1) {
-      props.toggleEntityInfo(props.entities[0].id)
+    if (props.entityDetails.length === 1) {
+      props.toggleEntityInfo(props.entityDetails[0].eid)
     }
   }
   render() {
@@ -55,7 +49,7 @@ class AddressDetail extends React.PureComponent<AddressDetailProps> {
           </Button>
         </div>
         <ListGroup className="address-detail-list">
-          {map(this.props.entities, (e) => <ListRow entity={e} key={e.id} />)}
+          {map(this.props.entityDetails, (e) => <ListRow entityDetail={e} key={e.eid} />)}
         </ListGroup>
       </div>
     )
@@ -64,8 +58,8 @@ class AddressDetail extends React.PureComponent<AddressDetailProps> {
 export default compose(
   connect(
     (state: State) => ({
-      entities: addressEntitiesSelector(state),
       entitiesIds: addressEntitiesIdsSelector(state),
+      entityDetails: sortedAddressEntityDetailsSelector(state),
     }),
     {
       closeAddressDetail,

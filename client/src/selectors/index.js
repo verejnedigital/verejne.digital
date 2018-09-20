@@ -14,7 +14,7 @@ import {
   SLOVAKIA_CITIES,
 } from '../constants'
 import {isInSlovakia, normalizeName} from '../utils'
-import {sortBy, filter} from 'lodash'
+import {sortBy, map, filter} from 'lodash'
 import supercluster from 'points-cluster'
 import type {ContextRouter} from 'react-router-dom'
 import type {NoticesOrdering} from '../components/Notices/NoticeList'
@@ -100,22 +100,31 @@ export const entityDetailSelector = (state: State, eid: number): NewEntityDetail
   if (!eid) return null
   return state.entityDetails[eid.toString()]
 }
-
 export const addressEntitiesSelector = createSelector(
   entitiesSelector,
   openedAddressDetailSelector,
   (entities, addressIds: Array<number>) =>
     filter(entities, (entity) => addressIds.includes(entity.addressId))
 )
+export const addressEntitiesIdsSelector = createSelector(addressEntitiesSelector, (entities) =>
+  entities.map((v) => v.id)
+)
+
+export const sortedAddressEntityDetailsSelector = createSelector(
+  addressEntitiesIdsSelector,
+  allEntityDetailsSelector,
+  (entitiesIds, entityDetails) =>
+    sortBy(map(entitiesIds, (eid) => entityDetails[eid.toString()]), [
+      'political_entity',
+      'contact_with_politics',
+      'trade_with_government',
+    ]).reverse()
+)
 
 export const useLabelsSelector = createSelector(
   zoomSelector,
   centerSelector,
   (zoom, center) => zoom < CITY_ZOOM && isInSlovakia(center)
-)
-
-export const addressEntitiesIdsSelector = createSelector(addressEntitiesSelector, (entities) =>
-  entities.map((v) => v.id)
 )
 
 type SuperCluster = {
@@ -261,6 +270,16 @@ export const entitySearchEidsSelector = createSelector(
   entitySearchesSelector,
   entitySearchForSelector,
   (searches, query): Array<number> => (searches[query] && searches[query].eids) || []
+)
+export const sortedEntitySearchDetailsSelector = createSelector(
+  entitySearchEidsSelector,
+  allEntityDetailsSelector,
+  (eids, entityDetails): Array<NewEntityDetail> =>
+    sortBy(map(eids, (eid) => entityDetails[eid.toString()]), [
+      'political_entity',
+      'contact_with_politics',
+      'trade_with_government',
+    ]).reverse()
 )
 export const entitySearchSuggestionEidsSelector = createSelector(
   entitySearchesSelector,
