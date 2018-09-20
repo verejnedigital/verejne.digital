@@ -1,7 +1,7 @@
 // @flow
 import React, {Fragment} from 'react'
 import {Container} from 'reactstrap'
-import {Link} from 'react-router-dom'
+import {Link, NavLink} from 'react-router-dom'
 import classnames from 'classnames'
 import type {Node} from 'react'
 
@@ -27,6 +27,7 @@ import Trend from './Trend'
 import ExternalLink from '../ExternalLink'
 import CircleIcon from '.././CircleIcon'
 import mapIcon from '../../../assets/mapIcon.svg'
+import ProfileIcon from 'react-icons/lib/fa/user'
 import type {NewEntityDetail, Center} from '../../../state'
 import type {FinancialData} from '../../../services/utilities'
 import './Info.css'
@@ -129,6 +130,13 @@ const Info = ({data, canClose, onClose, showOnMap, className}: InfoProps) => (
           className="mb-2"
         />
       </Link>
+      {data.profil_id && <NavLink to={`/profil/${data.profil_id}`} title="Zobraz profil">
+        <ProfileIcon
+          alt="ProfileIcon"
+          style={{width: '18px', height: '25px'}}
+          className="mb-2 blue"
+        />
+      </NavLink>}
       {canClose && (
         <span className="info-close-button" onClick={onClose}>
           &times;
