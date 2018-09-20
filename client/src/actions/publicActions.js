@@ -87,6 +87,12 @@ export const toggleModalOpen = () => ({
   reducer: (open: boolean) => !open,
 })
 
+export const setModalOpen = (open: boolean) => ({
+  type: 'Set entity search open',
+  path: ['publicly', 'entityModalOpen'],
+  reducer: () => open,
+})
+
 export const setEntitySearchOpen = (open: boolean) => ({
   type: 'Set entity search open',
   path: ['publicly', 'entitySearchOpen'],
