@@ -1,8 +1,8 @@
 // @flow
 import React, {Fragment, type Node} from 'react'
-import CompanyDetails from '../CompanyDetails'
 import {compose, withState, withHandlers} from 'recompose'
 import {Button} from 'reactstrap'
+import CompanyDetails from '../CompanyDetails'
 import type {StateUpdater} from '../../../types/commonTypes'
 
 type RecursiveInfoProps = {|
@@ -18,20 +18,17 @@ type StateProps = {
   toggle: StateUpdater<boolean>,
 }
 
-const RecursiveInfo = ({name, eid, badge, useNewApi, toggledOn, toggle}: RecursiveInfoProps) => {
-  if (toggledOn) {
-    return <CompanyDetails useNewApi={useNewApi} eid={eid} />
-  } else {
-    return (
-      <Fragment>
-        {badge}
-        <Button onClick={toggle} color="link" className="p-0">
-          {name}
-        </Button>
-      </Fragment>
-    )
-  }
-}
+const RecursiveInfo = ({name, eid, badge, useNewApi, toggledOn, toggle}: RecursiveInfoProps) =>
+  toggledOn ? (
+    <CompanyDetails useNewApi={useNewApi} eid={eid} />
+  ) : (
+    <Fragment>
+      {badge}
+      <Button onClick={toggle} color="link" className="p-0">
+        {name}
+      </Button>
+    </Fragment>
+  )
 
 export default compose(
   withState('toggledOn', 'toggle', false),

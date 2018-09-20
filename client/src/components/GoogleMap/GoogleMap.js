@@ -12,18 +12,16 @@ type Props = {|
   children: React.Node,
 |}
 
-const GoogleMap = ({zoom, center, onChange, children}: Props) => {
-  return (
-    <GMap
-      bootstrapURLKeys={GOOGLE_MAP_CONFIG}
-      center={center}
-      zoom={zoom}
-      options={createMapOptions}
-      onChange={onChange}
-    >
-      {children}
-    </GMap>
-  )
-}
+const GoogleMap = ({zoom, center, onChange, children}: Props) => (
+  <GMap
+    bootstrapURLKeys={GOOGLE_MAP_CONFIG}
+    center={center}
+    zoom={zoom}
+    options={createMapOptions}
+    onChange={onChange}
+  >
+    {children}
+  </GMap>
+)
 
 export default GoogleMap

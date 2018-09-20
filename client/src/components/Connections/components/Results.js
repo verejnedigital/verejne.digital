@@ -7,7 +7,7 @@ import ConnectionWrapper, {type ConnectionProps} from '../dataWrappers/Connectio
 import EntityWrapper, {type EntityProps} from '../dataWrappers/EntityWrapper'
 import EntitySearchWrapper, {type EntitySearchProps} from '../dataWrappers/EntitySearchWrapper'
 import InfoLoader from './InfoLoader'
-import {BeforeResults, EmptyResults} from './DummyResults'
+import {BeforeResults, EmptyResults, NoEntityResults} from './DummyResults'
 import Subgraph from './Subgraph'
 import './Results.css'
 
@@ -20,13 +20,16 @@ type Props = EntitySearchProps & EntityProps & ConnectionProps & StateProps
 
 const Results = (props: Props) => (
   <div>
-    <div className="showGraphButtonWrap">
-      <Button color="primary" onClick={props.toggleGraphShown} className="showGraphButton">
-        {props.graphShown ? 'Skryť graf' : 'Zobraziť graf'}
-      </Button>
-    </div>
-    {props.graphShown && <Subgraph preloadNodes {...props} />}
-    {props.connections.map((connEid) => <InfoLoader key={connEid} eid={connEid} hasConnectLine />)}
+    {props.entitySearch2 && (
+      <div className="showGraphButtonWrap">
+        <Button color="primary" onClick={props.toggleGraphShown} className="showGraphButton">
+          {props.graphShown ? 'Skryť graf' : 'Zobraziť graf'}
+        </Button>
+      </div>
+    )}
+    {(props.graphShown || !props.entitySearch2) && <Subgraph preloadNodes {...props} />}
+    {props.entitySearch2 &&
+      props.connections.map((connEid) => <InfoLoader key={connEid} eid={connEid} hasConnectLine />)}
   </div>
 )
 
@@ -37,14 +40,18 @@ export default compose(
     toggleGraphShown: ({setGraphShown, graphShown}) => () => setGraphShown(!graphShown),
   }),
   branch(
-    ({entitySearch1, entitySearch2}: EntitySearchProps) =>
-      entitySearch1 !== '' && entitySearch2 !== '',
+    ({entitySearch1}: EntitySearchProps) => entitySearch1 !== '',
     compose(
       EntityWrapper,
       ConnectionWrapper,
       branch(
-        ({connections}: ConnectionProps) => connections.length === 0,
-        renderComponent(EmptyResults),
+        ({connections, entitySearch2, entity1}: ConnectionProps & EntitySearchProps & EntityProps) =>
+        connections.length === 0 && (entity1.eids.length === 0 || entitySearch2.length > 0),
+        branch(
+          ({entitySearch2} : EntitySearchProps) => entitySearch2.length > 0,
+          renderComponent(EmptyResults),
+          renderComponent(NoEntityResults),
+        )
       )
     ),
     renderComponent(BeforeResults)

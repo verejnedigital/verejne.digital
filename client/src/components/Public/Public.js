@@ -6,8 +6,7 @@ import Map from './Map/Map'
 import Legend from './Legend/Legend'
 import './Public.css'
 
-
-export default () => (
+const Public = () => (
   <div className="wrapper">
     <Sidebar />
     <EntitySearchModal />
@@ -15,3 +14,5 @@ export default () => (
     <Legend />
   </div>
 )
+
+export default Public

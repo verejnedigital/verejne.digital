@@ -61,7 +61,7 @@ const graphStyle = {
 const legendGraph = (() => {
   const x = 10
   const y = 10
-  const step = 140
+  const step = 120
   return {
     nodes: [
       {
@@ -85,8 +85,8 @@ const legendGraph = (() => {
         id: '3',
         x: x + 2 * step,
         y,
-        label: 'Kontakt s politikou',
-        group: 'politician',
+        label: 'Kontakt\ns politikou',
+        group: 'politTies',
         fixed: true,
         physics: false,
       },
@@ -103,14 +103,23 @@ const legendGraph = (() => {
         id: '5',
         x: x + 4 * step,
         y,
-        label: 'Údaje sa\nnačítavajú',
-        group: 'notLoaded',
+        label: 'Politik',
+        group: 'politician',
         fixed: true,
         physics: false,
       },
       {
         id: '6',
         x: x + 5 * step,
+        y,
+        label: 'Údaje sa\nnačítavajú',
+        group: 'notLoaded',
+        fixed: true,
+        physics: false,
+      },
+      {
+        id: '7',
+        x: x + 6 * step,
         y,
         label: 'Zaniknutá',
         shape: 'diamond',
@@ -183,7 +192,10 @@ export default compose(
       if (!nodes.length) {
         return
       }
-      const subgraphId = `${props.entity1.eids.join()}-${props.entity2.eids.join()}`
+      const subgraphId =
+        props.entity2.query.length > 0
+          ? `${props.entity1.eids.join()}-${props.entity2.eids.join()}`
+          : `${props.entity1.eids.join()}`
       const clickedEid = getNodeEid(nodes[0])
 
       if (props.entityDetails[clickedEid.toString()]) {
@@ -202,7 +214,10 @@ export default compose(
         return
       }
       if (checkShaking(pointer.canvas)) {
-        const subgraphId = `${props.entity1.eids.join()}-${props.entity2.eids.join()}`
+        const subgraphId =
+          props.entity2.query.length > 0
+            ? `${props.entity1.eids.join()}-${props.entity2.eids.join()}`
+            : `${props.entity1.eids.join()}`
         props.updateValue(
           ['connections', 'subgraph', subgraphId, 'data'],
           removeNodes(props.subgraph, nodes.map(getNodeEid), true)
