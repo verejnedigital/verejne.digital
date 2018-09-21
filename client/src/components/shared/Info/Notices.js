@@ -1,6 +1,6 @@
 // @flow
 import React from 'react'
-import ExternalLink from '../ExternalLink'
+import {Link} from 'react-router-dom'
 
 import InfoButton from './InfoButton'
 import {ShowNumberCurrency} from '../../../services/utilities'
@@ -18,13 +18,13 @@ const Notices = ({data}: NoticesProps) => (
     list={data.most_recent}
     buildItem={(notice: NoticeNew) => (
       <li key={notice.id}>
-        <ExternalLink url={`${window.location.host}/obstaravania/${notice.notice_id}`}>
+        <Link to={`/obstaravania/${notice.notice_id}`} target="_blank" rel="noopener noreferrer">
           <b>{notice.client_name}</b>
           {notice.total_final_value_amount ? ', ' : ''}
           <ShowNumberCurrency num={notice.total_final_value_amount} />
           <br />
           {notice.title}
-        </ExternalLink>
+        </Link>
       </li>
     )}
   />
