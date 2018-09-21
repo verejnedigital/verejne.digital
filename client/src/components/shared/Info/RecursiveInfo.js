@@ -13,6 +13,7 @@ type RecursiveInfoProps = {|
   toggledOn: boolean,
   toggle: () => void,
 |}
+
 type StateProps = {
   toggledOn: boolean,
   toggle: StateUpdater<boolean>,

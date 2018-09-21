@@ -1,6 +1,10 @@
 // @flow
 import {createSelector} from 'reselect'
 import qs from 'qs'
+import {sortBy, filter, pickBy, map} from 'lodash'
+import supercluster from 'points-cluster'
+import type {ContextRouter} from 'react-router-dom'
+
 import {
   clusterOptions,
   clusterOptionsCloser,
@@ -14,9 +18,6 @@ import {
   SLOVAKIA_CITIES,
 } from '../constants'
 import {isInSlovakia, normalizeName} from '../utils'
-import {sortBy, map, filter} from 'lodash'
-import supercluster from 'points-cluster'
-import type {ContextRouter} from 'react-router-dom'
 import type {NoticesOrdering} from '../components/Notices/NoticeList'
 import type {NoticeDetailProps} from '../components/Notices/NoticeDetail'
 import type {
@@ -28,6 +29,7 @@ import type {
   NewEntityDetail,
   Notice,
   SearchedEntity,
+  Center,
 } from '../state'
 import type {ObjectMap} from '../types/commonTypes'
 
@@ -205,12 +207,37 @@ const createLabels = (mapOptions: MapOptions): Array<MapCluster> => {
   }
   return labels
 }
+
+export const selectedLocationsSelector = (state: State) => state.publicly.selectedLocations || []
+
+const createSelectedLocationClusters = (selectedLocations: Center[], clusters) =>
+  selectedLocations
+    .map((location, i) => ({
+      lat: location.lat,
+      lng: location.lng,
+      numPoints: 1,
+      id: `loc${i}`,
+      points: [location],
+      isLabel: true,
+      setZoomTo: ENTITY_ZOOM,
+    }))
+    .filter(
+      (location) =>
+        !clusters.some(
+          (cluster) =>
+            cluster.numPoints === 1 && cluster.lat === location.lat && cluster.lng === location.lng
+        )
+    )
+
 export const clustersSelector = createSelector(
   mapOptionsSelector,
   addressesSelector,
   useLabelsSelector,
-  (mapOptions, addresses, useLabels) =>
-    useLabels ? createLabels(mapOptions) : createClusters(mapOptions, addresses)
+  selectedLocationsSelector,
+  (mapOptions, addresses, useLabels, selectedLocations) => {
+    const clusters = useLabels ? createLabels(mapOptions) : createClusters(mapOptions, addresses)
+    return clusters.concat(createSelectedLocationClusters(selectedLocations, clusters))
+  }
 )
 
 const requestParamsSelector = createSelector(
@@ -294,8 +321,13 @@ export const entitySearchSuggestionsSelector = createSelector(
   }
 )
 
+export const entitiesToHighlightSelector = createSelector(
+  allEntityDetailsSelector,
+  entitySearchEidsSelector,
+  (details, eids) => pickBy(details, (value, key) => eids.some((eid) => eid.toString() === key))
+)
+
 export const drawerOpenSelector = (state: State) => state.publicly.drawerOpen
-export const selectedLocationSelector = (state: State) => state.publicly.selectedLocation
 
 export const connectionDetailSelector = (
   state: State,

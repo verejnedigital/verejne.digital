@@ -10,7 +10,7 @@ type Props = {
 
 const InfoLoader = ({eid, hasConnectLine}: Props) => (
   <div className="info-loader">
-    <CompanyDetails eid={eid} useNewApi />
+    <CompanyDetails eid={eid} />
     {hasConnectLine && (
       <div className="container">
         <div className="info-loader-connection-line" />

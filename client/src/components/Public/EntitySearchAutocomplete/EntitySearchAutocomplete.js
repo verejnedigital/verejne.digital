@@ -33,7 +33,9 @@ import Autocomplete from 'react-autocomplete'
 import {FIND_ENTITY_TITLE} from '../../../constants'
 import type NewEntityDetail from '../../../state'
 
-type Props = {
+import type {State} from '../../../state'
+
+type EntitySearchAutocompleteProps = {
   entitySearchValue: string,
   suggestionEids: Array<number>,
   suggestions: Array<NewEntityDetail>,
@@ -72,7 +74,7 @@ const EntitySearchAutocomplete = ({
   onChangeHandler,
   getItemValue,
   renderItem,
-}: Props) => (
+}: EntitySearchAutocompleteProps) => (
   <Form onSubmit={findEntities}>
     <InputGroup className="autocomplete-holder">
       <Autocomplete
@@ -117,7 +119,7 @@ const EntitySearchAutocomplete = ({
 
 export default compose(
   connect(
-    (state) => ({
+    (state: State) => ({
       entitySearchValue: entitySearchValueSelector(state),
       suggestionEids: entitySearchSuggestionEidsSelector(state),
       suggestions: entitySearchSuggestionsSelector(state),
@@ -168,9 +170,10 @@ export default compose(
     renderItem: () => (entity, isHighlighted) => (
       <div
         key={entity.eid}
-        className={
-          classnames({'autocomplete-item': entity.name, 'autocomplete-item--active': isHighlighted})
-        }
+        className={classnames({
+          'autocomplete-item': entity.name,
+          'autocomplete-item--active': isHighlighted,
+        })}
       >
         <strong>{entity.name ? entity.name : ''}</strong>
       </div>

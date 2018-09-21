@@ -1,9 +1,17 @@
+// @flow
 import React from 'react'
 import {withHandlers} from 'recompose'
 import {NavLink} from 'react-router-dom'
 import {getTerm} from '../utilities'
 
-const Politician = ({politician, useDefaultPicture}) => (
+import type {Politician as PoliticianType} from '../../../state'
+
+type PoliticianProps = {
+  politician: PoliticianType,
+  useDefaultPicture: Function,
+}
+
+const Politician = ({politician, useDefaultPicture}: PoliticianProps) => (
   <tr className="table-line">
     <td className="number-column">{politician.order}.</td>
     <td>

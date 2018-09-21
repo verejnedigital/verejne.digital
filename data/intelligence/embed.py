@@ -62,12 +62,10 @@ class Word2VecEmbedder:
         print "Frequency table ready. Number of words:", self.count_words, "Number of distinct words:", len(self.word_frequency)
 
     def multiplier(self, word):
-        if self.count_words == 0:
-            return 1
         if word in self.word_frequency:
-            return 1.0 * self.word_frequency[word] / self.count_words
+            return 1.0 / self.word_frequency[word]
         else:
-            return 1.0 / self.count_words
+            return 1.0
 
     def embed(self, texts):
         embeddings = []

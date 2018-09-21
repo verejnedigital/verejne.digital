@@ -16,7 +16,7 @@ import {connect} from 'react-redux'
 import {
   zoomToLocation,
   toggleEntitySearchOpen,
-  makeLocationSelected,
+  makeLocationsSelected,
 } from '../../../actions/publicActions'
 import {ENTITY_CLOSE_ZOOM} from '../../../constants'
 import Contracts from './Contracts'
@@ -43,7 +43,7 @@ type OwnProps = {
 type DispatchProps = {
   zoomToLocation: (center: Center, withZoom?: number) => void,
   toggleEntitySearchOpen: () => void,
-  makeLocationSelected: (point: Center) => void,
+  makeLocationsSelected: (points: Center[]) => void,
 }
 
 type HandlerProps = {
@@ -159,24 +159,24 @@ const Info = ({data, canClose, onClose, showOnMap, className}: InfoProps) => (
       {data.contracts && data.contracts.count > 0 && <Contracts data={data.contracts} />}
       {data.notices && data.notices.count > 0 && <Notices data={data.notices} />}
       {data.eufunds && data.eufunds.eufunds_count > 0 && <Eurofunds data={data.eufunds} />}
-      {data.related.length > 0 && <Relations data={data.related} name={data.name} useNewApi />}
+      {data.related.length > 0 && <Relations data={data.related} name={data.name} />}
     </div>
   </Container>
 )
 
 export default compose(
-  connect(null, {makeLocationSelected, zoomToLocation, toggleEntitySearchOpen}),
+  connect(null, {makeLocationsSelected, zoomToLocation, toggleEntitySearchOpen}),
   withHandlers({
     showOnMap: ({
       data,
       inModal,
       zoomToLocation,
       toggleEntitySearchOpen,
-      makeLocationSelected,
+      makeLocationsSelected,
     }: OwnProps & DispatchProps) => () => {
       inModal && toggleEntitySearchOpen()
       zoomToLocation(data, ENTITY_CLOSE_ZOOM)
-      makeLocationSelected({lat: data.lat, lng: data.lng})
+      makeLocationsSelected([{lat: data.lat, lng: data.lng}])
     },
   })
 )(Info)

@@ -26,6 +26,8 @@ import {ENTITY_CLOSE_ZOOM} from '../../../constants'
 import AddressDetail from './../Map/AddressDetail/AddressDetail'
 import PlacesAutocomplete from '../../PlacesAutocomplete/PlacesAutocomplete'
 
+import type {State} from '../../../state'
+
 type DrawerIconProps = {|
   drawerOpen: boolean,
   toggleDrawer: () => void,
@@ -62,7 +64,7 @@ const _DrawerIcon = ({drawerOpen, toggleDrawer}: DrawerIconProps) =>
   )
 
 const DrawerIcon = connect(
-  (state) => ({
+  (state: State) => ({
     drawerOpen: drawerOpenSelector(state),
   }),
   {toggleDrawer}
@@ -98,7 +100,7 @@ const _Content = ({
 
 const Content = compose(
   connect(
-    (state) => ({
+    (state: State) => ({
       autocompleteValue: autocompleteValueSelector(state),
       autocompleteOptions: autocompleteOptionsSelector(state),
       openedAddressIds: openedAddressDetailSelector(state),
@@ -141,7 +143,7 @@ const Sidebar = ({toggleDrawer, closeDrawer, drawerOpen, renderDrawer}: SidebarP
 
 export default compose(
   connect(
-    (state) => ({
+    (state: State) => ({
       drawerOpen: drawerOpenSelector(state),
       renderDrawer: window.innerWidth < 576,
     }),

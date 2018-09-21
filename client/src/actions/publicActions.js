@@ -61,11 +61,11 @@ export const zoomToLocation = (center: Center, withZoom?: number): Thunk => (
   const zoom = withZoom || zoomSelector(getState()) + 1
   dispatch(setMapOptions({...mapOptionsSelector(state), zoom, center: [center.lat, center.lng]}))
 }
-export const makeLocationSelected = (point: Center) => ({
+export const makeLocationsSelected = (points: Center[]) => ({
   type: 'Make Location Selected',
-  path: ['publicly', 'selectedLocation'],
-  payload: point,
-  reducer: () => point,
+  path: ['publicly', 'selectedLocations'],
+  payload: points,
+  reducer: () => points,
 })
 
 export const toggleEntitySearchOpen = () => ({
@@ -74,9 +74,9 @@ export const toggleEntitySearchOpen = () => ({
   reducer: (open: boolean) => !open,
 })
 
-export const deselectLocation = () => ({
+export const deselectLocations = () => ({
   type: 'Unselect Location',
-  path: ['publicly', 'selectedLocation'],
+  path: ['publicly', 'selectedLocations'],
   payload: null,
   reducer: () => null,
 })

@@ -13,7 +13,6 @@ import './InfoButton.css'
 type RelationsProps = {|
   data: Array<RelatedEntity>,
   name: string,
-  useNewApi: boolean,
   toggledOn: boolean,
   toggle: () => void,
 |}
@@ -22,7 +21,7 @@ type StateProps = {
   toggle: StateUpdater<boolean>,
 }
 
-const Relations = ({data, name, useNewApi, toggledOn, toggle}: RelationsProps) => (
+const Relations = ({data, name, toggledOn, toggle}: RelationsProps) => (
   <div className="relations info-button">
     <Button outline color="primary" onClick={toggle}>
       {toggledOn ? (
@@ -35,7 +34,7 @@ const Relations = ({data, name, useNewApi, toggledOn, toggle}: RelationsProps) =
         {data.length}
       </Badge>
     </Button>
-    {toggledOn && <RelationList data={data} name={name} useNewApi />}
+    {toggledOn && <RelationList data={data} name={name} />}
   </div>
 )
 

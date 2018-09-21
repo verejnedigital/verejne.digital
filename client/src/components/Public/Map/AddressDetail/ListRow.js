@@ -1,3 +1,4 @@
+// @flow
 import React from 'react'
 import {connect} from 'react-redux'
 import {compose} from 'redux'
@@ -37,7 +38,14 @@ const DetailedInfo = compose(
   })
 )(_DetailedInfo)
 
-const ListRow = ({entityDetail, toggleEntityInfo, showInfo, openModalSearch}) =>
+type ListRowProps = {
+  entityDetail: NewEntityDetail,
+  toggleEntityInfo: (id: number) => void,
+  showInfo: () => void,
+  openModalSearch: () => void,
+}
+
+const ListRow = ({entityDetail, toggleEntityInfo, showInfo, openModalSearch}: ListRowProps) =>
   showInfo ? (
     <DetailedInfo eid={entityDetail.eid} data={entityDetail} />
   ) : (

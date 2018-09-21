@@ -14,11 +14,10 @@ import {Row, Col, Container} from 'reactstrap'
 import './Profile.css'
 
 import type {State, Politician} from '../../state'
-import type {ObjectMap} from '../../types/commonTypes'
 
 export type ProfileProps = {
   query: string,
-  politicians: ObjectMap<Politician>,
+  politicians: Array<Politician>,
   updateQuery: (e: Event) => void,
 }
 
@@ -29,7 +28,9 @@ const Profile = ({query, politicians, updateQuery}: ProfileProps) => (
         <h1 className="title">
           <span className="bolder">profil</span>.verejne.digital
         </h1>
-        <h3 className="sub-title">Majetok poslancov a verejných funkcionárov podľa priznaní a katastra</h3>
+        <h3 className="sub-title">
+          Majetok poslancov a verejných funkcionárov podľa priznaní a katastra
+        </h3>
       </Col>
     </Row>
     <Row key="search" className="profile-search">

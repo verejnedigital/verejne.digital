@@ -30,6 +30,8 @@ class Notice:
         self.supplier = supplier
         self.embedding = embedding
         self.norm = numpy.linalg.norm(self.embedding)
+        if self.norm == 0:
+            self.norm = 1
         self.candidates = []
         self.similarities = []
         self.candidate_prices = []
@@ -47,6 +49,8 @@ class Notice:
         mean = numpy.mean(values)
         # Here we compute 95% reliability interval
         price_low = mean - 1.96 * std_dev / math.sqrt(len(values))
+        if price_low < 0:
+            price_low = 0
         price_high = mean + 1.96 * std_dev / math.sqrt(len(values))
         return mean, price_low, price_high
 
@@ -112,7 +116,7 @@ def notices_find_candidates(notices):
                 # candidates are only the notices with known winners / suppliers
                 if not notice2.supplier is None:
                     similarity = numpy.inner(notice.embedding, notice2.embedding) / (notice.norm * notice2.norm)
-                    if similarity > 0.75 and len(notice.similarities) < 5:
+                    if similarity > 0.85 and len(notice.similarities) < 15:
                         notice.similarities.append(similarity)
                         notice.candidates.append(notice2.idx)
                         notice.candidate_prices.append(notice2.price)
@@ -131,10 +135,11 @@ def _post_process_notices(db, test_mode):
     suppliers = []
     notices = []
 
+    # TODO: once we use universal sentence encoder, use also description, not only title as text to be embedded.
     query = """
       SELECT
         notice_id,
-        concat_ws(' ', title, short_description) as text,
+        title as text,
         supplier_eid,
         total_final_value_amount as price
       FROM notices
