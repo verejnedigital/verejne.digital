@@ -10,7 +10,7 @@ const Trend = ({trend}: TrendProps) => (
   <span>
     &nbsp;(
     <span title="Oproti predchádzajúcemu roku" className={trend > 0 ? 'profit' : 'deficit'}>
-      {`${trend > 0 && '+'}${trend}%`}
+      {`${trend > 0 ? '+' : ''}${trend}%`}
     </span>
     )
   </span>
