@@ -17,13 +17,12 @@ const Notices = ({data}: NoticesProps) => (
     priceSum={data.total_final_value_amount_eur_sum}
     list={data.most_recent}
     buildItem={(notice: NoticeNew) => (
-      <li key={notice.id} title={notice.title}>
+      <li key={notice.id}>
         <ExternalLink url={`${window.location.host}/obstaravania/${notice.notice_id}`}>
-          <div>
-            <b>{notice.client_name}</b>
-            {notice.total_final_value_amount ? ', ' : ''}
-            <ShowNumberCurrency num={notice.total_final_value_amount} />
-          </div>
+          <b>{notice.client_name}</b>
+          {notice.total_final_value_amount ? ', ' : ''}
+          <ShowNumberCurrency num={notice.total_final_value_amount} />
+          <br />
           {notice.title}
         </ExternalLink>
       </li>
