@@ -31,14 +31,13 @@ import ModalIcon from 'react-icons/lib/fa/clone'
 import Autocomplete from 'react-autocomplete'
 
 import {FIND_ENTITY_TITLE} from '../../../constants'
-import type NewEntityDetail from '../../../state'
 
 import type {State} from '../../../state'
 
 type EntitySearchAutocompleteProps = {
   entitySearchValue: string,
   suggestionEids: Array<number>,
-  suggestions: Array<NewEntityDetail>,
+  suggestions: Array<string>,
   setEntitySearchValue: (value: string) => void,
   setEntitySearchFor: (value: string) => void,
   toggleModalOpen: () => void,
@@ -48,8 +47,8 @@ type EntitySearchAutocompleteProps = {
   findEntities: (e: Event) => void,
   onSelectHandler: (e: Event) => void,
   onChangeHandler: (e: Event) => void,
-  getItemValue: (entity: NewEntityDetail) => string,
-  renderItem: (entity: NewEntityDetail, isHighlighted: boolean) => any,
+  getItemValue: (suggestion: string) => string,
+  renderItem: (suggestion: string, isHighlighted: boolean) => any,
 }
 
 const menuStyle = {
@@ -156,7 +155,7 @@ export default compose(
       closeAddressDetail,
       setEntitySearchOpen,
       setDrawer,
-    }) => (name, entity) => {
+    }) => (name, suggestion) => {
       setEntitySearchValue(name)
       setEntitySearchFor(name)
       closeAddressDetail()
@@ -166,16 +165,15 @@ export default compose(
     onChangeHandler: ({setEntitySearchValue}) => (e) => {
       setEntitySearchValue(e.target.value)
     },
-    getItemValue: () => (entity) => (entity.name ? entity.name : ''),
-    renderItem: () => (entity, isHighlighted) => (
+    getItemValue: () => (suggestion) => (suggestion),
+    renderItem: () => (suggestion, isHighlighted) => (
       <div
-        key={entity.eid}
-        className={classnames({
-          'autocomplete-item': entity.name,
+        key={suggestion}
+        className={classnames('autocomplete-item', {
           'autocomplete-item--active': isHighlighted,
         })}
       >
-        <strong>{entity.name ? entity.name : ''}</strong>
+        <strong>{suggestion}</strong>
       </div>
     ),
   }),

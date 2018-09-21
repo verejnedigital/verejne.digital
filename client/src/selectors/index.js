@@ -316,8 +316,10 @@ export const entitySearchSuggestionEidsSelector = createSelector(
 export const entitySearchSuggestionsSelector = createSelector(
   allEntityDetailsSelector,
   entitySearchSuggestionEidsSelector,
-  (details, eids): Array<NewEntityDetail> => {
-    return eids.map((eid) => ({eid, ...details[eid.toString()]}))
+  (details, eids): Array<string> => {
+    return eids
+      .map((eid) => details[eid.toString()] ? details[eid.toString()].name : null)
+      .filter((name, index, array) => name && array.indexOf(name) === index)
   }
 )
 
