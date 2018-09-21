@@ -1,6 +1,7 @@
 import React from 'react'
 import {withHandlers} from 'recompose'
 import {NavLink} from 'react-router-dom'
+import {getTerm} from '../utilities'
 
 const Politician = ({politician, useDefaultPicture}) => (
   <tr className="table-line">
@@ -19,7 +20,7 @@ const Politician = ({politician, useDefaultPicture}) => (
       </NavLink>
     </td>
     <td className="text-left party-column">
-      {politician.term_start} - {politician.term_finish}
+      {(!politician.term_start) && '\t'}{getTerm(politician)}
     </td>
     <td className="party-column">{politician.party_abbreviation}</td>
     <td className="number-column">{politician.num_houses_flats}</td>
