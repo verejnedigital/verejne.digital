@@ -66,7 +66,8 @@ const _NoticeDetail = ({notice}: NoticeDetailProps) => {
         <Fragment>
           <ShowNumberCurrency
             num={notice.total_final_value_amount || notice.estimated_value_amount}
-          /> {getWarning(notice)}
+          />{' '}
+          {getWarning(notice)}
         </Fragment>
       ),
     },
@@ -86,7 +87,7 @@ const _NoticeDetail = ({notice}: NoticeDetailProps) => {
       <NoticeInformation data={noticeDetailInformations} />
       {notice.supplier_name ? (
         <div className="notice-detail-table">
-          <CompanyDetails useNewApi eid={notice.supplier_eid} />
+          <CompanyDetails eid={notice.supplier_eid} />
         </div>
       ) : (
         <div className="notice-detail-table">
