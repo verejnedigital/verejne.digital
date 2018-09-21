@@ -12,6 +12,7 @@ import {ListGroup} from 'reactstrap'
 import {map, chunk, flatten} from 'lodash'
 import ListRow from './ListRow'
 import type {State, NewEntityDetail} from '../../../../state'
+import {resultPlurality} from '../../../../services/utilities'
 import './AddressDetail.css'
 
 type OwnProps = {
@@ -42,6 +43,7 @@ class AddressDetail extends React.PureComponent<AddressDetailProps> {
         <button type="button" className="close" onClick={this.props.closeAddressDetail}>
           <span>&times;</span>
         </button>
+        {this.props.entityDetails && `${resultPlurality(this.props.entityDetails.length)} na adrese.`}
       </div>
       <ListGroup className="address-detail-list">
         {map(this.props.entityDetails, (e) => <ListRow entityDetail={e} key={e.eid} />)}
