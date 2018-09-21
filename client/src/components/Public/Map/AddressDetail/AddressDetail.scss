@@ -26,4 +26,8 @@
   @media screen and (max-width: 576px) {
     max-height: calc(100vh - 160px);
   }
+
+  .detailed-info {
+    padding: .5rem .75rem;  
+  }
 }
