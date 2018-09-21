@@ -1,7 +1,7 @@
 // @flow
 import {createSelector} from 'reselect'
 import qs from 'qs'
-import {sortBy, filter, pickBy, map} from 'lodash'
+import {sortBy, filter, map} from 'lodash'
 import supercluster from 'points-cluster'
 import type {ContextRouter} from 'react-router-dom'
 
@@ -319,12 +319,6 @@ export const entitySearchSuggestionsSelector = createSelector(
   (details, eids): Array<NewEntityDetail> => {
     return eids.map((eid) => ({eid, ...details[eid.toString()]}))
   }
-)
-
-export const entitiesToHighlightSelector = createSelector(
-  allEntityDetailsSelector,
-  entitySearchEidsSelector,
-  (details, eids) => pickBy(details, (value, key) => eids.some((eid) => eid.toString() === key))
 )
 
 export const drawerOpenSelector = (state: State) => state.publicly.drawerOpen

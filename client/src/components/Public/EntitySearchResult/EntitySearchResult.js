@@ -7,7 +7,7 @@ import {withDataProviders} from 'data-provider'
 import {pick, uniqWith, isEqual} from 'lodash'
 
 import {
-  entitiesToHighlightSelector,
+  sortedEntitySearchDetailsSelector,
   entitySearchForSelector,
   entitySearchEidsSelector,
 } from '../../../selectors'
@@ -77,7 +77,7 @@ export default compose(
   ),
   connect(
     (state: State) => ({
-      entityDetails: entitiesToHighlightSelector(state),
+      entityDetails: sortedEntitySearchDetailsSelector(state),
     }),
     {makeLocationsSelected, zoomToLocation}
   )
