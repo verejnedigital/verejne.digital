@@ -3,7 +3,6 @@
 .list-row {
   border: 0;
   margin-bottom: 0;
-  padding: .5rem 0;
 
   &:first-child {
     border-radius: 0;
@@ -26,11 +25,6 @@
   cursor: pointer;
   width: calc(100% - 3rem);
   display: inline-block;
-}
-
-.list-row-icon {
-  margin-left: -1rem;
-  margin-right: 1rem;
 }
 
 .search-icon {

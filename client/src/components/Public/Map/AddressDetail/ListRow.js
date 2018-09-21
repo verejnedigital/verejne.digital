@@ -4,7 +4,7 @@ import {connect} from 'react-redux'
 import {compose} from 'redux'
 import {withHandlers} from 'recompose'
 import SearchIcon from 'react-icons/lib/fa/search'
-import {ListGroupItem} from 'reactstrap'
+import {ListGroupItem, Row, Col} from 'reactstrap'
 import {
   toggleEntityInfo,
   toggleEntitySearchOpen,
@@ -50,11 +50,17 @@ const ListRow = ({entityDetail, toggleEntityInfo, showInfo, openModalSearch}: Li
     <DetailedInfo eid={entityDetail.eid} data={entityDetail} />
   ) : (
     <ListGroupItem action className="list-row">
-      <span className="list-row-toggler" onClick={toggleEntityInfo}>
-        <CircleIcon data={entityDetail} className="list-row-icon" size="10" />
-        <span>{entityDetail.name}</span>
-      </span>
-      <SearchIcon size="16" className="search-icon float-right mr-3" onClick={openModalSearch} />
+      <Row >
+        <Col xs="auto" className="px-1">
+          <CircleIcon data={entityDetail} className="list-row-icon" size="10" />
+        </Col>
+        <Col className="px-1 list-row-toggler" onClick={toggleEntityInfo}>
+          <span>{entityDetail.name}</span>
+        </Col>
+        <Col xs="auto" className="px-1">
+          <SearchIcon size="16" className="search-icon float-right" onClick={openModalSearch} />
+        </Col>
+      </Row>
     </ListGroupItem>
   )
 

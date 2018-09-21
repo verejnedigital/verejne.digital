@@ -21,12 +21,9 @@
 .address-detail-list {
   overflow-y: auto;
   border-radius: 0;
-  padding-left: 1.5rem;
-  padding-right: .5rem;
   max-height: calc(100vh - 300px);
 
   @media screen and (max-width: 576px) {
-    padding: 0 .2rem;
     max-height: calc(100vh - 160px);
   }
 }
