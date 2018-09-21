@@ -1,6 +1,6 @@
 // @flow
 import React, {Fragment} from 'react'
-import {Container} from 'reactstrap'
+import {Container, Row, Col} from 'reactstrap'
 import {Link, NavLink} from 'react-router-dom'
 import classnames from 'classnames'
 import type {Node} from 'react'
@@ -115,33 +115,40 @@ const Findata = ({data}: {data: FinancialData}) => {
 const Info = ({data, canClose, onClose, showOnMap, className}: InfoProps) => (
   <Container className={classnames(className, {closable: canClose}, 'info')}>
     <div className="info-header">
-      <h3 onClick={onClose}>
-        <CircleIcon data={data} />&nbsp;{data.name}&nbsp;
-      </h3>
-      <Link
-        to={`/verejne?lat=${data.lat}&lng=${data.lng}&zoom=${ENTITY_CLOSE_ZOOM}`}
-        title="Zobraz na mape"
-        onClick={showOnMap}
-      >
-        <img
-          src={mapIcon}
-          alt="MapMarker"
-          style={{width: '16px', height: '25px'}}
-          className="mb-2"
-        />
-      </Link>
-      {data.profil_id && <NavLink to={`/profil/${data.profil_id}`} title="Zobraz profil">
-        <ProfileIcon
-          alt="ProfileIcon"
-          style={{width: '18px', height: '25px'}}
-          className="mb-2 blue"
-        />
-      </NavLink>}
-      {canClose && (
-        <span className="info-close-button" onClick={onClose}>
-          &times;
-        </span>
-      )}
+      <Row>
+        <Col xs="auto" className="mt-1 pr-0">
+          <CircleIcon data={data} />
+        </Col>
+        <Col className="pl-2">
+          <h3 onClick={onClose} className="d-inline mr-1">
+            {data.name}
+          </h3>
+          <Link
+            to={`/verejne?lat=${data.lat}&lng=${data.lng}&zoom=${ENTITY_CLOSE_ZOOM}`}
+            title="Zobraz na mape"
+            onClick={showOnMap}
+          >
+            <img
+              src={mapIcon}
+              alt="MapMarker"
+              style={{width: '16px', height: '25px'}}
+              className="mb-2"
+            />
+          </Link>
+          {data.profil_id && <NavLink to={`/profil/${data.profil_id}`} title="Zobraz profil">
+            <ProfileIcon
+              alt="ProfileIcon"
+              style={{width: '18px', height: '25px'}}
+              className="mb-2 blue"
+            />
+          </NavLink>}
+          {canClose && (
+            <span className="info-close-button" onClick={onClose}>
+              &times;
+            </span>
+          )}
+        </Col>
+      </Row>
     </div>
     <div className="info-main">
       <ul className="info-list">
