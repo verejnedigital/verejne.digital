@@ -20,15 +20,16 @@ import EntitySearchResultItem from '../EntitySearchResultItem/EntitySearchResult
 import {getBoundsFromLocations} from '../../../services/map'
 import {NAVBAR_HEIGHT} from '../../../constants'
 import type {NewEntityDetail, Center, State} from '../../../state'
+import type {ObjectMap} from '../../../types/commonTypes'
 
-type Props = {
+type EntitySearchResultProps = {
   searchFor: string,
-  entityDetails: NewEntityDetail[],
+  entityDetails: ObjectMap<NewEntityDetail>,
   makeLocationsSelected: (Center[]) => void,
   zoomToLocation: (Center, number) => void,
 }
 
-class EntitySearchResult extends PureComponent<Props> {
+class EntitySearchResult extends PureComponent<EntitySearchResultProps> {
   componentDidMount() {
     this.highlightLocations()
   }
