@@ -8,16 +8,16 @@ import {toggleEntitySearchOpen} from '../../../actions/publicActions'
 import {resultPlurality} from '../../../services/utilities'
 import './EntitySearch.css'
 
-type EntitySearchProps = {|
-  toggleEntitySearchOpen: () => void,
-  className: string,
+import type {State} from '../../../state'
+
+type EntitySearchProps = {
+  toggleEntitySearchOpen: () => Object,
   entitySearchEids: Array<number>,
   entitySearchFor: string,
-|}
+}
 
 const EntitySearch = ({
   toggleEntitySearchOpen,
-  className,
   entitySearchEids,
   entitySearchFor,
 }: EntitySearchProps) => (
@@ -37,7 +37,7 @@ const EntitySearch = ({
 
 export default compose(
   connect(
-    (state) => ({
+    (state: State) => ({
       entitySearchEids: entitySearchEidsSelector(state),
       entitySearchFor: entitySearchForSelector(state),
     }),

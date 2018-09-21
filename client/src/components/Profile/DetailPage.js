@@ -45,15 +45,15 @@ export type ProfileDetailPageProps = {
   selectedYear: string,
   assets: ?ParsedAssetDeclarationsType,
   politician: PoliticianDetail,
-  cadastral: CadastralData,
-  paginatedCadastral: CadastralData,
+  cadastral: Array<CadastralData>,
+  paginatedCadastral: Array<CadastralData>,
   cadastralLength: number,
   cadastralPage: number,
   cadastralSearch: string,
-  query: Object,
+  query: {cadastralPage: string},
   history: RouterHistory,
   mapProps: {center: GeolocationPoint, zoom: number},
-  goMap: (ProfileDetailPageProps) => Function, // TODO instead take map center from url
+  goMap: (lv: CadastralData) => void, // TODO instead take map center from url
 } & ContextRouter
 
 const DetailPage = ({

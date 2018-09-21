@@ -1,10 +1,19 @@
+// @flow
 import React, {Component} from 'react'
 import ExternalLinkIcon from 'react-icons/lib/fa/external-link'
 
 import './DetailCadastralLV.css'
 
-class DetailCadastralLV extends Component {
-  disablePropagation = (event) => {
+import type {CadastralData} from '../../../state'
+
+type DetailCadastralLVProps = {
+  lv: CadastralData,
+  num: number,
+  onParcelShow: () => void,
+}
+
+class DetailCadastralLV extends Component<DetailCadastralLVProps> {
+  disablePropagation = (event: Event) => {
     event.stopPropagation()
   }
 

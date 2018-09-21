@@ -21,7 +21,7 @@ import CircleIcon from '../../../shared/CircleIcon'
 import Marker from '../Marker/Marker'
 import './ClusterMarker.css'
 
-import type {Center} from '../../../../state'
+import type {Center, State} from '../../../../state'
 import type {MapCluster} from '../../../../selectors'
 import type {Thunk} from '../../../../types/reduxTypes'
 
@@ -73,7 +73,7 @@ const ClusterMarker = ({
 
 export default compose(
   connect(
-    (state) => ({
+    (state: State) => ({
       openedAddressIds: openedAddressDetailSelector(state),
       zoom: zoomSelector(state),
       selectedLocations: selectedLocationsSelector(state),

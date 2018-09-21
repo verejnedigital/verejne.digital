@@ -12,7 +12,6 @@ type Props = {
   onChange: (value: string) => any,
   onErrorBinded: OnError,
   searchOptions: Object,
-  onError: OnError,
   onSelect: OnSelect,
   className: string,
 }

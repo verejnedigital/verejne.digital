@@ -69,5 +69,5 @@ export default compose(
       entitiesIds.length
         ? chunk(entitiesIds, MAX_ENTITY_REQUEST_COUNT).map((ids) => entityDetailProvider(ids))
         : []
-  ),
+  )
 )(AddressDetail)

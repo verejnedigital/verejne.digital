@@ -69,23 +69,6 @@ export type NoticeDetail = {
   bulletin_published_on: string,
 }
 
-export type Politician = {|
-  num_fields_gardens: number,
-  picture: string,
-  surname: string,
-  party_abbreviation: string,
-  firstname: string,
-  title: string,
-  term_finish: number,
-  party_nom: string,
-  num_houses_flats: number,
-  office_name_male: string,
-  num_others: number,
-  term_start: number,
-  office_name_female: string,
-  id: number,
-|}
-
 export type CadastralData = {|
   lon: number,
   cadastralunitcode: number,
@@ -225,6 +208,7 @@ export type Address = {
 
 // Entity returned from api call getEntitiesAtAddressId
 export type NewEntity = {
+  addressId: number,
   id: number,
   name: string,
 }
@@ -315,6 +299,7 @@ export type NewEntityDetail = {
   lat: number,
   lng: number,
   address: string,
+  addressId?: number,
   eufunds: Eufunds,
   companyfinancials: {
     [year: number]: CompanyFinancial,
@@ -347,6 +332,23 @@ export type PoliticianDetail = {|
   office_name_female: string,
 |}
 
+export type Politician = {|
+  order?: number,
+  num_fields_gardens: number,
+  picture: string,
+  surname: string,
+  party_abbreviation: string,
+  firstname: string,
+  title: string,
+  term_finish: number,
+  party_nom: string,
+  num_houses_flats: number,
+  office_name_male: string,
+  num_others: number,
+  term_start: number,
+  office_name_female: string,
+  id: number,
+|}
 // Each property must begin with '+' to be made read only and each object
 // must be enclosed in '|' so no properties can be added to state at runtime
 export type State = {|
