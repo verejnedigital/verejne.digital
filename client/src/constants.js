@@ -151,7 +151,7 @@ export const SLOVAKIA_COORDS = {
 export const clusterOptions = {
   minZoom: 0,
   maxZoom: 18,
-  radius: 30,
+  radius: 15,
 }
 
 export const clusterOptionsCloser = {
