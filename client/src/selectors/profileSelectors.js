@@ -50,13 +50,14 @@ export const parsedAssetDeclarations: Selector<
     unmovable_assets: r.unmovable_assets ? r.unmovable_assets.split('\n') : [],
     movable_assets: r.movable_assets ? r.movable_assets.split('\n') : [],
     income_assets: [
-      `príjmy: ${r.income}`,
-      `paušálne náhrady: ${r.compensations}`,
-      `ostatné príjmy: ${r.other_income}`,
-      `počas výkonu verejnej funkcie má tieto funkcie (čl. 7 ods. 1 písm. c) u. z. 357/2004): ${
-        r.offices_other
-      }`,
-    ],
+      r.income && `príjmy: ${r.income}`,
+      r.compensations && `paušálne náhrady: ${r.compensations}`,
+      r.other_income && `ostatné príjmy: ${r.other_income}`,
+      r.offices_other &&
+        `počas výkonu verejnej funkcie má tieto funkcie (čl. 7 ods. 1 písm. c) u. z. 357/2004): ${
+          r.offices_other
+        }`,
+    ].filter((asset) => asset !== null),
     source: r.source || 'http://www.nrsr.sk',
   }))
 )

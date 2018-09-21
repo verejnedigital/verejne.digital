@@ -139,22 +139,26 @@ const DetailPage = ({
         )}
       </Col>
       <Col tag="section">
-        <DetailCadastralTable
-          cadastral={paginatedCadastral}
-          cadastralLength={cadastralLength}
-          currentPage={cadastralPage}
-          search={cadastralSearch}
-          query={query}
-          history={history}
-          onParcelShow={goMap}
-        />
+        {cadastral.length > 0 &&
+          <DetailCadastralTable
+            cadastral={paginatedCadastral}
+            cadastralLength={cadastralLength}
+            currentPage={cadastralPage}
+            search={cadastralSearch}
+            query={query}
+            history={history}
+            onParcelShow={goMap}
+          />
+        }
       </Col>
     </Row>
-    <Row key="map" id="map" className="profile-map">
-      <Col>
-        <MapContainer assets={cadastral} {...mapProps} />
-      </Col>
-    </Row>
+    {cadastral.length > 0 &&
+      <Row key="map" id="map" className="profile-map">
+        <Col>
+          <MapContainer assets={cadastral} {...mapProps} />
+        </Col>
+      </Row>
+    }
   </Container>
 )
 
@@ -169,7 +173,7 @@ export default compose(
     assetsYears: assetDeclarationsSortedYearsSelector(state, props),
     assets: parsedAssetDeclarationsForYearSelector(state, props),
     politician: politicianDetailSelector(state, props),
-    cadastral: Object.values(sortedCadastralInfoSelector(state, props)),
+    cadastral: sortedCadastralInfoSelector(state, props),
     paginatedCadastral: paginatedCadastralInfoSelector(state, props),
     cadastralLength: filteredCadastralInfoLengthSelector(state, props),
     cadastralPage: cadastralPageSelector(state, props),
