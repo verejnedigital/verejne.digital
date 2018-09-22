@@ -289,7 +289,7 @@ class Relations:
       vertex['notable'] = vertex['eid'] in notable_eids
     return subgraph
 
-  def subgraph(self, set_A, set_B, max_nodes_to_explore):
+  def subgraph(self, set_A, set_B, max_nodes_to_explore=None):
     """Returns a subgraph containing connections between A and B.
 
     Args:
