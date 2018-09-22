@@ -69,7 +69,7 @@ export const connectionSubgraphProvider = (
   getData: [
     fetch,
     `${process.env.REACT_APP_API_URL ||
-      ''}/api/p/subgraph?eid1=${eid1.toString()}&eid2=${eid2.toString()}`,
+      ''}/api/p/subgraph?eid1=${eid1.toString()}&eid2=${eid2.toString()}&max_explore=250000`,
     {
       accept: 'application/json',
     },
@@ -86,7 +86,7 @@ export const notableConnectionSubgraphProvider = (
   ref: `notable-connection-${eid.toString()}`,
   getData: [
     fetch,
-    `${process.env.REACT_APP_API_URL || ''}/api/p/notable_connections?eid=${eid.toString()}`,
+    `${process.env.REACT_APP_API_URL || ''}/api/p/notable_connections?eid=${eid.toString()}&max_explore=100000&max_order=100`,
     {
       accept: 'application/json',
     },

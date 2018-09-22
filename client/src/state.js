@@ -177,8 +177,7 @@ export type Node = {
   label: string,
   x?: number,
   y?: number,
-  distA?: number,
-  distB?: number,
+  is_query: boolean,
   leaf?: boolean,
 }
 export type Edge = {

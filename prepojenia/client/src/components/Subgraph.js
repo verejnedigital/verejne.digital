@@ -124,21 +124,9 @@ class Subgraph extends Component {
         var subgraph_nodes = subgraph['vertices'];
         var nodes = [];
         for (var i = 0; i < subgraph_nodes.length; i++) {
-          // skip nodes that are not connected to the other end
-          var distA = subgraph_nodes[i]['distance_from_A'];
-          var distB = subgraph_nodes[i]['distance_from_B'];
-          if (distA == null || distB == null)
-            continue;
-
-          // add node to the graph, with special groups for the source and target nodes
           var eid = subgraph_nodes[i]['eid'];
           var label = subgraph_nodes[i]['entity_name'];
-          if (distA === 0)
-            nodes.push({id: eid, label: label, group: "source", x: 0.0});
-          else if (distB === 0)
-            nodes.push({id: eid, label: label, group: "target", x: 150.0 * distA});
-          else
-            nodes.push({id: eid, label: label});
+          nodes.push({id: eid, label: label});
         }
 
         var edges = [];
