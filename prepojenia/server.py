@@ -148,12 +148,11 @@ class NotableConnections(MyServer):
 
     # Parse URL parameters:
     start = self._parse_eid_list('eid')
-    radius = self._parse_int('radius', default=5)
-    max_explore = self._parse_int('max_explore', default=5000)
-    max_path_vertices = self._parse_int('max_path_vertices',
-                                        default=20)
+    radius = self._parse_int('radius', default=6)
+    max_explore = self._parse_int('max_explore', default=20000)
+    max_path_vertices = self._parse_int('max_order', default=50)
 
-    max_explore_limit = 100000
+    max_explore_limit = 200000
     if max_explore > max_explore_limit:
       self.abort(400, detail='Param `max_explore` must be <= %d' % (
         max_explore_limit))
