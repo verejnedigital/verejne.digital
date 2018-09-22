@@ -54,7 +54,7 @@ def add_family_and_neighbour_edges(db, test_mode):
 
   # Load surnames and academic titles:
   surnames = entity_tools.get_surnames()
-  titles = entity_tools.get_academic_titles()
+  titles_parser = entity_tools.get_academic_titles_parser()
 
   # Compute mapping from eids to parsed entity names:
   parsed_name = {}
@@ -63,7 +63,7 @@ def add_family_and_neighbour_edges(db, test_mode):
   with db.get_server_side_cursor(query) as cur:
     for eid, name in cur:
       parsed = entity_tools.parse_entity_name(
-          name, surnames, titles, verbose=False)
+          name, titles_parser, surnames, verbose=False)
       if parsed:
         parsed_name[eid] = parsed
 

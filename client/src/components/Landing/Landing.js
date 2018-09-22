@@ -78,7 +78,7 @@ const Landing = () => (
         </div>
         <div className="float-lg-right">
           <ul className="list-inline">
-            <li className="list-inline-item">
+            <li className="list-inline-item partners">
               <span className="gray">Partneri</span>
               <ul className="list-inline">
                 <li className="list-inline-item">
@@ -103,6 +103,11 @@ const Landing = () => (
                 <li className="list-inline-item">
                   <a href="https://vacuumlabs.com/" target="_blank" rel="noopener noreferrer">
                     <img src="/vl.png" alt="VacuumLabs" />
+                  </a>
+                </li>
+                <li className="list-inline-item">
+                  <a href="https://www.uvostat.sk" target="_blank" rel="noopener noreferrer">
+                    <img src="/uvo.png" alt="UVOstat" />
                   </a>
                 </li>
               </ul>

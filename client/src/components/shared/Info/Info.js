@@ -1,7 +1,7 @@
 // @flow
 import React, {Fragment} from 'react'
-import {Container} from 'reactstrap'
-import {Link} from 'react-router-dom'
+import {Container, Row, Col} from 'reactstrap'
+import {Link, NavLink} from 'react-router-dom'
 import classnames from 'classnames'
 import type {Node} from 'react'
 
@@ -13,7 +13,11 @@ import {
 } from '../../../services/utilities'
 import {compose, withHandlers} from 'recompose'
 import {connect} from 'react-redux'
-import {zoomToLocation, toggleEntitySearchOpen, makeLocationSelected} from '../../../actions/publicActions'
+import {
+  zoomToLocation,
+  toggleEntitySearchOpen,
+  makeLocationsSelected,
+} from '../../../actions/publicActions'
 import {ENTITY_CLOSE_ZOOM} from '../../../constants'
 import Contracts from './Contracts'
 import Notices from './Notices'
@@ -23,6 +27,7 @@ import Trend from './Trend'
 import ExternalLink from '../ExternalLink'
 import CircleIcon from '.././CircleIcon'
 import mapIcon from '../../../assets/mapIcon.svg'
+import ProfileIcon from 'react-icons/lib/fa/user'
 import type {NewEntityDetail, Center} from '../../../state'
 import type {FinancialData} from '../../../services/utilities'
 import './Info.css'
@@ -38,7 +43,7 @@ type OwnProps = {
 type DispatchProps = {
   zoomToLocation: (center: Center, withZoom?: number) => void,
   toggleEntitySearchOpen: () => void,
-  makeLocationSelected: (point: Center) => void,
+  makeLocationsSelected: (points: Center[]) => void,
 }
 
 type HandlerProps = {
@@ -110,21 +115,40 @@ const Findata = ({data}: {data: FinancialData}) => {
 const Info = ({data, canClose, onClose, showOnMap, className}: InfoProps) => (
   <Container className={classnames(className, {closable: canClose}, 'info')}>
     <div className="info-header">
-      <h3 onClick={onClose} >
-        <CircleIcon data={data} />&nbsp;{data.name}&nbsp;
-      </h3>
-      <Link
-        to={`/verejne?lat=${data.lat}&lng=${data.lng}&zoom=${ENTITY_CLOSE_ZOOM}`}
-        title="Zobraz na mape"
-        onClick={showOnMap}
-      >
-        <img src={mapIcon} alt="MapMarker" style={{width: '16px', height: '25px'}} />
-      </Link>
-      {canClose && (
-        <span className="info-close-button" onClick={onClose}>
-          &times;
-        </span>
-      )}
+      <Row>
+        <Col xs="auto" className="mt-1 pr-0">
+          <CircleIcon data={data} />
+        </Col>
+        <Col className="pl-2">
+          <h3 onClick={onClose} className="d-inline mr-1">
+            {data.name}
+          </h3>
+          <Link
+            to={`/verejne?lat=${data.lat}&lng=${data.lng}&zoom=${ENTITY_CLOSE_ZOOM}`}
+            title="Zobraz na mape"
+            onClick={showOnMap}
+          >
+            <img
+              src={mapIcon}
+              alt="MapMarker"
+              style={{width: '16px', height: '25px'}}
+              className="mb-2"
+            />
+          </Link>
+          {data.profil_id && <NavLink to={`/profil/${data.profil_id}`} title="Zobraz profil">
+            <ProfileIcon
+              alt="ProfileIcon"
+              style={{width: '18px', height: '25px'}}
+              className="mb-2 blue"
+            />
+          </NavLink>}
+          {canClose && (
+            <span className="info-close-button" onClick={onClose}>
+              &times;
+            </span>
+          )}
+        </Col>
+      </Row>
     </div>
     <div className="info-main">
       <ul className="info-list">
@@ -142,24 +166,24 @@ const Info = ({data, canClose, onClose, showOnMap, className}: InfoProps) => (
       {data.contracts && data.contracts.count > 0 && <Contracts data={data.contracts} />}
       {data.notices && data.notices.count > 0 && <Notices data={data.notices} />}
       {data.eufunds && data.eufunds.eufunds_count > 0 && <Eurofunds data={data.eufunds} />}
-      {data.related.length > 0 && <Relations data={data.related} useNewApi />}
+      {data.related.length > 0 && <Relations data={data.related} name={data.name} />}
     </div>
   </Container>
 )
 
 export default compose(
-  connect(null, {makeLocationSelected, zoomToLocation, toggleEntitySearchOpen}),
+  connect(null, {makeLocationsSelected, zoomToLocation, toggleEntitySearchOpen}),
   withHandlers({
     showOnMap: ({
       data,
       inModal,
       zoomToLocation,
       toggleEntitySearchOpen,
-      makeLocationSelected,
+      makeLocationsSelected,
     }: OwnProps & DispatchProps) => () => {
       inModal && toggleEntitySearchOpen()
       zoomToLocation(data, ENTITY_CLOSE_ZOOM)
-      makeLocationSelected({lat: data.lat, lng: data.lng})
+      makeLocationsSelected([{lat: data.lat, lng: data.lng}])
     },
   })
 )(Info)

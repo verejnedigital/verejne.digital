@@ -1,6 +1,10 @@
 // @flow
 import {createSelector} from 'reselect'
 import qs from 'qs'
+import {sortBy, filter, map} from 'lodash'
+import supercluster from 'points-cluster'
+import type {ContextRouter} from 'react-router-dom'
+
 import {
   clusterOptions,
   clusterOptionsCloser,
@@ -14,9 +18,6 @@ import {
   SLOVAKIA_CITIES,
 } from '../constants'
 import {isInSlovakia, normalizeName} from '../utils'
-import {sortBy, filter} from 'lodash'
-import supercluster from 'points-cluster'
-import type {ContextRouter} from 'react-router-dom'
 import type {NoticesOrdering} from '../components/Notices/NoticeList'
 import type {NoticeDetailProps} from '../components/Notices/NoticeDetail'
 import type {
@@ -28,6 +29,7 @@ import type {
   NewEntityDetail,
   Notice,
   SearchedEntity,
+  Center,
 } from '../state'
 import type {ObjectMap} from '../types/commonTypes'
 
@@ -92,29 +94,39 @@ export const openedAddressDetailSelector = (state: State): Array<number> =>
 export const entitiesSelector = (state: State) => state.entities
 export const entitySearchSelector = (state: State, query: string): SearchedEntity =>
   state.entitySearch[query]
-export const entitySearchesSelector = (state: State): Array<SearchedEntity> => state.entitySearch
+export const entitySearchesSelector = (state: State): ObjectMap<SearchedEntity> =>
+  state.entitySearch
 export const allEntityDetailsSelector = (state: State): ObjectMap<NewEntityDetail> =>
   state.entityDetails
 export const entityDetailSelector = (state: State, eid: number): NewEntityDetail | null => {
   if (!eid) return null
   return state.entityDetails[eid.toString()]
 }
-
 export const addressEntitiesSelector = createSelector(
   entitiesSelector,
   openedAddressDetailSelector,
   (entities, addressIds: Array<number>) =>
     filter(entities, (entity) => addressIds.includes(entity.addressId))
 )
+export const addressEntitiesIdsSelector = createSelector(addressEntitiesSelector, (entities) =>
+  entities.map((v) => v.id)
+)
+
+export const sortedAddressEntityDetailsSelector = createSelector(
+  addressEntitiesIdsSelector,
+  allEntityDetailsSelector,
+  (entitiesIds, entityDetails) =>
+    sortBy(map(entitiesIds, (eid) => entityDetails[eid.toString()]), [
+      'political_entity',
+      'contact_with_politics',
+      'trade_with_government',
+    ]).reverse()
+)
 
 export const useLabelsSelector = createSelector(
   zoomSelector,
   centerSelector,
   (zoom, center) => zoom < CITY_ZOOM && isInSlovakia(center)
-)
-
-export const addressEntitiesIdsSelector = createSelector(addressEntitiesSelector, (entities) =>
-  entities.map((v) => v.id)
 )
 
 type SuperCluster = {
@@ -195,12 +207,37 @@ const createLabels = (mapOptions: MapOptions): Array<MapCluster> => {
   }
   return labels
 }
+
+export const selectedLocationsSelector = (state: State) => state.publicly.selectedLocations || []
+
+const createSelectedLocationClusters = (selectedLocations: Center[], clusters) =>
+  selectedLocations
+    .map((location, i) => ({
+      lat: location.lat,
+      lng: location.lng,
+      numPoints: 1,
+      id: `loc${i}`,
+      points: [location],
+      isLabel: true,
+      setZoomTo: ENTITY_ZOOM,
+    }))
+    .filter(
+      (location) =>
+        !clusters.some(
+          (cluster) =>
+            cluster.numPoints === 1 && cluster.lat === location.lat && cluster.lng === location.lng
+        )
+    )
+
 export const clustersSelector = createSelector(
   mapOptionsSelector,
   addressesSelector,
   useLabelsSelector,
-  (mapOptions, addresses, useLabels) =>
-    useLabels ? createLabels(mapOptions) : createClusters(mapOptions, addresses)
+  selectedLocationsSelector,
+  (mapOptions, addresses, useLabels, selectedLocations) => {
+    const clusters = useLabels ? createLabels(mapOptions) : createClusters(mapOptions, addresses)
+    return clusters.concat(createSelectedLocationClusters(selectedLocations, clusters))
+  }
 )
 
 const requestParamsSelector = createSelector(
@@ -261,6 +298,16 @@ export const entitySearchEidsSelector = createSelector(
   entitySearchForSelector,
   (searches, query): Array<number> => (searches[query] && searches[query].eids) || []
 )
+export const sortedEntitySearchDetailsSelector = createSelector(
+  entitySearchEidsSelector,
+  allEntityDetailsSelector,
+  (eids, entityDetails): Array<NewEntityDetail> =>
+    sortBy(map(eids, (eid) => entityDetails[eid.toString()]), [
+      'political_entity',
+      'contact_with_politics',
+      'trade_with_government',
+    ]).reverse()
+)
 export const entitySearchSuggestionEidsSelector = createSelector(
   entitySearchesSelector,
   entitySearchValueSelector,
@@ -269,21 +316,20 @@ export const entitySearchSuggestionEidsSelector = createSelector(
 export const entitySearchSuggestionsSelector = createSelector(
   allEntityDetailsSelector,
   entitySearchSuggestionEidsSelector,
-  (details, eids): Array<NewEntityDetail> => {
-    return eids.map((eid) => ({eid, ...details[eid]}))
+  (details, eids): Array<string> => {
+    return eids
+      .map((eid) => details[eid.toString()] ? details[eid.toString()].name : null)
+      .filter((name, index, array) => name && array.indexOf(name) === index)
   }
 )
 
 export const drawerOpenSelector = (state: State) => state.publicly.drawerOpen
-export const selectedLocationSelector = (state: State) => state.publicly.selectedLocation
 
 export const connectionDetailSelector = (
   state: State,
   eids1: Array<number>,
-  eids2: Array<number>,
+  eids2: Array<number>
 ) => {
   const query = `${eids1.join()}-${eids2.join()}`
-  return state.connections.detail[query]
-    ? state.connections.detail[query].ids
-    : []
+  return state.connections.detail[query] ? state.connections.detail[query].ids : []
 }

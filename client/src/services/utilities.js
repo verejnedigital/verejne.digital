@@ -160,13 +160,6 @@ export function showContractStatus(statusId: number) {
   return contractStatuses[statusId.toString()] || 'Neznáme'
 }
 
-export function showRelationType(typeId: number, typeText: string) {
-  if (typeId == null) {
-    return 'Neznáme'
-  }
-  return `${typeText || 'Neznáme'} ${typeId > 0 ? '>' : '<'}`
-}
-
 function padIco(ico?: number | string) {
   // TODO remove null checks when `extractIco` is removed
   return ico != null ? padStart(ico.toString(), 8, '0') : ''
@@ -177,4 +170,13 @@ export function extractIco(data: Company) {
     (src) => data[src].length >= 1
   )
   return icoSource ? padIco(data[icoSource][0].ico) : null
+}
+
+export const resultPlurality = (count: number): string => {
+  if (count === 1) {
+    return `Nájdený ${count} výsledok`
+  } else if (count > 1 && count < 5) {
+    return `Nájdené ${count} výsledky`
+  }
+  return `Nájdených ${count} výsledkov`
 }

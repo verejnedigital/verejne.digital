@@ -1,5 +1,6 @@
 // @flow
 import React from 'react'
+import ExternalLink from '../ExternalLink'
 
 import InfoButton from './InfoButton'
 import {ShowNumberCurrency} from '../../../services/utilities'
@@ -11,14 +12,19 @@ type NoticesProps = {|
 
 const Notices = ({data}: NoticesProps) => (
   <InfoButton
-    label="Zmluvy so štátom"
+    label="Obstarávania"
     count={data.count}
     priceSum={data.total_final_value_amount_eur_sum}
     list={data.most_recent}
     buildItem={(notice: NoticeNew) => (
-      <li key={notice.id} title={notice.title}>
-        {`${notice.client_name}, `}
-        <ShowNumberCurrency num={notice.total_final_value_amount} />
+      <li key={notice.id}>
+        <ExternalLink url={`${window.location.host}/obstaravania/${notice.notice_id}`}>
+          <b>{notice.client_name}</b>
+          {notice.total_final_value_amount ? ', ' : ''}
+          <ShowNumberCurrency num={notice.total_final_value_amount} />
+          <br />
+          {notice.title}
+        </ExternalLink>
       </li>
     )}
   />

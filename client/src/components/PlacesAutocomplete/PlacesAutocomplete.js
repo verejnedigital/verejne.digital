@@ -5,45 +5,47 @@ import {withHandlers, defaultProps, compose} from 'recompose'
 import classnames from 'classnames'
 import './PlacesAutocomplete.css'
 
-type onError = (status: string, clearSuggestions: Function) => any
-type onSelect = (address: string, placeId: ?string) => any
+type OnError = (status: string, clearSuggestions: Function) => any
+type OnSelect = (address: string, placeId: ?string) => any
 type Props = {
   value: string,
   onChange: (value: string) => any,
-  onErrorBinded: onError,
+  onErrorBinded: OnError,
   searchOptions: Object,
-  onError?: onError,
-  onSelect?: onSelect,
-  className?: string,
+  onSelect: OnSelect,
+  className: string,
 }
 
-// TODO: $FlowFixMe: undefined is incompatible with ...
-const PlacesAutocomplete = (props: Props) => {
-  // Do mnot destructure in argument as formatter will reorder lines and flow issue
-  // will not work.
-  const {value, onChange, onSelect, onErrorBinded, searchOptions, className} = props
-  return (
-    <GoogleAutocomplete
-      type="text"
-      className="form-control"
-      placeholder="Hľadaj adresu"
-      value={value}
-      onChange={onChange}
-      onSelect={onSelect}
-      onError={onErrorBinded}
-      searchOptions={searchOptions}
-      googleCallbackName="placesAutocompleteCallback"
-    >
-      {({getInputProps, suggestions, getSuggestionItemProps}) => (
-        <div className="autocomplete">
-          <input
-            {...getInputProps({
-              placeholder: 'Hľadaj adresu...',
-              className: classnames(className, 'autocomplete__input'),
-              autoFocus: true,
-            })}
-          />
-          {suggestions.length > 0 && <div className="autocomplete__suggestions">
+const PlacesAutocomplete = ({
+  value,
+  onChange,
+  onSelect,
+  onErrorBinded,
+  searchOptions,
+  className,
+}: Props) => (
+  <GoogleAutocomplete
+    type="text"
+    className="form-control"
+    placeholder="Hľadaj adresu"
+    value={value}
+    onChange={onChange}
+    onSelect={onSelect}
+    onError={onErrorBinded}
+    searchOptions={searchOptions}
+    googleCallbackName="placesAutocompleteCallback"
+  >
+    {({getInputProps, suggestions, getSuggestionItemProps}) => (
+      <div className="autocomplete">
+        <input
+          {...getInputProps({
+            placeholder: 'Hľadaj adresu...',
+            className: classnames(className, 'autocomplete__input'),
+            autoFocus: true,
+          })}
+        />
+        {suggestions.length > 0 && (
+          <div className="autocomplete__suggestions">
             {suggestions.map((suggestion) => {
               const className = classnames(
                 'autocomplete__suggestions__item',
@@ -56,12 +58,12 @@ const PlacesAutocomplete = (props: Props) => {
                 </div>
               )
             })}
-          </div>}
-        </div>
-      )}
-    </GoogleAutocomplete>
-  )
-}
+          </div>
+        )}
+      </div>
+    )}
+  </GoogleAutocomplete>
+)
 
 export default compose(
   defaultProps({

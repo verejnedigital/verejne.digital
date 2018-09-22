@@ -1,69 +1,62 @@
 // @flow
 import React from 'react'
 import {connect} from 'react-redux'
-import {withHandlers, compose} from 'recompose'
+import {compose} from 'recompose'
 import {withDataProviders} from 'data-provider'
 import {addressEntitiesProvider} from '../../../../dataProviders/publiclyDataProviders'
 import {entityDetailProvider} from '../../../../dataProviders/sharedDataProviders'
-import {addressEntitiesSelector, addressEntitiesIdsSelector} from '../../../../selectors'
+import {sortedAddressEntityDetailsSelector, addressEntitiesIdsSelector} from '../../../../selectors'
 import {MAX_ENTITY_REQUEST_COUNT} from '../../../../constants'
 import {closeAddressDetail, toggleEntityInfo} from '../../../../actions/publicActions'
-import {ListGroup, Button} from 'reactstrap'
+import {ListGroup} from 'reactstrap'
 import {map, chunk, flatten} from 'lodash'
 import ListRow from './ListRow'
-import type {State} from '../../../../state'
+import type {State, NewEntityDetail} from '../../../../state'
+import {resultPlurality} from '../../../../services/utilities'
 import './AddressDetail.css'
-
-type Entity = {
-  addressId: number,
-  id: number,
-  name: string,
-}
 
 type OwnProps = {
   addressIds: Array<number>,
 }
 type StateProps = {
-  entities: Array<Entity>,
+  entityDetails: Array<NewEntityDetail>,
   addressId: number,
-  onClick: (e: Event) => void,
   hasStateTraders: boolean,
   closeAddressDetail: () => void,
   toggleEntityInfo: (id: number) => void,
 }
 
-type AddressDetailProps = OwnProps &
-  StateProps & {
-    onClick: (e: Event) => void,
-  }
+type AddressDetailProps = OwnProps & StateProps
 
 const DETAILS_HEADER_HEIGHT = 37
 
-class AddressDetail extends React.Component<AddressDetailProps> {
+class AddressDetail extends React.PureComponent<AddressDetailProps> {
   constructor(props: AddressDetailProps) {
     super(props)
-    if (props.entities.length === 1) {
-      props.toggleEntityInfo(props.entities[0].id)
+    if (props.entityDetails.length === 1) {
+      props.toggleEntityInfo(props.entityDetails[0].eid)
     }
   }
   render = () => (
     <div className="address-detail">
       <div className="address-detail-header" style={{height: DETAILS_HEADER_HEIGHT}}>
-        <Button color="link" onClick={this.props.onClick}>
-          Close detail
-        </Button>
+        <button type="button" className="close" onClick={this.props.closeAddressDetail}>
+          <span>&times;</span>
+        </button>
+        {this.props.entityDetails && `${resultPlurality(this.props.entityDetails.length)} na adrese.`}
       </div>
       <ListGroup className="address-detail-list">
-        {map(this.props.entities, (e) => <ListRow entity={e} key={e.id} />)}
+        {map(this.props.entityDetails, (e) => <ListRow entityDetail={e} key={e.eid} />)}
       </ListGroup>
     </div>
   )
 }
+
 export default compose(
   connect(
     (state: State) => ({
-      entities: addressEntitiesSelector(state),
       entitiesIds: addressEntitiesIdsSelector(state),
+      entityDetails: sortedAddressEntityDetailsSelector(state),
     }),
     {
       closeAddressDetail,
@@ -78,8 +71,5 @@ export default compose(
       entitiesIds.length
         ? chunk(entitiesIds, MAX_ENTITY_REQUEST_COUNT).map((ids) => entityDetailProvider(ids))
         : []
-  ),
-  withHandlers({
-    onClick: ({closeAddressDetail}: StateProps) => closeAddressDetail,
-  })
+  )
 )(AddressDetail)

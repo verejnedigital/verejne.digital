@@ -4,6 +4,7 @@ import collections
 import heapq
 import Queue
 import random
+import six
 
 
 class Relations:
@@ -154,7 +155,6 @@ class Relations:
   def _get_spanning_subgraph(self, vertices_eids):
     """Returns dict describing subgraph spanned by `vertices_eids`."""
 
-    assert isinstance(vertices_eids, set)
     vertices = [{'eid': eid} for eid in vertices_eids]
     edges = [(vertex, target, edge_type)
              for vertex in vertices_eids
@@ -164,7 +164,7 @@ class Relations:
 
   def get_notable_connections_subgraph(
       self, start, notable_eids, max_distance,
-      max_nodes_to_explore, max_path_vertices):
+      max_nodes_to_explore, max_order):
     """Returns a subgraph that is a neighbourhood of `start`.
 
     Args:
@@ -178,13 +178,12 @@ class Relations:
       max_nodes_to_explore: Maximum number of distinct nodes the BFS
           will encounter before terminating. Tweak this parameter to
           get sufficiently fast responses from the APIs.
-      max_path_vertices: Maximum number of vertices to include that
-          are neither in `start`, nor "notable."
+      max_order: Maximum number of vertices to return.
     Returns:
       Subgraph containing all nodes in `start` and all shortest paths
       between `start` and `notable_eids` that are within
       `max_distance` from `start`, up to the constraints imposed by
-      the `max_nodes_to_explore` and `max_path_vertices` parameters.
+      the `max_nodes_to_explore` and `max_order` parameters.
     """
 
     # Initialise search:
@@ -210,34 +209,50 @@ class Relations:
 
       queue_index += 1
 
-    # Flag vertices on shortest paths to "notable" entities:
-    on_shortest_path = set()
+    # For each vertex v, compute the smallest integer d such that v
+    # lies on a shortest path between `start` and a notable entity
+    # that is distance d away from `start`.
+    vertex_d = {}
     for i in range(len(queue) - 1, -1, -1):
       vertex = queue[i]
-      if vertex not in on_shortest_path:
-        # Check if `vertex` itself is notable:
-        if vertex in notable_eids:
-          on_shortest_path.add(vertex)
-          continue
-        # Check if `vertex` is on a shortest path to a notable eid:
-        for _, target, _ in self._outgoing_edges(vertex):
-          if (target in on_shortest_path) and (
-              distance[target] == distance[vertex] + 1):
-            on_shortest_path.add(vertex)
-            break
+      vertex_distance = distance[vertex]
 
-    # Determine vertices to be included in the subgraph:
-    subgraph_vertices = set(start)
-    for vertex in queue:
+      # If notable itself, cannot be on a shortest path to another
+      # notable entity that would be closer to `start` (BFS ordering).
       if vertex in notable_eids:
-        subgraph_vertices.add(vertex)
-    num_path_vertices = 0
+        vertex_d[vertex] = vertex_distance
+        continue
+
+      # Look at neighbours that are one step further away from `start`
+      # then `vertex`, i.e. a shortest path flows through `vertex`.
+      d = float('inf')
+      for _, target, _ in self._outgoing_edges(vertex):
+        if (target in vertex_d) and (distance[target] == vertex_distance + 1):
+          d = min(d, vertex_d[target])
+      if d <= max_distance:
+        vertex_d[vertex] = d
+
+    # Group entities according to their values of d:
+    entities_with_d = [[] for _ in six.moves.range(max_distance + 1)]
     for vertex in queue:
-      if (vertex not in subgraph_vertices) and (
-          vertex in on_shortest_path):
-        subgraph_vertices.add(vertex)
-        num_path_vertices += 1
-        if num_path_vertices >= max_path_vertices:
+      if vertex in vertex_d:
+        entities_with_d[vertex_d[vertex]].append(vertex)
+
+    # Determine vertices to be included in the subgraph by finding
+    # a limit on `d` such that `max_order` is not exceeded.
+    subgraph_vertices = []
+    d = 0
+    while (d <= max_distance) and (
+        len(subgraph_vertices) + len(entities_with_d[d]) <= max_order):
+      subgraph_vertices.extend(entities_with_d[d])
+      d += 1
+
+    # If no notable connections have been found at all, include the
+    # immediate neighbourhood of `start`.
+    if not subgraph_vertices:
+      for vertex in queue:
+        subgraph_vertices.append(vertex)
+        if distance[vertex] >= 2 or len(subgraph_vertices) >= max_order:
           break
 
     # Construct and return the subgraph:

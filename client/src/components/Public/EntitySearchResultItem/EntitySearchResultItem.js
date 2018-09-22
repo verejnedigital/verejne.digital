@@ -1,17 +1,17 @@
 // @flow
 import React from 'react'
-import {connect} from 'react-redux'
 import './EntitySearchResultItem.css'
 import Info from '../../shared/Info/Info'
-import {entityDetailSelector} from '../../../selectors/index'
+import type {NewEntityDetail} from '../../../state'
 
-const EntitySearchResultItem = ({entity}) => (
+type EntitySearchResultItemProps = {|
+  entity: NewEntityDetail,
+|}
+
+const EntitySearchResultItem = ({entity}: EntitySearchResultItemProps) => (
   <div style={{marginBottom: '1rem'}}>
     <Info data={entity} inModal />
   </div>
 )
 
-export default connect(
-  (state, {eid}) => ({
-    entity: entityDetailSelector(state, eid),
-  }))(EntitySearchResultItem)
+export default EntitySearchResultItem

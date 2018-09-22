@@ -32,6 +32,20 @@ const dispatchSubgraphData = (
   )
 }
 
+const dispatchNotableSubgraphData = (eid: number | number[], transformer: (Object) => Object) => (
+  ref: string,
+  data: any,
+  dispatch: Dispatch
+) => {
+  dispatch(
+    receiveData(
+      ['connections', 'subgraph'],
+      {id: `${eid.toString()}`, data: transformer(data)},
+      ref
+    )
+  )
+}
+
 export const connectionDetailProvider = (eid1: number | number[], eid2: number | number[]) => ({
   ref: `connection-${eid1.toString()}-${eid2.toString()}`,
   getData: [
@@ -61,6 +75,23 @@ export const connectionSubgraphProvider = (
     },
   ],
   onData: [dispatchSubgraphData, eid1, eid2, transformer],
+  keepAliveFor: 60 * 60 * 1000,
+  loadingComponent: <GraphLoading />,
+})
+
+export const notableConnectionSubgraphProvider = (
+  eid: number | number[],
+  transformer: (Object) => Object
+) => ({
+  ref: `notable-connection-${eid.toString()}`,
+  getData: [
+    fetch,
+    `${process.env.REACT_APP_API_URL || ''}/api/p/notable_connections?eid=${eid.toString()}`,
+    {
+      accept: 'application/json',
+    },
+  ],
+  onData: [dispatchNotableSubgraphData, eid, transformer],
   keepAliveFor: 60 * 60 * 1000,
   loadingComponent: <GraphLoading />,
 })

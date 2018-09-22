@@ -1,3 +1,4 @@
+// @flow
 import React, {Component} from 'react'
 import GoogleMapReact from 'google-map-react'
 import {
@@ -6,11 +7,20 @@ import {
   createMapOptions,
   GOOGLE_MAP_CONFIG,
 } from '../../../constants'
+
+import type {CadastralData, GeolocationPoint} from '../../../state'
+
 import './MapContainer.css'
 
 const Marker = ({title}) => <div className="marker">{title}</div>
 
-class MapContainer extends Component {
+type MapContainerProps = {
+  assets: Array<CadastralData>,
+  center: GeolocationPoint,
+  zoom: number,
+}
+
+class MapContainer extends Component<MapContainerProps> {
   render() {
     return (
       <div className="map">

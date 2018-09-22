@@ -53,14 +53,14 @@ const Statuses = ({
       <span> pre</span> <strong>&quot;{entity1.query}&quot;</strong>
       {showAlternatives1 &&
         entity1.eids &&
-        entity1.eids.map((eid) => <Alternative key={eid} eid={eid} useNewApi />)}
+        entity1.eids.map((eid) => <Alternative key={eid} eid={eid} />)}
     </p>
     <p id="search-status2" className="searchStatus">
       {translateZaznam(entity2.eids.length, toggleAlternatives2)}
       <span> pre</span> <strong>&quot;{entity2.query}&quot;</strong>
       {showAlternatives2 &&
         entity2.eids &&
-        entity2.eids.map((eid) => <Alternative key={eid} eid={eid} useNewApi />)}
+        entity2.eids.map((eid) => <Alternative key={eid} eid={eid} />)}
     </p>
   </div>
 )

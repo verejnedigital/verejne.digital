@@ -1,9 +1,17 @@
+// @flow
 import React, {Component} from 'react'
 import Politician from './Politician'
-import './PoliticiansList.css'
 import {Table} from 'reactstrap'
 
-class PoliticiansList extends Component {
+import './PoliticiansList.css'
+
+import type {Politician as PoliticianType} from '../../../state'
+
+type PoliticianListProps = {
+  politicians: Array<PoliticianType>,
+}
+
+class PoliticiansList extends Component<PoliticianListProps> {
   render() {
     return (
       <Table id="politicians-table">

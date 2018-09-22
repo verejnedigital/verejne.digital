@@ -1,15 +1,16 @@
 // @flow
 import React, {Fragment} from 'react'
-import './LegendSymbols.css'
 import {getWarning} from './utilities'
-import {formatSimilarPercent} from './LegendSymbols'
-import CompanyDetails from '../shared/CompanyDetails'
 import {Link} from 'react-router-dom'
 import {compose, withState, withHandlers} from 'recompose'
+
+import {formatSimilarPercent} from './LegendSymbols'
+import CompanyDetails from '../shared/CompanyDetails'
 
 import type {Notice} from '../../state'
 
 import './NoticeItem.css'
+import './LegendSymbols.css'
 
 type Props = {|
   item: Notice,
@@ -24,60 +25,54 @@ const _NoticeItem = ({
   showCustomerInfo,
   toggleSupplier,
   toggleCustomer,
-}: Props) => {
-  return (
-    <Fragment>
-      <tr className="notice-item">
-        <td className="notice-item-title">
-          {getWarning(item)}
-          <Link
-            title={item.title}
-            className="nowrap-ellipsis"
-            to={`/obstaravania/${item.notice_id}`}
-          >
-            {item.title}
-          </Link>
-        </td>
-        <td>
-          <a className="notice-item-link" onClick={toggleCustomer}>
-            {showCustomerInfo ? <span>[&minus;]</span> : '[+]'} {item.name}
+}: Props) => (
+  <Fragment>
+    <tr className="notice-item">
+      <td className="notice-item-title">
+        {getWarning(item)}
+        <Link title={item.title} className="nowrap-ellipsis" to={`/obstaravania/${item.notice_id}`}>
+          {item.title}
+        </Link>
+      </td>
+      <td>
+        <a className="notice-item-link" onClick={toggleCustomer}>
+          {showCustomerInfo ? <span>[&minus;]</span> : '[+]'} {item.name}
+        </a>
+      </td>
+      <td>
+        {item.best_supplier_name && (
+          <a className="notice-item-link" onClick={toggleSupplier}>
+            {showSupplierInfo ? <span>[&minus;]</span> : '[+]'} {item.best_supplier_name}
           </a>
-        </td>
-        <td>
-          {item.best_supplier_name && (
-            <a className="notice-item-link" onClick={toggleSupplier}>
-              {showSupplierInfo ? <span>[&minus;]</span> : '[+]'} {item.best_supplier_name}
-            </a>
-          )}
-        </td>
-        <td>
-          {item.supplier_name && (
-            <a className="notice-item-link" onClick={toggleSupplier}>
-              {showSupplierInfo ? <span>[&minus;]</span> : '[+]'} {item.supplier_name}
-            </a>
-          )}
-        </td>
-        <td className="text-right">
-          {item.best_similarity ? formatSimilarPercent(Math.round(item.best_similarity * 100)) : ''}
+        )}
+      </td>
+      <td>
+        {item.supplier_name && (
+          <a className="notice-item-link" onClick={toggleSupplier}>
+            {showSupplierInfo ? <span>[&minus;]</span> : '[+]'} {item.supplier_name}
+          </a>
+        )}
+      </td>
+      <td className="text-right">
+        {item.best_similarity ? formatSimilarPercent(Math.round(item.best_similarity * 100)) : ''}
+      </td>
+    </tr>
+    {showSupplierInfo && (
+      <tr>
+        <td colSpan={5}>
+          <CompanyDetails eid={item.supplier_eid || item.best_supplier} useNewApi />
         </td>
       </tr>
-      {showSupplierInfo && (
-        <tr>
-          <td colSpan={5}>
-            <CompanyDetails eid={item.supplier_eid || item.best_supplier} useNewApi />
-          </td>
-        </tr>
-      )}
-      {showCustomerInfo && (
-        <tr>
-          <td colSpan={5}>
-            <CompanyDetails eid={item.eid} useNewApi />
-          </td>
-        </tr>
-      )}
-    </Fragment>
-  )
-}
+    )}
+    {showCustomerInfo && (
+      <tr>
+        <td colSpan={5}>
+          <CompanyDetails eid={item.eid} useNewApi />
+        </td>
+      </tr>
+    )}
+  </Fragment>
+)
 
 export default compose(
   withState('showSupplierInfo', 'setSupplier', false),

@@ -1,8 +1,17 @@
+// @flow
 import React from 'react'
 import {withHandlers} from 'recompose'
 import {NavLink} from 'react-router-dom'
+import {getTerm} from '../utilities'
 
-const Politician = ({politician, useDefaultPicture}) => (
+import type {Politician as PoliticianType} from '../../../state'
+
+type PoliticianProps = {
+  politician: PoliticianType,
+  useDefaultPicture: Function,
+}
+
+const Politician = ({politician, useDefaultPicture}: PoliticianProps) => (
   <tr className="table-line">
     <td className="number-column">{politician.order}.</td>
     <td>
@@ -19,7 +28,7 @@ const Politician = ({politician, useDefaultPicture}) => (
       </NavLink>
     </td>
     <td className="text-left party-column">
-      {politician.term_start} - {politician.term_finish}
+      {(!politician.term_start) && '\t'}{getTerm(politician)}
     </td>
     <td className="party-column">{politician.party_abbreviation}</td>
     <td className="number-column">{politician.num_houses_flats}</td>

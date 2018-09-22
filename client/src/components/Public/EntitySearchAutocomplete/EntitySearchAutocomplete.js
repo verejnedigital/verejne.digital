@@ -31,12 +31,13 @@ import ModalIcon from 'react-icons/lib/fa/clone'
 import Autocomplete from 'react-autocomplete'
 
 import {FIND_ENTITY_TITLE} from '../../../constants'
-import type NewEntityDetail from '../../../state'
 
-type Props = {
+import type {State} from '../../../state'
+
+type EntitySearchAutocompleteProps = {
   entitySearchValue: string,
   suggestionEids: Array<number>,
-  suggestions: Array<NewEntityDetail>,
+  suggestions: Array<string>,
   setEntitySearchValue: (value: string) => void,
   setEntitySearchFor: (value: string) => void,
   toggleModalOpen: () => void,
@@ -46,8 +47,8 @@ type Props = {
   findEntities: (e: Event) => void,
   onSelectHandler: (e: Event) => void,
   onChangeHandler: (e: Event) => void,
-  getItemValue: (entity: NewEntityDetail) => string,
-  renderItem: (entity: NewEntityDetail, isHighlighted: boolean) => any,
+  getItemValue: (suggestion: string) => string,
+  renderItem: (suggestion: string, isHighlighted: boolean) => any,
 }
 
 const menuStyle = {
@@ -72,9 +73,9 @@ const EntitySearchAutocomplete = ({
   onChangeHandler,
   getItemValue,
   renderItem,
-}: Props) => (
+}: EntitySearchAutocompleteProps) => (
   <Form onSubmit={findEntities}>
-    <InputGroup>
+    <InputGroup className="autocomplete-holder">
       <Autocomplete
         getItemValue={getItemValue}
         items={suggestions}
@@ -92,7 +93,13 @@ const EntitySearchAutocomplete = ({
         renderMenu={function(items, value, style) {
           // this.menuStyle is react-autocomplete's default
           // we're using menuStyle to partially override it
-          return <div className="menu" style={{...style, ...this.menuStyle, ...menuStyle}} children={items} />
+          return (
+            <div
+              className="autocomplete-suggestions-menu"
+              style={{...style, ...this.menuStyle, ...menuStyle}}
+              children={items}
+            />
+          )
         }}
       />
       <InputGroupAddon addonType="append">
@@ -111,7 +118,7 @@ const EntitySearchAutocomplete = ({
 
 export default compose(
   connect(
-    (state) => ({
+    (state: State) => ({
       entitySearchValue: entitySearchValueSelector(state),
       suggestionEids: entitySearchSuggestionEidsSelector(state),
       suggestions: entitySearchSuggestionsSelector(state),
@@ -148,7 +155,7 @@ export default compose(
       closeAddressDetail,
       setEntitySearchOpen,
       setDrawer,
-    }) => (name, entity) => {
+    }) => (name, suggestion) => {
       setEntitySearchValue(name)
       setEntitySearchFor(name)
       closeAddressDetail()
@@ -158,24 +165,22 @@ export default compose(
     onChangeHandler: ({setEntitySearchValue}) => (e) => {
       setEntitySearchValue(e.target.value)
     },
-    getItemValue: () => (entity) => (entity.name ? entity.name : ''),
-    renderItem: () => (entity, isHighlighted) => (
-      <div key={entity.eid} className={entity.name && classnames('item', isHighlighted && 'item--active')} >
-        <strong>{entity.name ? entity.name : ''}</strong>
+    getItemValue: () => (suggestion) => (suggestion),
+    renderItem: () => (suggestion, isHighlighted) => (
+      <div
+        key={suggestion}
+        className={classnames('autocomplete-item', {
+          'autocomplete-item--active': isHighlighted,
+        })}
+      >
+        <strong>{suggestion}</strong>
       </div>
     ),
   }),
-  withDataProviders(
-    ({entitySearchValue, suggestionEids}) => [
-      ...(entitySearchValue.trim() !== ''
-        ? [entitySearchProvider(entitySearchValue, false, false)]
-        : []
-      ),
-      ...(suggestionEids.length > 0
-        ? [entityDetailProvider(suggestionEids, false)]
-        : []
-      ),
-    ]
-  ),
+  withDataProviders(({entitySearchValue, suggestionEids}) => [
+    ...(entitySearchValue.trim() !== ''
+      ? [entitySearchProvider(entitySearchValue, false, false)]
+      : []),
+    ...(suggestionEids.length > 0 ? [entityDetailProvider(suggestionEids, false)] : []),
+  ])
 )(EntitySearchAutocomplete)
-

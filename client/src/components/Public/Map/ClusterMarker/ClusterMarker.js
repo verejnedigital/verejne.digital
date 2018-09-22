@@ -10,37 +10,35 @@ import {
   zoomToLocation,
   setDrawer,
   setEntitySearchOpen,
-  deselectLocation,
+  deselectLocations,
 } from '../../../../actions/publicActions'
 import {
   zoomSelector,
   openedAddressDetailSelector,
-  selectedLocationSelector,
+  selectedLocationsSelector,
 } from '../../../../selectors'
 import CircleIcon from '../../../shared/CircleIcon'
 import Marker from '../Marker/Marker'
 import './ClusterMarker.css'
 
-import type {Center} from '../../../../state'
+import type {Center, State} from '../../../../state'
 import type {MapCluster} from '../../../../selectors'
 import type {Thunk} from '../../../../types/reduxTypes'
 
 type ClusterMarkerProps = {
   zoom: number,
-  selectedLocation: Center,
+  selectedLocations: Center[],
   zoomToLocation: ({lat: number, lng: number}) => Thunk,
   cluster: MapCluster,
   onClick: () => void,
   openedAddressIds: Array<number>,
 }
-const clusterIsOnSelectedLocation = (selectedLocation, point) =>
-  selectedLocation !== null &&
-  point.lat === selectedLocation.lat &&
-  point.lng === selectedLocation.lng
+const clusterHasSelectedLocation = (selectedLocations, point) =>
+  selectedLocations.some((location) => point.lat === location.lat && point.lng === location.lng)
 const ClusterMarker = ({
   cluster,
   zoom,
-  selectedLocation,
+  selectedLocations,
   zoomToLocation,
   onClick,
   openedAddressIds,
@@ -48,7 +46,7 @@ const ClusterMarker = ({
   const selected =
     cluster.numPoints === 1 &&
     (openedAddressIds.includes(cluster.points[0].address_id) ||
-      clusterIsOnSelectedLocation(selectedLocation, {
+      clusterHasSelectedLocation(selectedLocations, {
         lat: cluster.points[0].lat,
         lng: cluster.points[0].lng,
       }))
@@ -75,22 +73,22 @@ const ClusterMarker = ({
 
 export default compose(
   connect(
-    (state) => ({
+    (state: State) => ({
       openedAddressIds: openedAddressDetailSelector(state),
       zoom: zoomSelector(state),
-      selectedLocation: selectedLocationSelector(state),
+      selectedLocations: selectedLocationsSelector(state),
     }),
     {
       openAddressDetail,
       zoomToLocation,
       setDrawer,
       setEntitySearchOpen,
-      deselectLocation,
+      deselectLocations,
     }
   ),
   withHandlers({
     onClick: ({
-      deselectLocation,
+      deselectLocations,
       zoom,
       cluster,
       zoomToLocation,
@@ -99,21 +97,22 @@ export default compose(
       setEntitySearchOpen,
     }) => (event) => {
       if (cluster.numPoints === 1) {
-        openAddressDetail([cluster.points[0].address_id])
-        setDrawer(true)
-        setEntitySearchOpen(false)
+        if (cluster.points[0].address_id) {
+          openAddressDetail([cluster.points[0].address_id])
+          setEntitySearchOpen(false)
+          setDrawer(true)
+        }
         zoomToLocation({lat: cluster.lat, lng: cluster.lng}, Math.max(ENTITY_CLOSE_ZOOM, zoom))
-        deselectLocation()
       } else {
         if (zoom < 22) {
           zoomToLocation({lat: cluster.lat, lng: cluster.lng}, cluster.setZoomTo)
-          deselectLocation()
+          deselectLocations()
         } else {
           openAddressDetail(cluster.points.map((point) => point.address_id))
           setDrawer(true)
           setEntitySearchOpen(false)
           zoomToLocation({lat: cluster.lat, lng: cluster.lng}, Math.max(ENTITY_CLOSE_ZOOM, zoom))
-          deselectLocation()
+          deselectLocations()
         }
       }
     },

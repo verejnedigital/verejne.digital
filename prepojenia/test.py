@@ -64,16 +64,16 @@ class TestHandlers(unittest.TestCase):
     self.assertTrue('vertices' in content)
     self.assertTrue('edges' in content)
     print('Subgraph (|V|=%d, |E|=%d):\n%s' % (
-      len(content['vertices']), len(content['edges']), content))
+        len(content['vertices']), len(content['edges']), content))
 
   def test_notable_connections(self):
-    url = '/notable_connections?eid=294113'
+    url = '/notable_connections?eid=1690208'
     content = _request_json(url, self)
     self.assertIsInstance(content, dict)
     self.assertTrue('vertices' in content)
     self.assertTrue('edges' in content)
     print('NotableConnections subgraph (|V|=%d, |E|=%d):\n%s' % (
-      len(content['vertices']), len(content['edges']), content))
+        len(content['vertices']), len(content['edges']), content))
 
 
 def main():

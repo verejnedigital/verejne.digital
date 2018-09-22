@@ -26,53 +26,47 @@ const _Company = ({
   showCustomerInfo,
   toggleSupplier,
   toggleCustomer,
-}: Props) => {
-  return (
-    <Fragment>
-      <tr className="company">
-        <td className="text-nowrap">
-          <a className="company-link" onClick={toggleSupplier}>
-            {showSupplierInfo ? <Fragment>[&minus;]</Fragment> : '[+]'} {item.supplier_name}
-          </a>
-        </td>
-        <td className="company-title">
-          <Link
-            className="nowrap-ellipsis"
-            to={`/obstaravania/${item.notice_id}`}
-            title={item.title}
-          >
-            {item.title}
-          </Link>
-        </td>
-        <td>
-          <a className="company-link" onClick={toggleCustomer}>
-            {showCustomerInfo ? <Fragment>[&minus;]</Fragment> : '[+]'} {item.name}
-          </a>
-        </td>
-        <td className="text-nowrap text-right">
-          <strong>{localeNumber(item.total_final_value_amount)}</strong>
-        </td>
-        <td className="text-center">
-          <span className="similarity">{formatSimilarPercent(Math.round(similarity * 100))}</span>
+}: Props) => (
+  <Fragment>
+    <tr className="company">
+      <td className="text-nowrap">
+        <a className="company-link" onClick={toggleSupplier}>
+          {showSupplierInfo ? <Fragment>[&minus;]</Fragment> : '[+]'} {item.supplier_name}
+        </a>
+      </td>
+      <td className="company-title">
+        <Link className="nowrap-ellipsis" to={`/obstaravania/${item.notice_id}`} title={item.title}>
+          {item.title}
+        </Link>
+      </td>
+      <td>
+        <a className="company-link" onClick={toggleCustomer}>
+          {showCustomerInfo ? <Fragment>[&minus;]</Fragment> : '[+]'} {item.name}
+        </a>
+      </td>
+      <td className="text-nowrap text-right">
+        <strong>{localeNumber(item.total_final_value_amount)}</strong>
+      </td>
+      <td className="text-center">
+        <span className="similarity">{formatSimilarPercent(Math.round(similarity * 100))}</span>
+      </td>
+    </tr>
+    {showSupplierInfo && (
+      <tr>
+        <td colSpan={5}>
+          <CompanyDetails eid={item.supplier_eid} useNewApi />
         </td>
       </tr>
-      {showSupplierInfo && (
-        <tr>
-          <td colSpan={5}>
-            <CompanyDetails eid={item.supplier_eid} useNewApi />
-          </td>
-        </tr>
-      )}
-      {showCustomerInfo && (
-        <tr>
-          <td colSpan={5}>
-            <CompanyDetails eid={item.eid} useNewApi />
-          </td>
-        </tr>
-      )}
-    </Fragment>
-  )
-}
+    )}
+    {showCustomerInfo && (
+      <tr>
+        <td colSpan={5}>
+          <CompanyDetails eid={item.eid} useNewApi />
+        </td>
+      </tr>
+    )}
+  </Fragment>
+)
 
 export default compose(
   withState('showSupplierInfo', 'setSupplier', false),

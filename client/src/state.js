@@ -9,12 +9,12 @@ export type Candidate = {
   eid: number,
   supplier_name: string,
   supplier_eid: number,
-  notice_id: number
+  notice_id: number,
 }
 
 export type Notice = {
   price_est: number,
-  total_final_value_amount:	number,
+  total_final_value_amount: number,
   bulletin_source_url: string,
   best_similarity: number,
   notice_type_id: number,
@@ -35,7 +35,7 @@ export type Notice = {
   eid: number,
   estimated_value_currency: string,
   bulletin_published_on: string,
-  total_final_value_currency: string
+  total_final_value_currency: string,
 }
 
 export type NoticeDetail = {
@@ -66,38 +66,8 @@ export type NoticeDetail = {
   estimated_value_amount: number,
   eid: number,
   estimated_value_currency: string,
-  bulletin_published_on: string
+  bulletin_published_on: string,
 }
-
-export type PoliticianDetail = {|
-  picture: string,
-  party_nom: string,
-  surname: string,
-  party_abbreviation: string,
-  firstname: string,
-  title: string,
-  term_finish: number,
-  office_name_male: string,
-  term_start: number,
-  office_name_female: string,
-|}
-
-export type Politician = {|
-  num_fields_gardens: number,
-  picture: string,
-  surname: string,
-  party_abbreviation: string,
-  firstname: string,
-  title: string,
-  term_finish: number,
-  party_nom: string,
-  num_houses_flats: number,
-  office_name_male: string,
-  num_others: number,
-  term_start: number,
-  office_name_female: string,
-  id: number,
-|}
 
 export type CadastralData = {|
   lon: number,
@@ -194,7 +164,7 @@ export type MapOptions = {
   bounds: ?MapBounds,
 }
 
-export type Center = {lat: number, lng: number}
+export type Center = {lat: number, lng: number, addressId?: number}
 
 export type SearchedEntity = {
   query: string,
@@ -238,6 +208,7 @@ export type Address = {
 
 // Entity returned from api call getEntitiesAtAddressId
 export type NewEntity = {
+  addressId: number,
   id: number,
   name: string,
 }
@@ -316,6 +287,7 @@ export type RelatedEntity = {
   name: string,
   edge_types: number[],
   edge_type_texts: string[],
+  edge_effective_to_dates: string[],
   lat: number,
   lng: number,
   address: string,
@@ -327,6 +299,7 @@ export type NewEntityDetail = {
   lat: number,
   lng: number,
   address: string,
+  addressId?: number,
   eufunds: Eufunds,
   companyfinancials: {
     [year: number]: CompanyFinancial,
@@ -342,8 +315,40 @@ export type NewEntityDetail = {
   political_entity: boolean,
   contact_with_politics: boolean,
   trade_with_government: boolean,
+  profil_id?: number,
 }
 
+export type PoliticianDetail = {|
+  picture: string,
+  party_nom: string,
+  surname: string,
+  party_abbreviation: string,
+  firstname: string,
+  title: string,
+  term_finish: number,
+  entities: ObjectMap<NewEntityDetail>,
+  office_name_male: string,
+  term_start: number,
+  office_name_female: string,
+|}
+
+export type Politician = {|
+  order?: number,
+  num_fields_gardens: number,
+  picture: string,
+  surname: string,
+  party_abbreviation: string,
+  firstname: string,
+  title: string,
+  term_finish: number,
+  party_nom: string,
+  num_houses_flats: number,
+  office_name_male: string,
+  num_others: number,
+  term_start: number,
+  office_name_female: string,
+  id: number,
+|}
 // Each property must begin with '+' to be made read only and each object
 // must be enclosed in '|' so no properties can be added to state at runtime
 export type State = {|
@@ -371,7 +376,7 @@ export type State = {|
     +showInfo: any, //TODO: TBD
     +openedAddressDetail: Array<number>,
     +drawerOpen: boolean,
-    +selectedLocation: Center | null,
+    +selectedLocations: Center[],
   |},
   +mapOptions: MapOptions,
   +connections: Connections,
@@ -406,7 +411,7 @@ const getInitialState = (): State => ({
     showInfo: {},
     openedAddressDetail: [],
     drawerOpen: false,
-    selectedLocation: null,
+    selectedLocations: [],
   },
   mapOptions: {
     center: SLOVAKIA_COORDINATES,

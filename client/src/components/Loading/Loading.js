@@ -26,7 +26,6 @@ export const EntityDetailLoading = () => (
 export const ModalLoading = () => (
   <div className="loading-modal">
     <LoadingComponent type="tail_spin" width={250} height={250} fill={LOADING_CIRCLE_COLOR} />
-    {console.log(LOADING_CIRCLE_COLOR)}
   </div>
 )
 export const GraphLoading = () => (
