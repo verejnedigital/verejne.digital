@@ -21,15 +21,18 @@ class MyServer(webapp2.RequestHandler):
     """Implements actual hook logic and responds to requests."""
     raise NotImplementedError('Must implement method `get`.')
 
-  def _parse_int(self, parameter, default=None):
+  def _parse_int(self, parameter, default=None, max_value=None):
     """Attempts to parse an integer GET `parameter`."""
     if default and (parameter not in self.request.GET):
       return default
     try:
       value = int(self.request.GET[parameter])
     except:
-      self.abort(400, detail='Could not parse param `%s` as int' % (
+      self.abort(400, detail='Parameter "%s" must be integer' % (
         parameter))
+    if max_value and (value > max_value):
+      self.abort(400, detail='Parameter "%s" must be <= %d' % (
+        parameter, max_value))
     return value
 
   def _parse_eid_list(self, parameter, limit=50):
@@ -128,12 +131,11 @@ class Subgraph(MyServer):
     # Compute the subgraph to return:
     start = self._parse_eid_list('eid1')
     end = self._parse_eid_list('eid2')
-    max_distance = 4
-    tolerance = 1
-    subgraph = relations.subgraph(
-      start, end, max_distance, tolerance)
+    max_explore = self._parse_int(
+      'max_explore', default=25000, max_value=250000)
+    subgraph = relations.subgraph(start, end, max_explore)
 
-    # Endow returning vertices with corresponding entity names:
+    # Endow returning vertices with entity names (and other info).
     self._add_entity_info_to_vertices(subgraph['vertices'])
 
     self.returnJSON(subgraph)
@@ -149,19 +151,16 @@ class NotableConnections(MyServer):
     # Parse URL parameters:
     start = self._parse_eid_list('eid')
     radius = self._parse_int('radius', default=6)
-    max_explore = self._parse_int('max_explore', default=20000)
-    max_path_vertices = self._parse_int('max_order', default=50)
-
-    max_explore_limit = 200000
-    if max_explore > max_explore_limit:
-      self.abort(400, detail='Param `max_explore` must be <= %d' % (
-        max_explore_limit))
+    max_nodes_to_explore = self._parse_int(
+      'max_explore', default=25000, max_value=250000)
+    max_order = self._parse_int(
+      'max_order', default=100, max_value=500)
 
     # Build subgraph of connections to notable entities:
     subgraph = relations.get_notable_connections_subgraph(
-      start, notable_eids, radius, max_explore, max_path_vertices)
+      start, notable_eids, radius, max_nodes_to_explore, max_order)
 
-    # Endow returning vertices with corresponding entity names:
+    # Endow returning vertices with entity names (and other info).
     self._add_entity_info_to_vertices(subgraph['vertices'])
 
     self.returnJSON(subgraph)

@@ -139,19 +139,6 @@ class Relations:
         return
       yield edge
 
-  def _neighbourhood_bfs(self, start, radius):
-    """Returns all vertices within `radius` steps from `start`."""
-
-    queue = collections.deque((vertex, 0) for vertex in set(start))
-    neighbourhood = {vertex: 0 for vertex in start}
-    while len(queue) >= 1:
-      vertex, distance = queue.pop()
-      for _, target, _ in self._outgoing_edges(vertex):
-        if (target not in neighbourhood) and (distance + 1 <= radius):
-          neighbourhood[target] = distance + 1
-          queue.appendleft((target, distance + 1))
-    return neighbourhood
-
   def _get_spanning_subgraph(self, vertices_eids):
     """Returns dict describing subgraph spanned by `vertices_eids`."""
 
@@ -162,9 +149,62 @@ class Relations:
              if target in vertices_eids]
     return {'vertices': vertices, 'edges': edges}
 
-  def get_notable_connections_subgraph(
-      self, start, notable_eids, max_distance,
-      max_nodes_to_explore, max_order):
+  def _bfs_order_from_set(self,
+                          start,
+                          max_distance=None,
+                          max_distance_by_set=None,
+                          max_nodes_to_explore=None):
+    """Returns nodes as reached from `start` in BFS order.
+
+    Args:
+      start: Iterable of eIDs: the start set (vertices of distance 0).
+      max_distance: Maximum distance from `start` to explore.
+      max_distance_by_set: If not None, a set of eIDs such that when
+          any of these eIDs is encountered, the current distance is
+          finished and then the BFS terminates. Use to include all
+          nodes up to distance equal to the length of a shortest path
+          from `start` to `max_distance_by_set`.
+      max_nodes_to_explore: Maximum number of distinct nodes to
+          visit before terminating.
+    Returns:
+      queue: List of eIDs in the order BFS encountered them.
+      distance: Dict mapping visited eIDs to distance from `start`.
+    """
+    assert (max_distance is None) or (max_distance_by_set is None)
+
+    # Initialise BFS.
+    queue = [eid for eid in set(start)]
+    distance = {eid: 0 for eid in start}
+
+    # Iterate through the queue in FIFO order, but do not pop.
+    queue_index = 0
+    while (queue_index < len(queue)) and (
+        len(queue) < max_nodes_to_explore):
+      vertex = queue[queue_index]
+      vertex_distance = distance[vertex]
+      if max_distance and (vertex_distance >= max_distance):
+        break
+
+      # Iterate through unseen neighbours of `vertex`.
+      for _, target, _ in self._outgoing_edges(vertex):
+        if target not in distance:
+          distance[target] = vertex_distance + 1
+          queue.append(target)
+          if max_distance_by_set and (target in max_distance_by_set):
+            max_distance = distance[target]
+          if len(queue) == max_nodes_to_explore:
+            break
+
+      queue_index += 1
+
+    return queue, distance
+
+  def get_notable_connections_subgraph(self,
+                                       start,
+                                       notable_eids,
+                                       max_distance,
+                                       max_nodes_to_explore,
+                                       max_order):
     """Returns a subgraph that is a neighbourhood of `start`.
 
     Args:
@@ -186,28 +226,13 @@ class Relations:
       the `max_nodes_to_explore` and `max_order` parameters.
     """
 
-    # Initialise search:
-    distance = {eid: 0 for eid in start}
-    queue = [eid for eid in set(start)]
-
-    # Iterate through the queue in FIFO order:
-    queue_index = 0
-    while (queue_index < len(queue)) and (
-        len(queue) < max_nodes_to_explore):
-      vertex = queue[queue_index]
-      vertex_distance = distance[vertex]
-      if vertex_distance >= max_distance:
-        break
-
-      # Iterate through unseen neighbours of `vertex`:
-      for _, target, _ in self._outgoing_edges(vertex):
-        if target not in distance:
-          distance[target] = vertex_distance + 1
-          queue.append(target)
-          if len(queue) == max_nodes_to_explore:
-            break
-
-      queue_index += 1
+    # Run BFS from `start`:
+    queue, distance = self._bfs_order_from_set(
+        start,
+        max_distance=max_distance,
+        max_distance_by_set=None,
+        max_nodes_to_explore=max_nodes_to_explore
+    )
 
     # For each vertex v, compute the smallest integer d such that v
     # lies on a shortest path between `start` and a notable entity
@@ -224,7 +249,7 @@ class Relations:
         continue
 
       # Look at neighbours that are one step further away from `start`
-      # then `vertex`, i.e. a shortest path flows through `vertex`.
+      # than `vertex`, i.e. a shortest path flows through `vertex`.
       d = float('inf')
       for _, target, _ in self._outgoing_edges(vertex):
         if (target in vertex_d) and (distance[target] == vertex_distance + 1):
@@ -251,58 +276,71 @@ class Relations:
     # immediate neighbourhood of `start`.
     if not subgraph_vertices:
       for vertex in queue:
+        if distance[vertex] >= 2:
+          break
         subgraph_vertices.append(vertex)
-        if distance[vertex] >= 2 or len(subgraph_vertices) >= max_order:
+        if len(subgraph_vertices) >= max_order:
           break
 
-    # Construct and return the subgraph:
+    # Return the subgraph spanned by `subgraph_vertices`.
     subgraph = self._get_spanning_subgraph(subgraph_vertices)
     for vertex in subgraph['vertices']:
       vertex['distance'] = distance[vertex['eid']]
       vertex['notable'] = vertex['eid'] in notable_eids
     return subgraph
 
-  def subgraph(self, set_A, set_B, max_distance, tolerance):
+  def subgraph(self, set_A, set_B, max_nodes_to_explore):
     """Returns a subgraph containing connections between A and B.
 
     Args:
       set_A: List of eids specifying the first set of vertices.
       set_B: List of eids specifying the second set of vertices.
-      max_distance: Maximum length of A-B connections to consider.
-      tolerance: Integer specifying how much longer a path can be
-          than a shortest path for it to be considered.
+      max_nodes_to_explore: Maximum number of distinct nodes the BFS
+          will encounter before terminating. Tweak this parameter to
+          get sufficiently fast responses from the APIs.
     Returns:
-      Subgraph spanned by all vertices that lie on a path between A
-      and B that is at most `tolerance` longer than a shortest path
-      between A and B. An empty subgraph is returned if no shortest
-      path of length at most `max_distance` exists.
+      Subgraph spanned by all vertices that lie on a shortest path
+      between `set_A` and `set_B`, subject to the constraint imposed
+      by `max_nodes_to_explore`.
     """
-    # TODO: Implement a faster algorithm.
 
-    # Explore neighbourhoods of the set A and the set B:
-    print("Starting neighbourhood searches...")
-    dists_A = self._neighbourhood_bfs(set_A, max_distance + tolerance)
-    dists_B = self._neighbourhood_bfs(set_B, max_distance + tolerance)
-    dists_AB = [dists_A[v] for v in set_B if v in dists_A]
+    # If the two sets already intersect, return their intersection.
+    intersection = set(set_A).intersection(set(set_B))
+    if intersection:
+      return self._get_spanning_subgraph(intersection)
 
-    # Return empty subgraph if no connection of length `max_distance`:
-    if len(dists_AB) == 0:
-      return {'vertices': [], 'edges': []}
-    dist_AB = min(dists_AB)
-    if dist_AB > max_distance:
-      return {'vertices': [], 'edges': []}
+    # Run BFS, starting from the smaller of the two sets.
+    if len(set_B) < len(set_A):
+      (set_A, set_B) = (set_B, set_A)
+    queue, distance = self._bfs_order_from_set(
+        set_A,
+        max_distance=None,
+        max_distance_by_set=set_B,
+        max_nodes_to_explore=max_nodes_to_explore
+    )
 
-    # Determine subgraph's vertices (eIDs):
-    vertices_eids = set()
-    vertices_eids.update(set_A)
-    vertices_eids.update(set_B)
-    for v in dists_A:
-      if (v in dists_B) and (dists_A[v] + dists_B[v] <= dist_AB + tolerance):
-        vertices_eids.add(v)
+    # Mark all vertices on a shortest path from `set_A` to `set_B`.
+    subgraph_vertices = set()
+    for i in range(len(queue) - 1, -1, -1):
+      vertex = queue[i]
+      vertex_distance = distance[vertex]
 
-    # Build and return the spanning subgraph:
-    subgraph = self._get_spanning_subgraph(vertices_eids)
-    for vertex in subgraph['vertices']:
-      vertex['distance_from_A'] = dists_A.get(vertex['eid'], None)
-      vertex['distance_from_B'] = dists_B.get(vertex['eid'], None)
-    return subgraph
+      # If in `set_B`, must be on a shortest path (BFS ends early).
+      if vertex in set_B:
+        subgraph_vertices.add(vertex)
+        continue
+
+      # Look at neighbours that are one step further away from `start`
+      # than `vertex`, i.e. a shortest path flows through `vertex`.
+      for _, target, _ in self._outgoing_edges(vertex):
+        if (target in subgraph_vertices
+            and distance[target] == vertex_distance + 1):
+          subgraph_vertices.add(vertex)
+
+    # If no connection found, include just `set_A` and `set_B`.
+    if not subgraph_vertices:
+      subgraph_vertices.update(set_A)
+      subgraph_vertices.update(set_B)
+
+    # Return the subgraph spanned by `subgraph_vertices`.
+    return self._get_spanning_subgraph(subgraph_vertices)
