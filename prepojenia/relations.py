@@ -303,11 +303,16 @@ class Relations:
       between `set_A` and `set_B`, subject to the constraint imposed
       by `max_nodes_to_explore`.
     """
+    set_A = set(set_A)
+    set_B = set(set_B)
 
     # If the two sets already intersect, return their intersection.
-    intersection = set(set_A).intersection(set(set_B))
+    intersection = set_A.intersection(set_B)
     if intersection:
-      return self._get_spanning_subgraph(intersection)
+      subgraph = self._get_spanning_subgraph(intersection)
+      for vertex in subgraph['vertices']:
+        vertex['query'] = True
+      return subgraph
 
     # Run BFS, starting from the smaller of the two sets.
     if len(set_B) < len(set_A):
@@ -343,4 +348,8 @@ class Relations:
       subgraph_vertices.update(set_B)
 
     # Return the subgraph spanned by `subgraph_vertices`.
-    return self._get_spanning_subgraph(subgraph_vertices)
+    subgraph = self._get_spanning_subgraph(subgraph_vertices)
+    query = set_A.union(set_B)
+    for vertex in subgraph['vertices']:
+      vertex['query'] = vertex['eid'] in query
+    return subgraph
