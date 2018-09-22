@@ -30,9 +30,14 @@ class DatabaseConnection():
             rows = cur.fetchall()
         return rows
 
-    def get_server_side_cursor(self, query, query_data=(), buffer_size=100000):
+    def get_server_side_cursor(self,
+                               query,
+                               query_data=(),
+                               buffer_size=100000,
+                               return_dicts=False):
         """ Executes query and returns all rows using a server side cursor """
-        cur = self.conn.cursor('dummy_cursor_name')
+        cursor_factory = psycopg2.extras.RealDictCursor if return_dicts else None
+        cur = self.conn.cursor('dummy_cursor_name', cursor_factory=cursor_factory)
         cur.itersize = buffer_size
         cur.execute(query, query_data)
         return cur

@@ -19,7 +19,7 @@ class Entities:
   def __init__(self, db = None):
       self.db = db
       self.surnames = entity_tools.get_surnames()
-      self.titles = entity_tools.get_academic_titles()
+      self.titles_parser = entity_tools.get_academic_titles_parser()
 
   def AddOrg2Eid(self, org_id, eid):
       self.org2eid[org_id] = eid
@@ -104,7 +104,7 @@ class Entities:
         return eid
     # self.Ak je to osoba
     parsed_name = entity_tools.parse_entity_name(
-        name, self.surnames, self.titles)
+        name, self.titles_parser, self.surnames)
     eid = self.ExistsPerson(name, parsed_name, address_id)
     # Ak sme osobu nasli tak ju vratime
     if eid >= 0:

@@ -80,7 +80,7 @@ def CreateAndSetProdSchema(db, prod_schema_name):
 
 # TODO(rasto): refactor this method: split it into individual parts, so that
 # the main ProcessSource is short without deep nesting
-def ProcessSource(db_prod, geocoder, entities, config, test_mode):
+def ProcessSource(db_source, db_prod, geocoder, entities, config, test_mode):
     """ Process one source table (read from db_source) using the config and
     performing normalization using the given geocoder and entities lookup.
 
@@ -90,7 +90,6 @@ def ProcessSource(db_prod, geocoder, entities, config, test_mode):
     """
 
     # Connect to the most recent schema from the current source
-    db_source = DatabaseConnection(path_config='db_config_update_source.yaml')
     source_schema_name = db_source.get_latest_schema('source_' + config["source_schema"])
     print "Processing source_schema_name", source_schema_name
     db_source.execute('SET search_path="' + source_schema_name + '";')
@@ -152,22 +151,20 @@ def ProcessSource(db_prod, geocoder, entities, config, test_mode):
             values = [row[column] for column in columns]
             AddValuesToTable(columns, values, eid, supplier_eid)
 
-    with db_source.dict_cursor() as cur:
-        # Read data using the given command.
-        print "Executing SQL command ..."
-        suffix_for_testing = ""
-        if test_mode:
-            suffix_for_testing = " LIMIT 1000"
-        cur.execute(config["command"] + suffix_for_testing)
-        print "Done."
-        missed = 0
-        found = 0
-        empty = 0
+    # Initialise statistics to collect.
+    missed = 0
+    found = 0
+    empty = 0
+    missed_eid = 0
+    found_eid = 0
+    missed_addresses = set()
 
-        missed_eid = 0
-        found_eid = 0
-
-        missed_addresses = set([])
+    # Read data using the command given in the yaml config.
+    suffix_for_testing = " LIMIT 1000" if test_mode else ""
+    print("Executing SQL command...")
+    query = config["command"] + suffix_for_testing
+    with db_source.get_server_side_cursor(
+        query, buffer_size=100000, return_dicts=True) as cur:
         for row in cur:
             # Read entries one by one and try to geocode them. If the address
             # lookup succeeds, try to normalize the entities. If it succeeds,
@@ -241,13 +238,13 @@ def ProcessSource(db_prod, geocoder, entities, config, test_mode):
             found_eid += 1
             AddToTable(row, table, eid, table_config.get("years"), supplier_eid)
 
+    # Print statistics.
     print "FOUND", found
     print "MISSED", missed
     print "EMPTY", empty
     print "MISSED UNIQUE", len(missed_addresses)
     print "FOUND EID", found_eid
     print "MISSED EID", missed_eid
-    db_source.close()
 
 
 def process_source_rpvs(db_source, db_prod, geocoder, entities, test_mode):
@@ -337,11 +334,13 @@ def main(args_dict):
     print "prod_schema_name", prod_schema_name
 
     # Create database connections:
-    # Read / write address cache from this one
+    db_source = DatabaseConnection(
+        path_config='db_config_update_source.yaml')
     db_address_cache = DatabaseConnection(
-        path_config='db_config_update_source.yaml', search_path='address_cache')
-    # Write prod tables into this one
-    db_prod = DatabaseConnection(path_config='db_config_update_source.yaml')
+        path_config='db_config_update_source.yaml',
+        search_path='address_cache')
+    db_prod = DatabaseConnection(
+        path_config='db_config_update_source.yaml')
     CreateAndSetProdSchema(db_prod, prod_schema_name)
 
     # Initialize geocoder
@@ -359,13 +358,11 @@ def main(args_dict):
     for key in sorted(config.keys()):
         config_per_source = config[key]
         print "Working on source:", key
-        ProcessSource(db_prod, geocoder, entities_lookup, config_per_source, test_mode)
+        ProcessSource(db_source, db_prod, geocoder, entities_lookup, config_per_source, test_mode)
         print "GEOCODER STATS"
         geocoder.PrintStats()
 
     # Process yaml-free sources:
-    db_source = DatabaseConnection(
-        path_config='db_config_update_source.yaml')
     process_source_rpvs(db_source, db_prod, geocoder, entities_lookup, test_mode)
     db_source.close()
 
