@@ -39,8 +39,7 @@ export type SubgraphProps = {
 type RawNode = {
   eid: number,
   entity_name: string,
-  distance_from_A?: number,
-  distance_from_B?: number,
+  query: boolean,
   distance: number,
 }
 type RawEdge = [number, number]
@@ -82,7 +81,7 @@ function enhanceGraph(
       return {id, label, group: 'notLoaded', x, y, ...props}
     }
     const entity = entityDetails[id.toString()]
-    const poi = props.distA === 0 || props.distB === 0
+    const poi = props.is_query
     if (props.leaf && entity.related.length) {
       // add more edges to this leaf if available, then mark as non-leaf
       entity.related.forEach(({eid}: RelatedEntity) => {
@@ -112,15 +111,10 @@ function transformRaw(rawGraph: {vertices: Array<RawNode>, edges: Array<RawEdge>
   const nodeIds: {[GraphId]: boolean} = {}
 
   rawNodes.forEach((n: RawNode) => {
-    // skip nodes that are not connected to the other end
-    if (n.distance === undefined && (n.distance_from_A == null || n.distance_from_B == null)) {
-      return
-    }
     nodes.push({
       id: n.eid,
       label: n.entity_name,
-      distA: n.distance_from_A,
-      distB: n.distance_from_B,
+      is_query: n.query,
     })
     nodeIds[n.eid] = true
   })
