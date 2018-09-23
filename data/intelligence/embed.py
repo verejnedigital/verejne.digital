@@ -1,3 +1,4 @@
+# coding=utf-8
 import argparse
 import os
 import sys
@@ -31,7 +32,7 @@ import numpy as np
 from string import maketrans
 
 def tokenize(text):
-    return text.encode("utf-8").translate(string.maketrans('',''),string.punctuation).lower().split()
+    return text.decode('utf-8').translate(string.punctuation).lower().split()
 
 class Word2VecEmbedder:
     sk_model = None
@@ -42,9 +43,12 @@ class Word2VecEmbedder:
     def __init__(self, all_texts):
         # Creating the model
         print "Reading the pretrained model for Word2VecEmbedder"
-        self.sk_model = KeyedVectors.load_word2vec_format('/data/verejne/datautils/embedding_data/slovak.vec')
+        self.sk_model = KeyedVectors.load_word2vec_format('/data/verejne/datautils/embedding_data/slovak.vec', encoding='utf-8', unicode_errors='ignore')
         print "Model contains", len(self.sk_model.vocab), "tokens"
         self.dimension = len(self.sk_model["auto"])
+        print ("sídlisk" in self.sk_model)
+        print ("sídlisk".decode('utf-8') in self.sk_model)
+        
         print "Dimension of embedding of 'auto' is", self.dimension
         # Create frequecny table for words
         if all_texts is None:
@@ -78,7 +82,7 @@ class Word2VecEmbedder:
                 embeddings.append(embedding)
                 continue
             for word in words:
-                if word in self.sk_model:
+                if word in self.sk_model and len(word)>2:
                     embedding = np.add(embedding, np.multiply(self.multiplier(word), self.sk_model[word]))
             embeddings.append(embedding)
         return embeddings
@@ -103,7 +107,7 @@ def main(args_dict):
     text_embedder = FakeTextEmbedder()
     text_embedder.embed(["How are you?", "What is the time?", "What time it is?"])
 
-    texts = ["auto Je doma.", "Auto! doma", "Kupujem traktor", "Dovolenkujem na Madagaskare"]
+    texts = ["Regenerácia vnútroblokov sídlisk mesta Brezno", "Územný plán mesta Brezno", "Oprava miestnych komunikácií v katastrálnom území mesta Brezno", "Dovolenkujem na Madagaskare", "Oprava miestnych komunikácií v katastrálnom území Trencin"]
     word2vec_embedder = Word2VecEmbedder(texts)
     embeddings = word2vec_embedder.embed(texts)
     print 'Similarities:'

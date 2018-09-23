@@ -106,9 +106,8 @@ def notices_insert_into_extra_table(db, notices, test_mode):
 
 
 def notices_find_candidates(notices):
+    print 'finding candidates'
     for notice in notices:
-        if notice.idx % 1000 == 0:
-            print "progress:", notice.idx, len(notices)*3
         # If we do not know the winner already
         if notice.supplier is None:
             # try all other candidates, but keep only similar
@@ -116,20 +115,22 @@ def notices_find_candidates(notices):
                 # candidates are only the notices with known winners / suppliers
                 if not notice2.supplier is None:
                     similarity = numpy.inner(notice.embedding, notice2.embedding) / (notice.norm * notice2.norm)
-                    if similarity > 0.85 and len(notice.similarities) < 15:
+                    if similarity > 0.75 and len(notice.similarities) < 300:
                         notice.similarities.append(similarity)
                         notice.candidates.append(notice2.idx)
                         notice.candidate_prices.append(notice2.price)
                         if (notice.best_supplier is None) or (similarity > notice.best_similarity):
                             notice.best_supplier = notice2.supplier
                             notice.best_similarity = similarity
+            # keep only top 20 candidates and sort them by similarity
+            if len(notice.candidates) > 0:
+                sorted_lists = sorted(izip(notice.similarities, notice.candidates, notice.candidate_prices), reverse=True, key=lambda x: x[0])
+                notice.similarities, notice.candidates, notice.candidate_prices = [[x[i][:20] for x in sorted_lists] for i in range(3)]
     return notices
 
 
 def _post_process_notices(db, test_mode):
     notices_create_extra_table(db, test_mode)
-    # Default text embedder is the random one. For not test mode we set the real one later.
-    text_embedder = embed.FakeTextEmbedder()
     ids = []
     texts = []
     suppliers = []
@@ -143,14 +144,12 @@ def _post_process_notices(db, test_mode):
         supplier_eid,
         total_final_value_amount as price
       FROM notices
-      """ + (" LIMIT 100;" if test_mode else ";")
+      """ + (" LIMIT 1000" if test_mode else "")
     rows = db.query(query)
 
-    # In production we use the real embedder.
-    # Note that you can test changes in Word2VecEmbedder directly in intelligence/embed.py
-    if not test_mode:
-        all_texts = [row["text"] for row in rows]
-        text_embedder = embed.Word2VecEmbedder(all_texts)
+    all_texts = [row["text"] for row in rows]
+    print 'Number of notices: ', len(all_texts)
+    text_embedder = embed.Word2VecEmbedder(all_texts)
     for row in rows:
         embedding = text_embedder.embed([row["text"]])
         if embedding is None or len(embedding) == 0:
