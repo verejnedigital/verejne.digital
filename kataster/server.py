@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 import argparse
 import json
 import os
@@ -15,9 +17,13 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../vere
 from api_GetInfos import get_GetInfos
 
 
-# All individual hooks inherit from this class
-# Actual work of subclasses is done in method get
 class MyServer(webapp2.RequestHandler):
+  """Abstract request handler, to be subclasses by server hooks."""
+
+  def get(self):
+    """Implements actual hook logic and responds to requests."""
+    raise NotImplementedError('Must implement method `get`.')
+
   def returnJSON(self,j):
     self.response.headers['Content-Type'] = 'application/json'
     self.response.write(json.dumps(j, separators=(',',':')))
@@ -26,10 +32,10 @@ class MyServer(webapp2.RequestHandler):
 class KatasterInfoLocation(MyServer):
   def get(self):
     try:
-      lat = float(self.request.GET["lat"])
-      lon = float(self.request.GET["lon"])
+      lat = float(self.request.GET['lat'])
+      lon = float(self.request.GET['lon'])
     except:
-      self.abort(400, detail="Could not parse coordinates as floats")
+      self.abort(400, detail='Could not parse coordinates as floats')
     tolerance = 0.00001
     circumvent_geoblocking = True
     verbose = False
@@ -40,7 +46,7 @@ class KatasterInfoLocation(MyServer):
 
 class KatasterInfoCompany(MyServer):
   def get(self):
-    company_name = self.request.GET["name"].encode("utf8").decode("utf8")
+    company_name = self.request.GET['name'].encode('utf8').decode('utf8')
     circumvent_geoblocking = True
     verbose = False
     response = skgeodesy.get_cadastral_data_for_company(
@@ -62,9 +68,9 @@ class KatasterInfoPolitician(MyServer):
       self.abort(400, detail='Could not parse parameter `id` as int')
 
     # Find Parcels owned by this politician in the database
-    db = webapp2.get_app().registry['db']
+    db_profil = webapp2.get_app().registry['db_profil']
     Parcels = db_search.get_Parcels_owned_by_Person(
-        db, politician_id)
+        db_profil, politician_id)
     self.returnJSON(Parcels)
 
 
@@ -77,16 +83,16 @@ class InfoPolitician(MyServer):
       self.abort(400, detail='Could not parse parameter `id` as int')
 
     # Get politician information from database
-    db = webapp2.get_app().registry['db']
+    db_profil = webapp2.get_app().registry['db_profil']
     politician = db_search.get_politician_by_PersonId(
-        db, politician_id)
+        db_profil, politician_id)
     if politician is None:
       self.abort(
           404, detail='Could not find politician with provided `id`')
 
     # Add information from database vd:
-    db_vd = webapp2.get_app().registry['db_vd']
-    rows = db_vd.query(
+    db = webapp2.get_app().registry['db']
+    rows = db.query(
         """
         SELECT eid FROM profilmapping
         WHERE profil_id=%s;
@@ -94,7 +100,7 @@ class InfoPolitician(MyServer):
         [politician_id]
     )
     eids = [row['eid'] for row in rows]
-    politician['entities'] = get_GetInfos(db_vd, eids)
+    politician['entities'] = get_GetInfos(db, eids)
 
     self.returnJSON(politician)
 
@@ -108,23 +114,45 @@ class AssetDeclarations(MyServer):
       self.abort(400, detail='Could not parse parameter `id` as int')
 
     # Find asset declarations of this politician in the database
-    db = webapp2.get_app().registry['db']
-    declarations = db_search.get_asset_declarations(db, politician_id)
+    db_profil = webapp2.get_app().registry['db_profil']
+    declarations = db_search.get_asset_declarations(
+        db_profil, politician_id)
     self.returnJSON(declarations)
 
 
 class ListPoliticians(MyServer):
   def get(self):
-    mps_only = False
+
+    # Retrieve `group` parameter:
     try:
-      mps_only = bool(self.request.GET['mps_only'])
+      group = self.request.GET['group']
     except:
-      pass
+      group = 'active'
+      # TODO(matejbalog): Temporary default.
+      # self.abort(400, detail='Could not parse parameter `group`')
+
+    # Determine SQL query filter based on the requested `group`:
+    if group == 'active':
+      query_filter = 'AssetDeclarations.Year>=2016'
+    elif group == 'nrsr_mps':
+      query_filter = (
+        "AssetDeclarations.Year>=2016 AND "
+        "Offices.name_male='poslanec NRSR'")
+    elif group == 'candidates_2018_bratislava_mayor':
+      query_filter = (
+        "PersonOffices.term_end=2018 AND "
+        "Offices.name_male='kandidát na primátora Bratislavy'")
+    elif group == 'candidates_2019_president':
+      query_filter = (
+        "PersonOffices.term_end=2019 AND "
+        "Offices.name_male='kandidát na prezidenta SR'")
+    else:
+      self.abort(404, detail='Requested `group` not recognised.')
 
     # Return politicians augmented with property counts as JSON
-    db = webapp2.get_app().registry['db']
+    db_profil = webapp2.get_app().registry['db_profil']
     politicians = db_search.get_politicians_with_Folio_counts(
-        db, mps_only)
+        db_profil, query_filter)
     self.returnJSON(politicians)
 
 
@@ -142,15 +170,22 @@ app = webapp2.WSGIApplication([
 
 def initialise_app():
   """Precomputes values to be shared across requests."""
-  app.registry['db'] = DatabaseConnection(search_path='profil')
 
-  # TEMP: While profil is running from database `kataster`, store a
-  # separate connection to database `vd` (which is required for
-  # querying information about entities).
-  db_vd = DatabaseConnection(path_config='db_config_vd.yaml')
-  schema = db_vd.get_latest_schema('prod_')
-  db_vd.execute('SET search_path to ' + schema + ';')
-  app.registry['db_vd'] = db_vd
+  # Maintain two database connections: one into profil source schema,
+  # and another into the latest production schema. Note these two must
+  # be kept consistent for `profilmapping` to make sense; to this end,
+  # the source_internal_profil_* schema is made visible to user
+  # `kataster` together with prod data generation.
+
+  db_profil = DatabaseConnection(path_config='db_config.yaml')
+  schema = db_profil.get_latest_schema('source_internal_profil_')
+  db_profil.execute('SET search_path to ' + schema + ';')
+  app.registry['db_profil'] = db_profil
+
+  db = DatabaseConnection(path_config='db_config.yaml')
+  schema = db.get_latest_schema('prod_')
+  db.execute('SET search_path to ' + schema + ';')
+  app.registry['db'] = db
 
 
 def main():

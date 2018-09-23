@@ -36,29 +36,36 @@ class TestHandlers(unittest.TestCase):
     content = _request_json('/kataster_info_person', self)
 
   def test_kataster_info_politician(self):
-    content = _request_json('/kataster_info_politician?id=717', self)
+    content = _request_json('/kataster_info_politician?id=295', self)
     self.assertIsInstance(content, list)
-    self.assertTrue(content)
     print('KatasterInfoPolitician returned %d results.' % (
         len(content)))
 
   def test_list_politicians(self):
-    content = _request_json('/list_politicians', self)
-    self.assertIsInstance(content, list)
-    self.assertTrue(content)
-    print('ListPoliticians returned %d results.' % (len(content)))
-
-  def test_list_politicians_mps_only(self):
-    content = _request_json('/list_politicians?mps_only=true', self)
-    self.assertIsInstance(content, list)
-    self.assertTrue(content)
-    print('ListPoliticians (MPs only) returned %d results.' % (
-        len(content)))
+    groups = [
+        'active', 'nrsr_mps', 'candidates_2018_bratislava_mayor',
+        'candidates_2019_president'
+    ]
+    for group in groups:
+      content = _request_json(
+          '/list_politicians?group=%s' % (group), self)
+      self.assertIsInstance(content, list)
+      self.assertTrue(content)
+      print('ListPoliticians(%s) returned %d results.' % (
+          group, len(content)))
+      #for row in content:
+      #  print(row["id"], row["surname"], row["firstname"],
+      #        row["office_name_male"], row["term_finish"])
 
   def test_info_politician(self):
-    content = _request_json('/info_politician?id=717', self)
+    politician_id = 965
+    content = _request_json(
+      '/info_politician?id=%d' % (politician_id), self)
     self.assertIsInstance(content, dict)
     self.assertTrue(content)
+    print('InfoPolitician(%d) responded:' % (politician_id))
+    for key in content:
+      print("%s: %s" % (key, content[key]))
 
   def test_asset_declarations(self):
     content = _request_json('/asset_declarations?id=717', self)

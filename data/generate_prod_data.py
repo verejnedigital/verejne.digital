@@ -246,6 +246,13 @@ def ProcessSource(db_source, db_prod, geocoder, entities, config, test_mode):
     print "FOUND EID", found_eid
     print "MISSED EID", missed_eid
 
+    # Special case: As source_internal_profil and prod tables need to
+    # be kept consistent for table `profilmapping` to be meaningful,
+    # only make the source schema visible to user `kataster` here.
+    if config["source_schema"] == "internal_profil":
+      db_prod.grant_usage_and_select_on_schema(
+          source_schema_name, 'kataster')
+
 
 def process_source_rpvs(db_source, db_prod, geocoder, entities, test_mode):
   log_prefix = "[source_rpvs] "

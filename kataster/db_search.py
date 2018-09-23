@@ -59,8 +59,28 @@ def get_Parcels_owned_by_Person(db, PersonId):
       Folios ON Folios.Id=Parcels.FolioId
     INNER JOIN
       PersonFolios ON PersonFolios.FolioId=Folios.Id
+    INNER JOIN
+      Persons ON Persons.Id=PersonFolios.PersonId
+    INNER JOIN
+      PersonOffices ON PersonOffices.PersonId=Persons.Id
+    INNER JOIN
+      Offices ON Offices.Id=PersonOffices.OfficeId
+    LEFT JOIN
+      AssetDeclarations ON AssetDeclarations.PersonId=Persons.Id
     WHERE
       PersonFolios.PersonId=%s
+      -- Ensure a recent asset declaration exists, or the person is
+      -- currently running for office:
+      AND (
+        AssetDeclarations.Year>=2016
+        OR (
+          PersonOffices.term_end>=2018
+          AND Offices.name_male IN (
+            'kandidát na primátora Bratislavy',
+            'kandidát na prezidenta SR'
+          )
+        )
+      )
     ORDER BY
       CadastralUnitCode, FolioNo, ParcelNo, Parcels.ValidTo DESC
     ;"""
@@ -77,7 +97,7 @@ def get_Parcels_owned_by_Person(db, PersonId):
   return rows
 
 
-def get_politicians_with_Folio_counts(db, mps_only):
+def get_politicians_with_Folio_counts(db, query_filter):
   """Returns a list of politicians with asset counts."""
   q = """
       WITH
@@ -123,7 +143,7 @@ def get_politicians_with_Folio_counts(db, mps_only):
         Offices.name_female AS office_name_female
       FROM
         Persons
-      INNER JOIN
+      LEFT JOIN
         AssetDeclarations ON AssetDeclarations.PersonId=Persons.Id
       INNER JOIN
         PersonCounts ON PersonCounts.PersonId=Persons.Id
@@ -131,10 +151,10 @@ def get_politicians_with_Folio_counts(db, mps_only):
         PersonOffices ON PersonOffices.PersonId=Persons.Id
       INNER JOIN
         Offices ON Offices.id=PersonOffices.OfficeId
-      """ + ("""INNER""" if mps_only else """LEFT""") + """ JOIN
+      LEFT JOIN
         Parties ON Parties.id=PersonOffices.party_nomid
       WHERE
-        AssetDeclarations.Year>=2016
+        """ + query_filter + """
       ORDER BY
         Persons.Id, PersonOffices.term_end DESC
       ;"""

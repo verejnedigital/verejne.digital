@@ -86,7 +86,7 @@ export const notableConnectionSubgraphProvider = (
   ref: `notable-connection-${eid.toString()}`,
   getData: [
     fetch,
-    `${process.env.REACT_APP_API_URL || ''}/api/p/notable_connections?eid=${eid.toString()}&max_order=95`,
+    `${process.env.REACT_APP_API_URL || ''}/api/p/notable_connections?eid=${eid.toString()}&max_order=50`,
     {
       accept: 'application/json',
     },
