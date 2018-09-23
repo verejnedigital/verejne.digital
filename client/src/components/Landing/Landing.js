@@ -82,17 +82,17 @@ const Landing = () => (
               <span className="gray">Partneri</span>
               <ul className="list-inline">
                 <li className="list-inline-item">
+                  <a href="https://slovensko.digital/" target="_blank" rel="noopener noreferrer">
+                    <img src="/slovenko.png" alt="slovenko.digital" />
+                  </a>
+                </li>
+                <li className="list-inline-item">
                   <a
                     href="https://www.zastavmekorupciu.sk/"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
                     <img src="/nzk.png" alt="Nadácia Zastavme Korupciu" />
-                  </a>
-                </li>
-                <li className="list-inline-item">
-                  <a href="https://slovensko.digital/" target="_blank" rel="noopener noreferrer">
-                    <img src="/slovenko.png" alt="slovenko.digital" />
                   </a>
                 </li>
                 <li className="list-inline-item">
