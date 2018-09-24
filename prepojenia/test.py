@@ -59,6 +59,7 @@ class TestHandlers(unittest.TestCase):
 
   def test_subgraph(self):
     url = '/subgraph?eid1=1690208&eid2=1549377'
+    url = '/subgraph?eid1=1392540,1608323&eid2=1387739'
     content = _request_json(url, self)
     self.assertIsInstance(content, dict)
     self.assertTrue('vertices' in content)

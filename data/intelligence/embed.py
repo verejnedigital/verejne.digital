@@ -32,7 +32,7 @@ import numpy as np
 from string import maketrans
 
 def tokenize(text):
-    return text.decode('utf-8').translate(string.punctuation).lower().split()
+    return text.translate(dict((x, None) for x in string.punctuation)).lower().split()
 
 class Word2VecEmbedder:
     sk_model = None
@@ -48,7 +48,7 @@ class Word2VecEmbedder:
         self.dimension = len(self.sk_model["auto"])
         print ("sídlisk" in self.sk_model)
         print ("sídlisk".decode('utf-8') in self.sk_model)
-        
+
         print "Dimension of embedding of 'auto' is", self.dimension
         # Create frequecny table for words
         if all_texts is None:
@@ -92,7 +92,7 @@ class Word2VecEmbedder:
 class FakeTextEmbedder:
     def __init__(self):
         np.random.seed(22)
-    
+
 
     def embed(self, texts):
         embeddings = []
@@ -107,7 +107,12 @@ def main(args_dict):
     text_embedder = FakeTextEmbedder()
     text_embedder.embed(["How are you?", "What is the time?", "What time it is?"])
 
-    texts = ["Regenerácia vnútroblokov sídlisk mesta Brezno", "Územný plán mesta Brezno", "Oprava miestnych komunikácií v katastrálnom území mesta Brezno", "Dovolenkujem na Madagaskare", "Oprava miestnych komunikácií v katastrálnom území Trencin"]
+    texts = [
+        u"Regenerácia vnútroblokov sídlisk mesta Brezno",
+        u"Územný plán mesta Brezno",
+        u"Oprava miestnych komunikácií v katastrálnom území mesta Brezno",
+        u"Dovolenkujem na Madagaskare",
+        u"Oprava miestnych komunikácií v katastrálnom území Trencin"]
     word2vec_embedder = Word2VecEmbedder(texts)
     embeddings = word2vec_embedder.embed(texts)
     print 'Similarities:'
@@ -120,4 +125,11 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--verbose', default=False, action='store_true', help='Report progress to stdout')
     args_dict = vars(parser.parse_args())
-    main(args_dict)
+    try:
+        main(args_dict)
+    except:
+        import pdb, sys, traceback
+        type, value, tb = sys.exc_info()
+        traceback.print_exc()
+        pdb.post_mortem(tb)
+        raise
