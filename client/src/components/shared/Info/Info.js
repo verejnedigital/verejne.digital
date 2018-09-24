@@ -15,7 +15,8 @@ import {compose, withHandlers} from 'recompose'
 import {connect} from 'react-redux'
 import {
   zoomToLocation,
-  toggleEntitySearchOpen,
+  setModalOpen,
+  setDrawer,
   makeLocationsSelected,
 } from '../../../actions/publicActions'
 import {ENTITY_CLOSE_ZOOM} from '../../../constants'
@@ -42,7 +43,8 @@ type OwnProps = {
 
 type DispatchProps = {
   zoomToLocation: (center: Center, withZoom?: number) => void,
-  toggleEntitySearchOpen: () => void,
+  setModalOpen: (boolean) => void,
+  setDrawer: (boolean) => void,
   makeLocationsSelected: (points: Center[]) => void,
 }
 
@@ -172,16 +174,18 @@ const Info = ({data, canClose, onClose, showOnMap, className}: InfoProps) => (
 )
 
 export default compose(
-  connect(null, {makeLocationsSelected, zoomToLocation, toggleEntitySearchOpen}),
+  connect(null, {makeLocationsSelected, zoomToLocation, setModalOpen, setDrawer}),
   withHandlers({
     showOnMap: ({
       data,
       inModal,
       zoomToLocation,
-      toggleEntitySearchOpen,
+      setModalOpen,
+      setDrawer,
       makeLocationsSelected,
     }: OwnProps & DispatchProps) => () => {
-      inModal && toggleEntitySearchOpen()
+      inModal && setModalOpen(false)
+      setDrawer(false)
       zoomToLocation(data, ENTITY_CLOSE_ZOOM)
       makeLocationsSelected([{lat: data.lat, lng: data.lng}])
     },

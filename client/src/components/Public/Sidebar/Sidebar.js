@@ -109,16 +109,18 @@ const Content = compose(
     {
       updateValue,
       zoomToLocation,
+      setDrawer,
     }
   ),
   withHandlers({
     setAutocompleteValue: ({updateValue}) => (value) =>
       updateValue(['publicly', 'autocompleteValue'], value, 'Set autocomplete value'),
-    setZoomToLocation: ({zoomToLocation, updateValue}) => (value, id) => {
+    setZoomToLocation: ({zoomToLocation, updateValue, setDrawer}) => (value, id) => {
       updateValue(['publicly', 'autocompleteValue'], value, 'Set autocomplete value')
       geocodeByAddress(value)
         .then((results) => getLatLng(results[0]))
         .then((location) => zoomToLocation(location, ENTITY_CLOSE_ZOOM))
+      setDrawer(false)
     },
   })
 )(_Content)
