@@ -58,7 +58,7 @@ class TestHandlers(unittest.TestCase):
       #        row["office_name_male"], row["term_finish"])
 
   def test_info_politician(self):
-    politician_id = 965
+    politician_id = 100
     content = _request_json(
       '/info_politician?id=%d' % (politician_id), self)
     self.assertIsInstance(content, dict)

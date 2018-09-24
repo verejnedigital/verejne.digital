@@ -124,8 +124,12 @@ def notices_find_candidates(notices):
                             notice.best_similarity = similarity
             # keep only top 20 candidates and sort them by similarity
             if len(notice.candidates) > 0:
-                sorted_lists = sorted(izip(notice.similarities, notice.candidates, notice.candidate_prices), reverse=True, key=lambda x: x[0])
-                notice.similarities, notice.candidates, notice.candidate_prices = [[x[i][:20] for x in sorted_lists] for i in range(3)]
+                sorted_lists = sorted(
+                    zip(notice.similarities, notice.candidates, notice.candidate_prices),
+                    reverse=True,
+                    key=lambda x: x[0])
+                notice.similarities, notice.candidates, notice.candidate_prices = (
+                  zip(*sorted_lists[:20]))
     return notices
 
 
@@ -234,4 +238,11 @@ if __name__ == '__main__':
                         action='store_true',
                         help='Disable test mode.')
     args_dict = vars(parser.parse_args())
-    main(args_dict)
+    try:
+        main(args_dict)
+    except:
+        import pdb, sys, traceback
+        type, value, tb = sys.exc_info()
+        traceback.print_exc()
+        pdb.post_mortem(tb)
+        raise

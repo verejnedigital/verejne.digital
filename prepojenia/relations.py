@@ -171,6 +171,7 @@ class Relations:
       distance: Dict mapping visited eIDs to distance from `start`.
     """
     assert (max_distance is None) or (max_distance_by_set is None)
+    max_nodes_to_explore = max_nodes_to_explore or float('inf')
 
     # Initialise BFS.
     queue = [eid for eid in set(start)]

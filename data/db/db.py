@@ -5,6 +5,17 @@ psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
 psycopg2.extensions.register_type(psycopg2.extensions.UNICODEARRAY)
 import yaml
 
+
+# Register a customised adapter that returns Postgres decimal values
+# as Python floats rather than Decimal objects (which are not JSON
+# serialisable). See http://initd.org/psycopg/docs/faq.html#faq-float
+DEC2FLOAT = psycopg2.extensions.new_type(
+    psycopg2.extensions.DECIMAL.values,
+    'DEC2FLOAT',
+    lambda value, curs: float(value) if value is not None else None)
+psycopg2.extensions.register_type(DEC2FLOAT)
+
+
 class DatabaseConnection():
     def __init__(self, path_config='db_config.yaml', search_path=None):
         with open(path_config, 'r') as stream:
