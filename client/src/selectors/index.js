@@ -15,7 +15,8 @@ import {
   COUNTRY_ZOOM,
   WORLD_ZOOM,
   SLOVAKIA_COORDINATES,
-  SLOVAKIA_CITIES,
+  SLOVAKIA_DISTRICT_CITIES,
+  SLOVAKIA_ALL_CITIES,
 } from '../constants'
 import {isInSlovakia, normalizeName} from '../utils'
 import type {NoticesOrdering} from '../components/Notices/NoticeList'
@@ -126,7 +127,7 @@ export const sortedAddressEntityDetailsSelector = createSelector(
 export const useLabelsSelector = createSelector(
   zoomSelector,
   centerSelector,
-  (zoom, center) => zoom < CITY_ZOOM && isInSlovakia(center)
+  (zoom, center) => zoom < SUB_CITY_ZOOM && isInSlovakia(center)
 )
 
 type SuperCluster = {
@@ -192,19 +193,28 @@ const createLabels = (mapOptions: MapOptions): Array<MapCluster> => {
         isLabel: true,
       },
     ]
-  } else {
-    if (mapOptions.zoom < CITY_ZOOM) {
-      labels = SLOVAKIA_CITIES.map((city) => ({
-        lat: city.coord[1],
-        lng: city.coord[0],
-        numPoints: 0,
-        id: city.name,
-        points: [],
-        setZoomTo: CITY_ZOOM,
-        isLabel: true,
-      }))
-    }
+  } else if (mapOptions.zoom < CITY_ZOOM) {
+    labels = SLOVAKIA_DISTRICT_CITIES.map((city) => ({
+      lat: city.coord[1],
+      lng: city.coord[0],
+      numPoints: 0,
+      id: city.name,
+      points: [],
+      setZoomTo: CITY_ZOOM,
+      isLabel: true,
+    }))
+  } else if (mapOptions.zoom < SUB_CITY_ZOOM) {
+    labels = SLOVAKIA_ALL_CITIES.map((city) => ({
+      lat: city.coord[0],
+      lng: city.coord[1],
+      numPoints: 0,
+      id: city.name,
+      points: [],
+      setZoomTo: SUB_CITY_ZOOM,
+      isLabel: true,
+    }))
   }
+
   return labels
 }
 
