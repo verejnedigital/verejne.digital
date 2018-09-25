@@ -109,7 +109,7 @@ def add_family_and_neighbour_edges(db, test_mode):
 
   # Get edge type indices for the new edge types:
   edge_type_family = graph_tools.add_or_get_edge_type(
-      db, "Pravdepodobne rodina", LOG_PREFIX)
+      db, "Zhoda v priezvisku a adrese", LOG_PREFIX)
   edge_type_neighbour = graph_tools.add_or_get_edge_type(
       db, "Susedia", LOG_PREFIX)
 

@@ -127,25 +127,34 @@ class ListPoliticians(MyServer):
     try:
       group = self.request.GET['group']
     except:
-      group = 'active'
-      # TODO(matejbalog): Temporary default.
-      # self.abort(400, detail='Could not parse parameter `group`')
+      self.abort(400, detail='Could not parse parameter `group`')
 
     # Determine SQL query filter based on the requested `group`:
-    if group == 'active':
+    if group == 'all':
+      query_filter = """
+          AssetDeclarations.Year>=2016
+          OR (
+            PersonOffices.term_end>=2018
+            AND Offices.name_male IN (
+              'kandidát na primátora Bratislavy',
+              'kandidát na prezidenta SR'
+            )
+          )
+      """
+    elif group == 'active':
       query_filter = 'AssetDeclarations.Year>=2016'
     elif group == 'nrsr_mps':
       query_filter = (
-        "AssetDeclarations.Year>=2016 AND "
-        "Offices.name_male='poslanec NRSR'")
+          "AssetDeclarations.Year>=2016 AND "
+          "Offices.name_male='poslanec NRSR'")
     elif group == 'candidates_2018_bratislava_mayor':
       query_filter = (
-        "PersonOffices.term_end=2018 AND "
-        "Offices.name_male='kandidát na primátora Bratislavy'")
+          "PersonOffices.term_end=2018 AND "
+          "Offices.name_male='kandidát na primátora Bratislavy'")
     elif group == 'candidates_2019_president':
       query_filter = (
-        "PersonOffices.term_end=2019 AND "
-        "Offices.name_male='kandidát na prezidenta SR'")
+          "PersonOffices.term_end=2019 AND "
+          "Offices.name_male='kandidát na prezidenta SR'")
     else:
       self.abort(404, detail='Requested `group` not recognised.')
 
