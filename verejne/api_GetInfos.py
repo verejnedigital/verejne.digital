@@ -360,7 +360,9 @@ def get_GetInfos(db, eIDs):
             related.eid_relation AS target,
             +1 * related.stakeholder_type_id AS edge_type,
             stakeholdertypes.stakeholder_type_text AS edge_type_text,
-            related.effective_to AS effective_to
+            COALESCE(
+              to_char(related.effective_to, 'DD. MM. YYYY'), '')
+              AS effective_to
           FROM
             related
           LEFT JOIN
@@ -377,7 +379,9 @@ def get_GetInfos(db, eIDs):
             related.eid AS target,
             -1 * related.stakeholder_type_id AS edge_type,
             stakeholdertypes.stakeholder_type_text AS edge_type_text,
-            related.effective_to AS effective_to
+            COALESCE(
+              to_char(related.effective_to, 'DD. MM. YYYY'), '')
+              AS effective_to
           FROM
             related
           LEFT JOIN
@@ -417,11 +421,6 @@ def get_GetInfos(db, eIDs):
         """
     q_data = [tuple(eIDs), tuple(eIDs)]
     for row in db.query(q, q_data):
-        # Ensure JSON serialisability:
-        row['edge_effective_to_dates'] = [
-            datetime.datetime.strftime(date, '%Y-%m-%d') if date else ''
-            for date in row['edge_effective_to_dates']]
-
         # Save the related entity:
         eID = row['eid_source']
         result[eID]['related'].append(row)
