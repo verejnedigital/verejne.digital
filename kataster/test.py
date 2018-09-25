@@ -43,7 +43,8 @@ class TestHandlers(unittest.TestCase):
 
   def test_list_politicians(self):
     groups = [
-        'active', 'nrsr_mps', 'candidates_2018_bratislava_mayor',
+        'all', 'active', 'nrsr_mps',
+        'candidates_2018_bratislava_mayor',
         'candidates_2019_president'
     ]
     for group in groups:
@@ -53,9 +54,9 @@ class TestHandlers(unittest.TestCase):
       self.assertTrue(content)
       print('ListPoliticians(%s) returned %d results.' % (
           group, len(content)))
-      #for row in content:
-      #  print(row["id"], row["surname"], row["firstname"],
-      #        row["office_name_male"], row["term_finish"])
+      # for row in content:
+      #   print(row["id"], row["surname"], row["firstname"],
+      #         row["office_name_male"], row["term_finish"])
 
   def test_info_politician(self):
     politician_id = 100
