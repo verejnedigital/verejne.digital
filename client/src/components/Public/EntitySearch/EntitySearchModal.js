@@ -23,7 +23,7 @@ import {
   entitySearchEidsSelector,
   entitySearchForSelector,
 } from '../../../selectors'
-import {toggleModalOpen, setEntitySearchFor, toggleDrawer} from '../../../actions/publicActions'
+import {toggleModalOpen, setEntitySearchFor} from '../../../actions/publicActions'
 import {updateValue} from '../../../actions/sharedActions'
 import {FIND_ENTITY_TITLE} from '../../../constants'
 import {resultPlurality} from '../../../services/utilities'
@@ -104,16 +104,15 @@ export default compose(
       entitySearchEids: entitySearchEidsSelector(state),
       entitySearchFor: entitySearchForSelector(state),
     }),
-    {toggleModalOpen, setEntitySearchFor, updateValue, toggleDrawer}
+    {toggleModalOpen, setEntitySearchFor, updateValue}
   ),
   withHandlers({
-    findEntities: ({setEntitySearchFor, entitySearchValue, toggleDrawer}) => (e) => {
+    findEntities: ({setEntitySearchFor, entitySearchValue}) => (e) => {
       e.preventDefault()
       if (entitySearchValue.trim() === '') {
         return
       }
       setEntitySearchFor(entitySearchValue)
-      toggleDrawer()
     },
     setEntitySearchValue: ({updateValue}) => (e) =>
       updateValue(
