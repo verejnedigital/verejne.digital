@@ -102,12 +102,12 @@ const EntitySearchAutocomplete = ({
           )
         }}
       />
-      <InputGroupAddon addonType="append">
+      <InputGroupAddon title={FIND_ENTITY_TITLE} addonType="append">
         <Button className="addon-button" color="primary" onClick={findEntities}>
           <SearchIcon />
         </Button>
       </InputGroupAddon>
-      <InputGroupAddon addonType="append">
+      <InputGroupAddon title="Otvor modálne okno" addonType="append">
         <Button className="addon-button" color="primary" onClick={toggleModalOpen}>
           <ModalIcon />
         </Button>
