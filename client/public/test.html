@@ -1,0 +1,189 @@
+<html>
+<head>
+<style>
+    html, body {
+        background-color: #f1f4f5;
+        height: 100%;
+        font-family: 'Roboto', sans-serif;
+    }
+    a {
+        color: #337ab7;
+    }
+    table {
+        background-color: white;
+        border-radius: 4px;
+        border: 2px;
+        border-collapse: collapse;
+        border-color:  #cddae3;
+        border-style: solid;
+        box-shadow: 0 4px 12px 0 rgba(187, 198, 206, 0.5);
+        width: 100%;
+    }
+    h1 a {
+        text-decoration: none;
+    }
+    h1 a:hover {
+        text-decoration: underline;
+    }
+    hr {
+        display: block;
+        height: 2px;
+        border: 0;
+        border-top: 2px solid #cddae3;
+        margin-top: -10px;
+        padding: 0;
+    }
+    table, th, td {
+        text-align: left;
+        vertical-align: top;
+    }
+    td, th {
+        border-top: 1px solid #cddae3;
+        font-size: 0.9em;
+        max-width: 250px;
+        padding: 3px;
+        word-wrap: break-word;
+    }
+    td a:hover {
+        text-decoration: none;
+    }
+    table tr.response td {
+        border: 0;
+        padding: 0;
+    }
+    td pre {
+        font-size: 10px;
+    }
+
+    pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
+    .string { color: green; }
+    .number { color: darkorange; }
+    .boolean { color: blue; }
+    .null { color: magenta; }
+    .key { color: red; }
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script>
+
+    function syntaxHighlight(json) {
+        if (typeof json != 'string') {
+                json = JSON.stringify(json, undefined, 4);
+        }
+        json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+            var cls = 'number';
+            if (/^"/.test(match)) {
+                if (/:$/.test(match)) {
+                    cls = 'key';
+                } else {
+                    cls = 'string';
+                }
+            } else if (/true|false/.test(match)) {
+                cls = 'boolean';
+            } else if (/null/.test(match)) {
+                cls = 'null';
+            }
+            return '<span class="' + cls + '">' + match + '</span>';
+        });
+    }
+
+    function toggle(id) {
+        if (document.getElementById(id).style.display == 'block') {
+            document.getElementById(id).style = 'display:none';
+        } else {
+            document.getElementById(id).style = 'display:block';
+        }
+    }
+
+    function test_case_response_status(url, status_id, response_id) {
+        document.write('<td><a id="' + status_id + '" href="' + url + '"></a>');
+        document.write(' (<a href="javascript:;" onclick="toggle(\'' + response_id +'\')">show response</a>)</td>');
+    }
+    function test_case_response_content(url, status_id, response_id) {
+        document.write('<pre id="' + response_id + '" style="display:none"></pre>');
+        $.get(url, function(response) {
+        var str = syntaxHighlight(response);
+            document.getElementById(status_id).style = "color: green;";
+            document.getElementById(status_id).innerHTML = 'success';
+            document.getElementById(response_id).innerHTML = str;
+        }).error(function(){
+            document.getElementById(status_id).style = "color: red;";
+            document.getElementById(status_id).innerHTML = 'failure';
+        });
+    }
+
+    function test_case(app_name, test_name, url) {
+        // production version test
+        var status_id = test_name + "status";
+        var response_id = test_name + "resp";
+
+        // cache-breaking version test
+        var milliseconds = new Date().getTime();
+        var url_fresh = url + ((url.indexOf('?') < 0) ? '?' : '&') + 'milliseconds=' + milliseconds;
+        var status_id_fresh = test_name + "status_fresh";
+        var response_id_fresh = test_name + "resp_fresh";
+
+        // write table row
+        document.write('<tr><td>' + app_name + '</td><td>' + test_name + '</td>');
+        document.write('<td><a href="' + url + '">' + url + '</a></td>');
+        test_case_response_status(url, status_id, response_id)
+        test_case_response_status(url_fresh, status_id_fresh, response_id_fresh)
+        document.write('</tr><tr class="response"><td colspan="2">');
+        test_case_response_content(url, status_id, response_id)
+        document.write('</td><td colspan="3">');
+        test_case_response_content(url_fresh, status_id_fresh, response_id_fresh)
+        document.write('</td></tr>');
+    }
+</script>
+</head>
+<body>
+    <h1><a href="https://verejne.digital">verejne.digital</a> API health check and testing</h1>
+    <hr />
+
+    <p>APIs using <a href="data.html">new production data</a>:</p>
+    <table>
+    <tr>
+        <th>Application</th>
+        <th>Function</th>
+        <th>URL</th>
+        <th>Status (prod)</th>
+        <th>Status (fresh)</th>
+    </tr>
+    <script> test_case('verejne', 'getAddresses', 'https://verejne.digital/api/v/getAddresses?level=0&lat1=48.31306363500883&lng1=17.25013026130364&lat2=48.31751977226477&lng2=17.257496582309614'); </script>
+    <script> test_case('verejne', 'getEntitiesAtAddressId', 'https://verejne.digital/api/v/getEntitiesAtAddressId?address_id=613'); </script>
+    <script> test_case('verejne', 'getInfos', 'https://verejne.digital/api/v/getInfos?eids=103,82680,293097,389093,389094'); </script>
+    <script> test_case('prepojenia', 'a_shortest_path', 'https://verejne.digital/prepojenia/api/p/a_shortest_path?eid1=1392540,1608323&eid2=1387739'); </script>
+    <script> test_case('prepojenia', 'notable_connections', 'https://verejne.digital/prepojenia/api/p/notable_connections?eid=294113'); </script>
+    <script> test_case('prepojenia', 'subgraph', 'https://verejne.digital/prepojenia/api/p/subgraph?eid1=1392540,1608323&eid2=1387739'); </script>
+    <script> test_case('obstaravania', 'list_notices','https://verejne.digital/api/o/list_notices'); </script>
+    <script> test_case('obstaravania', 'info_notice','https://verejne.digital/api/o/info_notice?id=83095'); </script>
+    <script> test_case('kataster', 'kataster_info_politician','https://verejne.digital/api/k/kataster_info_politician?id=40'); </script>
+    <script> test_case('kataster', 'list_politicians?group=active', 'https://verejne.digital/api/k/list_politicians'); </script>
+    <script> test_case('kataster', 'info_politician', 'https://verejne.digital/api/k/info_politician?id=40'); </script>
+    <script> test_case('kataster', 'asset_declarations','https://verejne.digital/api/k/asset_declarations?id=40'); </script>
+    <script> test_case('data', 'source_data_info','https://verejne.digital/api/d/source_data_info'); </script>
+    <script> test_case('data', 'prod_data_info','https://verejne.digital/api/d/prod_data_info'); </script>
+    <script> test_case('data', 'public_dumps_info','https://verejne.digital/api/d/public_dumps_info'); </script>
+    <script> test_case('verejne', 'searchEntityByName', 'https://verejne.digital/api/v/searchEntityByName?name=stefan%20skrucany'); </script>
+    </table>
+
+    <p>APIs using old data:</p>
+    <table>
+    <tr>
+        <th>Application</th>
+        <th>Function</th>
+        <th>URL</th>
+        <th>Status (prod)</th>
+        <th>Status (fresh)</th>
+    </tr>
+    <script> test_case('verejne', 'getInfo', 'https://verejne.digital/api/v/getInfo?eid=389093'); </script>
+    <script> test_case('verejne', 'getInfo for company', 'https://verejne.digital/api/v/getInfo?eid=317924'); </script>
+    <script> test_case('verejne', 'getEntities', 'https://verejne.digital/api/v/getEntities?level=0&lat1=48.31306363500883&lng1=17.25013026130364&lat2=48.31751977226477&lng2=17.257496582309614'); </script>
+    <script> test_case('verejne', 'getRelated', 'https://verejne.digital/api/v/getRelated?eid=389093'); </script>
+    <script> test_case('verejne', 'searchEntity', 'https://verejne.digital/api/v/searchEntity?text=stefan%20skrucany'); </script>
+    <script> test_case('verejne', 'searchEntityByNameAndAddress', 'https://verejne.digital/api/v/searchEntityByNameAndAddress?firstname=Ladislav&surname=Basternak&address=Hodalova'); </script>
+    <script> test_case('prepojenia', 'connection', 'https://verejne.digital/prepojenia/api/p/connection?eid1=39541,78864,94764,229752&eid2=136671,229753'); </script>
+    <script> test_case('obstaravania', 'info_obstaravanie','https://verejne.digital/api/o/info_obstaravanie?id=177241'); </script>
+    </table>
+</body>
+</html>
