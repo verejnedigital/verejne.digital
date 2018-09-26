@@ -58,7 +58,6 @@ class TestHandlers(unittest.TestCase):
     self.assertListEqual(content, [source, target])
 
   def test_subgraph(self):
-    url = '/subgraph?eid1=1690208&eid2=1549377'
     url = '/subgraph?eid1=1392540,1608323&eid2=1387739'
     content = _request_json(url, self)
     self.assertIsInstance(content, dict)
@@ -75,6 +74,43 @@ class TestHandlers(unittest.TestCase):
     self.assertTrue('edges' in content)
     print('NotableConnections subgraph (|V|=%d, |E|=%d):\n%s' % (
         len(content['vertices']), len(content['edges']), content))
+
+  def test_many(self):
+    """Tests API calls with multiple eid (pairs)."""
+
+    # Query the database for the number of entities.
+    db = server.app.registry['db']
+    num_entities = db.query('SELECT COUNT(*) FROM entities;',
+                            return_dicts=False)[0][0]
+    print("Number of entities: %d " % (num_entities))
+
+    # Construct a list of multiple entities.
+    num_evenly = 5
+    eids = range(1, num_entities + 1, num_entities // num_evenly)
+
+    for eid in eids:
+      print(eid)
+
+      # Test notable_connections:
+      url = '/notable_connections?eid=%d' % (eid)
+      content = _request_json(url, self)
+      self.assertIsInstance(content, dict)
+      self.assertTrue('vertices' in content)
+      self.assertTrue('edges' in content)
+
+      for other_eid in eids:
+
+        # Test a_shortest_path:
+        url = '/a_shortest_path?eid1=%d&eid2=%d' % (eid, other_eid)
+        content = _request_json(url, self)
+        self.assertIsInstance(content, list)
+
+        # Test subgraph:
+        url = '/subgraph?eid1=%d&eid2=%d' % (eid, other_eid)
+        content = _request_json(url, self)
+        self.assertIsInstance(content, dict)
+        self.assertTrue('vertices' in content)
+        self.assertTrue('edges' in content)
 
 
 def main():
