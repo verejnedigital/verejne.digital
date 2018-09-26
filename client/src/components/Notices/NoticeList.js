@@ -7,7 +7,7 @@ import {withRouter} from 'react-router-dom'
 import {withDataProviders} from 'data-provider'
 import {noticesProvider} from '../../dataProviders/noticesDataProviders'
 import {
-  dateSortedNoticesSelector,
+  activeNoticesSelector,
   noticesLengthSelector,
   locationSearchSelector,
   noticesSearchQuerySelector,
@@ -29,7 +29,7 @@ export type NoticesOrdering = 'title' | 'date'
 
 export type NoticeListProps = {
   dispatch: Dispatch,
-  dateSortedNotices: Array<Notice>,
+  notices: Array<Notice>,
   noticesLength: number,
   query: Object,
   searchValue: string,
@@ -39,7 +39,7 @@ export type NoticeListProps = {
 
 const NoticeList = ({
   dispatch,
-  dateSortedNotices,
+  notices,
   noticesLength,
   location,
   history,
@@ -49,8 +49,8 @@ const NoticeList = ({
   updateValue,
 }: NoticeListProps) => {
   const items =
-    dateSortedNotices.length > 0
-      ? groupBy(dateSortedNotices, (item) => `${item.bulletin_number}/${item.bulletin_year}`)
+    notices.length > 0
+      ? groupBy(notices, (item) => `${item.bulletin_number}/${item.bulletin_year}`)
       : []
 
   return (
@@ -90,7 +90,7 @@ export default compose(
   withDataProviders(() => [noticesProvider()]),
   connect(
     (state: State, props: NoticeListProps) => ({
-      dateSortedNotices: dateSortedNoticesSelector(state, props),
+      notices: activeNoticesSelector(state, props),
       noticesLength: noticesLengthSelector(state, props),
       query: locationSearchSelector(state, props),
       searchValue: noticesSearchQuerySelector(state),

@@ -66,9 +66,9 @@ export const dateSortedNoticesSelector = createSelector(
   searchFilteredNoticesSelector,
   (data: Array<Notice>) => sortBy(data, ['bulletin_year'])
 )
-export const nameSortedNoticesSelector = createSelector(
-  searchFilteredNoticesSelector,
-  (data: Array<Notice>) => sortBy(data, ['title'])
+export const activeNoticesSelector = createSelector(
+  dateSortedNoticesSelector,
+  (notices: Array<Notice>) => filter(notices, (notice) => !notice.supplier_eid)
 )
 
 export const locationSearchSelector = (_: State, props: ContextRouter) =>
