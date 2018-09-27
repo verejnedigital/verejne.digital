@@ -2,7 +2,7 @@
 import React, {Fragment} from 'react'
 import {connect} from 'react-redux'
 import {compose, withState, withHandlers} from 'recompose'
-import {isNill} from 'lodash'
+import {isNil} from 'lodash'
 import {withDataProviders} from 'data-provider'
 import {noticeDetailProvider} from '../../dataProviders/noticesDataProviders'
 import {noticeDetailSelector} from '../../selectors'
@@ -49,7 +49,7 @@ const _NoticeDetail = ({
     </span>
   ) : null
 
-  const estimate = isNill(notice.price_est_low) ? (
+  const estimate = isNil(notice.price_est_low) ? (
     <Fragment>
       <ShowNumberCurrency num={Math.round(notice.price_est_low)} />
       {' - '}
