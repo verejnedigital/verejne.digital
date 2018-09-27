@@ -48,10 +48,7 @@ const NoticeList = ({
   updateSearchValue,
   updateValue,
 }: NoticeListProps) => {
-  const items =
-    notices.length > 0
-      ? groupBy(notices, (item) => `${item.bulletin_number}/${item.bulletin_year}`)
-      : []
+  const items = groupBy(notices, (item) => `${item.bulletin_number}/${item.bulletin_year}`)
 
   return (
     <Container fluid className="notice-list">
