@@ -12,7 +12,7 @@ const _NoticeInformation = ({data}: Props) => (
   <ul className="notice-information">
     {data.map(({label, body}, index) => (
       <li className="notice-information-item" key={index}>
-        <strong>{label}:</strong> {body}
+        {label && <strong>{label}:</strong>} {body}
       </li>
     ))}
   </ul>
