@@ -12,11 +12,13 @@ import {
   setDrawer,
   setEntitySearchOpen,
   closeAddressDetail,
+  setEntitySearchLoaded,
 } from '../../../actions/publicActions'
 import {
   entitySearchValueSelector,
   entitySearchSuggestionsSelector,
   entitySearchSuggestionEidsSelector,
+  entitySearchLoadedSelector,
 } from '../../../selectors'
 import {
   entitySearchProvider,
@@ -49,6 +51,7 @@ type EntitySearchAutocompleteProps = {
   onChangeHandler: (e: Event) => void,
   getItemValue: (suggestion: string) => string,
   renderItem: (suggestion: string, isHighlighted: boolean) => any,
+  setEntitySearchLoaded: (loaded: boolean) => void,
 }
 
 const menuStyle = {
@@ -73,6 +76,7 @@ const EntitySearchAutocomplete = ({
   onChangeHandler,
   getItemValue,
   renderItem,
+  setEntitySearchLoaded,
 }: EntitySearchAutocompleteProps) => (
   <Form onSubmit={findEntities}>
     <InputGroup className="autocomplete-holder">
@@ -122,6 +126,7 @@ export default compose(
       entitySearchValue: entitySearchValueSelector(state),
       suggestionEids: entitySearchSuggestionEidsSelector(state),
       suggestions: entitySearchSuggestionsSelector(state),
+      entitySearchLoaded: entitySearchLoadedSelector(state),
     }),
     {
       setEntitySearchValue,
@@ -130,6 +135,7 @@ export default compose(
       setDrawer,
       setEntitySearchOpen,
       closeAddressDetail,
+      setEntitySearchLoaded,
     }
   ),
   withHandlers({
@@ -139,11 +145,13 @@ export default compose(
       closeAddressDetail,
       setEntitySearchOpen,
       setDrawer,
+      setEntitySearchLoaded,
     }) => (e) => {
       e.preventDefault()
       if (entitySearchValue.trim() === '') {
         return
       }
+      setEntitySearchLoaded(false)
       setEntitySearchFor(entitySearchValue)
       closeAddressDetail()
       setEntitySearchOpen(true)
@@ -165,7 +173,7 @@ export default compose(
     onChangeHandler: ({setEntitySearchValue}) => (e) => {
       setEntitySearchValue(e.target.value)
     },
-    getItemValue: () => (suggestion) => (suggestion),
+    getItemValue: () => (suggestion) => suggestion,
     renderItem: () => (suggestion, isHighlighted) => (
       <div
         key={suggestion}
