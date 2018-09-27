@@ -30,7 +30,7 @@ import SearchIcon from 'react-icons/lib/fa/search'
 import ModalIcon from 'react-icons/lib/fa/clone'
 import Autocomplete from 'react-autocomplete'
 
-import {FIND_ENTITY_TITLE} from '../../../constants'
+import {FIND_ENTITY_TITLE, FIND_ENTITY_TOOLTIP, OPEN_MODAL_TOOLTIP} from '../../../constants'
 
 import type {State} from '../../../state'
 
@@ -102,12 +102,12 @@ const EntitySearchAutocomplete = ({
           )
         }}
       />
-      <InputGroupAddon title={FIND_ENTITY_TITLE} addonType="append">
+      <InputGroupAddon title={FIND_ENTITY_TOOLTIP} addonType="append">
         <Button className="addon-button" color="primary" onClick={findEntities}>
           <SearchIcon />
         </Button>
       </InputGroupAddon>
-      <InputGroupAddon title="Otvor modálne okno" addonType="append">
+      <InputGroupAddon title={OPEN_MODAL_TOOLTIP} addonType="append">
         <Button className="addon-button" color="primary" onClick={toggleModalOpen}>
           <ModalIcon />
         </Button>
