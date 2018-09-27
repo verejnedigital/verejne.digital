@@ -2,6 +2,7 @@
 import React, {Fragment} from 'react'
 import {connect} from 'react-redux'
 import {compose, withState, withHandlers} from 'recompose'
+import {isNill} from 'lodash'
 import {withDataProviders} from 'data-provider'
 import {noticeDetailProvider} from '../../dataProviders/noticesDataProviders'
 import {noticeDetailSelector} from '../../selectors'
@@ -48,11 +49,11 @@ const _NoticeDetail = ({
     </span>
   ) : null
 
-  const estimate = notice.price_est_high !== null ? (
+  const estimate = isNill(notice.price_est_low) ? (
     <Fragment>
-      <ShowNumberCurrency num={Math.floor(notice.price_est_low)} />
+      <ShowNumberCurrency num={Math.round(notice.price_est_low)} />
       {' - '}
-      <ShowNumberCurrency num={Math.floor(notice.price_est_high)} />
+      <ShowNumberCurrency num={Math.round(notice.price_est_high)} />
     </Fragment>
   ) : null
 
@@ -72,7 +73,7 @@ const _NoticeDetail = ({
     {
       label: null,
       body: showCustomerInfo ? (
-        <CompanyDetails eid={notice.eid} useNewApi />
+        <CompanyDetails eid={notice.eid} />
       ) : null,
     },
     {
