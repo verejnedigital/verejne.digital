@@ -200,7 +200,7 @@ const createLabels = (mapOptions: MapOptions): Array<MapCluster> => {
       numPoints: 0,
       id: city.name,
       points: [],
-      setZoomTo: CITY_ZOOM,
+      setZoomTo: SUB_CITY_ZOOM,
       isLabel: true,
     }))
   } else if (mapOptions.zoom < SUB_CITY_ZOOM) {
