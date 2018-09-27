@@ -49,7 +49,7 @@ const _NoticeDetail = ({
     </span>
   ) : null
 
-  const estimate = isNil(notice.price_est_low) ? (
+  const estimate = !isNil(notice.price_est_low) ? (
     <Fragment>
       <ShowNumberCurrency num={Math.round(notice.price_est_low)} />
       {' - '}
