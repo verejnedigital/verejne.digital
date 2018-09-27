@@ -34,7 +34,6 @@ const Bulletin = ({items, number, year, date}: Props) => (
           <th>Názov obstarávania</th>
           <th>Objednávateľ</th>
           <th>Kto by sa mal prihlásiť</th>
-          <th>Výherca</th>
           <th className="text-right">Pod.</th>
         </tr>
       </thead>
