@@ -91,7 +91,7 @@ const DetailPage = ({
                 Pozor, možno iba {size(politician.entities) > 1 ? 'menovci' : 'menovec'}.
             </h5>
             {map(politician.entities, (e, i) => (
-              <Info key={i} data={e} className="bc-transparent" />
+              <Info key={i} data={e} />
             ))}
           </section>
         )}
