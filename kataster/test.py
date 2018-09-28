@@ -6,6 +6,7 @@ To run an individual unit test only, run (for example):
   python test.py TestHandlers.test_kataster_info_politician
 """
 import json
+import tqdm
 import unittest
 import webapp2
 
@@ -36,7 +37,9 @@ class TestHandlers(unittest.TestCase):
     content = _request_json('/kataster_info_person', self)
 
   def test_kataster_info_politician(self):
-    content = _request_json('/kataster_info_politician?id=295', self)
+    politician_id = 295
+    content = _request_json(
+      '/kataster_info_politician?id=%d' % (politician_id), self)
     self.assertIsInstance(content, list)
     print('KatasterInfoPolitician returned %d results.' % (
         len(content)))
@@ -69,10 +72,36 @@ class TestHandlers(unittest.TestCase):
       print("%s: %s" % (key, content[key]))
 
   def test_asset_declarations(self):
-    content = _request_json('/asset_declarations?id=717', self)
+    politician_id = 717
+    content = _request_json(
+      '/asset_declarations?id=%d' % (politician_id), self)
     self.assertIsInstance(content, list)
     print('AssetDeclarations returned %d declarations.' % (
         len(content)))
+
+  def test_all_politicians(self):
+    """Tests API calls for everyone returned by list_politicians."""
+
+    # Query list_politicians API to obtain list of politician_id's.
+    politicians = _request_json('/list_politicians?group=all', self)
+    for politician in tqdm.tqdm(politicians):
+      politician_id = politician["id"]
+
+      # Test info_politician.
+      content = _request_json(
+          '/info_politician?id=%d' % (politician_id), self)
+      self.assertIsInstance(content, dict)
+      self.assertTrue(content)
+
+      # Test asset_declarations.
+      content = _request_json(
+          '/asset_declarations?id=%d' % (politician_id), self)
+      self.assertIsInstance(content, list)
+
+      # Test kataster_info_politician.
+      content = _request_json(
+          '/kataster_info_politician?id=%d' % (politician_id), self)
+      self.assertIsInstance(content, list)
 
 
 def main():

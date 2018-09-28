@@ -14,7 +14,7 @@ type PoliticianProps = {
 const Politician = ({politician, useDefaultPicture}: PoliticianProps) => (
   <tr className="table-line">
     <td className="number-column">{politician.order}.</td>
-    <td>
+    <td className="photo-column">
       <img
         alt="foto"
         className="thumb-photo"
@@ -28,7 +28,8 @@ const Politician = ({politician, useDefaultPicture}: PoliticianProps) => (
       </NavLink>
     </td>
     <td className="text-left party-column">
-      {(!politician.term_start) && '\t'}{getTerm(politician)}
+      {!politician.term_start && '\t'}
+      {getTerm(politician)}
     </td>
     <td className="party-column">{politician.party_abbreviation}</td>
     <td className="number-column">{politician.num_houses_flats}</td>

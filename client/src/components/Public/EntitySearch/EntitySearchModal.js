@@ -1,6 +1,5 @@
 // @flow
 import React from 'react'
-import ReactDOM from 'react-dom'
 import {
   Button,
   Modal,
@@ -69,10 +68,7 @@ const EntitySearchModal = ({
               placeholder={FIND_ENTITY_TITLE}
               value={entitySearchValue}
               onChange={setEntitySearchValue}
-              ref={(input) => {
-                const el = ReactDOM.findDOMNode(input)
-                el && el instanceof HTMLElement && el.focus()
-              }}
+              innerRef={(input) => setTimeout(() => input && input.focus(), 0)}
             />
             <InputGroupAddon addonType="append">
               <Button color="primary" onClick={findEntities}>
