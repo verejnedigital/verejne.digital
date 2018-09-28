@@ -21,8 +21,13 @@ import {
   entitySearchModalOpenSelector,
   entitySearchEidsSelector,
   entitySearchForSelector,
+  entitySearchLoadedSelector,
 } from '../../../selectors'
-import {toggleModalOpen, setEntitySearchFor} from '../../../actions/publicActions'
+import {
+  toggleModalOpen,
+  setEntitySearchFor,
+  setEntitySearchLoaded,
+} from '../../../actions/publicActions'
 import {updateValue} from '../../../actions/sharedActions'
 import {FIND_ENTITY_TITLE} from '../../../constants'
 import {resultPlurality} from '../../../services/utilities'
@@ -38,6 +43,8 @@ type EntitySearchProps = {|
   findEntities: (setEntitySearchFor: Function, entitySearchValue: string) => void,
   entitySearchEids: Array<number>,
   entitySearchFor: string,
+  entitySearchLoaded: boolean,
+  setEntitySearchLoaded: (loaded: boolean) => void,
 |}
 
 const EntitySearchModal = ({
@@ -49,6 +56,8 @@ const EntitySearchModal = ({
   findEntities,
   entitySearchEids,
   entitySearchFor,
+  entitySearchLoaded,
+  setEntitySearchLoaded,
 }: EntitySearchProps) => (
   <Modal
     isOpen={entitySearchModalOpen}
@@ -77,7 +86,7 @@ const EntitySearchModal = ({
             </InputGroupAddon>
           </InputGroup>
           <FormText>
-            {entitySearchFor &&
+            {entitySearchLoaded &&
               `${resultPlurality(entitySearchEids.length)} pre "${entitySearchFor}".`}
           </FormText>
         </FormGroup>
@@ -99,15 +108,21 @@ export default compose(
       entitySearchModalOpen: entitySearchModalOpenSelector(state),
       entitySearchEids: entitySearchEidsSelector(state),
       entitySearchFor: entitySearchForSelector(state),
+      entitySearchLoaded: entitySearchLoadedSelector(state),
     }),
-    {toggleModalOpen, setEntitySearchFor, updateValue}
+    {toggleModalOpen, setEntitySearchFor, updateValue, setEntitySearchLoaded}
   ),
   withHandlers({
-    findEntities: ({setEntitySearchFor, entitySearchValue}) => (e) => {
+    findEntities: ({
+      setEntitySearchFor,
+      entitySearchValue,
+      setEntitySearchLoaded,
+    }) => (e) => {
       e.preventDefault()
       if (entitySearchValue.trim() === '') {
         return
       }
+      setEntitySearchLoaded(false)
       setEntitySearchFor(entitySearchValue)
     },
     setEntitySearchValue: ({updateValue}) => (e) =>

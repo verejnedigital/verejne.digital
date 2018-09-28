@@ -106,6 +106,13 @@ export const setEntitySearchFor = (searchFor: string) => ({
   reducer: () => searchFor,
 })
 
+export const setEntitySearchLoaded = (loaded: boolean) => ({
+  type: 'Set entity search loaded pattern',
+  path: ['publicly', 'entitySearchLoaded'],
+  payload: loaded,
+  reducer: () => loaded,
+})
+
 export const toggleEntityInfo = (eid: number) => ({
   type: 'Toggle entity info',
   path: ['publicly', 'showInfo', eid],
