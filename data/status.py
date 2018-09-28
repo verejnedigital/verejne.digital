@@ -24,7 +24,8 @@ def _get_tables_and_columns_in_schema(db, schema):
   # Obtain names of tables in `schema`:
   q = """
       SELECT table_name FROM information_schema.tables
-      WHERE table_schema = '""" + schema + """';
+      WHERE table_schema = '""" + schema + """'
+      ORDER BY table_name;
       """
   rows_tables = db.query(q)
 
