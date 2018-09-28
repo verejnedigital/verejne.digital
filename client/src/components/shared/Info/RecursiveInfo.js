@@ -21,7 +21,7 @@ type StateProps = {
 
 const RecursiveInfo = ({name, eid, badge, useNewApi, toggledOn, toggle}: RecursiveInfoProps) =>
   toggledOn ? (
-    <CompanyDetails useNewApi={useNewApi} eid={eid} canClose onClose={toggle} />
+    <CompanyDetails useNewApi={useNewApi} eid={eid} onClose={toggle} />
   ) : (
     <Fragment>
       {badge}
