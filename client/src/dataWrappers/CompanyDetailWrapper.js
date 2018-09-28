@@ -15,7 +15,6 @@ type BaseCompanyDetailProps = {
 export type CompanyDetailProps = {
   eid: number,
   company: NewEntityDetail,
-  canClose?: boolean,
   onClose?: () => void,
 }
 

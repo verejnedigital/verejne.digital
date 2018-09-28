@@ -37,7 +37,6 @@ type OwnProps = {
   data: NewEntityDetail,
   className?: string,
   inModal?: boolean,
-  canClose?: boolean,
   onClose?: () => void,
 }
 
@@ -114,8 +113,8 @@ const Findata = ({data}: {data: FinancialData}) => {
   )
 }
 
-const Info = ({data, canClose, onClose, showOnMap, className}: InfoProps) => (
-  <Container className={classnames(className, {closable: canClose}, 'info')}>
+const Info = ({data, onClose, showOnMap, className}: InfoProps) => (
+  <Container className={classnames(className, {closable: Boolean(onClose)}, 'info')}>
     <div className="info-header">
       <Row>
         <Col xs="auto" className="mt-1 pr-0">
@@ -144,7 +143,7 @@ const Info = ({data, canClose, onClose, showOnMap, className}: InfoProps) => (
               className="mb-2 blue"
             />
           </NavLink>}
-          {canClose && (
+          {Boolean(onClose) && (
             <span className="info-close-button" onClick={onClose}>
               &times;
             </span>
