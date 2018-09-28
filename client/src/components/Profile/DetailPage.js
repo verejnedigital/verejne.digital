@@ -153,7 +153,7 @@ const DetailPage = ({
       </Col>
     </Row>
     {cadastral.length > 0 &&
-      <Row key="map" id="map" className="profile-map">
+      <Row key="map" id="map">
         <Col>
           <MapContainer assets={cadastral} {...mapProps} />
         </Col>
