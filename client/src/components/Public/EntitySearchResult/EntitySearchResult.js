@@ -37,7 +37,7 @@ type EntitySearchResultProps = {
 class EntitySearchResult extends PureComponent<EntitySearchResultProps> {
   componentDidMount() {
     this.highlightLocations()
-    this.props.setEntitySearchLoaded(true)
+    this.props.setEntitySearchLoaded(this.props.searchFor.trim() !== '')
   }
 
   componentDidUpdate(oldProps) {
