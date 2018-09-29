@@ -14,8 +14,7 @@ from prod_generation import graph_tools
 import post_process
 from datetime import datetime
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../data/db')))
-from db import DatabaseConnection
+from db.db import DatabaseConnection
 
 def ExtractDescriptionFromBody(body):
     """ Input is the raw body of raw_notice.

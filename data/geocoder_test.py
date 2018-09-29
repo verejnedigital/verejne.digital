@@ -3,8 +3,9 @@ import sys
 import unittest
 
 import geocoder as geocoder_lib
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../data/db')))
-from db import DatabaseConnection
+#import db.db
+#sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../data/db')))
+from db.db import DatabaseConnection
 
 class GeocoderTest(unittest.TestCase):
 
