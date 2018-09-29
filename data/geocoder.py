@@ -34,13 +34,14 @@ class Geocoder:
         # matches NUM/NUMx where x is either space (' ') or command followed by
         # space (', ')
         self.prog = re.compile(" ([0-9]+)\/([0-9]+)( |(, ))")
-        # Match psc, either XXXXX or XXX XX.
-        self.psc = re.compile("[0-9][0-9][0-9](([0-9][0-9])|( [0-9][0-9]))")
+        # Match psc, either XXXXX or XXX XX. Check that it's in a block with a
+        # nondigit character (or beginning/end of string) before and after
+        self.psc = re.compile("(\D|^)([0-9][0-9][0-9](([0-9][0-9])|( [0-9][0-9])))(\D|$)")
         # Match Bratislava/Kosice - xxx
         self.city_part = re.compile("(bratislava|košice) ?-(.*)")
 
         suffix_for_testing = ""
-        if self.test_mode: suffix_for_testing = " LIMIT 200000"
+        if self.test_mode: suffix_for_testing = " LIMIT 20000"
         with db_address_cache.dict_cursor() as cur:
             print "Reading cache of geocoded addresses"
             cur.execute(
@@ -113,7 +114,7 @@ class Geocoder:
             for k in keys:
                 obj = re.search(self.psc, k)
                 if obj:
-                    new_k = k.replace(obj.group(0), "")
+                    new_k = k.replace(obj.group(2), "")
                     if (len(new_k) > 5): result.append(new_k)
             return result
 
