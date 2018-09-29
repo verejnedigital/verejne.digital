@@ -1,20 +1,20 @@
 # -*- coding: utf-8 -*-
 import argparse
-import os
-import sys
-import yaml
-import re
+from datetime import datetime
 import HTMLParser
-import xml.etree.ElementTree as ET
+import os
 from psycopg2.extensions import AsIs
+import re
+import sys
+import xml.etree.ElementTree as ET
 
+from db.db import DatabaseConnection
 import geocoder as geocoder_lib
 import entities
 from prod_generation import graph_tools
 import post_process
-from datetime import datetime
+import utils
 
-from db.db import DatabaseConnection
 
 def ExtractDescriptionFromBody(body):
     """ Input is the raw body of raw_notice.
@@ -356,8 +356,7 @@ def main(args_dict):
 
     # Table prod_tables.yaml defines a specifications of SQL selects to read
     # source data and describtion of additional tables to be created.
-    with open('prod_tables.yaml', 'r') as stream:
-        config = yaml.load(stream)
+    config = utils.yaml_load('prod_tables.yaml')
     # This is where all the population happens!!!
     # Go through all the specified data sources and process them, adding data
     # as needed. We process them in the order!
