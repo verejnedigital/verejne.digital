@@ -324,7 +324,7 @@ def process_source_rpvs(db_source, db_prod, geocoder, entities, test_mode):
       continue
 
     # Save the edge:
-    edges.add((eid_partner, eid_kuv))
+    edges.add((eid_kuv, eid_partner))
   print("%sCollected %d edges" % (log_prefix, len(edges)))
 
   # Create an edge type for `konecny uzivatel vyhod`:
