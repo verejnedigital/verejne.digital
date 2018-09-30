@@ -76,13 +76,13 @@ class KatasterInfoPolitician(MyServer):
 
 class InfoPolitician(MyServer):
   def get(self):
-    # Parse politician id
+    # Parse politician id.
     try:
       politician_id = int(self.request.GET['id'])
     except:
       self.abort(400, detail='Could not parse parameter `id` as int')
 
-    # Get politician information from database
+    # Get politician information from profil database.
     db_profil = webapp2.get_app().registry['db_profil']
     politician = db_search.get_politician_by_PersonId(
         db_profil, politician_id)
@@ -90,7 +90,12 @@ class InfoPolitician(MyServer):
       self.abort(
           404, detail='Could not find politician with provided `id`')
 
-    # Add information from database vd:
+    # Add information about offices held by the politician.
+    offices = db_search.get_offices_of_person(
+      db_profil, politician_id)
+    politician['offices'] = offices
+
+    # Add entity information from database vd.
     db = webapp2.get_app().registry['db']
     rows = db.query(
         """

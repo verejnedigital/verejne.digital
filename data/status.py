@@ -13,8 +13,7 @@ import subprocess
 import sys
 import urllib
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../data/db')))
-from db import DatabaseConnection
+from db.db import DatabaseConnection
 import utils
 
 

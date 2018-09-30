@@ -3,7 +3,11 @@ import React from 'react'
 import {connect} from 'react-redux'
 import {compose} from 'recompose'
 import EntitySearchResult from '../EntitySearchResult/EntitySearchResult'
-import {entitySearchEidsSelector, entitySearchForSelector} from '../../../selectors'
+import {
+  entitySearchEidsSelector,
+  entitySearchForSelector,
+  entitySearchLoadedSelector,
+} from '../../../selectors'
 import {toggleEntitySearchOpen} from '../../../actions/publicActions'
 import {resultPlurality} from '../../../services/utilities'
 import './EntitySearch.css'
@@ -14,20 +18,24 @@ type EntitySearchProps = {
   toggleEntitySearchOpen: () => Object,
   entitySearchEids: Array<number>,
   entitySearchFor: string,
+  entitySearchLoaded: boolean,
 }
 
 const EntitySearch = ({
   toggleEntitySearchOpen,
   entitySearchEids,
   entitySearchFor,
+  entitySearchLoaded,
 }: EntitySearchProps) => (
   <div className="search-results">
-    <div className="search-results-header">
-      <button type="button" className="close" onClick={toggleEntitySearchOpen}>
-        <span>&times;</span>
-      </button>
-      {entitySearchFor && `${resultPlurality(entitySearchEids.length)} pre "${entitySearchFor}".`}
-    </div>
+    {entitySearchLoaded && (
+      <div className="search-results-header">
+        <button type="button" className="close" onClick={toggleEntitySearchOpen}>
+          <span>&times;</span>
+        </button>
+        {`${resultPlurality(entitySearchEids.length)} pre "${entitySearchFor}".`}
+      </div>
+    )}
     <div className="search-results-panel">
       <EntitySearchResult />
     </div>
@@ -40,6 +48,7 @@ export default compose(
     (state: State) => ({
       entitySearchEids: entitySearchEidsSelector(state),
       entitySearchFor: entitySearchForSelector(state),
+      entitySearchLoaded: entitySearchLoadedSelector(state),
     }),
     {toggleEntitySearchOpen}
   )

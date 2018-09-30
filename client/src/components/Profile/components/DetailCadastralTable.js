@@ -67,7 +67,7 @@ class DetailCadastralTable extends Component<DetailCadastralTableProps> {
           }
           placeholder="Obec"
         />
-        <Table>
+        <Table className="assets-cadastral">
           <thead>
             <tr>
               <th />

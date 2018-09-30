@@ -4,15 +4,11 @@ import os
 import sys
 import numpy
 import math
+
 from intelligence import embed
-
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../data/db')))
-from db import DatabaseConnection
-
+from db.db import DatabaseConnection
 from prod_generation import post_process_neighbours
-
 import utils
-
 
 class Notice:
     idx = None

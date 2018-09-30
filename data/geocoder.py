@@ -34,13 +34,14 @@ class Geocoder:
         # matches NUM/NUMx where x is either space (' ') or command followed by
         # space (', ')
         self.prog = re.compile(" ([0-9]+)\/([0-9]+)( |(, ))")
-        # Match psc, either XXXXX or XXX XX.
-        self.psc = re.compile("[0-9][0-9][0-9](([0-9][0-9])|( [0-9][0-9]))")
+        # Match psc, either XXXXX or XXX XX. Check that it's in a block with a
+        # nondigit character (or beginning/end of string) before and after
+        self.psc = re.compile("(\D|^)([0-9][0-9][0-9](([0-9][0-9])|( [0-9][0-9])))(\D|$)")
         # Match Bratislava/Kosice - xxx
         self.city_part = re.compile("(bratislava|košice) ?-(.*)")
 
         suffix_for_testing = ""
-        if self.test_mode: suffix_for_testing = " LIMIT 200000"
+        if self.test_mode: suffix_for_testing = " LIMIT 20000"
         with db_address_cache.dict_cursor() as cur:
             print "Reading cache of geocoded addresses"
             cur.execute(
@@ -95,7 +96,17 @@ class Geocoder:
         For example removes slovenska republika from the end, simplifies PSC,
         removes A/B, etc
         """
-        # Drop the first number in NUM/NUM in address. E.g, Hlavna Ulica 123/45
+
+
+        # Performs string.repalce(old, new) on the substring starting at start_index.
+        def ReplaceAfter(s, start_index, old, new):
+            return s[:start_index] + s[start_index:].replace(old, new)
+
+
+        # If NUM1/NUM2 appears in the address (e.g Hlavne Ulica 123/45), normalize
+        # it as follows:
+        # 1) Ensure we have a variant where NUM1 > NUM2. Swap NUM1<->NUM2 if need be
+        # 2) Drop NUM1
         # Here and below, the input is the set of keys. The function returns the
         # keys after applying the transformation (if possible).
         def ExpandKeysRemoveSlash(keys):
@@ -103,8 +114,12 @@ class Geocoder:
             for k in keys:
                 obj = re.search(self.prog, k)
                 if obj:
-                    new_k = k.replace(obj.group(0), " " + obj.group(2) + " ")
-                    if (len(new_k) > 5): result.append(new_k)
+                    drop_first = ReplaceAfter(k, obj.start(0), obj.group(0), " " + obj.group(2) + " ")
+                    if int(obj.group(1)) < int(obj.group(2)):
+                        swapped = ReplaceAfter(
+                                k, obj.start(0), obj.group(0), " " + obj.group(2) + "/" + obj.group(1) + " ")
+                        if (len(swapped) > 5): result.append(swapped)
+                    if len(drop_first) > 5: result.append(drop_first)
             return result
 
         # Remove PSC
@@ -113,7 +128,7 @@ class Geocoder:
             for k in keys:
                 obj = re.search(self.psc, k)
                 if obj:
-                    new_k = k.replace(obj.group(0), "")
+                    new_k = ReplaceAfter(k, obj.start(2), obj.group(2), "")
                     if (len(new_k) > 5): result.append(new_k)
             return result
 
@@ -140,7 +155,7 @@ class Geocoder:
             for k in keys:
                 obj = re.search(self.city_part, k)
                 if obj:
-                    new_k = k.replace(obj.group(2), "")
+                    new_k = ReplaceAfter(k, obj.start(2), obj.group(2), "")
                     if (len(new_k) > 5): result.append(new_k)
             return result
 

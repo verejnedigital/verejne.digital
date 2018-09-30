@@ -3,7 +3,8 @@ import psycopg2.extras
 from psycopg2.extensions import AsIs
 psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
 psycopg2.extensions.register_type(psycopg2.extensions.UNICODEARRAY)
-import yaml
+
+import utils
 
 
 # Register a customised adapter that returns Postgres decimal values
@@ -18,8 +19,7 @@ psycopg2.extensions.register_type(DEC2FLOAT)
 
 class DatabaseConnection():
     def __init__(self, path_config='db_config.yaml', search_path=None):
-        with open(path_config, 'r') as stream:
-            config = yaml.load(stream)
+        config = utils.yaml_load(path_config)
         self.conn = psycopg2.connect(user=config['user'], dbname=config['db'])
         if search_path is not None:
             self.execute('SET search_path = %s', (search_path,))
