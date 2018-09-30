@@ -86,6 +86,8 @@ def ProcessSource(db_source, db_prod, geocoder, entities, config, test_mode):
     The produced data are written into db_prod connection. The function writes
     new entities and addresses in to the Entities and Address tables. It also
     creates and populates supplementary tables as specified by a config.
+
+    Throughout, "org_id" refers to "organization_id" from source RPO.
     """
 
     # Connect to the most recent schema from the current source
@@ -203,13 +205,22 @@ def ProcessSource(db_source, db_prod, geocoder, entities, config, test_mode):
                 print "Progress:", found
                 sys.stdout.flush()
 
+            # Save the mapping from RPO `organization_id` identifiers
+            # to our `eid` identifiers. This flag is only turned on
+            # for the first source `1_rpo`.
             if config.get("save_org_id"):
                 entities.AddOrg2Eid(row["org_id"], eid)
+
+            # This flag indicates that column `eid_relation` contains
+            # an `organization_id` (id from source RPO) rather than an
+            # eid. The value must thus first be mapped to eid. This
+            # flag is only turned on for the source `2_related`.
             if config.get("use_org_id_as_eid_relation"):
                 eid2 = entities.GetEidForOrgId(row["eid_relation"])
                 if eid2 is None:
                   continue
                 row["eid_relation"] = eid2
+
             if config.get("extract_description_from_body"):
                 row["body"] = ExtractDescriptionFromBody(row["body"])
             supplier_eid = None
@@ -262,7 +273,7 @@ def process_source_rpvs(db_source, db_prod, geocoder, entities, test_mode):
   print("%ssource_schema_name=%s" % (log_prefix, source_schema_name))
 
   # Read relevant data from the source database:
-  rows = db_source.query("""
+  rows = db_source.query(r"""
       SELECT
         concat_ws(' ',
           kuv_title_front,
@@ -272,7 +283,9 @@ def process_source_rpvs(db_source, db_prod, geocoder, entities, test_mode):
           kuv_public_figure
         ) AS kuv_name,
         concat_ws(' ',
-          kuv_address,
+          --Fix missing space between street name and number.
+          regexp_replace(
+            kuv_address, '([^/ -\.0-9])([0-9])', '\1 \2', 'gi'),
           kuv_city,
           kuv_psc,
           kuv_country
@@ -306,8 +319,8 @@ def process_source_rpvs(db_source, db_prod, geocoder, entities, test_mode):
       partner_ico = int(row["partner_ico"])
     except ValueError:
       continue
-    eid_partner = entities.GetEidForOrgId(partner_ico)
-    if eid_partner is None:
+    eid_partner = entities.ExistsICO(partner_ico)
+    if eid_partner < 0:
       continue
 
     # Save the edge:
@@ -366,6 +379,7 @@ def main(args_dict):
         ProcessSource(db_source, db_prod, geocoder, entities_lookup, config_per_source, test_mode)
         print "GEOCODER STATS"
         geocoder.PrintStats()
+        entities_lookup.print_statistics()
 
     # Process yaml-free sources:
     process_source_rpvs(db_source, db_prod, geocoder, entities_lookup, test_mode)
@@ -389,7 +403,7 @@ def main(args_dict):
         print('[OK] Rolled back database changes (test mode)')
     else:
         db_prod.commit()
-        db_prod.close()
+    db_prod.close()
 
 
 if __name__ == '__main__':
