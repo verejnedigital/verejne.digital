@@ -11,7 +11,7 @@ const Public = () => (
     <Sidebar />
     <EntitySearchModal />
     <Map />
-    <Legend positionAbsolute closable/>
+    <Legend positionAbsolute closable />
 
   </div>
 )

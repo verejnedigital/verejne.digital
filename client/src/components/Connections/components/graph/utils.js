@@ -12,6 +12,7 @@ const variables = {
   orangeColor: '#e55600',
   grayColor: '#6c8294',
   purpleColor: 'purple',
+  shadowColor: 'rgba(187, 198, 206, .5)',
 }
 
 export const options = {
@@ -23,6 +24,7 @@ export const options = {
     color: {color: variables.grayColor},
     hoverWidth: 0,
     width: 1,
+    length: 100,
   },
   groups: {
     notLoaded: {
@@ -72,6 +74,7 @@ export const options = {
     multiselect: true,
   },
   nodes: {
+    mass: 2,
     value: 1,
     color: {
       background: 'white',
@@ -90,21 +93,16 @@ export const options = {
     shape: 'dot',
     shadow: {
       enabled: true,
-      color: 'rgba(187, 198, 206, .5)',
+      color: variables.shadowColor,
       size: 10,
       x: 0,
       y: 0,
-    },
-    scaling: {
-      min: 10,
-      max: 50,
     },
     chosen: {
       // selected nodes have shadow
       label: false,
       node: (values: {[string]: any}, id: GraphId, selected: boolean, hovering: boolean) => {
         values.shadowSize = 30
-        values.borderWidth = 2
       },
     },
   },
@@ -162,6 +160,7 @@ export const addNeighbours = (
         // they would otherwise appear in the middle of the viewport which disturbs the layout
         x: sourcePoint.x + randomInt(20, 100),
         y: sourcePoint.y + randomInt(20, 100),
+        is_query: false,
       })
       nodeIds[eid] = true
     }
