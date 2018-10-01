@@ -113,7 +113,7 @@ const DetailPage = ({
                 assets={assets.unmovable_assets}
                 year={selectedYear}
                 title="Majetkové priznanie: Nehnuteľnosti"
-                image={`https://verejne.digital/img/majetok/${politician.surname}_${
+                image={`https://verejne.digital/resources/profil_asset_plots/${politician.surname}_${
                   politician.firstname
                 }.png`}
                 source={assets.source}
