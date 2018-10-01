@@ -18,7 +18,7 @@ const Politician = ({politician, useDefaultPicture}: PoliticianProps) => (
       <img
         alt="foto"
         className="thumb-photo"
-        src={`https://verejne.digital/img/nrsr/${politician.surname}_${politician.firstname}.jpg`}
+        src={`https://verejne.digital/resources/profil_pics/${politician.surname}_${politician.firstname}.jpg`}
         onError={useDefaultPicture}
       />
     </td>
