@@ -1,5 +1,6 @@
 // @flow
 import React from 'react'
+import classnames from 'classnames'
 import CircleIcon from 'react-icons/lib/fa/circle-o'
 import FilledCircleIcon from 'react-icons/lib/fa/circle'
 import {compose, withState, withHandlers} from 'recompose'
@@ -10,11 +11,13 @@ import MapIcon from '../../../assets/mapIcon.svg'
 type Props = {
   legendOpen: boolean,
   toggleLegend: () => void,
+  positionAbsolute?: boolean,
+  closable?: boolean
 }
 
-const Legend = ({legendOpen, toggleLegend}: Props) =>
+const Legend = ({legendOpen, toggleLegend, positionAbsolute, closable}: Props) =>
   legendOpen ? (
-    <div className="legend">
+    <div className={classnames('legend', {'position-absolute': positionAbsolute})}>
       <div className="legend__header">
         <iframe
           src={FACEBOOK_LIKE_SRC}
@@ -24,9 +27,11 @@ const Legend = ({legendOpen, toggleLegend}: Props) =>
           frameBorder="0"
           title="Facebook"
         />
-        <button type="button" className="close" onClick={toggleLegend}>
-          <span>&times;</span>
-        </button>
+        {closable && (
+          <button type="button" className="close" onClick={toggleLegend}>
+            <span>&times;</span>
+          </button>
+        )}
       </div>
       <p>Legenda</p>
       <p>
@@ -59,7 +64,7 @@ const Legend = ({legendOpen, toggleLegend}: Props) =>
       </p>
     </div>
   ) : (
-    <button type="button" className="legend" onClick={toggleLegend}>
+    <button type="button" className={classnames('legend', {'position-absolute': positionAbsolute})} onClick={toggleLegend}>
       Legenda
     </button>
   )
