@@ -78,7 +78,7 @@ function enhanceGraph(
   // adds entity info to graph
   const nodes = oldNodes.map(({id, label, x, y, ...props}) => {
     if (!entityDetails[id.toString()]) {
-      return {id, label, group: 'notLoaded', x, y, ...props}
+      return {id, label, group: 'notLoaded', shape: 'box', x, y, ...props}
     }
     const entity = entityDetails[id.toString()]
     const poi = props.is_query
@@ -90,13 +90,14 @@ function enhanceGraph(
         }
       })
     }
+
     return {
       // delete x, y to prevent jumping on node load
       ...props,
       id,
       label: bold(poi, `${entity.name} (${entity.related.length})`),
       group: findGroup(entity),
-      shape: poi ? 'box' : (entity.companyinfo || {}).terminated_on ? 'diamond' : 'dot',
+      shape: 'infoBox',
       leaf: false,
     }
   })
@@ -115,6 +116,7 @@ function transformRaw(rawGraph: {vertices: Array<RawNode>, edges: Array<RawEdge>
       id: n.eid,
       label: n.entity_name,
       is_query: n.query,
+      shape: 'infoBox',
     })
     nodeIds[n.eid] = true
   })

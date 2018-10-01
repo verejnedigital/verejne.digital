@@ -30,10 +30,17 @@ export const options = {
     },
     normal: {
       shapeProperties: {borderDashes: false},
+      color: {
+        border: variables.blueColor,
+        highlight: {border: variables.blueColor},
+      },
     },
     contracts: {
-      color: {border: variables.blueColor, highlight: {border: variables.blueColor}},
-      borderWidth: 5,
+      color: {
+        background: variables.blueColor,
+        border: variables.blueColor,
+        highlight: {border: variables.blueColor},
+      },
       shapeProperties: {borderDashes: false},
     },
     politician: {
@@ -43,13 +50,11 @@ export const options = {
         highlight: {background: variables.purpleColor, border: variables.purpleColor},
       },
       font: {color: variables.purpleColor},
-      borderWidth: 5,
       shapeProperties: {borderDashes: false},
     },
     politTies: {
       color: {border: variables.orangeColor, highlight: {border: variables.orangeColor}},
       font: {color: variables.orangeColor},
-      borderWidth: 5,
       shapeProperties: {borderDashes: false},
     },
     politContracts: {
@@ -59,7 +64,6 @@ export const options = {
         highlight: {background: variables.orangeColor, border: variables.orangeColor},
       },
       font: {color: variables.orangeColor},
-      borderWidth: 5,
       shapeProperties: {borderDashes: false},
     },
   },
@@ -81,12 +85,13 @@ export const options = {
       multi: 'md', // enables use of bold/italics
     },
     widthConstraint: {maximum: 150},
+    borderWidth: 2,
     labelHighlightBold: false,
     shape: 'dot',
     shadow: {
-      enabled: false,
-      color: 'rgba(0,0,0,0.5)',
-      size: 30,
+      enabled: true,
+      color: 'rgba(187, 198, 206, .5)',
+      size: 10,
       x: 0,
       y: 0,
     },
@@ -98,7 +103,8 @@ export const options = {
       // selected nodes have shadow
       label: false,
       node: (values: {[string]: any}, id: GraphId, selected: boolean, hovering: boolean) => {
-        values.shadow = true
+        values.shadowSize = 30
+        values.borderWidth = 2
       },
     },
   },
