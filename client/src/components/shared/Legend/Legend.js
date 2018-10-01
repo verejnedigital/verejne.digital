@@ -12,7 +12,7 @@ type Props = {
   legendOpen: boolean,
   toggleLegend: () => void,
   positionAbsolute?: boolean,
-  closable?: boolean
+  closable?: boolean,
 }
 
 const Legend = ({legendOpen, toggleLegend, positionAbsolute, closable}: Props) =>
@@ -64,7 +64,11 @@ const Legend = ({legendOpen, toggleLegend, positionAbsolute, closable}: Props) =
       </p>
     </div>
   ) : (
-    <button type="button" className={classnames('legend', {'position-absolute': positionAbsolute})} onClick={toggleLegend}>
+    <button
+      type="button"
+      className={classnames('legend', {'position-absolute': positionAbsolute})}
+      onClick={toggleLegend}
+    >
       Legenda
     </button>
   )
