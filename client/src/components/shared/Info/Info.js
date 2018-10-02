@@ -22,15 +22,15 @@ import {ENTITY_CLOSE_ZOOM} from '../../../constants'
 import Contracts from './Contracts'
 import Notices from './Notices'
 import Eurofunds from './Eurofunds'
+import Finances from './Finances'
 import Item from './Item'
 import Relations from './Relations'
-import Trend from './Trend'
 import ExternalLink from '../ExternalLink'
 import CircleIcon from '.././CircleIcon'
 import mapIcon from '../../../assets/mapIcon.svg'
 import ProfileIcon from 'react-icons/lib/fa/user'
 import type {NewEntityDetail, Center} from '../../../state'
-import type {EnhancedCompanyFinancial, FinancialData} from '../../../services/utilities'
+import type {FinancialData} from '../../../services/utilities'
 import './Info.css'
 
 type OwnProps = {
@@ -78,36 +78,6 @@ const Findata = ({data}: {data: FinancialData}) => {
       {established_on && <Item label="Založená">{showDate(established_on)}</Item>}
       {terminated_on && <Item label="Zaniknutá">{showDate(terminated_on)}</Item>}
       <Finances data={lastFinances} ico />
-    </Fragment>
-  )
-}
-
-const Finances = ({data, ico}: {data: EnhancedCompanyFinancial, ico: string}) => {  
-  const {employees, profit, profitTrend, revenue, revenueTrend, year} = data
-
-  return (
-    <Fragment>     
-      {employees && (
-        <Item label={`Zamestnanci v ${year}`}>{employees}</Item>
-      )} 
-      {profit && (
-        <Item
-          label={`Zisk v ${year}`}
-          url={icoUrl(ico)}
-          linkText={<ShowNumberCurrency num={profit} />}
-        >
-          {profitTrend && <Trend trend={profitTrend} />}
-        </Item>
-      )}
-      {revenue && (
-        <Item
-          label={`Tržby v ${year}`}
-          url={icoUrl(ico)}
-          linkText={<ShowNumberCurrency num={revenue} />}
-        >
-          {revenueTrend && <Trend trend={revenueTrend} />}
-        </Item>
-      )}
     </Fragment>
   )
 }
