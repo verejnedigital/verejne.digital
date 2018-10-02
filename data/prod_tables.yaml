@@ -59,7 +59,7 @@
           organization_id as eid_relation,
           stakeholder_type_id,
           concat_ws(' ',
-            full_name, person_formatted_name
+            full_name, array_to_string(person_given_names,' '), array_to_string(person_family_names,' ')
           ) AS name,
           concat_ws(' ',
             address_formatted,
@@ -78,7 +78,7 @@
           organization_id as org_id,
           stakeholder_type_id,
           concat_ws(' ',
-            full_name, person_formatted_name
+            full_name, array_to_string(person_given_names,' '), array_to_string(person_family_names,' ')
           ) AS name,
           concat_ws(' ',
             address_formatted,
