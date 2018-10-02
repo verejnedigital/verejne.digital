@@ -6,7 +6,12 @@ import {icoUrl, ShowNumberCurrency} from '../../../services/utilities'
 import Item from './Item'
 import Trend from './Trend'
 
-const Finances = ({data, ico}: {data: EnhancedCompanyFinancial, ico: string}) => {  
+type FinancesProps = {|
+  data: EnhancedCompanyFinancial[],
+  ico: string,
+|}
+
+const FinancesItem = ({data, ico}: {data: EnhancedCompanyFinancial, ico: string}) => {  
   const {employees, profit, profitTrend, revenue, revenueTrend, year} = data
 
   return (
@@ -32,6 +37,21 @@ const Finances = ({data, ico}: {data: EnhancedCompanyFinancial, ico: string}) =>
           {revenueTrend && <Trend trend={revenueTrend} />}
         </Item>
       )}
+    </Fragment>
+  )
+}
+
+const Finances = ({data, ico}: FinancesProps) => {
+  const [lastFinances = {}, ...otherFinances] = data
+
+  return (
+    <Fragment>
+      <FinancesItem data={lastFinances} ico />
+      {
+        otherFinances.map(finances => {
+          return (<FinancesItem data={finances} ico />)
+        })
+      }
     </Fragment>
   )
 }

@@ -61,8 +61,6 @@ const Findata = ({data}: {data: FinancialData}) => {
     terminated_on
   } = data
 
-  const lastFinances = finances[0]
-
   return(
     <Fragment>
       <Item
@@ -77,7 +75,7 @@ const Findata = ({data}: {data: FinancialData}) => {
       </Item>
       {established_on && <Item label="Založená">{showDate(established_on)}</Item>}
       {terminated_on && <Item label="Zaniknutá">{showDate(terminated_on)}</Item>}
-      <Finances data={lastFinances} ico />
+      <Finances data={finances} ico />
     </Fragment>
   )
 }
