@@ -3,7 +3,6 @@ import React, {Fragment} from 'react'
 import {Container, Row, Col} from 'reactstrap'
 import {Link, NavLink} from 'react-router-dom'
 import classnames from 'classnames'
-import type {Node} from 'react'
 
 import {
   getNewFinancialData,
@@ -23,6 +22,7 @@ import {ENTITY_CLOSE_ZOOM} from '../../../constants'
 import Contracts from './Contracts'
 import Notices from './Notices'
 import Eurofunds from './Eurofunds'
+import Item from './Item'
 import Relations from './Relations'
 import Trend from './Trend'
 import ExternalLink from '../ExternalLink'
@@ -52,25 +52,6 @@ type HandlerProps = {
 }
 
 type InfoProps = OwnProps & DispatchProps & HandlerProps
-
-type ItemProps = {|
-  children?: Node,
-  label?: string,
-  url?: string,
-  linkText?: Node,
-|}
-
-const Item = ({children, label, url, linkText}: ItemProps) => (
-  <li className="info-item">
-    {label && <strong className="info-item-label">{label}</strong>}
-    {url && (
-      <ExternalLink isMapView={false} url={url}>
-        {linkText}
-      </ExternalLink>
-    )}
-    {children}
-  </li>
-)
 
 const Findata = ({data}: {data: FinancialData}) => {
   const {
