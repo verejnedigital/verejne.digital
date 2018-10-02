@@ -30,7 +30,7 @@ import CircleIcon from '.././CircleIcon'
 import mapIcon from '../../../assets/mapIcon.svg'
 import ProfileIcon from 'react-icons/lib/fa/user'
 import type {NewEntityDetail, Center} from '../../../state'
-import type {FinancialData} from '../../../services/utilities'
+import type {EnhancedCompanyFinancial, FinancialData} from '../../../services/utilities'
 import './Info.css'
 
 type OwnProps = {
@@ -73,42 +73,60 @@ const Item = ({children, label, url, linkText}: ItemProps) => (
 )
 
 const Findata = ({data}: {data: FinancialData}) => {
-  const finances = data.finances[0] || {} // possible feature: display finances also for older years
-  return (
+  const {
+    established_on,
+    finances,
+    ico,
+    terminated_on
+  } = data
+
+  const lastFinances = finances[0]
+
+  return(
     <Fragment>
       <Item
         label="IČO"
-        url={`http://www.orsr.sk/hladaj_ico.asp?ICO=${data.ico}&SID=0`}
+        url={`http://www.orsr.sk/hladaj_ico.asp?ICO=${ico}&SID=0`}
         // TODO link to zrsr when there is a way to tell companies and persons apart
-        linkText={data.ico}
+        linkText={ico}
       >
-        &nbsp;(<ExternalLink isMapView={false} url={icoUrl(data.ico)}>
+        &nbsp;(<ExternalLink isMapView={false} url={icoUrl(ico)}>
           Detaily o firme
         </ExternalLink>)
       </Item>
-      {data.established_on && <Item label="Založená">{showDate(data.established_on)}</Item>}
-      {data.terminated_on && <Item label="Zaniknutá">{showDate(data.terminated_on)}</Item>}
-      {finances.employees && (
-        <Item label={`Zamestnanci v ${finances.year}`}>{finances.employees}</Item>
+      {established_on && <Item label="Založená">{showDate(established_on)}</Item>}
+      {terminated_on && <Item label="Zaniknutá">{showDate(terminated_on)}</Item>}
+      <Finances data={lastFinances} ico />
+    </Fragment>
+  )
+}
+
+const Finances = ({data, ico}: {data: EnhancedCompanyFinancial, ico: string}) => {  
+  const {employees, profit, profitTrend, revenue, revenueTrend, year} = data
+
+  return (
+    <Fragment>     
+      {employees && (
+        <Item label={`Zamestnanci v ${year}`}>{employees}</Item>
+      )} 
+      {profit && (
+        <Item
+          label={`Zisk v ${year}`}
+          url={icoUrl(ico)}
+          linkText={<ShowNumberCurrency num={profit} />}
+        >
+          {profitTrend && <Trend trend={profitTrend} />}
+        </Item>
       )}
-      {finances.profit ? (
+      {revenue && (
         <Item
-          label={`Zisk v ${finances.year}`}
-          url={icoUrl(data.ico)}
-          linkText={<ShowNumberCurrency num={finances.profit} />}
+          label={`Tržby v ${year}`}
+          url={icoUrl(ico)}
+          linkText={<ShowNumberCurrency num={revenue} />}
         >
-          {finances.profitTrend ? <Trend trend={finances.profitTrend} /> : null}
+          {revenueTrend && <Trend trend={revenueTrend} />}
         </Item>
-      ) : null}
-      {finances.revenue ? (
-        <Item
-          label={`Tržby v ${finances.year}`}
-          url={icoUrl(data.ico)}
-          linkText={<ShowNumberCurrency num={finances.revenue} />}
-        >
-          {finances.revenueTrend ? <Trend trend={finances.revenueTrend} /> : null}
-        </Item>
-      ) : null}
+      )}
     </Fragment>
   )
 }
