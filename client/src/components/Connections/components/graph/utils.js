@@ -1,5 +1,6 @@
 // @flow
 import type {GraphId, Node, Edge, Graph, RelatedEntity} from '../../../../state'
+import {orderBy} from 'lodash'
 
 export type Point = {|
   x: number,
@@ -148,7 +149,7 @@ export const addNeighbours = (
   const edges = graph.edges.slice()
   const {...nodeIds} = graph.nodeIds
   let addedCount = 0
-  for (const {eid, name} of neighbours) {
+  for (const {eid, name} of orderBy(neighbours, ['edge_types'])) {
     if (addedCount >= limit) break
     if (!nodeIds[eid]) {
       nodes.push({
