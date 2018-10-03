@@ -1,15 +1,10 @@
 // @flow
-import React, {Fragment} from 'react'
+import React from 'react'
 import {Container, Row, Col} from 'reactstrap'
 import {Link, NavLink} from 'react-router-dom'
 import classnames from 'classnames'
 
-import {
-  getNewFinancialData,
-  icoUrl,
-  ShowNumberCurrency,
-  showDate,
-} from '../../../services/utilities'
+import {getNewFinancialData, ShowNumberCurrency} from '../../../services/utilities'
 import {compose, withHandlers} from 'recompose'
 import {connect} from 'react-redux'
 import {
@@ -22,15 +17,13 @@ import {ENTITY_CLOSE_ZOOM} from '../../../constants'
 import Contracts from './Contracts'
 import Notices from './Notices'
 import Eurofunds from './Eurofunds'
-import Finances from './Finances'
+import Findata from './Findata'
 import Item from './Item'
 import Relations from './Relations'
-import ExternalLink from '../ExternalLink'
 import CircleIcon from '.././CircleIcon'
 import mapIcon from '../../../assets/mapIcon.svg'
 import ProfileIcon from 'react-icons/lib/fa/user'
 import type {NewEntityDetail, Center} from '../../../state'
-import type {FinancialData} from '../../../services/utilities'
 import './Info.css'
 
 type OwnProps = {
@@ -52,33 +45,6 @@ type HandlerProps = {
 }
 
 type InfoProps = OwnProps & DispatchProps & HandlerProps
-
-const Findata = ({data}: {data: FinancialData}) => {
-  const {
-    established_on,
-    finances,
-    ico,
-    terminated_on
-  } = data
-
-  return(
-    <Fragment>
-      <Item
-        label="IČO"
-        url={`http://www.orsr.sk/hladaj_ico.asp?ICO=${ico}&SID=0`}
-        // TODO link to zrsr when there is a way to tell companies and persons apart
-        linkText={ico}
-      >
-        &nbsp;(<ExternalLink isMapView={false} url={icoUrl(ico)}>
-          Detaily o firme
-        </ExternalLink>)
-      </Item>
-      {established_on && <Item label="Založená">{showDate(established_on)}</Item>}
-      {terminated_on && <Item label="Zaniknutá">{showDate(terminated_on)}</Item>}
-      <Finances data={finances} ico />
-    </Fragment>
-  )
-}
 
 const Info = ({data, onClose, showOnMap, className}: InfoProps) => (
   <Container className={classnames(className, {closable: Boolean(onClose)}, 'info')}>
@@ -103,13 +69,15 @@ const Info = ({data, onClose, showOnMap, className}: InfoProps) => (
               className="mb-2"
             />
           </Link>
-          {data.profil_id && <NavLink to={`/profil/${data.profil_id}`} title="Zobraz profil">
-            <ProfileIcon
-              alt="ProfileIcon"
-              style={{width: '18px', height: '25px'}}
-              className="mb-2 blue"
-            />
-          </NavLink>}
+          {data.profil_id && (
+            <NavLink to={`/profil/${data.profil_id}`} title="Zobraz profil">
+              <ProfileIcon
+                alt="ProfileIcon"
+                style={{width: '18px', height: '25px'}}
+                className="mb-2 blue"
+              />
+            </NavLink>
+          )}
           {Boolean(onClose) && (
             <span className="info-close-button" onClick={onClose}>
               &times;

@@ -7,89 +7,57 @@ import ChevronDown from 'react-icons/lib/fa/chevron-down'
 
 import type {StateUpdater} from '../../../types/commonTypes'
 import type {EnhancedCompanyFinancial} from '../../../services/utilities'
-import {icoUrl, ShowNumberCurrency} from '../../../services/utilities'
-import Item from './Item'
-import Trend from './Trend'
+import FinancesItem from './FinancesItem'
 import './Finances.css'
 import './InfoButton.css'
 
 type FinancesProps = {|
   data: EnhancedCompanyFinancial[],
   ico: string,
-  toggledOn: boolean,
+  expanded: boolean,
   toggle: () => void,
 |}
 
 type StateProps = {
-  toggledOn: boolean,
-  toggle: StateUpdater<boolean>,
+  expanded: boolean,
+  setExpanded: StateUpdater<boolean>,
 }
 
-const FinancesItem = ({data, ico}: {data: EnhancedCompanyFinancial, ico: string}) => {  
-  const {employees, profit, profitTrend, revenue, revenueTrend, year} = data
-
-  return (
-    <div className="finances-item">     
-      {employees && (
-        <Item label={`Zamestnanci v ${year}`}>{employees}</Item>
-      )} 
-      {profit && (
-        <Item
-          label={`Zisk v ${year}`}
-          url={icoUrl(ico)}
-          linkText={<ShowNumberCurrency num={profit} />}
-        >
-          {profitTrend && <Trend trend={profitTrend} />}
-        </Item>
-      )}
-      {revenue && (
-        <Item
-          label={`Tržby v ${year}`}
-          url={icoUrl(ico)}
-          linkText={<ShowNumberCurrency num={revenue} />}
-        >
-          {revenueTrend && <Trend trend={revenueTrend} />}
-        </Item>
-      )}
-    </div>
-  )
-}
-
-const Finances = ({data, ico, toggledOn, toggle}: FinancesProps) => {
-  const [lastFinances = {}, ...otherFinances] = data
-
-  return (
-    <Fragment>
-      <FinancesItem data={lastFinances} ico />
-      {otherFinances.length &&
-        (
-          <div className="info-button">
-            <Button outline color="primary" onClick={toggle}>
-            {toggledOn ? (
-                <ChevronUp aria-hidden="true" className="mb-1" />
-            ) : (
-                <ChevronDown aria-hidden="true" className="mb-1" />
-            )}{' '}
-            Staršie záznamy{' '}
-            <Badge color="primary" className="info-badge info-badge-number">
-              {otherFinances.length}
-            </Badge>
-            </Button>
-            <div className="older-finances">
-              {toggledOn && otherFinances.map(finances => {
-                return (<FinancesItem data={finances} ico />)
-              })}
-            </div>
-          </div>
-        )
-      }
-    </Fragment>
-  )
-}
+const Finances = ({
+  data: [lastFinances = {}, ...otherFinances],
+  ico,
+  expanded,
+  toggle,
+}: FinancesProps) => (
+  <Fragment>
+    <FinancesItem data={lastFinances} ico />
+    {!!otherFinances.length && (
+      <div className="info-button">
+        <Button outline color="primary" onClick={toggle}>
+          {expanded ? (
+            <ChevronUp aria-hidden="true" className="mb-1" />
+          ) : (
+            <ChevronDown aria-hidden="true" className="mb-1" />
+          )}{' '}
+          Staršie záznamy{' '}
+          <Badge color="primary" className="info-badge info-badge-number">
+            {otherFinances.length}
+          </Badge>
+        </Button>
+        <div className="older-finances">
+          {expanded &&
+            otherFinances.map((finances) => (
+              <FinancesItem key={finances.year} data={finances} ico />
+            ))}
+        </div>
+      </div>
+    )}
+  </Fragment>
+)
 
 export default compose(
-  withState('toggledOn', 'toggle', false),
+  withState('expanded', 'setExpanded', false),
   withHandlers({
-    toggle: ({toggle}: StateProps) => () => toggle((current) => !current),
+    toggle: ({setExpanded}: StateProps) => () => setExpanded((current) => !current),
   })
 )(Finances)
