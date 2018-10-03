@@ -1,13 +1,14 @@
 // @flow
 import React from 'react'
 import {compose} from 'redux'
+import {map} from 'lodash'
 import {connect} from 'react-redux'
 import {withHandlers} from 'recompose'
 import {updateValue} from '../../actions/sharedActions'
 import {profileQuerySelector, politicianGroupSelector} from '../../selectors/profileSelectors'
 import PoliticiansList from './components/PoliticiansList'
 import {FACEBOOK_LIKE_SRC} from '../../constants'
-import {Row, Col, Container, Button, ButtonGroup} from 'reactstrap'
+import {Row, Col, Container, Button} from 'reactstrap'
 
 import './Profile.css'
 
@@ -20,12 +21,21 @@ export type ProfileProps = {
   updateGroup: (group: string) => void,
 }
 
+const groupFilter = {
+  all: 'Všetci',
+  active: 'Aktívni',
+  nrsr_mps: 'Národná Rada Slovenskej Republiky',
+  candidates_2018_bratislava_mayor: 'Kandidáti na Primátora Bratislavy',
+  candidates_2019_president: 'Kandidáti na Prezidenta',
+}
+
 const Profile = ({query, politicianGroup, updateQuery, updateGroup}: ProfileProps) => (
   <Container className="Profile">
     <Row tag="header" key="header" className="header profile-header">
       <Col>
         <h1 className="title">
-          <span className="bolder">profil</span>.verejne.digital
+          <span className="bolder">profil</span>
+          .verejne.digital
         </h1>
         <h3 className="sub-title">
           Majetok poslancov a verejných funkcionárov podľa priznaní a katastra
@@ -45,14 +55,18 @@ const Profile = ({query, politicianGroup, updateQuery, updateGroup}: ProfileProp
       </Col>
     </Row>
     <Row>
-      <Col>
-        <ButtonGroup>
-          <Button onClick={() => updateGroup('all')}>all</Button>
-          <Button onClick={() => updateGroup('active')}>active</Button>
-          <Button onClick={() => updateGroup('nrsr_mps')}>nrsr_mps</Button>
-          <Button onClick={() => updateGroup('candidates_2018_bratislava_mayor')}>candidates_2018_bratislava_mayor</Button>
-          <Button onClick={() => updateGroup('candidates_2019_president')}>candidates_2019_president</Button>
-        </ButtonGroup>
+      <Col className="justify-content-center d-flex flex-wrap">
+        {map(groupFilter, (text, key) => (
+          <Button
+            key={key}
+            active={politicianGroup === key}
+            color="light"
+            className="my-1 profile-group-button"
+            onClick={() => updateGroup(key)}
+          >
+            {text}
+          </Button>
+        ))}
       </Col>
     </Row>
     <Row key="fb" className="profile-fbframe mt-2">
