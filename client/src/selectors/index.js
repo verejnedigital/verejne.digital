@@ -346,4 +346,4 @@ export const connectionDetailSelector = (
 }
 
 export const addNeighboursLimitSelector = (state: State): number =>
-  state.connections.addNeighbourLimit
+  state.connections.addNeighboursLimit

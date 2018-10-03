@@ -148,7 +148,8 @@ export const addNeighbours = (
   const edges = graph.edges.slice()
   const {...nodeIds} = graph.nodeIds
   let addedCount = 0
-  neighbours.some(({eid, name}: RelatedEntity) => {
+  for (const {eid, name} of neighbours) {
+    if (addedCount >= limit) break
     if (!nodeIds[eid]) {
       nodes.push({
         id: eid,
@@ -163,8 +164,7 @@ export const addNeighbours = (
       addedCount += 1
     }
     addEdgeIfMissing(eid, sourceEid, edges)
-    return addedCount >= limit
-  })
+  }
   return {nodes, edges, nodeIds}
 }
 

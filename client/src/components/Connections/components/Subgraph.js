@@ -4,7 +4,7 @@ import {compose} from 'redux'
 import {connect} from 'react-redux'
 import {withHandlers} from 'recompose'
 import GraphCompnent from 'react-graph-vis'
-import {Col, Row} from 'reactstrap'
+import {Col, Row, Input} from 'reactstrap'
 import InfoLoader from './InfoLoader'
 import {addNeighboursLimitSelector} from '../../../selectors'
 import {updateValue} from '../../../actions/sharedActions'
@@ -35,6 +35,7 @@ export type GraphEvent = {|
 
 export type OwnProps = {
   preloadNodes: boolean,
+  limit: number,
 } & EntityProps &
   ConnectionProps
 
@@ -46,6 +47,7 @@ type Handlers = {
   handleDoubleClick: (e: GraphEvent) => void,
   handleDrag: (e: GraphEvent) => void,
   handleDragEnd: (e: GraphEvent) => void,
+  handleLimitChange: (e: Event) => void,
 }
 
 type Props = OwnProps & SubgraphProps & DispatchProps & Handlers
@@ -142,6 +144,8 @@ const Subgraph = ({
   handleDoubleClick,
   handleDrag,
   handleDragEnd,
+  limit,
+  handleLimitChange,
 }: Props) => (
   <div className="subgraph">
     <Row>
@@ -152,7 +156,11 @@ const Subgraph = ({
           <li>
             Klik na vrchol: načítať a zobraziť detailné informácie o vrchole (v boxe pod grafom)
           </li>
-          <li>Dvojklik na vrchol: pridať do grafu nezobrazených susedov</li>
+          <li>Dvojklik na vrchol: pridať do grafu <Input
+            className="limit-input"
+            value={limit}
+            onChange={handleLimitChange}
+          /> nezobrazených susedov</li>
           <li>Potrasenie vrcholom: odobrať vrchol z grafu (aj jeho výlučných susedov)</li>
         </ul>
       </Col>
@@ -232,5 +240,15 @@ export default compose(
       }
     },
     handleDragEnd: () => resetGesture,
+    handleLimitChange: (props: OwnProps & DispatchProps & SubgraphProps) => (e: Event) => {
+      if (e.target instanceof HTMLInputElement) {
+        const limit = Number(e.target.value)
+        Number.isInteger(limit) && limit >= 0 &&
+          props.updateValue(
+            ['connections', 'addNeighboursLimit'],
+            limit
+          )
+      }
+    },
   })
 )(Subgraph)
