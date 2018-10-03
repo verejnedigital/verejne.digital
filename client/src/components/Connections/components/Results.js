@@ -28,8 +28,7 @@ const Results = (props: Props) => (
       </div>
     )}
     {(props.graphShown || !props.entitySearch2) && <Subgraph preloadNodes {...props} />}
-    {props.entitySearch2 &&
-      props.connections.map((connEid) => <InfoLoader key={connEid} eid={connEid} hasConnectLine />)}
+    {props.entitySearch2 && <InfoLoader eids={props.connections} />}
   </div>
 )
 
@@ -45,12 +44,16 @@ export default compose(
       EntityWrapper,
       ConnectionWrapper,
       branch(
-        ({connections, entitySearch2, entity1}: ConnectionProps & EntitySearchProps & EntityProps) =>
-        connections.length === 0 && (entity1.eids.length === 0 || entitySearch2.length > 0),
+        ({
+          connections,
+          entitySearch2,
+          entity1,
+        }: ConnectionProps & EntitySearchProps & EntityProps) =>
+          connections.length === 0 && (entity1.eids.length === 0 || entitySearch2.length > 0),
         branch(
-          ({entitySearch2} : EntitySearchProps) => entitySearch2.length > 0,
+          ({entitySearch2}: EntitySearchProps) => entitySearch2.length > 0,
           renderComponent(EmptyResults),
-          renderComponent(NoEntityResults),
+          renderComponent(NoEntityResults)
         )
       )
     ),

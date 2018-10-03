@@ -1,7 +1,7 @@
 // @flow
 import {createSelector} from 'reselect'
 import qs from 'qs'
-import {sortBy, filter, map} from 'lodash'
+import {sortBy, filter, map, pick} from 'lodash'
 import supercluster from 'points-cluster'
 import type {ContextRouter} from 'react-router-dom'
 
@@ -103,6 +103,8 @@ export const entityDetailSelector = (state: State, eid: number): NewEntityDetail
   if (!eid) return null
   return state.entityDetails[eid.toString()]
 }
+export const entityDetailsSelector = (state: State, eids: number[]): ObjectMap<NewEntityDetail> =>
+  pick(state.entityDetails, eids)
 export const addressEntitiesSelector = createSelector(
   entitiesSelector,
   openedAddressDetailSelector,
@@ -329,7 +331,7 @@ export const entitySearchSuggestionsSelector = createSelector(
   entitySearchSuggestionEidsSelector,
   (details, eids): Array<string> => {
     return eids
-      .map((eid) => details[eid.toString()] ? details[eid.toString()].name : null)
+      .map((eid) => (details[eid.toString()] ? details[eid.toString()].name : null))
       .filter((name, index, array) => name && array.indexOf(name) === index)
   }
 )
