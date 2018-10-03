@@ -140,13 +140,15 @@ export const addNeighbours = (
   graph: Graph,
   sourceEid: number,
   sourcePoint: Point,
-  neighbours: Array<RelatedEntity>
+  neighbours: Array<RelatedEntity>,
+  limit: number,
 ) => {
   // Update graph with new neighbours
   const nodes = graph.nodes.slice()
   const edges = graph.edges.slice()
   const {...nodeIds} = graph.nodeIds
-  neighbours.forEach(({eid, name}: RelatedEntity) => {
+  let addedCount = 0
+  neighbours.some(({eid, name}: RelatedEntity) => {
     if (!nodeIds[eid]) {
       nodes.push({
         id: eid,
@@ -158,8 +160,10 @@ export const addNeighbours = (
         y: sourcePoint.y + randomInt(20, 100),
       })
       nodeIds[eid] = true
+      addedCount += 1
     }
     addEdgeIfMissing(eid, sourceEid, edges)
+    return addedCount >= limit
   })
   return {nodes, edges, nodeIds}
 }

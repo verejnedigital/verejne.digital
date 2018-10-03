@@ -6,6 +6,7 @@ import {withHandlers} from 'recompose'
 import GraphCompnent from 'react-graph-vis'
 import {Col, Row} from 'reactstrap'
 import InfoLoader from './InfoLoader'
+import {addNeighboursLimitSelector} from '../../../selectors'
 import {updateValue} from '../../../actions/sharedActions'
 import SubgraphWrapper from '../dataWrappers/SubgraphWrapper'
 import {options as graphOptions, getNodeEid, addNeighbours, removeNodes} from './graph/utils'
@@ -13,7 +14,7 @@ import {checkShaking, resetGesture} from './graph/gestures'
 import type {SubgraphProps} from '../dataWrappers/SubgraphWrapper'
 import type {EntityProps} from '../dataWrappers/EntityWrapper'
 import type {ConnectionProps} from '../dataWrappers/ConnectionWrapper'
-import type {GraphId, Node} from '../../../state'
+import type {GraphId, Node, State} from '../../../state'
 import type {Point} from './graph/utils'
 
 import './Subgraph.css'
@@ -179,7 +180,12 @@ const Subgraph = ({
 )
 
 export default compose(
-  connect(null, {updateValue}),
+  connect(
+    (state: State) => ({
+      limit: addNeighboursLimitSelector(state),
+    }),
+    {updateValue}
+  ),
   SubgraphWrapper,
   withHandlers({
     handleSelect: (props: OwnProps & DispatchProps & SubgraphProps) => ({nodes}: GraphEvent) => {
@@ -202,7 +208,7 @@ export default compose(
         const related = props.entityDetails[clickedEid.toString()].related
         props.updateValue(
           ['connections', 'subgraph', subgraphId, 'data'],
-          addNeighbours(props.subgraph, clickedEid, pointer.canvas, related)
+          addNeighbours(props.subgraph, clickedEid, pointer.canvas, related, props.limit)
         )
       }
     },

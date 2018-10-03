@@ -183,3 +183,5 @@ export const FIND_ENTITY_TITLE = 'Hľadaj firmu / človeka'
 
 export const LOADING_CIRCLE_COLOR = '#0062db'
 export const NAVBAR_HEIGHT = 45
+
+export const ADD_NEIGHBOUR_LIMIT = 20

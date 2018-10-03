@@ -344,3 +344,6 @@ export const connectionDetailSelector = (
   const query = `${eids1.join()}-${eids2.join()}`
   return state.connections.detail[query] ? state.connections.detail[query].ids : []
 }
+
+export const addNeighboursLimitSelector = (state: State): number =>
+  state.connections.addNeighbourLimit
