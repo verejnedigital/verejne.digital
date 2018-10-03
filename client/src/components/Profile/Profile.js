@@ -3,27 +3,24 @@ import React from 'react'
 import {compose} from 'redux'
 import {connect} from 'react-redux'
 import {withHandlers} from 'recompose'
-import {withDataProviders} from 'data-provider'
 import {updateValue} from '../../actions/sharedActions'
-import {politiciansProvider} from '../../dataProviders/profileDataProviders'
-import {profileQuerySelector, filteredPoliticiansSelector, politicianGroupSelector} from '../../selectors/profileSelectors'
+import {profileQuerySelector, politicianGroupSelector} from '../../selectors/profileSelectors'
 import PoliticiansList from './components/PoliticiansList'
 import {FACEBOOK_LIKE_SRC} from '../../constants'
 import {Row, Col, Container, Button, ButtonGroup} from 'reactstrap'
 
 import './Profile.css'
 
-import type {State, Politician} from '../../state'
+import type {State} from '../../state'
 
 export type ProfileProps = {
   query: string,
-  politicians: Array<Politician>,
   politicianGroup: string,
   updateQuery: (e: Event) => void,
   updateGroup: (group: string) => void,
 }
 
-const Profile = ({query, politicians, politicianGroup, updateQuery, updateGroup}: ProfileProps) => (
+const Profile = ({query, politicianGroup, updateQuery, updateGroup}: ProfileProps) => (
   <Container className="Profile">
     <Row tag="header" key="header" className="header profile-header">
       <Col>
@@ -73,7 +70,7 @@ const Profile = ({query, politicians, politicianGroup, updateQuery, updateGroup}
     </Row>
     <Row tag="article" key="politicians" className="profile">
       <Col>
-        <PoliticiansList politicians={politicians} />
+        <PoliticiansList />
       </Col>
     </Row>
   </Container>
@@ -84,11 +81,9 @@ export default compose(
     (state: State) => ({
       query: profileQuerySelector(state),
       politicianGroup: politicianGroupSelector(state),
-      politicians: filteredPoliticiansSelector(state),
     }),
     {updateValue}
   ),
-  withDataProviders(({politicianGroup}) => [politiciansProvider(politicianGroup)]),
   withHandlers({
     updateQuery: ({updateValue}) => (e) => {
       updateValue(['profile', 'query'], e.target.value)
