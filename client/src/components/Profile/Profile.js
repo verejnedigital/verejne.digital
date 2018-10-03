@@ -6,10 +6,10 @@ import {withHandlers} from 'recompose'
 import {withDataProviders} from 'data-provider'
 import {updateValue} from '../../actions/sharedActions'
 import {politiciansProvider} from '../../dataProviders/profileDataProviders'
-import {profileQuerySelector, filteredPoliticiansSelector} from '../../selectors/profileSelectors'
+import {profileQuerySelector, filteredPoliticiansSelector, politicianGroupSelector} from '../../selectors/profileSelectors'
 import PoliticiansList from './components/PoliticiansList'
 import {FACEBOOK_LIKE_SRC} from '../../constants'
-import {Row, Col, Container} from 'reactstrap'
+import {Row, Col, Container, Button, ButtonGroup} from 'reactstrap'
 
 import './Profile.css'
 
@@ -18,10 +18,12 @@ import type {State, Politician} from '../../state'
 export type ProfileProps = {
   query: string,
   politicians: Array<Politician>,
+  politicianGroup: string,
   updateQuery: (e: Event) => void,
+  updateGroup: (group: string) => void,
 }
 
-const Profile = ({query, politicians, updateQuery}: ProfileProps) => (
+const Profile = ({query, politicians, politicianGroup, updateQuery, updateGroup}: ProfileProps) => (
   <Container className="Profile">
     <Row tag="header" key="header" className="header profile-header">
       <Col>
@@ -45,7 +47,18 @@ const Profile = ({query, politicians, updateQuery}: ProfileProps) => (
         />
       </Col>
     </Row>
-    <Row key="fb" className="profile-fbframe">
+    <Row>
+      <Col>
+        <ButtonGroup>
+          <Button onClick={() => updateGroup('all')}>all</Button>
+          <Button onClick={() => updateGroup('active')}>active</Button>
+          <Button onClick={() => updateGroup('nrsr_mps')}>nrsr_mps</Button>
+          <Button onClick={() => updateGroup('candidates_2018_bratislava_mayor')}>candidates_2018_bratislava_mayor</Button>
+          <Button onClick={() => updateGroup('candidates_2019_president')}>candidates_2019_president</Button>
+        </ButtonGroup>
+      </Col>
+    </Row>
+    <Row key="fb" className="profile-fbframe mt-2">
       <Col>
         <iframe
           title="fb_like"
@@ -67,17 +80,21 @@ const Profile = ({query, politicians, updateQuery}: ProfileProps) => (
 )
 
 export default compose(
-  withDataProviders(() => [politiciansProvider()]),
   connect(
     (state: State) => ({
       query: profileQuerySelector(state),
+      politicianGroup: politicianGroupSelector(state),
       politicians: filteredPoliticiansSelector(state),
     }),
     {updateValue}
   ),
+  withDataProviders(({politicianGroup}) => [politiciansProvider(politicianGroup)]),
   withHandlers({
-    updateQuery: (props) => (e) => {
-      props.updateValue(['profile', 'query'], e.target.value)
+    updateQuery: ({updateValue}) => (e) => {
+      updateValue(['profile', 'query'], e.target.value)
+    },
+    updateGroup: ({updateValue}) => (newGroup: string) => {
+      updateValue(['profile', 'politicianGroup'], newGroup)
     },
   })
 )(Profile)

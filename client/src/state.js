@@ -359,11 +359,12 @@ export type State = {|
     +searchQuery: string,
   |},
   +profile: {|
-    +list: ObjectMap<Politician>,
+    +list: ObjectMap<ObjectMap<Politician>>,
     +details: ObjectMap<PoliticianDetail>,
     +cadastral: ObjectMap<CadastralData>,
     +assetDeclarations: ObjectMap<ObjectMap<AssetDeclaration>>,
     +query: string,
+    +politicianGroup: string,
   |},
   +publicly: {|
     +currentPage: number,
@@ -400,6 +401,7 @@ const getInitialState = (): State => ({
     cadastral: {},
     assetDeclarations: {},
     query: '',
+    politicianGroup: 'active',
   },
   publicly: {
     currentPage: 1,
