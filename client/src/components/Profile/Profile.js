@@ -4,6 +4,7 @@ import {compose} from 'redux'
 import {map} from 'lodash'
 import {connect} from 'react-redux'
 import {withHandlers} from 'recompose'
+import {withRouter} from 'react-router-dom'
 import {updateValue} from '../../actions/sharedActions'
 import {profileQuerySelector, politicianGroupSelector} from '../../selectors/profileSelectors'
 import PoliticiansList from './components/PoliticiansList'
@@ -12,6 +13,7 @@ import {Row, Col, Container, Button} from 'reactstrap'
 
 import './Profile.css'
 
+import type {RouterHistory, ContextRouter} from 'react-router'
 import type {State} from '../../state'
 
 export type ProfileProps = {
@@ -19,14 +21,13 @@ export type ProfileProps = {
   politicianGroup: string,
   updateQuery: (e: Event) => void,
   updateGroup: (group: string) => void,
+  history: RouterHistory,
 }
 
 const groupFilter = {
-  all: 'Všetci',
-  active: 'Aktívni',
-  nrsr_mps: 'Národná Rada Slovenskej Republiky',
-  candidates_2018_bratislava_mayor: 'Kandidáti na Primátora Bratislavy',
-  candidates_2019_president: 'Kandidáti na Prezidenta',
+  all: 'Poslanci a verejni funkcionari',
+  candidates_2018_bratislava_mayor: 'Kandidati na primatora Bratislavy',
+  candidates_2019_president: 'Prezidentski kandidati',
 }
 
 const Profile = ({query, politicianGroup, updateQuery, updateGroup}: ProfileProps) => (
@@ -91,10 +92,11 @@ const Profile = ({query, politicianGroup, updateQuery, updateGroup}: ProfileProp
 )
 
 export default compose(
+  withRouter,
   connect(
-    (state: State) => ({
+    (state: State, props: ContextRouter) => ({
       query: profileQuerySelector(state),
-      politicianGroup: politicianGroupSelector(state),
+      politicianGroup: politicianGroupSelector(state, props),
     }),
     {updateValue}
   ),
@@ -102,8 +104,8 @@ export default compose(
     updateQuery: ({updateValue}) => (e) => {
       updateValue(['profile', 'query'], e.target.value)
     },
-    updateGroup: ({updateValue}) => (newGroup: string) => {
-      updateValue(['profile', 'politicianGroup'], newGroup)
+    updateGroup: ({history}) => (newGroup: string) => {
+      history.push(`?group=${newGroup}`)
     },
   })
 )(Profile)

@@ -139,23 +139,16 @@ export const parsedAssetDeclarationsForYearSelector: Selector<
 
 export const profileQuerySelector = (state: State): string => normalizeName(state.profile.query)
 
-export const politicianGroupSelector = (state: State): string => state.profile.politicianGroup
+export const politicianGroupSelector = (state: State, props: ContextRouter): string =>
+  parseQueryFromLocation(props.location).group || 'all'
 
-export const politicianListSelector = (state: State): string => {
-  console.log(state.profile.politicianGroup)
-  const x = state.profile.list[state.profile.politicianGroup]
-  console.log(state.profile)
-  return x || {}
-}
+export const politicianListSelector = (state: State, props: ContextRouter): ObjectMap<Politician> =>
+  state.profile.list[politicianGroupSelector(state, props)] || {}
 
-export const orderedPoliticiansSelector: Selector<State> = createSelector(
+export const orderedPoliticiansSelector: Selector<State, *, Array<Politician>> = createSelector(
   politicianListSelector,
   (politicians) =>
-    sortBy(Object.values(politicians), [
-      'num_houses_flats',
-      'num_fields_gardens',
-      'num_others',
-    ])
+    sortBy(Object.values(politicians), ['num_houses_flats', 'num_fields_gardens', 'num_others'])
       .reverse()
       .map((p, i) => ({order: i + 1, ...p}))
 )
@@ -173,4 +166,3 @@ export const filteredPoliticiansSelector: Selector<State, *, Array<Politician>> 
         (p.party_abbreviation && normalizeName(p.party_abbreviation).indexOf(query) !== -1)
     )
 )
-

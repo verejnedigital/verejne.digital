@@ -2,34 +2,35 @@
 import React from 'react'
 import {compose} from 'redux'
 import {connect} from 'react-redux'
+import {withRouter} from 'react-router-dom'
 import {withDataProviders} from 'data-provider'
 import type {ComponentType} from 'react'
 import {politiciansProvider} from '../../../dataProviders/profileDataProviders'
-import {filteredPoliticiansSelector, politicianGroupSelector} from '../../../selectors/profileSelectors'
+import {
+  filteredPoliticiansSelector,
+  politicianGroupSelector,
+} from '../../../selectors/profileSelectors'
 
+import type {ContextRouter} from 'react-router'
 import type {State, Politician} from '../../../state'
-
-type BasePoliticiansListProps = {
-  politicianGroup: string,
-}
 
 export type PoliticiansListProps = {
   politicians: Array<Politician>,
   politicianGroup: string,
 }
 
-const PoliticiansListWrapper = (
-  WrappedComponent: ComponentType<PoliticiansListProps>
-): ComponentType<BasePoliticiansListProps> => {
+const PoliticiansListWrapper = (WrappedComponent: ComponentType<PoliticiansListProps>) => {
   const wrapped = (props: PoliticiansListProps) => <WrappedComponent {...props} />
 
   return compose(
-    connect((state: State) => ({
-      politicianGroup: politicianGroupSelector(state),
-      politicians: filteredPoliticiansSelector(state),
+    withRouter,
+    connect((state: State, props: ContextRouter) => ({
+      politicianGroup: politicianGroupSelector(state, props),
+      politicians: filteredPoliticiansSelector(state, props),
     })),
-    withDataProviders(({politicianGroup}: BasePoliticiansListProps) =>
-      [politiciansProvider(politicianGroup)]),
+    withDataProviders(({politicianGroup}: PoliticiansListProps) => [
+      politiciansProvider(politicianGroup),
+    ])
   )(wrapped)
 }
 
