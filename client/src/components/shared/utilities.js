@@ -20,23 +20,15 @@ export const getRelationTitle = (
   typeId != null
     ? symmetric
       ? typeDate === ''
-        ? name1.concat(' a ').concat(name2).concat(' majú tento vzťah')
-        : name1.concat(' a ').concat(name2).concat(' mali tento vzťah do ').concat(typeDate)
+        ? `${name1} a ${name2} majú tento vzťah`
+        : `${name1} a ${name2} mali tento vzťah do ${typeDate}`
       : typeDate === ''
         ? typeId > 0
-          ? name1.concat(' zastupuje túto funkciu pre ').concat(name2)
-          : name2.concat(' zastupuje túto funkciu pre ').concat(name1)
+          ? `${name1} zastupuje túto funkciu pre ${name2}`
+          : `${name2} zastupuje túto funkciu pre ${name1}`
         : typeId > 0
-          ? name1
-            .concat(' zastupoval/a túto funkciu pre ')
-            .concat(name2)
-            .concat(' do ')
-            .concat(typeDate)
-          : name2
-            .concat(' zastupoval/a túto funkciu pre ')
-            .concat(name1)
-            .concat(' do ')
-            .concat(typeDate)
+          ? `${name1} zastupoval/a túto funkciu pre ${name2} do ${typeDate}`
+          : `${name2} zastupoval/a túto funkciu pre ${name1} do ${typeDate}`
     : 'Spojenie neznáme'
 
 export const getColor = (type: number, date: string) =>
