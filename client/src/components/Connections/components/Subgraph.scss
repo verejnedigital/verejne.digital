@@ -15,8 +15,14 @@
     box-shadow: 0 4px 12px 0 $shadow-color;
   }
 
+  .limit {
+    cursor: pointer;
+  }
+
   .limit-input {
     display: inline-block;
-    width: 3.2rem;
+    padding: 0;
+    width: 2rem;
+    max-height: 1.3rem;
   }
 }

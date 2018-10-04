@@ -2,7 +2,7 @@
 import React from 'react'
 import {compose} from 'redux'
 import {connect} from 'react-redux'
-import {withHandlers} from 'recompose'
+import {withHandlers, withState} from 'recompose'
 import GraphCompnent from 'react-graph-vis'
 import {Col, Row, Input} from 'reactstrap'
 import InfoLoader from './InfoLoader'
@@ -36,6 +36,8 @@ export type GraphEvent = {|
 export type OwnProps = {
   preloadNodes: boolean,
   limit: number,
+  limitSettingsOpen: boolean,
+  setLimitSettingsOpen: (open: boolean) => void,
 } & EntityProps &
   ConnectionProps
 
@@ -48,6 +50,7 @@ type Handlers = {
   handleDrag: (e: GraphEvent) => void,
   handleDragEnd: (e: GraphEvent) => void,
   handleLimitChange: (e: Event) => void,
+  toggleLimitSettings: (e: Event) => void,
 }
 
 type Props = OwnProps & SubgraphProps & DispatchProps & Handlers
@@ -146,6 +149,8 @@ const Subgraph = ({
   handleDragEnd,
   limit,
   handleLimitChange,
+  limitSettingsOpen,
+  toggleLimitSettings,
 }: Props) => (
   <div className="subgraph">
     <Row>
@@ -156,11 +161,16 @@ const Subgraph = ({
           <li>
             Klik na vrchol: načítať a zobraziť detailné informácie o vrchole (v boxe pod grafom)
           </li>
-          <li>Dvojklik na vrchol: pridať do grafu <Input
-            className="limit-input"
-            value={limit}
-            onChange={handleLimitChange}
-          /> nezobrazených susedov</li>
+          <li>Dvojklik na vrchol: pridať do grafu {limitSettingsOpen
+            ? <Input
+              className="limit-input"
+              value={limit}
+              onChange={handleLimitChange}
+              onBlur={toggleLimitSettings}
+              autoFocus
+            />
+            : <b className="limit" onClick={toggleLimitSettings}>{limit}</b>
+          } nezobrazených susedov</li>
           <li>Potrasenie vrcholom: odobrať vrchol z grafu (aj jeho výlučných susedov)</li>
         </ul>
       </Col>
@@ -194,6 +204,7 @@ export default compose(
     }),
     {updateValue}
   ),
+  withState('limitSettingsOpen', 'setLimitSettingsOpen', false),
   SubgraphWrapper,
   withHandlers({
     handleSelect: (props: OwnProps & DispatchProps & SubgraphProps) => ({nodes}: GraphEvent) => {
@@ -250,5 +261,7 @@ export default compose(
           )
       }
     },
+    toggleLimitSettings: ({setLimitSettingsOpen, limitSettingsOpen}) => () =>
+      setLimitSettingsOpen(!limitSettingsOpen),
   })
 )(Subgraph)
