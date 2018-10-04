@@ -19,6 +19,7 @@ import {
   entitySearchSuggestionsSelector,
   entitySearchSuggestionEidsSelector,
   entitySearchLoadedSelector,
+  entitySearchForSelector,
 } from '../../../selectors'
 import {
   entitySearchProvider,
@@ -40,6 +41,7 @@ type EntitySearchAutocompleteProps = {
   entitySearchValue: string,
   suggestionEids: Array<number>,
   suggestions: Array<string>,
+  entitySearchFor: string,
   setEntitySearchValue: (value: string) => void,
   setEntitySearchFor: (value: string) => void,
   toggleModalOpen: () => void,
@@ -127,6 +129,7 @@ export default compose(
       suggestionEids: entitySearchSuggestionEidsSelector(state),
       suggestions: entitySearchSuggestionsSelector(state),
       entitySearchLoaded: entitySearchLoadedSelector(state),
+      entitySearchFor: entitySearchForSelector(state),
     }),
     {
       setEntitySearchValue,
@@ -146,12 +149,13 @@ export default compose(
       setEntitySearchOpen,
       setDrawer,
       setEntitySearchLoaded,
+      entitySearchFor,
     }) => (e) => {
       e.preventDefault()
       if (entitySearchValue.trim() === '') {
         return
       }
-      setEntitySearchLoaded(false)
+      entitySearchFor !== entitySearchValue && setEntitySearchLoaded(false)
       setEntitySearchFor(entitySearchValue)
       closeAddressDetail()
       setEntitySearchOpen(true)

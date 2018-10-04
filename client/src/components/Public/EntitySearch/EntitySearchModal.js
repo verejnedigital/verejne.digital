@@ -117,12 +117,13 @@ export default compose(
       setEntitySearchFor,
       entitySearchValue,
       setEntitySearchLoaded,
+      entitySearchFor,
     }) => (e) => {
       e.preventDefault()
       if (entitySearchValue.trim() === '') {
         return
       }
-      setEntitySearchLoaded(false)
+      entitySearchFor !== entitySearchValue && setEntitySearchLoaded(false)
       setEntitySearchFor(entitySearchValue)
     },
     setEntitySearchValue: ({updateValue}) => (e) =>
