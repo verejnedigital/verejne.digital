@@ -106,7 +106,7 @@ export default compose(
       updateValue(['profile', 'query'], e.target.value)
     },
     updateGroup: ({history}) => (newGroup: string) => {
-      history.push(`?group=${getQueryFromGroup(newGroup)}`)
+      history.push(`?skupina=${getQueryFromGroup(newGroup)}`)
     },
   })
 )(Profile)

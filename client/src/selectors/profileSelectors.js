@@ -142,7 +142,7 @@ export const parsedAssetDeclarationsForYearSelector: Selector<
 export const profileQuerySelector = (state: State): string => normalizeName(state.profile.query)
 
 export const politicianGroupSelector = (state: State, props: ContextRouter): string =>
-  getGroupFromQuery(parseQueryFromLocation(props.location).group) || DEFAULT_POLITICIAN_GROUP
+  getGroupFromQuery(parseQueryFromLocation(props.location).skupina) || DEFAULT_POLITICIAN_GROUP
 
 export const politicianListSelector = (state: State, props: ContextRouter): ObjectMap<Politician> =>
   state.profile.list[politicianGroupSelector(state, props)] || {}
