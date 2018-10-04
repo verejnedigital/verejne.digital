@@ -317,6 +317,15 @@ export type NewEntityDetail = {
   profil_id?: number,
 }
 
+export type PoliticianOffice = {|
+  party_nom: string,
+  party_abbreviation: string,
+  term_finish: number,
+  office_name_male: string,
+  term_start: number,
+  office_name_female: string,
+|}
+
 export type PoliticianDetail = {|
   picture: string,
   party_nom: string,
@@ -329,6 +338,7 @@ export type PoliticianDetail = {|
   office_name_male: string,
   term_start: number,
   office_name_female: string,
+  offices: Array<PoliticianOffice>
 |}
 
 export type Politician = {|
