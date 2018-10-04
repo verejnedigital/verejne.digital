@@ -10,6 +10,7 @@ import {profileQuerySelector, politicianGroupSelector} from '../../selectors/pro
 import PoliticiansList from './components/PoliticiansList'
 import {FACEBOOK_LIKE_SRC} from '../../constants'
 import {Row, Col, Container, Button} from 'reactstrap'
+import {getQueryFromGroup} from './utilities'
 
 import './Profile.css'
 
@@ -105,7 +106,7 @@ export default compose(
       updateValue(['profile', 'query'], e.target.value)
     },
     updateGroup: ({history}) => (newGroup: string) => {
-      history.push(`?group=${newGroup}`)
+      history.push(`?group=${getQueryFromGroup(newGroup)}`)
     },
   })
 )(Profile)

@@ -2,8 +2,10 @@
 import {createSelector} from 'reselect'
 import {sortBy, last, mapValues, chunk, filter, values} from 'lodash'
 import {normalizeName, parseQueryFromLocation} from '../utils'
+import {getGroupFromQuery} from '../components/Profile/utilities'
+
 import {paramsIdSelector} from './index'
-import {CADASTRAL_PAGINATION_CHUNK_SIZE} from '../constants'
+import {CADASTRAL_PAGINATION_CHUNK_SIZE, DEFAULT_POLITICIAN_GROUP} from '../constants'
 
 import type {State, Politician, PoliticianDetail, CadastralData, AssetDeclaration} from '../state'
 import type {Selector} from 'reselect'
@@ -140,7 +142,7 @@ export const parsedAssetDeclarationsForYearSelector: Selector<
 export const profileQuerySelector = (state: State): string => normalizeName(state.profile.query)
 
 export const politicianGroupSelector = (state: State, props: ContextRouter): string =>
-  parseQueryFromLocation(props.location).group || 'all'
+  getGroupFromQuery(parseQueryFromLocation(props.location).group) || DEFAULT_POLITICIAN_GROUP
 
 export const politicianListSelector = (state: State, props: ContextRouter): ObjectMap<Politician> =>
   state.profile.list[politicianGroupSelector(state, props)] || {}
