@@ -1,0 +1,45 @@
+@import '../variables.scss';
+
+.info-button {
+  border-top: 1px solid $border-color;
+  padding-top: 1rem;
+  margin-top: 1rem;
+}
+
+.info-button-list {
+  margin-top: 1rem;
+  margin-bottom: 0;
+
+  > li {
+    border-bottom: 1px solid $border-color;
+    padding: 0.25rem 0;
+  }
+
+  > * .btn {
+    white-space: normal;
+    text-align: left;
+  }
+
+  > li:last-child {
+    border-bottom: none;
+  }
+}
+
+.info-badge {
+  position: relative;
+  bottom: 0.05rem;
+  top: auto !important;
+
+  &.info-badge-number {
+    bottom: 0.065rem;
+  }
+
+  &.info-badge.badge {
+    white-space: normal;
+    text-align: left;
+  }
+}  
+
+.content {
+  margin-top: 1em;
+}
