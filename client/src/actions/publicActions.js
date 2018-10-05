@@ -149,3 +149,10 @@ export const setEntitySearchValue = (value: string) => ({
   payload: value,
   reducer: () => value,
 })
+
+export const setAddressesLoaded = (loaded: boolean) => ({
+  type: 'Set addresses loaded',
+  path: ['publicly', 'addressesLoaded'],
+  payload: loaded,
+  reducer: () => loaded,
+})
