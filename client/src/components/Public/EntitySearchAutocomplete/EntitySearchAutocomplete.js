@@ -16,7 +16,6 @@ import {
 } from '../../../actions/publicActions'
 import {
   entitySearchValueSelector,
-  entitySearchSuggestionsSelector,
   entitySearchSuggestionEidsSelector,
   entitySearchLoadedSelector,
   entitySearchForSelector,
@@ -25,22 +24,17 @@ import {
   entitySearchProvider,
   entityDetailProvider,
 } from '../../../dataProviders/sharedDataProviders'
-
-import classnames from 'classnames'
-import './EntitySearchAutocomplete.css'
-
+import AutoComplete from '../AutoComplete/AutoComplete'
 import SearchIcon from 'react-icons/lib/fa/search'
 import ModalIcon from 'react-icons/lib/fa/clone'
-import Autocomplete from 'react-autocomplete'
-
-import {FIND_ENTITY_TITLE} from '../../../constants'
 
 import type {State} from '../../../state'
+
+import './EntitySearchAutocomplete.css'
 
 type EntitySearchAutocompleteProps = {
   entitySearchValue: string,
   suggestionEids: Array<number>,
-  suggestions: Array<string>,
   entitySearchFor: string,
   setEntitySearchValue: (value: string) => void,
   setEntitySearchFor: (value: string) => void,
@@ -49,24 +43,12 @@ type EntitySearchAutocompleteProps = {
   setEntitySearchOpen: (open: boolean) => void,
   closeAddressDetail: () => void,
   findEntities: (e: Event) => void,
-  onSelectHandler: (e: Event) => void,
-  onChangeHandler: (e: Event) => void,
-  getItemValue: (suggestion: string) => string,
-  renderItem: (suggestion: string, isHighlighted: boolean) => any,
   setEntitySearchLoaded: (loaded: boolean) => void,
-}
-
-const menuStyle = {
-  padding: '0px',
-  borderRadius: '0px',
-  background: 'white',
-  zIndex: 1,
 }
 
 const EntitySearchAutocomplete = ({
   entitySearchValue,
   suggestionEids,
-  suggestions,
   setEntitySearchValue,
   setEntitySearchFor,
   toggleModalOpen,
@@ -74,40 +56,11 @@ const EntitySearchAutocomplete = ({
   setEntitySearchOpen,
   closeAddressDetail,
   findEntities,
-  onSelectHandler,
-  onChangeHandler,
-  getItemValue,
-  renderItem,
   setEntitySearchLoaded,
 }: EntitySearchAutocompleteProps) => (
   <Form onSubmit={findEntities}>
     <InputGroup className="autocomplete-holder">
-      <Autocomplete
-        getItemValue={getItemValue}
-        items={suggestions}
-        renderItem={renderItem}
-        value={entitySearchValue}
-        onChange={onChangeHandler}
-        onSelect={onSelectHandler}
-        autoHighlight={false}
-        inputProps={{
-          id: 'entity-input',
-          className: 'form-control',
-          type: 'text',
-          placeholder: FIND_ENTITY_TITLE,
-        }}
-        renderMenu={function(items, value, style) {
-          // this.menuStyle is react-autocomplete's default
-          // we're using menuStyle to partially override it
-          return (
-            <div
-              className="autocomplete-suggestions-menu"
-              style={{...style, ...this.menuStyle, ...menuStyle}}
-              children={items}
-            />
-          )
-        }}
-      />
+      <AutoComplete />
       <InputGroupAddon addonType="append">
         <Button className="addon-button" color="primary" onClick={findEntities}>
           <SearchIcon />
@@ -127,7 +80,6 @@ export default compose(
     (state: State) => ({
       entitySearchValue: entitySearchValueSelector(state),
       suggestionEids: entitySearchSuggestionEidsSelector(state),
-      suggestions: entitySearchSuggestionsSelector(state),
       entitySearchLoaded: entitySearchLoadedSelector(state),
       entitySearchFor: entitySearchForSelector(state),
     }),
@@ -161,33 +113,6 @@ export default compose(
       setEntitySearchOpen(true)
       setDrawer(true)
     },
-    onSelectHandler: ({
-      setEntitySearchValue,
-      setEntitySearchFor,
-      closeAddressDetail,
-      setEntitySearchOpen,
-      setDrawer,
-    }) => (name, suggestion) => {
-      setEntitySearchValue(name)
-      setEntitySearchFor(name)
-      closeAddressDetail()
-      setEntitySearchOpen(true)
-      setDrawer(true)
-    },
-    onChangeHandler: ({setEntitySearchValue}) => (e) => {
-      setEntitySearchValue(e.target.value)
-    },
-    getItemValue: () => (suggestion) => suggestion,
-    renderItem: () => (suggestion, isHighlighted) => (
-      <div
-        key={suggestion}
-        className={classnames('autocomplete-item', {
-          'autocomplete-item--active': isHighlighted,
-        })}
-      >
-        <strong>{suggestion}</strong>
-      </div>
-    ),
   }),
   withDataProviders(({entitySearchValue, suggestionEids}) => [
     ...(entitySearchValue.trim() !== ''
