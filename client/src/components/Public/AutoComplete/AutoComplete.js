@@ -11,6 +11,7 @@ import {
   setDrawer,
   setEntitySearchOpen,
   closeAddressDetail,
+  setEntitySearchLoaded,
 } from '../../../actions/publicActions'
 import {entitySearchValueSelector, entitySearchSuggestionsSelector} from '../../../selectors'
 
@@ -80,6 +81,7 @@ export default compose(
       setEntitySearchFor,
       setDrawer,
       setEntitySearchOpen,
+      setEntitySearchLoaded,
       closeAddressDetail,
     }
   ),
@@ -90,7 +92,9 @@ export default compose(
       closeAddressDetail,
       setEntitySearchOpen,
       setDrawer,
+      setEntitySearchLoaded,
     }) => (name, suggestion) => {
+      setEntitySearchLoaded(false)
       setEntitySearchValue(name)
       setEntitySearchFor(name)
       closeAddressDetail()
