@@ -26,9 +26,9 @@ export type ProfileProps = {
 }
 
 const groupFilter = {
-  all: 'Poslanci a verejni funkcionari',
-  candidates_2018_bratislava_mayor: 'Kandidati na primatora Bratislavy',
-  candidates_2019_president: 'Prezidentski kandidati',
+  all: 'Poslanci a verejní funkcionári',
+  candidates_2018_bratislava_mayor: 'Kandidáti na primátora Bratislavy',
+  candidates_2019_president: 'Prezidentskí kandidáti',
 }
 
 const Profile = ({query, politicianGroup, updateQuery, updateGroup}: ProfileProps) => (
