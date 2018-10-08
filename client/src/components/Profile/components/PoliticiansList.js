@@ -3,6 +3,8 @@ import React from 'react'
 import Politician from './Politician'
 import {Table} from 'reactstrap'
 
+import PoliticiansListWrapper from './PoliticiansListWrapper'
+
 import './PoliticiansList.css'
 
 import type {Politician as PoliticianType} from '../../../state'
@@ -33,4 +35,4 @@ const PoliticiansList = ({politicians}: PoliticianListProps) => (
   </Table>
 )
 
-export default PoliticiansList
+export default PoliticiansListWrapper(PoliticiansList)
