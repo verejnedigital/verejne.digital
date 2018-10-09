@@ -5,6 +5,7 @@ import {connect} from 'react-redux'
 import {withHandlers} from 'recompose'
 import GraphCompnent from 'react-graph-vis'
 import {Col, Row} from 'reactstrap'
+import Legend from '../../shared/Legend/Legend'
 import CompanyDetails from './../../shared/CompanyDetails'
 import {updateValue} from '../../../actions/sharedActions'
 import SubgraphWrapper from '../dataWrappers/SubgraphWrapper'
@@ -50,87 +51,10 @@ type Handlers = {
 
 type Props = OwnProps & SubgraphProps & DispatchProps & Handlers
 
-const legendStyle = {
-  width: '100%',
-  height: '120px',
-}
 const graphStyle = {
   width: '100%',
   height: '600px',
 }
-
-const legendGraph = (() => {
-  const x = 10
-  const y = 10
-  const step = 120
-  return {
-    nodes: [
-      {
-        id: '1',
-        x,
-        y,
-        label: 'Firma/Osoba\n(počet prepojení)',
-        fixed: true,
-        physics: false,
-      },
-      {
-        id: '2',
-        x: x + step,
-        y,
-        label: 'Obchod so štátom',
-        group: 'contracts',
-        fixed: true,
-        physics: false,
-      },
-      {
-        id: '3',
-        x: x + 2 * step,
-        y,
-        label: 'Kontakt\ns politikou',
-        group: 'politTies',
-        fixed: true,
-        physics: false,
-      },
-      {
-        id: '4',
-        x: x + 3 * step,
-        y,
-        label: 'Kontakt s politikou\na obchod so štátom',
-        group: 'politContracts',
-        fixed: true,
-        physics: false,
-      },
-      {
-        id: '5',
-        x: x + 4 * step,
-        y,
-        label: 'Politik',
-        group: 'politician',
-        fixed: true,
-        physics: false,
-      },
-      {
-        id: '6',
-        x: x + 5 * step,
-        y,
-        label: 'Údaje sa\nnačítavajú',
-        group: 'notLoaded',
-        fixed: true,
-        physics: false,
-      },
-      {
-        id: '7',
-        x: x + 6 * step,
-        y,
-        label: 'Zaniknutá',
-        shape: 'diamond',
-        fixed: true,
-        physics: false,
-      },
-    ],
-    edges: [],
-  }
-})()
 
 const Subgraph = ({
   subgraph,
@@ -145,7 +69,7 @@ const Subgraph = ({
 }: Props) => (
   <div className="subgraph">
     <Row>
-      <Col lg="5" md="12">
+      <Col lg="7" md="12">
         Ovládanie:
         <ul>
           <li>Ťahanie vrchola: premiestnenie vrchola v grafe</li>
@@ -156,13 +80,11 @@ const Subgraph = ({
           <li>Potrasenie vrcholom: odobrať vrchol z grafu (aj jeho výlučných susedov)</li>
         </ul>
       </Col>
-      <Col lg="7" md="12">
-        <div className="graph graph-legend">
-          <GraphCompnent graph={legendGraph} options={graphOptions} style={legendStyle} />
-        </div>
+      <Col lg="5" md="12">
+        <Legend />
       </Col>
     </Row>
-    <div className="graph">
+    <div className="graph mt-1">
       <GraphCompnent
         graph={subgraph}
         options={graphOptions}

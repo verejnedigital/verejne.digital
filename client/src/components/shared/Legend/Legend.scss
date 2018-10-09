@@ -1,11 +1,8 @@
 @import "../../variables.scss";
 
 .legend {
-  position: absolute;
   background: white;
   padding: .3rem;
-  right: 1.3rem;
-  bottom: 2rem;
   //width: 11.3rem;
   //height: 10.3rem;
   border: 1px solid $border-color;
@@ -15,12 +12,19 @@
     display: flex;
   }
 
+  &.position-absolute {
+    position: absolute;
+    right: 1.3rem;
+    bottom: 2rem;
+  }
+
   p {
     text-align: left;
     font-size: .8rem;
     margin-bottom: 0;
   }
 }
+
 
 button.legend {
   cursor: pointer;

@@ -21,7 +21,7 @@
     "react-app-polyfill": "^0.1.3",
     "react-autocomplete": "^1.8.1",
     "react-dom": "^16.3.2",
-    "react-graph-vis": "^1.0.2",
+    "react-graph-vis": "https://github.com/mirecmrozek/react-graph-vis/tarball/master",
     "react-icons": "^2.2.7",
     "react-js-pagination": "^3.0.2",
     "react-loading-components": "^1.1.12",
@@ -35,6 +35,7 @@
     "redux-thunk": "^2.2.0",
     "regenerator-runtime": "^0.11.1",
     "reselect": "^3.0.1",
+    "vis": "https://github.com/mirecmrozek/vis/tarball/master",
     "whatwg-fetch": "^2.0.4"
   },
   "scripts": {
