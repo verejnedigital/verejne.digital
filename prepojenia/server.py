@@ -151,12 +151,15 @@ class NotableConnections(MyServer):
     radius = self._parse_int('radius', default=6)
     max_nodes_to_explore = self._parse_int(
       'max_explore', default=100000, max_value=1000000)
+    target_order = self._parse_int(
+      'target_order', default=50, max_value=200)
     max_order = self._parse_int(
-      'max_order', default=50, max_value=200)
+      'max_order', default=100, max_value=200)
 
     # Build subgraph of connections to notable entities:
     subgraph = relations.get_notable_connections_subgraph(
-      start, notable_eids, radius, max_nodes_to_explore, max_order)
+      start, notable_eids, radius, max_nodes_to_explore, target_order,
+      max_order)
 
     # Endow returning vertices with entity names (and other info).
     self._add_entity_info_to_vertices(subgraph['vertices'])

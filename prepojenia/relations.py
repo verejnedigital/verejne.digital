@@ -153,7 +153,8 @@ class Relations:
                           start,
                           max_distance=None,
                           max_distance_by_set=None,
-                          max_nodes_to_explore=None):
+                          max_nodes_to_explore=None,
+                          verbose=False):
     """Returns nodes as reached from `start` in BFS order.
 
     Args:
@@ -166,6 +167,7 @@ class Relations:
           from `start` to `max_distance_by_set`.
       max_nodes_to_explore: Maximum number of distinct nodes to
           visit before terminating.
+      verbose: Boolean indicating whether to output debug information.
     Returns:
       queue: List of eIDs in the order BFS encountered them.
       distance: Dict mapping visited eIDs to distance from `start`.
@@ -198,6 +200,11 @@ class Relations:
 
       queue_index += 1
 
+    # Optionally report traversal information.
+    if verbose:
+      print("Final queue length %d, last element %d (distance %d)" % (
+        len(queue), queue[-1], distance[queue[-1]]))
+
     return queue, distance
 
   def get_notable_connections_subgraph(self,
@@ -205,7 +212,9 @@ class Relations:
                                        notable_eids,
                                        max_distance,
                                        max_nodes_to_explore,
-                                       max_order):
+                                       target_order,
+                                       max_order,
+                                       verbose=False):
     """Returns a subgraph that is a neighbourhood of `start`.
 
     Args:
@@ -219,7 +228,11 @@ class Relations:
       max_nodes_to_explore: Maximum number of distinct nodes the BFS
           will encounter before terminating. Tweak this parameter to
           get sufficiently fast responses from the APIs.
+      target_order: Number of vertices to aim for (do not continue
+          adding vertices beyond this number, if a notable connection
+          is already visible in the subgraph constructed so far).
       max_order: Maximum number of vertices to return.
+      verbose: Boolean indicating whether to output debug information.
     Returns:
       Subgraph containing all nodes in `start` and all shortest paths
       between `start` and `notable_eids` that are within
@@ -232,7 +245,8 @@ class Relations:
         start,
         max_distance=max_distance,
         max_distance_by_set=None,
-        max_nodes_to_explore=max_nodes_to_explore
+        max_nodes_to_explore=max_nodes_to_explore,
+        verbose=verbose
     )
 
     # For each vertex v, compute the smallest integer d such that v
@@ -267,15 +281,19 @@ class Relations:
     # Determine vertices to be included in the subgraph by finding
     # a limit on `d` such that `max_order` is not exceeded.
     subgraph_vertices = []
-    d = 0
-    while (d <= max_distance) and (
-        len(subgraph_vertices) + len(entities_with_d[d]) <= max_order):
-      subgraph_vertices.extend(entities_with_d[d])
-      d += 1
+    for batch in entities_with_d:
+      order_now = len(subgraph_vertices)
+      if order_now > 0 and order_now + len(batch) > target_order:
+        break
+      if order_now == 0 and len(batch) > max_order:
+        break
+      subgraph_vertices.extend(batch)
 
     # If no notable connections have been found at all, include the
     # immediate neighbourhood of `start`.
     if not subgraph_vertices:
+      if verbose:
+        print('No connections added, returning neighbourhood.')
       for vertex in queue:
         if distance[vertex] >= 2:
           break
