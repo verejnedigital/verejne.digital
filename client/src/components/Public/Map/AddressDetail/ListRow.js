@@ -24,8 +24,8 @@ type DetailedInfoProps = {|
 |}
 
 const _DetailedInfo = ({toggleEntityInfo, data}: DetailedInfoProps) => (
-  <ListGroupItem action className="list-row">
-    <Info data={data} canClose onClose={toggleEntityInfo} />
+  <ListGroupItem action className="list-row detailed-info">
+    <Info data={data} onClose={toggleEntityInfo} />
   </ListGroupItem>
 )
 

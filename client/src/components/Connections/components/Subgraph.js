@@ -5,8 +5,8 @@ import {connect} from 'react-redux'
 import {withHandlers} from 'recompose'
 import GraphCompnent from 'react-graph-vis'
 import {Col, Row} from 'reactstrap'
-import InfoLoader from './InfoLoader'
 import Legend from '../../shared/Legend/Legend'
+import CompanyDetails from './../../shared/CompanyDetails'
 import {updateValue} from '../../../actions/sharedActions'
 import SubgraphWrapper from '../dataWrappers/SubgraphWrapper'
 import {options as graphOptions, getNodeEid, addNeighbours, removeNodes} from './graph/utils'
@@ -18,6 +18,7 @@ import type {GraphId, Node} from '../../../state'
 import type {Point} from './graph/utils'
 
 import './Subgraph.css'
+import './InfoLoader.css'
 
 export type GraphEvent = {|
   nodes: Array<Node>,
@@ -96,7 +97,11 @@ const Subgraph = ({
         style={graphStyle}
       />
     </div>
-    {selectedEids.map((eid) => <InfoLoader key={eid} eid={eid} />)}
+    {selectedEids.map((eid) => (
+      <div className="info-loader" key={eid}>
+        <CompanyDetails eid={eid} />
+      </div>
+    ))}
   </div>
 )
 

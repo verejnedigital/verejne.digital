@@ -2,8 +2,10 @@
 import {createSelector} from 'reselect'
 import {sortBy, last, mapValues, chunk, filter, values} from 'lodash'
 import {normalizeName, parseQueryFromLocation} from '../utils'
+import {getGroupFromQuery} from '../components/Profile/utilities'
+
 import {paramsIdSelector} from './index'
-import {CADASTRAL_PAGINATION_CHUNK_SIZE} from '../constants'
+import {CADASTRAL_PAGINATION_CHUNK_SIZE, DEFAULT_POLITICIAN_GROUP} from '../constants'
 
 import type {State, Politician, PoliticianDetail, CadastralData, AssetDeclaration} from '../state'
 import type {Selector} from 'reselect'
@@ -139,10 +141,19 @@ export const parsedAssetDeclarationsForYearSelector: Selector<
 
 export const profileQuerySelector = (state: State): string => normalizeName(state.profile.query)
 
-export const orderedPoliticiansSelector = (state: State): Array<Politician> =>
-  sortBy(Object.values(state.profile.list), ['num_houses_flats', 'num_fields_gardens', 'num_others'])
-    .reverse()
-    .map((p, i) => ({order: i + 1, ...p}))
+export const politicianGroupSelector = (state: State, props: ContextRouter): string =>
+  getGroupFromQuery(parseQueryFromLocation(props.location).skupina) || DEFAULT_POLITICIAN_GROUP
+
+export const politicianListSelector = (state: State, props: ContextRouter): ObjectMap<Politician> =>
+  state.profile.list[politicianGroupSelector(state, props)] || {}
+
+export const orderedPoliticiansSelector: Selector<State, *, Array<Politician>> = createSelector(
+  politicianListSelector,
+  (politicians) =>
+    sortBy(Object.values(politicians), ['num_houses_flats', 'num_fields_gardens', 'num_others'])
+      .reverse()
+      .map((p, i) => ({order: i + 1, ...p}))
+)
 
 export const filteredPoliticiansSelector: Selector<State, *, Array<Politician>> = createSelector(
   profileQuerySelector,
@@ -152,6 +163,8 @@ export const filteredPoliticiansSelector: Selector<State, *, Array<Politician>> 
       (p) =>
         normalizeName(p.firstname).startsWith(query) ||
         normalizeName(p.surname).startsWith(query) ||
+        normalizeName(`${p.firstname} ${p.surname}`).startsWith(query) ||
+        normalizeName(`${p.surname} ${p.firstname}`).startsWith(query) ||
         (p.party_abbreviation && normalizeName(p.party_abbreviation).indexOf(query) !== -1)
     )
 )

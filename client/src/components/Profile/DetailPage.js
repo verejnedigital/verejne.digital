@@ -91,7 +91,7 @@ const DetailPage = ({
                 Pozor, možno iba {size(politician.entities) > 1 ? 'menovci' : 'menovec'}.
             </h5>
             {map(politician.entities, (e, i) => (
-              <Info key={i} data={e} className="bc-transparent" />
+              <Info key={i} data={e} />
             ))}
           </section>
         )}
@@ -113,7 +113,7 @@ const DetailPage = ({
                 assets={assets.unmovable_assets}
                 year={selectedYear}
                 title="Majetkové priznanie: Nehnuteľnosti"
-                image={`https://verejne.digital/img/majetok/${politician.surname}_${
+                image={`https://verejne.digital/resources/profil_asset_plots/${politician.surname}_${
                   politician.firstname
                 }.png`}
                 source={assets.source}
@@ -153,7 +153,7 @@ const DetailPage = ({
       </Col>
     </Row>
     {cadastral.length > 0 &&
-      <Row key="map" id="map" className="profile-map">
+      <Row key="map" id="map">
         <Col>
           <MapContainer assets={cadastral} {...mapProps} />
         </Col>

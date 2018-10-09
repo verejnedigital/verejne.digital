@@ -58,9 +58,8 @@
         SELECT
           organization_id as eid_relation,
           stakeholder_type_id,
-          ico,
           concat_ws(' ',
-            full_name, person_given_name, person_family_name
+            full_name, array_to_string(person_given_names,' '), array_to_string(person_family_names,' ')
           ) AS name,
           concat_ws(' ',
             address_formatted,
@@ -70,6 +69,7 @@
             address_municipality,
             address_country
           ) AS address,
+          cin AS ico,
           effective_from,
           effective_to
         FROM organization_stakeholder_entries
@@ -77,9 +77,8 @@
         SELECT
           organization_id as org_id,
           stakeholder_type_id,
-          ico,
           concat_ws(' ',
-            full_name, person_given_name, person_family_name
+            full_name, array_to_string(person_given_names,' '), array_to_string(person_family_names,' ')
           ) AS name,
           concat_ws(' ',
             address_formatted,
@@ -89,6 +88,7 @@
             address_municipality,
             address_country
           ) AS address,
+          cin AS ico,
           effective_from,
           effective_to
         FROM

@@ -97,6 +97,7 @@ export default compose(
       setEntitySearchOpen,
     }) => (event) => {
       if (cluster.numPoints === 1) {
+        deselectLocations()
         if (cluster.points[0].address_id) {
           openAddressDetail([cluster.points[0].address_id])
           setEntitySearchOpen(false)
@@ -106,13 +107,11 @@ export default compose(
       } else {
         if (zoom < 22) {
           zoomToLocation({lat: cluster.lat, lng: cluster.lng}, cluster.setZoomTo)
-          deselectLocations()
         } else {
           openAddressDetail(cluster.points.map((point) => point.address_id))
           setDrawer(true)
           setEntitySearchOpen(false)
           zoomToLocation({lat: cluster.lat, lng: cluster.lng}, Math.max(ENTITY_CLOSE_ZOOM, zoom))
-          deselectLocations()
         }
       }
     },

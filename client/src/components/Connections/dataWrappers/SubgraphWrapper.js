@@ -4,7 +4,7 @@ import {compose} from 'redux'
 import {connect} from 'react-redux'
 import {branch} from 'recompose'
 import {withDataProviders} from 'data-provider'
-import {isNil} from 'lodash'
+import {isNil, chunk} from 'lodash'
 import type {ComponentType} from 'react'
 import type {ObjectMap} from '../../../types/commonTypes'
 import {
@@ -23,6 +23,7 @@ import type {
   Node,
   Edge,
 } from '../../../state'
+import {MAX_ENTITY_REQUEST_COUNT} from '../../../constants'
 import type {EntityProps} from './EntityWrapper'
 import type {ConnectionProps} from './ConnectionWrapper'
 
@@ -157,8 +158,10 @@ const ConnectionWrapper = (WrappedComponent: ComponentType<*>) => {
       })),
       branch(
         ({preloadNodes, subgraph}: OwnProps & SubgraphProps) => subgraph != null && preloadNodes,
-        withDataProviders(({subgraph}: SubgraphProps) =>
-          subgraph.nodes.map(({id}: Node) => entityDetailProvider(id, false))
+        withDataProviders(({subgraph: {nodes}}: SubgraphProps) =>
+          chunk(nodes.map(({id}) => id), MAX_ENTITY_REQUEST_COUNT).map((ids) =>
+            entityDetailProvider(ids)
+          )
         )
       )
     )

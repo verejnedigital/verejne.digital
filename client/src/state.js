@@ -359,7 +359,7 @@ export type State = {|
     +searchQuery: string,
   |},
   +profile: {|
-    +list: ObjectMap<Politician>,
+    +list: ObjectMap<ObjectMap<Politician>>,
     +details: ObjectMap<PoliticianDetail>,
     +cadastral: ObjectMap<CadastralData>,
     +assetDeclarations: ObjectMap<ObjectMap<AssetDeclaration>>,
@@ -372,6 +372,7 @@ export type State = {|
     +entitySearchOpen: boolean,
     +entityModalOpen: boolean,
     +entitySearchFor: string,
+    +entitySearchLoaded: boolean,
     +showInfo: any, //TODO: TBD
     +openedAddressDetail: Array<number>,
     +drawerOpen: boolean,
@@ -407,6 +408,7 @@ const getInitialState = (): State => ({
     entitySearchOpen: false,
     entityModalOpen: false,
     entitySearchFor: '',
+    entitySearchLoaded: false,
     showInfo: {},
     openedAddressDetail: [],
     drawerOpen: false,
