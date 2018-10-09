@@ -2,6 +2,7 @@
 
 #entity-input {
   width: $verejne-sidebar-width - 80px;
+  height: auto;
 
   @media screen and (max-width: 575px) {
     width: 100%;
@@ -38,4 +39,8 @@
   @media screen and (max-width: 575px) {
     width: calc(100% - 82px);
   }
+}
+
+.autocomplete__input {
+  height: auto;
 }
