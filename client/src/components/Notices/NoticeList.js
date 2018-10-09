@@ -58,7 +58,7 @@ const NoticeList = ({
         <Col>
           <Input
             type="text"
-            className="form-control mt-2"
+            className="notice-input mt-2"
             placeholder="Vyhľadávanie"
             value={searchValue}
             onChange={updateSearchValue}
