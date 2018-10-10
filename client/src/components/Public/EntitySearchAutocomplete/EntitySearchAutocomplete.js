@@ -28,7 +28,7 @@ import AutoComplete from '../AutoComplete/AutoComplete'
 import SearchIcon from 'react-icons/lib/fa/search'
 import ModalIcon from 'react-icons/lib/fa/clone'
 
-import {FIND_ENTITY_TOOLTIP, OPEN_MODAL_TOOLTIP} from '../../../constants'
+import {FIND_ENTITY_TITLE, OPEN_MODAL_TOOLTIP} from '../../../constants'
 
 import type {State} from '../../../state'
 
@@ -63,7 +63,7 @@ const EntitySearchAutocomplete = ({
   <Form onSubmit={findEntities}>
     <InputGroup className="autocomplete-holder">
       <AutoComplete />
-      <InputGroupAddon title={FIND_ENTITY_TOOLTIP} addonType="append">
+      <InputGroupAddon title={FIND_ENTITY_TITLE} addonType="append">
         <Button className="addon-button" color="primary" onClick={findEntities}>
           <SearchIcon />
         </Button>
