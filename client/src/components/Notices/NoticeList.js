@@ -23,6 +23,7 @@ import type {Notice, State} from '../../state'
 import NoticeSidebar from './NoticeSidebar'
 import Bulletin from './Bulletin'
 import {Input, FormText, Row, Col, Container} from 'reactstrap'
+import Legend from './Legend'
 import './NoticeList.css'
 
 export type NoticesOrdering = 'title' | 'date'
@@ -52,31 +53,45 @@ const NoticeList = ({
 
   return (
     <Container fluid className="notice-list">
+      <NoticeSidebar />
       <Row>
-        <Col xl="3" tag="aside" className="notice-list-sidebar">
-          <NoticeSidebar />
-        </Col>
-        <Col xl={{size: 9, offset: 3}}>
+        <Col>
           <Input
             type="text"
-            className="form-control mt-2"
+            className="notice-input mt-2"
             placeholder="Vyhľadávanie"
             value={searchValue}
             onChange={updateSearchValue}
           />
+          <hr />
+          <Legend />
+          <hr />
           <FormText>
             {searchValue && `${resultPlurality(noticesLength)} pre "${searchValue}".`}
           </FormText>
-          {noticesLength >= 1 &&
-            map(items, (bulletin, index) => (
-              <Bulletin
-                key={index}
-                items={bulletin}
-                number={bulletin[0].bulletin_number}
-                year={bulletin[0].bulletin_year}
-                date={bulletin[0].bulletin_published_on}
-              />
-            ))}
+          <div className="notice-list-table">
+            {noticesLength >= 1 &&
+              map(items, (bulletin, index) => (
+                <Bulletin
+                  key={index}
+                  items={bulletin}
+                  number={bulletin[0].bulletin_number}
+                  year={bulletin[0].bulletin_year}
+                  date={bulletin[0].bulletin_published_on}
+                />
+              ))}
+          </div>
+        </Col>
+      </Row>
+      <Row>
+        <Col className="fbfooter">
+          <iframe
+            src="https://www.facebook.com/plugins/like.php?href=https%3A%2F%2Fwww.facebook.com%2Fverejne.digital&width=111&layout=button_count&action=like&size=small&show_faces=true&share=true&height=46&appId="
+            className="fbIframe"
+            title="facebook"
+            scrolling="no"
+            frameBorder="0"
+          />
         </Col>
       </Row>
     </Container>

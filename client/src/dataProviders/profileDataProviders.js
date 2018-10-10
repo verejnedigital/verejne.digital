@@ -3,16 +3,16 @@ import {dispatchReceivedData} from './dataProvidersUtils'
 import {DEFAULT_PROVIDER_KEEP_ALIVE} from '../constants'
 import {loadImageAsync, mapArrayToId, mapObjToId} from '../utils'
 
-export const politiciansProvider = () => ({
-  ref: 'politicians',
+export const politiciansProvider = (group: string) => ({
+  ref: `politicians-${group}`,
   getData: [
     fetch,
-    `${process.env.REACT_APP_API_URL || ''}/api/k/list_politicians?group=active`,
+    `${process.env.REACT_APP_API_URL || ''}/api/k/list_politicians?group=${group}`,
     {
       accept: 'application/json',
     },
   ],
-  onData: [dispatchReceivedData, ['profile', 'list']],
+  onData: [dispatchReceivedData, ['profile', 'list', group]],
   keepAliveFor: DEFAULT_PROVIDER_KEEP_ALIVE,
 })
 

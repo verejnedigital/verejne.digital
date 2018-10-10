@@ -360,7 +360,7 @@ export type State = {|
     +searchQuery: string,
   |},
   +profile: {|
-    +list: ObjectMap<Politician>,
+    +list: ObjectMap<ObjectMap<Politician>>,
     +details: ObjectMap<PoliticianDetail>,
     +cadastral: ObjectMap<CadastralData>,
     +assetDeclarations: ObjectMap<ObjectMap<AssetDeclaration>>,

@@ -4,7 +4,7 @@ import {compose} from 'redux'
 import {connect} from 'react-redux'
 import {branch} from 'recompose'
 import {withDataProviders} from 'data-provider'
-import {isNil} from 'lodash'
+import {isNil, chunk} from 'lodash'
 import type {ComponentType} from 'react'
 import type {ObjectMap} from '../../../types/commonTypes'
 import {
@@ -23,6 +23,7 @@ import type {
   Node,
   Edge,
 } from '../../../state'
+import {MAX_ENTITY_REQUEST_COUNT} from '../../../constants'
 import type {EntityProps} from './EntityWrapper'
 import type {ConnectionProps} from './ConnectionWrapper'
 
@@ -78,7 +79,7 @@ function enhanceGraph(
   // adds entity info to graph
   const nodes = oldNodes.map(({id, label, x, y, ...props}) => {
     if (!entityDetails[id.toString()]) {
-      return {id, label, group: 'notLoaded', x, y, ...props}
+      return {id, label, group: 'notLoaded', shape: 'box', x, y, ...props}
     }
     const entity = entityDetails[id.toString()]
     const poi = props.is_query
@@ -90,13 +91,14 @@ function enhanceGraph(
         }
       })
     }
+
     return {
       // delete x, y to prevent jumping on node load
       ...props,
       id,
       label: bold(poi, `${entity.name} (${entity.related.length})`),
       group: findGroup(entity),
-      shape: poi ? 'box' : (entity.companyinfo || {}).terminated_on ? 'diamond' : 'dot',
+      shape: 'infoBox',
       leaf: false,
     }
   })
@@ -115,6 +117,7 @@ function transformRaw(rawGraph: {vertices: Array<RawNode>, edges: Array<RawEdge>
       id: n.eid,
       label: n.entity_name,
       is_query: n.query,
+      shape: 'infoBox',
     })
     nodeIds[n.eid] = true
   })
@@ -155,8 +158,10 @@ const ConnectionWrapper = (WrappedComponent: ComponentType<*>) => {
       })),
       branch(
         ({preloadNodes, subgraph}: OwnProps & SubgraphProps) => subgraph != null && preloadNodes,
-        withDataProviders(({subgraph}: SubgraphProps) =>
-          subgraph.nodes.map(({id}: Node) => entityDetailProvider(id, false))
+        withDataProviders(({subgraph: {nodes}}: SubgraphProps) =>
+          chunk(nodes.map(({id}) => id), MAX_ENTITY_REQUEST_COUNT).map((ids) =>
+            entityDetailProvider(ids)
+          )
         )
       )
     )

@@ -185,3 +185,5 @@ export const LOADING_CIRCLE_COLOR = '#0062db'
 export const NAVBAR_HEIGHT = 45
 
 export const ADD_NEIGHBOURS_LIMIT = 20
+
+export const DEFAULT_POLITICIAN_GROUP = 'all'
