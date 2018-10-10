@@ -1,7 +1,8 @@
 // @flow
 import React, {Fragment} from 'react'
-import {compose} from 'redux'
 import {connect} from 'react-redux'
+import {compose, withState, withHandlers} from 'recompose'
+import {isNil} from 'lodash'
 import {withDataProviders} from 'data-provider'
 import {noticeDetailProvider} from '../../dataProviders/noticesDataProviders'
 import {noticeDetailSelector} from '../../selectors'
@@ -25,7 +26,16 @@ export type NoticeDetailProps = {
   },
 }
 
-const _NoticeDetail = ({notice}: NoticeDetailProps) => {
+type toggleCustomerProps = {
+  showCustomerInfo: boolean,
+  toggleCustomer: () => void,
+}
+
+const _NoticeDetail = ({
+  notice,
+  showCustomerInfo,
+  toggleCustomer,
+}: NoticeDetailProps & toggleCustomerProps) => {
   const bulletin = notice.bulletin_published_on ? (
     <span>
       <ExternalLink
@@ -39,11 +49,11 @@ const _NoticeDetail = ({notice}: NoticeDetailProps) => {
     </span>
   ) : null
 
-  const estimate = notice.price_est_low ? (
+  const estimate = !isNil(notice.price_est_low) ? (
     <Fragment>
-      <ShowNumberCurrency num={notice.price_est_low} key="currency-1" />
+      <ShowNumberCurrency num={Math.round(notice.price_est_low)} />
       {' - '}
-      <ShowNumberCurrency num={notice.price_est_high} key="currency-2" />
+      <ShowNumberCurrency num={Math.round(notice.price_est_high)} />
     </Fragment>
   ) : null
 
@@ -54,7 +64,25 @@ const _NoticeDetail = ({notice}: NoticeDetailProps) => {
     },
     {
       label: 'Objednávateľ',
-      body: notice.name,
+      body: (
+        <a className="notice-item-link" onClick={toggleCustomer}>
+          {showCustomerInfo ? <span>[&minus;]</span> : '[+]'} {notice.name}
+        </a>
+      ),
+    },
+    {
+      label: null,
+      body: showCustomerInfo ? (
+        <CompanyDetails eid={notice.eid} />
+      ) : null,
+    },
+    {
+      label: 'Stav',
+      body: (
+        <span className={notice.total_final_value_amount ? 'text-danger' : 'text-success'}>
+          {notice.total_final_value_amount ? 'UKONČENÉ' : 'PREBIEHA'}
+        </span>
+      ),
     },
     {
       label: 'Vestník',
@@ -104,5 +132,9 @@ export default compose(
   }),
   connect((state: State, props: NoticeDetailProps) => ({
     notice: noticeDetailSelector(state, props),
-  }))
+  })),
+  withState('showCustomerInfo', 'setCustomer', false),
+  withHandlers({
+    toggleCustomer: ({setCustomer}) => () => setCustomer((current) => !current),
+  })
 )(_NoticeDetail)

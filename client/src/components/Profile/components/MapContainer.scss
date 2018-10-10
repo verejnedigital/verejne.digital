@@ -4,7 +4,10 @@ div#map {
   .map {
     height: 50vh;
     width: 100%;
-    padding-bottom: 20px;
+    margin-top: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px 0 $shadow-color;
+    border: 2px solid $border-color;
 
     .marker {
       width: 36px;

@@ -10,6 +10,9 @@ def get_politician_by_PersonId(db, PersonId):
         Persons.firstname AS firstname,
         Persons.title AS title,
         PersonOffices.picture_url AS picture,
+
+        -- TODO(matejbalog): Fields below temporarily kept for
+        -- backward compatibility. Remove when no longer needed.
         Parties.abbreviation AS party_abbreviation,
         Parties.name AS party_nom,
         PersonOffices.term_start AS term_start,
@@ -36,6 +39,32 @@ def get_politician_by_PersonId(db, PersonId):
     return None
   else:
     return politicians[0]
+
+
+def get_offices_of_person(db, person_id):
+  """Returns a list of offices held by person with `person_id`."""
+  query = """
+      SELECT
+        Parties.abbreviation AS party_abbreviation,
+        Parties.name AS party_nom,
+        PersonOffices.term_start AS term_start,
+        PersonOffices.term_end AS term_finish,
+        Offices.name_male AS office_name_male,
+        Offices.name_female AS office_name_female
+      FROM
+        Persons
+      INNER JOIN
+        PersonOffices ON PersonOffices.PersonId=Persons.id
+      INNER JOIN
+        Offices ON Offices.id=PersonOffices.officeid
+      LEFT JOIN
+        Parties ON Parties.id=PersonOffices.party_nomid
+      WHERE
+        Persons.Id=%s
+      ORDER BY
+        PersonOffices.term_end DESC
+      ;"""
+  return db.query(query, [person_id])
 
 
 def get_Parcels_owned_by_Person(db, PersonId):

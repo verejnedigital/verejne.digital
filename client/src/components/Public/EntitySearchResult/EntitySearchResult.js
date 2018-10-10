@@ -15,7 +15,11 @@ import {
   entitySearchProvider,
   entityDetailProvider,
 } from '../../../dataProviders/sharedDataProviders'
-import {makeLocationsSelected, zoomToLocation} from '../../../actions/publicActions'
+import {
+  makeLocationsSelected,
+  zoomToLocation,
+  setEntitySearchLoaded,
+} from '../../../actions/publicActions'
 import EntitySearchResultItem from '../EntitySearchResultItem/EntitySearchResultItem'
 import {getBoundsFromLocations} from '../../../services/map'
 import {NAVBAR_HEIGHT} from '../../../constants'
@@ -27,16 +31,19 @@ type EntitySearchResultProps = {
   entityDetails: ObjectMap<NewEntityDetail>,
   makeLocationsSelected: (Center[]) => void,
   zoomToLocation: (Center, number) => void,
+  setEntitySearchLoaded: (loaded: boolean) => void,
 }
 
 class EntitySearchResult extends PureComponent<EntitySearchResultProps> {
   componentDidMount() {
     this.highlightLocations()
+    this.props.setEntitySearchLoaded(this.props.searchFor.trim() !== '')
   }
 
   componentDidUpdate(oldProps) {
     if (this.props.searchFor !== oldProps.searchFor) {
       this.highlightLocations()
+      this.props.setEntitySearchLoaded(true)
     }
   }
 
@@ -80,6 +87,6 @@ export default compose(
     (state: State) => ({
       entityDetails: sortedEntitySearchDetailsSelector(state),
     }),
-    {makeLocationsSelected, zoomToLocation}
+    {makeLocationsSelected, zoomToLocation, setEntitySearchLoaded}
   )
 )(EntitySearchResult)

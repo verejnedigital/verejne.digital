@@ -1,11 +1,11 @@
 // @flow
-import districtJson from './slovakiaData/district-centers.json'
 import regionJson from './slovakiaData/region-centers.json'
 import districtCityJson from './slovakiaData/district_cities.json'
+import allCityJson from './slovakiaData/all_cities.json'
 
-export const SLOVAKIA_DISTRICT = districtJson
 export const SLOVAKIA_REGION = regionJson
-export const SLOVAKIA_CITIES = districtCityJson
+export const SLOVAKIA_DISTRICT_CITIES = districtCityJson
+export const SLOVAKIA_ALL_CITIES = allCityJson
 
 export const PAGINATION_CHUNK_SIZE = 10
 export const NOTICES_PAGINATION_SIZE = 10
@@ -185,3 +185,5 @@ export const OPEN_MODAL_TOOLTIP = 'Otvor modálne okno'
 
 export const LOADING_CIRCLE_COLOR = '#0062db'
 export const NAVBAR_HEIGHT = 45
+
+export const DEFAULT_POLITICIAN_GROUP = 'all'

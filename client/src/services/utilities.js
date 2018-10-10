@@ -33,7 +33,7 @@ const contractStatuses: ObjectMap<string> = {
 
 export function localeNumber(number: number) {
   return isFinite(number)
-    ? number.toLocaleString('sk-SK', {minimumFractionDigits: 2, maximumFractionDigits: 2})
+    ? number.toLocaleString('sk-SK', {minimumFractionDigits: 0, maximumFractionDigits: 2})
     : null
 }
 

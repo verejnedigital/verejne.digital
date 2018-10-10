@@ -4,6 +4,7 @@ import CompanyDetailWrapper from '../../dataWrappers/CompanyDetailWrapper'
 import type {CompanyDetailProps} from '../../dataWrappers/CompanyDetailWrapper'
 import Info from '../shared/Info/Info'
 
-const CompanyDetails = ({company}: CompanyDetailProps) => <Info data={company} />
+const CompanyDetails = ({company, onClose}: CompanyDetailProps) =>
+  <Info data={company} onClose={onClose} />
 
 export default CompanyDetailWrapper(CompanyDetails)

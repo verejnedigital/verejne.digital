@@ -3,7 +3,7 @@ import React from 'react'
 import Sidebar from './Sidebar/Sidebar'
 import EntitySearchModal from './EntitySearch/EntitySearchModal'
 import Map from './Map/Map'
-import Legend from './Legend/Legend'
+import Legend from '../shared/Legend/Legend'
 import './Public.css'
 
 const Public = () => (
@@ -11,7 +11,8 @@ const Public = () => (
     <Sidebar />
     <EntitySearchModal />
     <Map />
-    <Legend />
+    <Legend positionAbsolute closable />
+
   </div>
 )
 

@@ -9,8 +9,7 @@ import urllib
 from datetime import datetime
 from itertools import chain
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../data/db')))
-from db import DatabaseConnection
+from db.db import DatabaseConnection
 from utils import json_load, remove_accents
 
 

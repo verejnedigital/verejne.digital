@@ -1,7 +1,7 @@
 // @flow
 import {createSelector} from 'reselect'
 import qs from 'qs'
-import {sortBy, filter, map} from 'lodash'
+import {sortBy, filter, map, pick} from 'lodash'
 import supercluster from 'points-cluster'
 import type {ContextRouter} from 'react-router-dom'
 
@@ -15,7 +15,8 @@ import {
   COUNTRY_ZOOM,
   WORLD_ZOOM,
   SLOVAKIA_COORDINATES,
-  SLOVAKIA_CITIES,
+  SLOVAKIA_DISTRICT_CITIES,
+  SLOVAKIA_ALL_CITIES,
 } from '../constants'
 import {isInSlovakia, normalizeName} from '../utils'
 import type {NoticesOrdering} from '../components/Notices/NoticeList'
@@ -66,9 +67,9 @@ export const dateSortedNoticesSelector = createSelector(
   searchFilteredNoticesSelector,
   (data: Array<Notice>) => sortBy(data, ['bulletin_year'])
 )
-export const nameSortedNoticesSelector = createSelector(
-  searchFilteredNoticesSelector,
-  (data: Array<Notice>) => sortBy(data, ['title'])
+export const activeNoticesSelector = createSelector(
+  dateSortedNoticesSelector,
+  (notices: Array<Notice>) => filter(notices, (notice) => !notice.supplier_eid)
 )
 
 export const locationSearchSelector = (_: State, props: ContextRouter) =>
@@ -102,6 +103,8 @@ export const entityDetailSelector = (state: State, eid: number): NewEntityDetail
   if (!eid) return null
   return state.entityDetails[eid.toString()]
 }
+export const entityDetailsSelector = (state: State, eids: number[]): ObjectMap<NewEntityDetail> =>
+  pick(state.entityDetails, eids)
 export const addressEntitiesSelector = createSelector(
   entitiesSelector,
   openedAddressDetailSelector,
@@ -126,7 +129,7 @@ export const sortedAddressEntityDetailsSelector = createSelector(
 export const useLabelsSelector = createSelector(
   zoomSelector,
   centerSelector,
-  (zoom, center) => zoom < CITY_ZOOM && isInSlovakia(center)
+  (zoom, center) => zoom < SUB_CITY_ZOOM && isInSlovakia(center)
 )
 
 type SuperCluster = {
@@ -192,19 +195,28 @@ const createLabels = (mapOptions: MapOptions): Array<MapCluster> => {
         isLabel: true,
       },
     ]
-  } else {
-    if (mapOptions.zoom < CITY_ZOOM) {
-      labels = SLOVAKIA_CITIES.map((city) => ({
-        lat: city.coord[1],
-        lng: city.coord[0],
-        numPoints: 0,
-        id: city.name,
-        points: [],
-        setZoomTo: CITY_ZOOM,
-        isLabel: true,
-      }))
-    }
+  } else if (mapOptions.zoom < CITY_ZOOM) {
+    labels = SLOVAKIA_DISTRICT_CITIES.map((city) => ({
+      lat: city.coord[1],
+      lng: city.coord[0],
+      numPoints: 0,
+      id: city.name,
+      points: [],
+      setZoomTo: SUB_CITY_ZOOM,
+      isLabel: true,
+    }))
+  } else if (mapOptions.zoom < SUB_CITY_ZOOM) {
+    labels = SLOVAKIA_ALL_CITIES.map((city) => ({
+      lat: city.coord[0],
+      lng: city.coord[1],
+      numPoints: 0,
+      id: city.name,
+      points: [],
+      setZoomTo: SUB_CITY_ZOOM,
+      isLabel: true,
+    }))
   }
+
   return labels
 }
 
@@ -293,6 +305,7 @@ export const entitySearchValueSelector = (state: State) => state.publicly.entity
 export const entitySearchOpenSelector = (state: State) => state.publicly.entitySearchOpen
 export const entitySearchModalOpenSelector = (state: State) => state.publicly.entityModalOpen
 export const entitySearchForSelector = (state: State) => state.publicly.entitySearchFor
+export const entitySearchLoadedSelector = (state: State) => state.publicly.entitySearchLoaded
 export const entitySearchEidsSelector = createSelector(
   entitySearchesSelector,
   entitySearchForSelector,
@@ -318,7 +331,7 @@ export const entitySearchSuggestionsSelector = createSelector(
   entitySearchSuggestionEidsSelector,
   (details, eids): Array<string> => {
     return eids
-      .map((eid) => details[eid.toString()] ? details[eid.toString()].name : null)
+      .map((eid) => (details[eid.toString()] ? details[eid.toString()].name : null))
       .filter((name, index, array) => name && array.indexOf(name) === index)
   }
 )

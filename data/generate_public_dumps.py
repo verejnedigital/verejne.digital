@@ -2,8 +2,7 @@ import argparse
 import os
 import sys
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../data/db')))
-from db import DatabaseConnection
+from db.db import DatabaseConnection
 from utils import yaml_load
 
 

@@ -46,13 +46,6 @@ const _NoticeItem = ({
           </a>
         )}
       </td>
-      <td>
-        {item.supplier_name && (
-          <a className="notice-item-link" onClick={toggleSupplier}>
-            {showSupplierInfo ? <span>[&minus;]</span> : '[+]'} {item.supplier_name}
-          </a>
-        )}
-      </td>
       <td className="text-right">
         {item.best_similarity ? formatSimilarPercent(Math.round(item.best_similarity * 100)) : ''}
       </td>

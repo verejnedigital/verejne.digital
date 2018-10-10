@@ -12,6 +12,7 @@ const variables = {
   orangeColor: '#e55600',
   grayColor: '#6c8294',
   purpleColor: 'purple',
+  shadowColor: 'rgba(187, 198, 206, .5)',
 }
 
 export const options = {
@@ -23,6 +24,7 @@ export const options = {
     color: {color: variables.grayColor},
     hoverWidth: 0,
     width: 1,
+    length: 100,
   },
   groups: {
     notLoaded: {
@@ -30,10 +32,17 @@ export const options = {
     },
     normal: {
       shapeProperties: {borderDashes: false},
+      color: {
+        border: variables.blueColor,
+        highlight: {border: variables.blueColor},
+      },
     },
     contracts: {
-      color: {border: variables.blueColor, highlight: {border: variables.blueColor}},
-      borderWidth: 5,
+      color: {
+        background: variables.blueColor,
+        border: variables.blueColor,
+        highlight: {border: variables.blueColor},
+      },
       shapeProperties: {borderDashes: false},
     },
     politician: {
@@ -43,13 +52,11 @@ export const options = {
         highlight: {background: variables.purpleColor, border: variables.purpleColor},
       },
       font: {color: variables.purpleColor},
-      borderWidth: 5,
       shapeProperties: {borderDashes: false},
     },
     politTies: {
       color: {border: variables.orangeColor, highlight: {border: variables.orangeColor}},
       font: {color: variables.orangeColor},
-      borderWidth: 5,
       shapeProperties: {borderDashes: false},
     },
     politContracts: {
@@ -59,7 +66,6 @@ export const options = {
         highlight: {background: variables.orangeColor, border: variables.orangeColor},
       },
       font: {color: variables.orangeColor},
-      borderWidth: 5,
       shapeProperties: {borderDashes: false},
     },
   },
@@ -68,6 +74,7 @@ export const options = {
     multiselect: true,
   },
   nodes: {
+    mass: 2,
     value: 1,
     color: {
       background: 'white',
@@ -81,24 +88,21 @@ export const options = {
       multi: 'md', // enables use of bold/italics
     },
     widthConstraint: {maximum: 150},
+    borderWidth: 2,
     labelHighlightBold: false,
     shape: 'dot',
     shadow: {
-      enabled: false,
-      color: 'rgba(0,0,0,0.5)',
-      size: 30,
+      enabled: true,
+      color: variables.shadowColor,
+      size: 10,
       x: 0,
       y: 0,
-    },
-    scaling: {
-      min: 10,
-      max: 50,
     },
     chosen: {
       // selected nodes have shadow
       label: false,
       node: (values: {[string]: any}, id: GraphId, selected: boolean, hovering: boolean) => {
-        values.shadow = true
+        values.shadowSize = 30
       },
     },
   },
@@ -156,6 +160,7 @@ export const addNeighbours = (
         // they would otherwise appear in the middle of the viewport which disturbs the layout
         x: sourcePoint.x + randomInt(20, 100),
         y: sourcePoint.y + randomInt(20, 100),
+        is_query: false,
       })
       nodeIds[eid] = true
     }

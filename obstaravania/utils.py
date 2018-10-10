@@ -6,6 +6,18 @@ import json
 import os
 import yaml
 
+
+# TODO: This function is currently only used by the db.py module,
+# imported from serving.py via sys.path modification. Due to the new
+# sys.path content, db.py attempts to find the `yaml_load` function in
+# this file, instead of in its own "utils.py". When imports are done
+# properly, delete this function from here.
+def yaml_load(path):
+  with open(path, 'r') as f:
+    data_yaml = yaml.load(f)
+  return data_yaml
+
+
 def NormalizeIco(ico):
     if ico is None: return None
     ico = ico.replace(" ", "")

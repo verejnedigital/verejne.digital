@@ -1,16 +1,10 @@
 // @flow
-import React, {Fragment} from 'react'
+import React from 'react'
 import {Container, Row, Col} from 'reactstrap'
 import {Link, NavLink} from 'react-router-dom'
 import classnames from 'classnames'
-import type {Node} from 'react'
 
-import {
-  getNewFinancialData,
-  icoUrl,
-  ShowNumberCurrency,
-  showDate,
-} from '../../../services/utilities'
+import {getNewFinancialData, ShowNumberCurrency} from '../../../services/utilities'
 import {compose, withHandlers} from 'recompose'
 import {connect} from 'react-redux'
 import {
@@ -23,21 +17,19 @@ import {ENTITY_CLOSE_ZOOM} from '../../../constants'
 import Contracts from './Contracts'
 import Notices from './Notices'
 import Eurofunds from './Eurofunds'
+import Findata from './Findata'
+import Item from './Item'
 import Relations from './Relations'
-import Trend from './Trend'
-import ExternalLink from '../ExternalLink'
 import CircleIcon from '.././CircleIcon'
 import mapIcon from '../../../assets/mapIcon.svg'
 import ProfileIcon from 'react-icons/lib/fa/user'
 import type {NewEntityDetail, Center} from '../../../state'
-import type {FinancialData} from '../../../services/utilities'
 import './Info.css'
 
 type OwnProps = {
   data: NewEntityDetail,
   className?: string,
   inModal?: boolean,
-  canClose?: boolean,
   onClose?: () => void,
 }
 
@@ -54,68 +46,8 @@ type HandlerProps = {
 
 type InfoProps = OwnProps & DispatchProps & HandlerProps
 
-type ItemProps = {|
-  children?: Node,
-  label?: string,
-  url?: string,
-  linkText?: Node,
-|}
-
-const Item = ({children, label, url, linkText}: ItemProps) => (
-  <li className="info-item">
-    {label && <strong className="info-item-label">{label}</strong>}
-    {url && (
-      <ExternalLink isMapView={false} url={url}>
-        {linkText}
-      </ExternalLink>
-    )}
-    {children}
-  </li>
-)
-
-const Findata = ({data}: {data: FinancialData}) => {
-  const finances = data.finances[0] || {} // possible feature: display finances also for older years
-  return (
-    <Fragment>
-      <Item
-        label="IČO"
-        url={`http://www.orsr.sk/hladaj_ico.asp?ICO=${data.ico}&SID=0`}
-        // TODO link to zrsr when there is a way to tell companies and persons apart
-        linkText={data.ico}
-      >
-        &nbsp;(<ExternalLink isMapView={false} url={icoUrl(data.ico)}>
-          Detaily o firme
-        </ExternalLink>)
-      </Item>
-      {data.established_on && <Item label="Založená">{showDate(data.established_on)}</Item>}
-      {data.terminated_on && <Item label="Zaniknutá">{showDate(data.terminated_on)}</Item>}
-      {finances.employees && (
-        <Item label={`Zamestnanci v ${finances.year}`}>{finances.employees}</Item>
-      )}
-      {finances.profit ? (
-        <Item
-          label={`Zisk v ${finances.year}`}
-          url={icoUrl(data.ico)}
-          linkText={<ShowNumberCurrency num={finances.profit} />}
-        >
-          {finances.profitTrend ? <Trend trend={finances.profitTrend} /> : null}
-        </Item>
-      ) : null}
-      {finances.revenue ? (
-        <Item
-          label={`Tržby v ${finances.year}`}
-          url={icoUrl(data.ico)}
-          linkText={<ShowNumberCurrency num={finances.revenue} />}
-        >
-          {finances.revenueTrend ? <Trend trend={finances.revenueTrend} /> : null}
-        </Item>
-      ) : null}
-    </Fragment>
-  )
-}
-
-const Info = ({data, canClose, onClose, showOnMap, className}: InfoProps) => (
-  <Container className={classnames(className, {closable: canClose}, 'info')}>
+const Info = ({data, onClose, showOnMap, className}: InfoProps) => (
+  <Container className={classnames(className, {closable: Boolean(onClose)}, 'info')}>
     <div className="info-header">
       <Row>
         <Col xs="auto" className="mt-1 pr-0">
@@ -137,14 +69,16 @@ const Info = ({data, canClose, onClose, showOnMap, className}: InfoProps) => (
               className="mb-2"
             />
           </Link>
-          {data.profil_id && <NavLink to={`/profil/${data.profil_id}`} title="Zobraz profil">
-            <ProfileIcon
-              alt="ProfileIcon"
-              style={{width: '18px', height: '25px'}}
-              className="mb-2 blue"
-            />
-          </NavLink>}
-          {canClose && (
+          {data.profil_id && (
+            <NavLink to={`/profil/${data.profil_id}`} title="Zobraz profil">
+              <ProfileIcon
+                alt="ProfileIcon"
+                style={{width: '18px', height: '25px'}}
+                className="mb-2 blue"
+              />
+            </NavLink>
+          )}
+          {Boolean(onClose) && (
             <span className="info-close-button" onClick={onClose}>
               &times;
             </span>

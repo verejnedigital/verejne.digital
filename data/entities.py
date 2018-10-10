@@ -117,6 +117,17 @@ class Entities:
       eid = self.AddNewEntity(ico, name, parsed_name, address_id)
       return eid
 
+  def print_statistics(self):
+    """Prints current values of accumulated statistics to stdout."""
+
+    statistics = {
+        "# entities": len(self.eid2name),
+        "# icos mapped to eids": len(self.ico2eid),
+        "# organization ids mapped to eids": len(self.org2eid),
+    }
+    for statistic_name in statistics:
+      print("%s: %d" % (statistic_name, statistics[statistic_name]))
+
 
 if __name__ == '__main__':
     e = Entities()

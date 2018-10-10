@@ -1,13 +1,11 @@
 // @flow
 import React from 'react'
-import ReactDOM from 'react-dom'
 import {
   Button,
   Modal,
   ModalHeader,
   ModalBody,
   ModalFooter,
-  Input,
   InputGroup,
   InputGroupAddon,
   Form,
@@ -22,12 +20,17 @@ import {
   entitySearchModalOpenSelector,
   entitySearchEidsSelector,
   entitySearchForSelector,
+  entitySearchLoadedSelector,
 } from '../../../selectors'
-import {toggleModalOpen, setEntitySearchFor} from '../../../actions/publicActions'
+import {
+  toggleModalOpen,
+  setEntitySearchFor,
+  setEntitySearchLoaded,
+} from '../../../actions/publicActions'
 import {updateValue} from '../../../actions/sharedActions'
 import {FIND_ENTITY_TITLE} from '../../../constants'
 import {resultPlurality} from '../../../services/utilities'
-
+import AutoComplete from '../AutoComplete/AutoComplete'
 import type {State} from '../../../state'
 
 type EntitySearchProps = {|
@@ -39,6 +42,8 @@ type EntitySearchProps = {|
   findEntities: (setEntitySearchFor: Function, entitySearchValue: string) => void,
   entitySearchEids: Array<number>,
   entitySearchFor: string,
+  entitySearchLoaded: boolean,
+  setEntitySearchLoaded: (loaded: boolean) => void,
 |}
 
 const EntitySearchModal = ({
@@ -50,6 +55,8 @@ const EntitySearchModal = ({
   findEntities,
   entitySearchEids,
   entitySearchFor,
+  entitySearchLoaded,
+  setEntitySearchLoaded,
 }: EntitySearchProps) => (
   <Modal
     isOpen={entitySearchModalOpen}
@@ -63,17 +70,7 @@ const EntitySearchModal = ({
       <Form onSubmit={findEntities}>
         <FormGroup>
           <InputGroup>
-            <Input
-              type="text"
-              className="form-control"
-              placeholder={FIND_ENTITY_TITLE}
-              value={entitySearchValue}
-              onChange={setEntitySearchValue}
-              ref={(input) => {
-                const el = ReactDOM.findDOMNode(input)
-                el && el instanceof HTMLElement && el.focus()
-              }}
-            />
+            <AutoComplete />
             <InputGroupAddon addonType="append">
               <Button color="primary" onClick={findEntities}>
                 {FIND_ENTITY_TITLE}
@@ -81,7 +78,7 @@ const EntitySearchModal = ({
             </InputGroupAddon>
           </InputGroup>
           <FormText>
-            {entitySearchFor &&
+            {entitySearchLoaded &&
               `${resultPlurality(entitySearchEids.length)} pre "${entitySearchFor}".`}
           </FormText>
         </FormGroup>
@@ -103,15 +100,22 @@ export default compose(
       entitySearchModalOpen: entitySearchModalOpenSelector(state),
       entitySearchEids: entitySearchEidsSelector(state),
       entitySearchFor: entitySearchForSelector(state),
+      entitySearchLoaded: entitySearchLoadedSelector(state),
     }),
-    {toggleModalOpen, setEntitySearchFor, updateValue}
+    {toggleModalOpen, setEntitySearchFor, updateValue, setEntitySearchLoaded}
   ),
   withHandlers({
-    findEntities: ({setEntitySearchFor, entitySearchValue}) => (e) => {
+    findEntities: ({
+      setEntitySearchFor,
+      entitySearchValue,
+      setEntitySearchLoaded,
+      entitySearchFor,
+    }) => (e) => {
       e.preventDefault()
       if (entitySearchValue.trim() === '') {
         return
       }
+      entitySearchFor !== entitySearchValue && setEntitySearchLoaded(false)
       setEntitySearchFor(entitySearchValue)
     },
     setEntitySearchValue: ({updateValue}) => (e) =>
