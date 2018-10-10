@@ -345,5 +345,5 @@ export const connectionDetailSelector = (
   return state.connections.detail[query] ? state.connections.detail[query].ids : []
 }
 
-export const addNeighboursLimitSelector = (state: State): number =>
+export const addNeighboursLimitSelector = (state: State): number | null =>
   state.connections.addNeighboursLimit

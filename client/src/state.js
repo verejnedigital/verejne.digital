@@ -194,7 +194,7 @@ export type Connections = {
   detail: {[string]: {ids: number[]}},
   subgraph: {[string]: {data: Graph}},
   selectedEids: Array<number>,
-  addNeighboursLimit: number,
+  addNeighboursLimit: number | null,
 }
 
 export type Address = {
