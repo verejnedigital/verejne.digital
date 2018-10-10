@@ -3,6 +3,7 @@ import 'regenerator-runtime/runtime'
 import 'whatwg-fetch'
 import 'react-app-polyfill/ie9' // For IE 9-11 support
 import Promise from 'bluebird'
+import ReactGA from 'react-ga'
 
 import React from 'react'
 import ReactDOM from 'react-dom'
@@ -16,6 +17,17 @@ import getConfiguredStore from './configureStore'
 import {Provider} from 'react-redux'
 
 window.Promise = Promise
+class GoogleAnalyticsInitializer extends React.Component {
+  constructor(props) {
+    super(props)
+    ReactGA.initialize('UA-82399296-1', {
+      titleCase: false,
+    })
+  }
+  render() {
+    return this.props.children
+  }
+}
 
 dataProvidersConfig({loadingComponent: <Loading />})
 
@@ -36,12 +48,14 @@ class DispatchProvider extends React.Component {
 
 const store = getConfiguredStore()
 ReactDOM.render(
-  <Provider store={store}>
-    <BrowserRouter basename={process.env.REACT_APP_BASENAME}>
-      <DispatchProvider dispatch={store.dispatch}>
-        <App />
-      </DispatchProvider>
-    </BrowserRouter>
-  </Provider>,
+  <GoogleAnalyticsInitializer>
+    <Provider store={store}>
+      <BrowserRouter basename={process.env.REACT_APP_BASENAME}>
+        <DispatchProvider dispatch={store.dispatch}>
+          <App />
+        </DispatchProvider>
+      </BrowserRouter>
+    </Provider>
+  </GoogleAnalyticsInitializer>,
   document.getElementById('root')
 )

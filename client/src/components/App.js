@@ -11,6 +11,8 @@ import Profile from './Profile/Profile'
 import DetailPage from './Profile/DetailPage'
 import Landing from './Landing/Landing'
 
+import withTracker from './withTracker'
+
 import './App.css'
 
 const App = () => (
@@ -18,13 +20,14 @@ const App = () => (
     <Route path="/:something" component={Navigation} />
     <div className="screen-container">
       <Switch>
-        <Route exact path="/" component={Landing} />
+        <Route exact path="/" component={withTracker(Landing)} />
         <Route path="/verejne" exact component={Public} />
-        <Route path="/prepojenia" exact component={Connections} />
-        <Route path="/obstaravania" exact component={NoticeList} />
-        <Route path="/obstaravania/:id" component={NoticeDetail} />
-        <Route path="/profil" exact component={Profile} />
-        <Route path="/profil/:id" component={DetailPage} />
+        {/* has tracking inside Map because of componentDidUpdate infinite loop */}
+        <Route path="/prepojenia" exact component={withTracker(Connections)} />
+        <Route path="/obstaravania" exact component={withTracker(NoticeList)} />
+        <Route path="/obstaravania/:id" component={withTracker(NoticeDetail)} />
+        <Route path="/profil" exact component={withTracker(Profile)} />
+        <Route path="/profil/:id" component={withTracker(DetailPage)} />
       </Switch>
     </div>
   </div>
