@@ -11,7 +11,7 @@ import Profile from './Profile/Profile'
 import DetailPage from './Profile/DetailPage'
 import Landing from './Landing/Landing'
 
-import withTracker from './withTracker'
+import withTracker from './shared/withTracker'
 
 import './App.css'
 
