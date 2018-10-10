@@ -279,8 +279,7 @@ def process_source_rpvs(db_source, db_prod, geocoder, entities, test_mode):
           kuv_title_front,
           kuv_first_name,
           kuv_last_name,
-          kuv_title_back,
-          kuv_public_figure
+          kuv_title_back
         ) AS kuv_name,
         concat_ws(' ',
           --Fix missing space between street name and number.
