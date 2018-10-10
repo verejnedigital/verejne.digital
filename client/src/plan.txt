@@ -1,0 +1,13 @@
+vyberanie prepojenia z vyhladanych entit:
+treba spravit:
+
+zobrazit modal
+v modale na jednej strane bude list s Info komponentami entit z prveho vyhladavania, na druhej z druheho
+z kazdeho listu si musim vediet vybrat prave jedneho
+dole button na submit
+a toto by vlastne malo fungovat aj pre notableConnections, teda len s 1 listom
+tento selection si budeme musiet pamat v State
+
+subgraphWrapper ci kery element loaduje graph, si teraz bude musiet este aj vyzistit,
+ze ci boli takto z modalu vybrane entity, ak ano, tak spravit vyhladavanie spojenia a grafu len medzi nimi
+

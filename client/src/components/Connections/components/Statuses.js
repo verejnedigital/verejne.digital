@@ -1,10 +1,14 @@
 // @flow
 import React from 'react'
 import {compose} from 'redux'
+import {connect} from 'react-redux'
 import {branch, renderNothing, withState, withHandlers} from 'recompose'
+import {Button} from 'reactstrap'
+import SearchModal from './SearchModal'
 import EntitySearchWrapper, {type EntitySearchProps} from '../dataWrappers/EntitySearchWrapper'
 import EntityWrapper, {type EntityProps} from '../dataWrappers/EntityWrapper'
 import ConnectionWrapper, {type ConnectionProps} from '../dataWrappers/ConnectionWrapper'
+import {updateValue} from '../../../actions/sharedActions'
 import Alternative from './Alternative'
 import './Statuses.css'
 
@@ -25,6 +29,7 @@ type Props = {
   showAlternatives2: boolean,
   toggleAlternatives1: EmptyHandler,
   toggleAlternatives2: EmptyHandler,
+  toggleModal: (boolean) => void,
 } & EntitySearchProps &
   EntityProps &
   ConnectionProps
@@ -37,6 +42,8 @@ const Statuses = ({
   showAlternatives2,
   toggleAlternatives1,
   toggleAlternatives2,
+  toggleModal,
+  modalOpen,
 }: Props) => (
   <div className="statuses">
     {connections.length > 0 ? (
@@ -62,6 +69,10 @@ const Statuses = ({
         entity2.eids &&
         entity2.eids.map((eid) => <Alternative key={eid} eid={eid} />)}
     </p>
+    <Button color="primary" onClick={toggleModal}>
+      Ine spojenie
+    </Button>
+    <SearchModal />
   </div>
 )
 
@@ -71,6 +82,11 @@ export default compose(
     ({entitySearch1, entitySearch2}: EntitySearchProps): boolean =>
       !!entitySearch1 && !!entitySearch2,
     compose(
+      connect((state) => ({
+        modalOpen: state.connections.modalOpen,
+      }),
+      {updateValue}
+      ),
       EntityWrapper,
       ConnectionWrapper,
       withState('showAlternatives1', 'toggleAlternatives1', false),
@@ -78,6 +94,9 @@ export default compose(
       withHandlers({
         toggleAlternatives1: ({toggleAlternatives1}) => () => toggleAlternatives1((show) => !show),
         toggleAlternatives2: ({toggleAlternatives2}) => () => toggleAlternatives2((show) => !show),
+        toggleModal: ({updateValue, modalOpen}) => () => {
+          updateValue(['connections', 'modalOpen'], !modalOpen)
+        },
       })
     ),
     renderNothing
