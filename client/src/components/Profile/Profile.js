@@ -1,32 +1,43 @@
 // @flow
 import React from 'react'
 import {compose} from 'redux'
+import {map} from 'lodash'
 import {connect} from 'react-redux'
 import {withHandlers} from 'recompose'
-import {withDataProviders} from 'data-provider'
+import {withRouter} from 'react-router-dom'
 import {updateValue} from '../../actions/sharedActions'
-import {politiciansProvider} from '../../dataProviders/profileDataProviders'
-import {profileQuerySelector, filteredPoliticiansSelector} from '../../selectors/profileSelectors'
+import {profileQuerySelector, politicianGroupSelector} from '../../selectors/profileSelectors'
 import PoliticiansList from './components/PoliticiansList'
 import {FACEBOOK_LIKE_SRC} from '../../constants'
-import {Row, Col, Container} from 'reactstrap'
+import {Row, Col, Container, Button} from 'reactstrap'
+import {getQueryFromGroup} from './utilities'
 
 import './Profile.css'
 
-import type {State, Politician} from '../../state'
+import type {RouterHistory, ContextRouter} from 'react-router'
+import type {State} from '../../state'
 
 export type ProfileProps = {
   query: string,
-  politicians: Array<Politician>,
+  politicianGroup: string,
   updateQuery: (e: Event) => void,
+  updateGroup: (group: string) => void,
+  history: RouterHistory,
 }
 
-const Profile = ({query, politicians, updateQuery}: ProfileProps) => (
+const groupFilter = {
+  all: 'Poslanci a verejní funkcionári',
+  candidates_2018_bratislava_mayor: 'Kandidáti na primátora Bratislavy',
+  candidates_2019_president: 'Prezidentskí kandidáti',
+}
+
+const Profile = ({query, politicianGroup, updateQuery, updateGroup}: ProfileProps) => (
   <Container className="Profile">
     <Row tag="header" key="header" className="header profile-header">
       <Col>
         <h1 className="title">
-          <span className="bolder">profil</span>.verejne.digital
+          <span className="bolder">profil</span>
+          .verejne.digital
         </h1>
         <h3 className="sub-title">
           Majetok poslancov a verejných funkcionárov podľa priznaní a katastra
@@ -45,7 +56,22 @@ const Profile = ({query, politicians, updateQuery}: ProfileProps) => (
         />
       </Col>
     </Row>
-    <Row key="fb" className="profile-fbframe">
+    <Row>
+      <Col className="justify-content-center d-flex flex-wrap">
+        {map(groupFilter, (text, key) => (
+          <Button
+            key={key}
+            active={politicianGroup === key}
+            color="light"
+            className="my-1 profile-group-button"
+            onClick={() => updateGroup(key)}
+          >
+            {text}
+          </Button>
+        ))}
+      </Col>
+    </Row>
+    <Row key="fb" className="profile-fbframe mt-2">
       <Col>
         <iframe
           title="fb_like"
@@ -60,24 +86,27 @@ const Profile = ({query, politicians, updateQuery}: ProfileProps) => (
     </Row>
     <Row tag="article" key="politicians" className="profile">
       <Col>
-        <PoliticiansList politicians={politicians} />
+        <PoliticiansList />
       </Col>
     </Row>
   </Container>
 )
 
 export default compose(
-  withDataProviders(() => [politiciansProvider()]),
+  withRouter,
   connect(
-    (state: State) => ({
+    (state: State, props: ContextRouter) => ({
       query: profileQuerySelector(state),
-      politicians: filteredPoliticiansSelector(state),
+      politicianGroup: politicianGroupSelector(state, props),
     }),
     {updateValue}
   ),
   withHandlers({
-    updateQuery: (props) => (e) => {
-      props.updateValue(['profile', 'query'], e.target.value)
+    updateQuery: ({updateValue}) => (e) => {
+      updateValue(['profile', 'query'], e.target.value)
+    },
+    updateGroup: ({history}) => (newGroup: string) => {
+      history.push(`?skupina=${getQueryFromGroup(newGroup)}`)
     },
   })
 )(Profile)

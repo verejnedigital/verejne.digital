@@ -25,3 +25,21 @@ export const mergeConsecutiveTerms = (
     return acc
   }, [])
 }
+
+export const getQueryFromGroup = (group: string): string =>
+  group === 'all'
+    ? 'poslanci'
+    : group === 'candidates_2018_bratislava_mayor'
+      ? 'kandidati_bratislava'
+      : group === 'candidates_2019_president'
+        ? 'kandidati_prezident'
+        : ''
+
+export const getGroupFromQuery = (group: string): string =>
+  group === 'poslanci'
+    ? 'all'
+    : group === 'kandidati_bratislava'
+      ? 'candidates_2018_bratislava_mayor'
+      : group === 'kandidati_prezident'
+        ? 'candidates_2019_president'
+        : ''

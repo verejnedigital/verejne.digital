@@ -49,7 +49,13 @@ const TitleBadge = ({related, name}: TitleBadgeProps) => {
         <Badge
           key={type}
           color={getColor(type, related.edge_effective_to_dates[i])}
-          title={getRelationTitle(type, name, related.name, related.edge_effective_to_dates[i])}
+          title={getRelationTitle(
+            type,
+            name,
+            related.name,
+            related.edge_effective_to_dates[i],
+            symmetric,
+          )}
           className="mr-1 info-badge"
         >
           {showRelationType(

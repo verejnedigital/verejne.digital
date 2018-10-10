@@ -6,7 +6,6 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
-  Input,
   InputGroup,
   InputGroupAddon,
   Form,
@@ -31,7 +30,7 @@ import {
 import {updateValue} from '../../../actions/sharedActions'
 import {FIND_ENTITY_TITLE} from '../../../constants'
 import {resultPlurality} from '../../../services/utilities'
-
+import AutoComplete from '../AutoComplete/AutoComplete'
 import type {State} from '../../../state'
 
 type EntitySearchProps = {|
@@ -71,14 +70,7 @@ const EntitySearchModal = ({
       <Form onSubmit={findEntities}>
         <FormGroup>
           <InputGroup>
-            <Input
-              type="text"
-              className="form-control"
-              placeholder={FIND_ENTITY_TITLE}
-              value={entitySearchValue}
-              onChange={setEntitySearchValue}
-              innerRef={(input) => setTimeout(() => input && input.focus(), 0)}
-            />
+            <AutoComplete />
             <InputGroupAddon addonType="append">
               <Button color="primary" onClick={findEntities}>
                 {FIND_ENTITY_TITLE}
@@ -117,12 +109,13 @@ export default compose(
       setEntitySearchFor,
       entitySearchValue,
       setEntitySearchLoaded,
+      entitySearchFor,
     }) => (e) => {
       e.preventDefault()
       if (entitySearchValue.trim() === '') {
         return
       }
-      setEntitySearchLoaded(false)
+      entitySearchFor !== entitySearchValue && setEntitySearchLoaded(false)
       setEntitySearchFor(entitySearchValue)
     },
     setEntitySearchValue: ({updateValue}) => (e) =>

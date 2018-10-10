@@ -1,6 +1,7 @@
 // polyfills
 import 'regenerator-runtime/runtime'
 import 'whatwg-fetch'
+import 'react-app-polyfill/ie9' // For IE 9-11 support
 import Promise from 'bluebird'
 
 import React from 'react'

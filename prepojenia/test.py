@@ -67,7 +67,7 @@ class TestHandlers(unittest.TestCase):
         len(content['vertices']), len(content['edges']), content))
 
   def test_notable_connections(self):
-    url = '/notable_connections?eid=1690208'
+    url = '/notable_connections?eid=623885,1035271,1261600,1389045,1562426,1588169,1984031,2152740,2287439'
     content = _request_json(url, self)
     self.assertIsInstance(content, dict)
     self.assertTrue('vertices' in content)

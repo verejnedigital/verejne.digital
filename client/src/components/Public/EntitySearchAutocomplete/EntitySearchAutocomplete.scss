@@ -1,48 +1,8 @@
-@import '../../variables.scss';
-
-#entity-input {
-  width: $verejne-sidebar-width - 80px;
-
-  @media screen and (max-width: 575px) {
-    width: 100%;
-  }
-}
-
-.input-group.autocomplete-holder > div:first-child {
-  @media screen and (max-width: 575px) {
-    width: calc(100% - 82px);
-  }
-}
+@import "../../variables.scss";
 
 @media screen and (max-width: 575px) {
   .addon-button {
     width: 41px;
     margin-left: 1px;
-  }
-}
-
-.autocomplete-suggestions-menu {
-  border: 1px solid $border-color;
-  width: $verejne-sidebar-width;
-
-  @media screen and (max-width: 575px) {
-    width: calc(90% - 1rem);
-  }
-}
-
-.autocomplete-item {
-  color: $search-color;
-  padding: .3rem;
-  cursor: pointer;
-  background-color: white;
-
-  &--active {
-    background-color: $asset-hover-color;
-  }
-
-  border-bottom: 1px solid $border-color;
-
-  &:last-child {
-    border-bottom: none;
   }
 }
