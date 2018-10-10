@@ -1,31 +1,13 @@
 // @flow
 import React, {Fragment} from 'react'
-import {getTerm} from '../utilities'
+import {getTerm, mergeConsecutiveTerms} from '../utilities'
 
-import type {PoliticianDetail, PoliticianOffice} from '../../../state'
+import type {PoliticianDetail} from '../../../state'
 
 import './Cardboard.css'
 
 type CardboardProps = {
   politician: PoliticianDetail,
-}
-
-const mergeConsecutiveTerms = (offices: Array<PoliticianOffice>): Array<PoliticianOffice> => {
-  let last = null
-  return offices.reduce((acc, cur) => {
-    if (
-      last &&
-      last.term_start === cur.term_finish &&
-      last.party_abbreviation === cur.party_abbreviation &&
-      last.office_name_male === cur.office_name_male
-    ) {
-      last.term_start = cur.term_start
-    } else {
-      last = {...cur}
-      acc.push(last)
-    }
-    return acc
-  }, [])
 }
 
 const Cardboard = ({politician}: CardboardProps) => (
