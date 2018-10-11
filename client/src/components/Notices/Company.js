@@ -30,9 +30,9 @@ const _Company = ({
   <Fragment>
     <tr className="company">
       <td className="text-nowrap">
-        <a className="company-link" onClick={toggleSupplier}>
+        <span className="company-link" onClick={toggleSupplier}>
           {showSupplierInfo ? <Fragment>[&minus;]</Fragment> : '[+]'} {item.supplier_name}
-        </a>
+        </span>
       </td>
       <td className="company-title">
         <Link className="nowrap-ellipsis" to={`/obstaravania/${item.notice_id}`} title={item.title}>
@@ -40,9 +40,9 @@ const _Company = ({
         </Link>
       </td>
       <td>
-        <a className="company-link" onClick={toggleCustomer}>
+        <span className="company-link" onClick={toggleCustomer}>
           {showCustomerInfo ? <Fragment>[&minus;]</Fragment> : '[+]'} {item.name}
-        </a>
+        </span>
       </td>
       <td className="text-nowrap text-right">
         <strong>{localeNumber(item.total_final_value_amount)}</strong>

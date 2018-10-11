@@ -65,9 +65,9 @@ const _NoticeDetail = ({
     {
       label: 'Objednávateľ',
       body: (
-        <a className="notice-item-link" onClick={toggleCustomer}>
+        <span className="notice-item-link" onClick={toggleCustomer}>
           {showCustomerInfo ? <span>[&minus;]</span> : '[+]'} {notice.name}
-        </a>
+        </span>
       ),
     },
     {

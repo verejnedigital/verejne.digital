@@ -17,7 +17,7 @@
   max-width: 20vw;
 }
 
-a.company-link:not([href]) {
+.company-link {
   color: $blue-color;
   cursor: pointer;
 
