@@ -1,5 +1,5 @@
 // @flow
-import {SLOVAKIA_COORDINATES} from './constants'
+import {SLOVAKIA_COORDINATES, ADD_NEIGHBOURS_LIMIT} from './constants'
 import type {ObjectMap} from './types/commonTypes'
 
 export type Candidate = {
@@ -194,6 +194,7 @@ export type Connections = {
   detail: {[string]: {ids: number[]}},
   subgraph: {[string]: {data: Graph}},
   selectedEids: Array<number>,
+  addNeighboursLimit: number | null,
 }
 
 export type Address = {
@@ -423,6 +424,7 @@ const getInitialState = (): State => ({
     detail: {},
     subgraph: {},
     selectedEids: [],
+    addNeighboursLimit: ADD_NEIGHBOURS_LIMIT,
   },
   addresses: {},
   entities: {},

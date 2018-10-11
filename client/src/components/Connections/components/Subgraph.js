@@ -2,20 +2,23 @@
 import React from 'react'
 import {compose} from 'redux'
 import {connect} from 'react-redux'
-import {withHandlers} from 'recompose'
+import {withHandlers, withState} from 'recompose'
 import GraphCompnent from 'react-graph-vis'
-import {Col, Row} from 'reactstrap'
+import {Col, Row, Input} from 'reactstrap'
+import {addNeighboursLimitSelector} from '../../../selectors'
 import Legend from '../../shared/Legend/Legend'
 import CompanyDetails from './../../shared/CompanyDetails'
 import {updateValue} from '../../../actions/sharedActions'
+import {setAddNeighboursLimit} from '../../../actions/connectionsActions'
 import SubgraphWrapper from '../dataWrappers/SubgraphWrapper'
 import {options as graphOptions, getNodeEid, addNeighbours, removeNodes} from './graph/utils'
 import {checkShaking, resetGesture} from './graph/gestures'
 import type {SubgraphProps} from '../dataWrappers/SubgraphWrapper'
 import type {EntityProps} from '../dataWrappers/EntityWrapper'
 import type {ConnectionProps} from '../dataWrappers/ConnectionWrapper'
-import type {GraphId, Node} from '../../../state'
+import type {GraphId, Node, State} from '../../../state'
 import type {Point} from './graph/utils'
+import {ADD_NEIGHBOURS_LIMIT} from '../../../constants'
 
 import './Subgraph.css'
 import './InfoLoader.css'
@@ -36,17 +39,25 @@ export type GraphEvent = {|
 
 export type OwnProps = {
   preloadNodes: boolean,
+  limit: number,
+  limitSettingsOpen: boolean,
+  setLimitSettingsOpen: (open: boolean) => void,
 } & EntityProps &
   ConnectionProps
 
 type DispatchProps = {
   updateValue: Function,
+  setAddNeighboursLimit: Function,
 }
 type Handlers = {
   handleSelect: (e: GraphEvent) => void,
   handleDoubleClick: (e: GraphEvent) => void,
   handleDrag: (e: GraphEvent) => void,
   handleDragEnd: (e: GraphEvent) => void,
+  handleLimitChange: (e: Event) => void,
+  openLimitSettings: (e: Event) => void,
+  closeLimitSettings: (e: Event) => void,
+  submitOnEnter: (e: KeyboardEvent) => void,
 }
 
 type Props = OwnProps & SubgraphProps & DispatchProps & Handlers
@@ -66,6 +77,12 @@ const Subgraph = ({
   handleDoubleClick,
   handleDrag,
   handleDragEnd,
+  limit,
+  handleLimitChange,
+  limitSettingsOpen,
+  openLimitSettings,
+  closeLimitSettings,
+  submitOnEnter,
 }: Props) => (
   <div className="subgraph">
     <Row>
@@ -76,7 +93,17 @@ const Subgraph = ({
           <li>
             Klik na vrchol: načítať a zobraziť detailné informácie o vrchole (v boxe pod grafom)
           </li>
-          <li>Dvojklik na vrchol: pridať do grafu nezobrazených susedov</li>
+          <li>Dvojklik na vrchol: pridať do grafu {limitSettingsOpen
+            ? <Input
+              className="limit-input"
+              value={limit || ''}
+              onChange={handleLimitChange}
+              onBlur={closeLimitSettings}
+              onKeyPress={submitOnEnter}
+              autoFocus
+            />
+            : <b className="limit" onClick={openLimitSettings}>{limit}</b>
+          } nezobrazených susedov</li>
           <li>Potrasenie vrcholom: odobrať vrchol z grafu (aj jeho výlučných susedov)</li>
         </ul>
       </Col>
@@ -106,7 +133,13 @@ const Subgraph = ({
 )
 
 export default compose(
-  connect(null, {updateValue}),
+  connect(
+    (state: State) => ({
+      limit: addNeighboursLimitSelector(state),
+    }),
+    {updateValue, setAddNeighboursLimit}
+  ),
+  withState('limitSettingsOpen', 'setLimitSettingsOpen', false),
   SubgraphWrapper,
   withHandlers({
     handleSelect: (props: OwnProps & DispatchProps & SubgraphProps) => ({nodes}: GraphEvent) => {
@@ -129,7 +162,13 @@ export default compose(
         const related = props.entityDetails[clickedEid.toString()].related
         props.updateValue(
           ['connections', 'subgraph', subgraphId, 'data'],
-          addNeighbours(props.subgraph, clickedEid, pointer.canvas, related)
+          addNeighbours(
+            props.subgraph,
+            clickedEid,
+            pointer.canvas,
+            related,
+            props.limit || ADD_NEIGHBOURS_LIMIT
+          )
         )
       }
     },
@@ -153,5 +192,26 @@ export default compose(
       }
     },
     handleDragEnd: () => resetGesture,
+    handleLimitChange: (props: OwnProps & DispatchProps & SubgraphProps) => (e: Event) => {
+      if (e.target instanceof HTMLInputElement) {
+        const {value} = e.target
+        const limit = Number(value)
+        if (value === '' || (Number.isInteger(limit) && limit >= 0)) {
+          props.setAddNeighboursLimit(value === '' ? null : limit)
+        }
+      }
+    },
+    openLimitSettings: (props: OwnProps & DispatchProps & SubgraphProps) => () =>
+      props.setLimitSettingsOpen(true),
+    closeLimitSettings: (props: OwnProps & DispatchProps & SubgraphProps) => () => {
+      props.limit || props.setAddNeighboursLimit(ADD_NEIGHBOURS_LIMIT)
+      props.setLimitSettingsOpen(false)
+    },
+    submitOnEnter: (props: OwnProps & DispatchProps & SubgraphProps) => (e: KeyboardEvent) => {
+      if (e.key === 'Enter') {
+        props.limit || props.setAddNeighboursLimit(ADD_NEIGHBOURS_LIMIT)
+        props.setLimitSettingsOpen(false)
+      }
+    },
   })
 )(Subgraph)
