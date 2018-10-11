@@ -35,15 +35,15 @@ const _NoticeItem = ({
         </Link>
       </td>
       <td>
-        <a className="notice-item-link" onClick={toggleCustomer}>
+        <span className="notice-item-link" onClick={toggleCustomer}>
           {showCustomerInfo ? <span>[&minus;]</span> : '[+]'} {item.name}
-        </a>
+        </span>
       </td>
       <td>
         {item.best_supplier_name && (
-          <a className="notice-item-link" onClick={toggleSupplier}>
+          <span className="notice-item-link" onClick={toggleSupplier}>
             {showSupplierInfo ? <span>[&minus;]</span> : '[+]'} {item.best_supplier_name}
-          </a>
+          </span>
         )}
       </td>
       <td className="text-right">

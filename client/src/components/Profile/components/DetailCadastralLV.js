@@ -1,6 +1,6 @@
 // @flow
 import React, {Component} from 'react'
-import ExternalLinkIcon from 'react-icons/lib/fa/external-link'
+import ExternalLink from '../../shared/ExternalLink'
 
 import './DetailCadastralLV.css'
 
@@ -22,15 +22,14 @@ class DetailCadastralLV extends Component<DetailCadastralLVProps> {
       <tr onClick={this.props.onParcelShow} className="parcel">
         <td className="key">{this.props.num < 10 ? `0${this.props.num}` : this.props.num}</td>
         <td>
-          <a
-            target="_BLANK"
-            href={`https://kataster.skgeodesy.sk/EsknBo/Bo.svc/GeneratePrf?prfNumber=${
+          <ExternalLink
+            url={`https://kataster.skgeodesy.sk/EsknBo/Bo.svc/GeneratePrf?prfNumber=${
               this.props.lv.foliono
             }&cadastralUnitCode=${this.props.lv.cadastralunitcode}&outputType=html`}
             onClick={this.disablePropagation}
           >
-            {this.props.lv.landusename}&nbsp;<ExternalLinkIcon />
-          </a>
+            {this.props.lv.landusename}
+          </ExternalLink>
           <br />
           {`${this.props.lv.cadastralunitname}, LV č. ${this.props.lv.foliono}; parcely: ${
             this.props.lv.parcelno

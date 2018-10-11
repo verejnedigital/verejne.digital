@@ -22,7 +22,7 @@
   display: inline-block;
 }
 
-a.notice-item-link:not([href]) {
+.notice-item-link {
   color: $blue-color;
   cursor: pointer;
 
