@@ -193,11 +193,11 @@
 
 6_contracts:
     source_schema: "ekosystem_CRZ"
-    command:   "select id as contract_id, contract_identifier, contract_price_amount, contract_price_total_amount, signed_on, effective_from, effective_to, status_id, contracting_authority_name as name, contracting_authority_formatted_address as address, contracting_authority_cin as ico, supplier_name, supplier_cin as supplier_ico, supplier_formatted_address as supplier_address from contracts"
+    command:   "select id as contract_id, contract_identifier, contract_price_amount, contract_price_total_amount, subject, signed_on, effective_from, effective_to, status_id, contracting_authority_name as name, contracting_authority_formatted_address as address, contracting_authority_cin as ico, supplier_name, supplier_cin as supplier_ico, supplier_formatted_address as supplier_address from contracts"
     supplier_eid: true
     tables:
             Contracts:
-                    columns: ["contract_price_amount", "contract_price_total_amount",
+                    columns: ["contract_price_amount", "contract_price_total_amount", "subject",
                     "signed_on", "effective_from", "effective_to", "status_id", "contract_id",
                     "contract_identifier"]
                     create_command: "
@@ -207,6 +207,7 @@
                                 supplier_eid INTEGER REFERENCES Entities(id),
                                 contract_price_amount numeric,
                                 contract_price_total_amount numeric,
+                                subject text,
                                 signed_on date,
                                 effective_from date,
                                 effective_to date,
