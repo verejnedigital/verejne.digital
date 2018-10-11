@@ -8,8 +8,9 @@ import {
   clustersSelector,
   addressesUrlSelector,
   useLabelsSelector,
+  addressesLoadedSelector,
 } from '../../../selectors'
-import {setMapOptions} from '../../../actions/publicActions'
+import {setMapOptions, setAddressesLoaded} from '../../../actions/publicActions'
 import './GoogleMap.css'
 import {map} from 'lodash'
 import ClusterMarker from './ClusterMarker/ClusterMarker'
@@ -37,11 +38,14 @@ type MapProps = {
   clusters: Array<MapCluster>,
   onChange: (options: MapOptions) => any,
   history: RouterHistory,
+  addressesLoaded: boolean,
+  setAddressesLoaded: (loaded: boolean) => void,
 }
 
 // NOTE: there can be multiple points on the map on the same location...
-const Map = ({useLabels, zoom, center, clusters, onChange}: MapProps) => (
+const Map = ({useLabels, zoom, center, clusters, onChange, addressesLoaded}: MapProps) => (
   <div className="google-map-wrapper">
+    {!useLabels && !addressesLoaded && <div className="loading-indicator">Sťahujú sa dáta...</div>}
     <GoogleMap center={center} zoom={zoom} onChange={onChange}>
       {map(clusters, (cluster, i: number) => (
         <ClusterMarker key={i} cluster={cluster} zoom={zoom} lat={cluster.lat} lng={cluster.lng} />
@@ -76,7 +80,8 @@ export default compose(
     clusters: clustersSelector(state),
     addressesUrl: addressesUrlSelector(state),
     useLabels: useLabelsSelector(state),
-  })),
+    addressesLoaded: addressesLoadedSelector(state)
+  }), {setAddressesLoaded}),
   withDataProviders(
     ({useLabels, addressesUrl}) => (useLabels ? [] : [addressesProvider(addressesUrl)])
   ),
@@ -87,6 +92,7 @@ export default compose(
         center: [options.center.lat, options.center.lng],
         bounds: options.bounds,
       }
+      props.setAddressesLoaded(false)
       props.setMapOptions(newOptions)
       props.history.replace(
         `?lat=${+options.center.lat.toFixed(6)}&lng=${+options.center.lng.toFixed(6)}&zoom=${

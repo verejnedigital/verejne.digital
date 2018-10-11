@@ -1,9 +1,10 @@
 // @flow
-import {setAddresses, setEntities} from '../actions/publicActions'
+import {setAddresses, setEntities, setAddressesLoaded} from '../actions/publicActions'
 import type {Address, NewEntity} from '../state'
 import type {Dispatch} from '../types/reduxTypes'
 
 const dispatchAddresses = () => (ref: string, data: Address[], dispatch: Dispatch) => {
+  dispatch(setAddressesLoaded(true))
   dispatch(setAddresses(data))
 }
 
