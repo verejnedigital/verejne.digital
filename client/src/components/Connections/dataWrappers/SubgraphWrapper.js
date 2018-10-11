@@ -160,7 +160,7 @@ const ConnectionWrapper = (WrappedComponent: ComponentType<*>) => {
         ({preloadNodes, subgraph}: OwnProps & SubgraphProps) => subgraph != null && preloadNodes,
         withDataProviders(({subgraph: {nodes}}: SubgraphProps) =>
           chunk(nodes.map(({id}) => id), MAX_ENTITY_REQUEST_COUNT).map((ids) =>
-            entityDetailProvider(ids)
+            entityDetailProvider(ids, false)
           )
         )
       )
