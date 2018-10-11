@@ -22,7 +22,7 @@
 .selected {
   background: white !important;
   border-radius: 50%;
-  box-shadow: 0 4px 12px darken($shadow-color, 20%);
+  box-shadow: 0 0 10px 4px $cluster-marker-border, 0 0 2px $cluster-marker-border inset;
 }
 
 .map-label {
