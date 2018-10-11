@@ -26,6 +26,25 @@ export const mergeConsecutiveTerms = (
   }, [])
 }
 
+export const splitOfficesByYear = (
+  offices: Array<PoliticianOffice>,
+  currentYear: number
+): Array<PoliticianOffice> => {
+  let current = []
+  const past = []
+  offices.forEach((office) => {
+    if (office.term_finish >= currentYear || office.term_start >= currentYear) {
+      current.push(office)
+    } else {
+      past.push(office)
+    }
+  })
+  if (current.length === 0) {
+    current = [past.shift()]
+  }
+  return {current, past}
+}
+
 export const getQueryFromGroup = (group: string): string =>
   group === 'all'
     ? 'poslanci'
