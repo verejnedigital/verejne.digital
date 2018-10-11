@@ -6,9 +6,7 @@ export const getTerm = (politician: Politician | PoliticianDetail | PoliticianOf
     ? `${politician.term_start || ''} - ${politician.term_finish || ''}`
     : ''
 
-export const mergeConsecutiveTerms = (
-  offices: Array<PoliticianOffice>
-): Array<PoliticianOffice> =>
+export const mergeConsecutiveTerms = (offices: Array<PoliticianOffice>): Array<PoliticianOffice> =>
   offices.reduce((acc, cur) => {
     acc.some((office) => {
       if (
@@ -24,10 +22,15 @@ export const mergeConsecutiveTerms = (
     return acc
   }, [])
 
+export type SplitOffices = {
+  currentOffices: Array<PoliticianOffice>,
+  pastOffices: Array<PoliticianOffice>,
+}
+
 export const splitOfficesByYear = (
   offices: Array<PoliticianOffice>,
   currentYear: number
-): Array<PoliticianOffice> => {
+): SplitOffices => {
   let current = []
   const past = []
   offices.forEach((office) => {
@@ -40,7 +43,7 @@ export const splitOfficesByYear = (
   if (current.length === 0) {
     current = [past.shift()]
   }
-  return {current, past}
+  return {currentOffices: current, pastOffices: past}
 }
 
 export const getQueryFromGroup = (group: string): string =>
