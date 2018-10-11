@@ -8,23 +8,21 @@ export const getTerm = (politician: Politician | PoliticianDetail | PoliticianOf
 
 export const mergeConsecutiveTerms = (
   offices: Array<PoliticianOffice>
-): Array<PoliticianOffice> => {
-  let last = null
-  return offices.reduce((acc, cur) => {
-    if (
-      last &&
-      last.term_start === cur.term_finish &&
-      last.party_abbreviation === cur.party_abbreviation &&
-      last.office_name_male === cur.office_name_male
-    ) {
-      last.term_start = cur.term_start
-    } else {
-      last = {...cur}
-      acc.push(last)
-    }
+): Array<PoliticianOffice> =>
+  offices.reduce((acc, cur) => {
+    acc.some((office) => {
+      if (
+        office.term_start === cur.term_finish &&
+        office.party_abbreviation === cur.party_abbreviation &&
+        office.office_name_male === cur.office_name_male
+      ) {
+        office.term_start = cur.term_start
+        return true
+      }
+      return false
+    }) || acc.push({...cur})
     return acc
   }, [])
-}
 
 export const splitOfficesByYear = (
   offices: Array<PoliticianOffice>,
