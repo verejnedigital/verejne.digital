@@ -17,8 +17,10 @@ export default function withTracker(WrappedComponent, options = {}) {
 
   const HOC = class extends Component {
     componentDidMount() {
-      const page = this.props.location.pathname
-      trackPage(page)
+      if (process.env.NODE_ENV === 'production') {
+        const page = this.props.location.pathname
+        trackPage(page)
+      }
     }
 
     render() {
