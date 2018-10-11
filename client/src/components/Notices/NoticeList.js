@@ -63,12 +63,12 @@ const NoticeList = ({
             value={searchValue}
             onChange={updateSearchValue}
           />
+          <FormText className="notice-search-result-text">
+            {searchValue && `${resultPlurality(noticesLength)} pre "${searchValue}".`}
+          </FormText>
           <hr />
           <Legend />
           <hr />
-          <FormText>
-            {searchValue && `${resultPlurality(noticesLength)} pre "${searchValue}".`}
-          </FormText>
           <div className="notice-list-table">
             {noticesLength >= 1 &&
               map(items, (bulletin, index) => (
