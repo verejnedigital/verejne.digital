@@ -8,7 +8,7 @@ import {stringify, parse} from 'qs'
 import type {Location} from 'react-router-dom'
 import type {ComponentType} from 'react'
 import type {SegmentReducer, Path} from './types/reduxTypes'
-import {SLOVAKIA_BOUNDS} from './constants'
+import {SLOVAKIA_BOUNDS, SLOVAKIA_COORDINATES, ADD_NEIGHBOURS_LIMIT} from './constants'
 
 export const isInSlovakia = (center: [number, number]): boolean => {
   return (
@@ -137,3 +137,31 @@ export const pickBy = <T: {}>(obj: T, predicate: (value: any) => boolean): T =>
 // https://github.com/facebook/flow/issues/2221#issuecomment-372112477
 // there is no nice way to handle object.values in flow currently - use this instead
 export const values = <T>(obj: {[string]: T}): Array<T> => Object.keys(obj).map((k) => obj[k])
+
+export const refreshState = (updateValue) => {
+  updateValue(['notices', 'searchQuery'], '')
+  updateValue(['profile', 'query'], '')
+  const publicly = {
+    autocompleteValue: '',
+    entitySearchValue: '',
+    entitySearchOpen: false,
+    entityModalOpen: false,
+    entitySearchFor: '',
+    entitySearchLoaded: false,
+    showInfo: {},
+    openedAddressDetail: [],
+    drawerOpen: false,
+    selectedLocations: [],
+  }
+  updateValue(['publicly'], publicly)
+
+  const mapOptions = {
+    center: SLOVAKIA_COORDINATES,
+    zoom: 8,
+    bounds: undefined,
+  }
+  updateValue(['mapOptions'], mapOptions)
+
+  updateValue(['connections', 'selectedEids'], [])
+  updateValue(['connections', 'addNeighboursLimit'], ADD_NEIGHBOURS_LIMIT)
+}

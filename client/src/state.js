@@ -377,7 +377,6 @@ export type State = {|
     +query: string,
   |},
   +publicly: {|
-    +currentPage: number,
     +autocompleteValue: string,
     +entitySearchValue: string,
     +entitySearchOpen: boolean,
@@ -413,7 +412,6 @@ const getInitialState = (): State => ({
     query: '',
   },
   publicly: {
-    currentPage: 1,
     autocompleteValue: '',
     entitySearchValue: '',
     entitySearchOpen: false,
