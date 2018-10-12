@@ -120,8 +120,18 @@ const SearchModal = ({
   submitNewConnection,
 }: Props) => (
   <Modal isOpen={modalOpen} toggle={toggleModal} className="connections-modal" autoFocus size="md">
-    <ModalHeader toggle={toggleModal}>Title</ModalHeader>
+    <ModalHeader toggle={toggleModal}>
+      <span className="text-center">Vyberte si, medzi ktorými osobami/firmami hľadať spojenie</span>
+    </ModalHeader>
     <ModalBody>
+      <Button
+        color="primary"
+        onClick={() => submitNewConnection(eid1, eid2)}
+        disabled={isNil(eid1) || isNil(eid2)}
+        className="mb-3"
+      >
+        Hľadať
+      </Button>
       <Container>
         <Row>
           <ConnectionModalTable
@@ -141,7 +151,7 @@ const SearchModal = ({
         onClick={() => submitNewConnection(eid1, eid2)}
         disabled={isNil(eid1) || isNil(eid2)}
       >
-        Submit
+        Hľadať
       </Button>
     </ModalFooter>
   </Modal>

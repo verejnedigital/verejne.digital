@@ -6,6 +6,7 @@ import {compose} from 'redux'
 import {Form, FormGroup, Label, Input, Button} from 'reactstrap'
 import type {ContextRouter} from 'react-router'
 import EntitySearchWrapper, {type EntitySearchProps} from '../dataWrappers/EntitySearchWrapper'
+import {updateValue} from '../../../actions/sharedActions'
 import './Search.css'
 
 type EmptyHandler = () => void
@@ -87,6 +88,7 @@ export default compose(
     setSearchValue2: ({setSearchValue2}) => (e) => setSearchValue2(e.target.value),
     searchOnEnter: (props: Props) => (e) => {
       if (e.key === 'Enter') {
+        updateValue(['connections', 'specificEntities'], [])
         _searchConnection(props)
       }
     },

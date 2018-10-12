@@ -17,6 +17,7 @@ import {
   selectedEidsSelector,
   subgraphSelector,
   notableSubgraphSelector,
+  specificEntitySearchSelector,
 } from '../../../selectors'
 import {addEdgeIfMissing} from '../components/graph/utils'
 import type {
@@ -141,18 +142,22 @@ const ConnectionWrapper = (WrappedComponent: ComponentType<*>) => {
   return branch(
     ({entity1, entity2}: EntityProps) => entity1.eids.length > 0,
     compose(
-      withDataProviders(({entity1, entity2}: EntityProps) => [
+      connect((state: State, props: EntityProps & ConnectionProps) => ({
+        specificEntity1: specificEntitySearchSelector(state, props.entity1.query, 0),
+        specificEntity2: specificEntitySearchSelector(state, props.entity2.query, 1),
+      })),
+      withDataProviders(({entity1, entity2, specificEntity1, specificEntity2}: EntityProps) => [
         entity2.query.length > 0
-          ? connectionSubgraphProvider(entity1.eids, entity2.eids, transformRaw)
-          : notableConnectionSubgraphProvider(entity1.eids, transformRaw),
+          ? connectionSubgraphProvider(specificEntity1.eids, specificEntity2.eids, transformRaw)
+          : notableConnectionSubgraphProvider(specificEntity1.eids, transformRaw),
       ]),
       // TODO extract selectors
       connect((state: State, props: EntityProps & ConnectionProps) => ({
         selectedEids: selectedEidsSelector(state),
         subgraph: enhanceGraph(
           (props.entity2.query.length > 0
-            ? subgraphSelector(state, props.entity1.eids, props.entity2.eids)
-            : notableSubgraphSelector(state, props.entity1.eids)
+            ? subgraphSelector(state, props.specificEntity1.eids, props.specificEntity2.eids)
+            : notableSubgraphSelector(state, props.specificEntity1.eids)
           ).data,
           allEntityDetailsSelector(state),
           props.connections

@@ -95,6 +95,10 @@ export const openedAddressDetailSelector = (state: State): Array<number> =>
 export const entitiesSelector = (state: State) => state.entities
 export const entitySearchSelector = (state: State, query: string): SearchedEntity =>
   state.entitySearch[query]
+export const specificEntitySearchSelector =
+  (state: State, query: string, i: number): SearchedEntity =>
+    (state.connections.specificEntities[i] &&
+      {query, eids: [state.connections.specificEntities[i]]}) || state.entitySearch[query]
 export const entitySearchesSelector = (state: State): ObjectMap<SearchedEntity> =>
   state.entitySearch
 export const allEntityDetailsSelector = (state: State): ObjectMap<NewEntityDetail> =>
