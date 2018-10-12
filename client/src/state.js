@@ -195,6 +195,7 @@ export type Connections = {
   subgraph: {[string]: {data: Graph}},
   selectedEids: Array<number>,
   modalOpen: boolean,
+  specificEntities: Array<number>,
 }
 
 export type Address = {
@@ -425,6 +426,7 @@ const getInitialState = (): State => ({
     subgraph: {},
     selectedEids: [],
     modalOpen: true,
+    specificEntities: [],
   },
   addresses: {},
   entities: {},

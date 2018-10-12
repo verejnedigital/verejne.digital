@@ -1,4 +1,48 @@
+@import "../../variables.scss";
+
 .connections-modal {
   width: 90%;
   max-width: none;
+}
+
+.chooser-holder {
+  background-color: $form-control-bg-color;
+  z-index: 1;
+  left: -1.25rem;
+  padding: 2rem;
+  border: 1px solid $border-color;
+  border-radius: 0 30% 30% 0;
+  &--active {
+    background-color: $blue-color;
+    border: none;
+    margin-left: 2px;
+  }
+  &--right {
+    left: 1.25rem;
+    border-radius: 30% 0 0 30%;
+  }
+  &:hover {
+    cursor: pointer;
+    background-color: darken($form-control-bg-color, 3%);
+  }
+  &--active:hover {
+    cursor: pointer;
+    background-color: darken($blue-color, 3%);
+  }
+}
+
+.connection-chooser {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  input {
+    cursor: pointer;
+  }
+}
+
+.modal-table-cell {
+  width: 50%;
+  max-width: 50%;
 }

@@ -12,7 +12,12 @@ import {
   notableConnectionSubgraphProvider,
 } from '../../../dataProviders/connectionsDataProviders'
 import {entityDetailProvider} from '../../../dataProviders/sharedDataProviders'
-import {allEntityDetailsSelector} from '../../../selectors'
+import {
+  allEntityDetailsSelector,
+  selectedEidsSelector,
+  subgraphSelector,
+  notableSubgraphSelector,
+} from '../../../selectors'
 import {addEdgeIfMissing} from '../components/graph/utils'
 import type {
   State,
@@ -143,13 +148,11 @@ const ConnectionWrapper = (WrappedComponent: ComponentType<*>) => {
       ]),
       // TODO extract selectors
       connect((state: State, props: EntityProps & ConnectionProps) => ({
-        selectedEids: state.connections.selectedEids,
+        selectedEids: selectedEidsSelector(state),
         subgraph: enhanceGraph(
           (props.entity2.query.length > 0
-            ? state.connections.subgraph[
-              `${props.entity1.eids.join()}-${props.entity2.eids.join()}`
-            ]
-            : state.connections.subgraph[`${props.entity1.eids.join()}`]
+            ? subgraphSelector(state, props.entity1.eids, props.entity2.eids)
+            : notableSubgraphSelector(state, props.entity1.eids)
           ).data,
           allEntityDetailsSelector(state),
           props.connections

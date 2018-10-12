@@ -346,3 +346,9 @@ export const connectionDetailSelector = (
   const query = `${eids1.join()}-${eids2.join()}`
   return state.connections.detail[query] ? state.connections.detail[query].ids : []
 }
+
+export const selectedEidsSelector = (state: State) => state.connections.selectedEids
+export const subgraphSelector = (state: State, eids1: Array<number>, eids2: Array<number>) =>
+  state.connections.subgraph[`${eids1.join()}-${eids2.join()}`]
+export const notableSubgraphSelector = (state: State, eids: Array<number>) =>
+  state.connections.subgraph[eids.join()]
