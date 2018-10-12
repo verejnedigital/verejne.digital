@@ -2,26 +2,33 @@
 import React from 'react'
 import Politician from './Politician'
 import {Table} from 'reactstrap'
-
+import {isItCandidatesList} from '../utilities'
 import PoliticiansListWrapper from './PoliticiansListWrapper'
-
+import {withRouter} from 'react-router-dom'
+import {compose} from 'redux'
 import './PoliticiansList.css'
 
 import type {Politician as PoliticianType} from '../../../state'
+import type {RouterHistory} from 'react-router'
 
 type PoliticianListProps = {
   politicians: Array<PoliticianType>,
+  history: RouterHistory,
 }
 
-const PoliticiansList = ({politicians}: PoliticianListProps) => (
+const PoliticiansList = ({politicians, history}: PoliticianListProps) => (
   <Table id="politicians-table">
     <thead>
       <tr>
         <th />
         <th />
         <th className="text-left column-title">Meno a priezvisko</th>
-        <th className="text-left column-title">Obdobie</th>
-        <th className="party-column column-title">Strana</th>
+        {!isItCandidatesList(history.location.search) && (
+          <th className="text-left column-title">Obdobie</th>
+        )}
+        {!isItCandidatesList(history.location.search) && (
+          <th className="party-column column-title">Strana</th>
+        )}
         <th className="number-column column-title" title="Domy, byty a iné stavby">
           Stavby
         </th>
@@ -30,9 +37,14 @@ const PoliticiansList = ({politicians}: PoliticianListProps) => (
       </tr>
     </thead>
     <tbody>
-      {politicians.map((politician) => <Politician key={politician.id} politician={politician} />)}
+      {politicians.map((politician) => (
+        <Politician key={politician.id} politician={politician} />
+      ))}
     </tbody>
   </Table>
 )
 
-export default PoliticiansListWrapper(PoliticiansList)
+export default compose(
+  PoliticiansListWrapper,
+  withRouter
+)(PoliticiansList)

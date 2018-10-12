@@ -2,7 +2,8 @@
 import type {Politician, PoliticianDetail, PoliticianOffice} from '../../state'
 
 export const getTerm = (politician: Politician | PoliticianDetail | PoliticianOffice): string =>
-  politician.term_start || politician.term_finish
+  (politician.term_start || politician.term_finish) &&
+  politician.term_start !== politician.term_finish
     ? `${politician.term_start || ''} - ${politician.term_finish || ''}`
     : ''
 
@@ -43,3 +44,6 @@ export const getGroupFromQuery = (group: string): string =>
       : group === 'kandidati_prezident'
         ? 'candidates_2019_president'
         : ''
+
+export const isItCandidatesList = (url: string): boolean =>
+  url.includes('kandidati_bratislava') || url.includes('kandidati_prezident')
