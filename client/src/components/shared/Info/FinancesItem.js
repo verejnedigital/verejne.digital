@@ -2,7 +2,11 @@
 import React from 'react'
 import {isNumber} from 'lodash'
 
-import {icoUrl, ShowNumberCurrency, type EnhancedCompanyFinancial} from '../../../services/utilities'
+import {
+  icoUrl,
+  ShowNumberCurrency,
+  type EnhancedCompanyFinancial,
+} from '../../../services/utilities'
 import Item from './Item'
 import Trend from './Trend'
 import './FinancesItem.css'

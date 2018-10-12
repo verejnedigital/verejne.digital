@@ -20,7 +20,9 @@ const Finances = ({
     {lastFinances && <FinancesItem data={lastFinances} ico={ico} />}
     {!!otherFinances.length && (
       <ToggleBox buttonText="Staršie záznamy" buttonInfo={otherFinances.length}>
-        {otherFinances.map((finances) => <FinancesItem key={finances.year} data={finances} ico={ico} />)}
+        {otherFinances.map((finances) => (
+          <FinancesItem key={finances.year} data={finances} ico={ico} />
+        ))}
       </ToggleBox>
     )}
   </Fragment>
