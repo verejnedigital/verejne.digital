@@ -1,3 +1,7 @@
+// @flow
+
+import type {Ties} from './CircleIcon'
+
 export const showRelationType = (
   typeId: number,
   typeText: string,
@@ -33,3 +37,15 @@ export const getRelationTitle = (
 
 export const getColor = (type: number, date: string) =>
   date === '' ? (type >= 0 ? 'primary' : 'dark') : 'secondary'
+
+export const getCircleIconTitle = (data: Ties) => {
+  return data.political_entity
+    ? 'Politik'
+    : data.trade_with_government && data.contact_with_politics
+      ? 'Kontakt s politikou a obchod so štátom'
+      : data.trade_with_government
+        ? 'Obchod so štátom'
+        : data.contact_with_politics
+          ? 'Kontakt s politikou'
+          : 'Firma / osoba'
+}
