@@ -25,7 +25,7 @@ const Findata = ({data: {established_on, finances, ico, terminated_on}}: Findata
     </Item>
     {established_on && <Item label="Založená">{showDate(established_on)}</Item>}
     {terminated_on && <Item label="Zaniknutá">{showDate(terminated_on)}</Item>}
-    <Finances data={finances} ico />
+    <Finances data={finances} ico={ico} />
   </Fragment>
 )
 

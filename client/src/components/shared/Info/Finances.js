@@ -17,10 +17,10 @@ const Finances = ({
   toggle,
 }: FinancesProps) => (
   <Fragment>
-    <FinancesItem data={lastFinances} ico />
+    <FinancesItem data={lastFinances} ico={ico} />
     {!!otherFinances.length && (
       <ToggleBox buttonText="Staršie záznamy" buttonInfo={otherFinances.length}>
-        {otherFinances.map((finances) => <FinancesItem key={finances.year} data={finances} ico />)}
+        {otherFinances.map((finances) => <FinancesItem key={finances.year} data={finances} ico={ico} />)}
       </ToggleBox>
     )}
   </Fragment>
