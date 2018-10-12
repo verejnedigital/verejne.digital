@@ -1,12 +1,5 @@
 @import "../variables.scss";
 
-.notice-list {
-  hr {
-    border-top-color: $border-color;
-    width: 80%;
-  }
-}
-
 .pagination-wrapper {
   display: flex;
   justify-content: center;
@@ -63,4 +56,11 @@
     overflow: hidden;
     margin-top: 0;
   }
+}
+
+.legend {
+  display: flex;
+  width: 80%;
+  margin: auto;
+  justify-content: center;
 }
