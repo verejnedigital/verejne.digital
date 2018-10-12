@@ -18,6 +18,9 @@
   padding-left: 1em;
   padding-right: .5em;
   border-bottom: 2px solid $border-color;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 .search-results-panel {
@@ -27,7 +30,7 @@
   max-height: calc(100vh - 300px);
 
   @media screen and (max-width: 576px) {
-    max-height: calc(100vh - 220px);
+    max-height: calc(100vh - 160px);
   }
 
   overflow-y: auto;

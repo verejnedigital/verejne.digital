@@ -39,7 +39,6 @@ const EntitySearch = ({
     <div className="search-results-panel">
       <EntitySearchResult />
     </div>
-    <div className="search-results-footer" />
   </div>
 )
 
