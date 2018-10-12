@@ -7,9 +7,9 @@ import {getCircleIconTitle} from './utilities'
 import './CircleIcon.css'
 
 export type Ties = {
-    trade_with_government: boolean,
-    contact_with_politics: boolean,
-    political_entity: boolean,
+  trade_with_government: boolean,
+  contact_with_politics: boolean,
+  political_entity: boolean,
 }
 type OwnProps = {
   data: Ties,
