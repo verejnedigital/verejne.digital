@@ -2,15 +2,17 @@
 import React from 'react'
 import Circle from 'react-icons/lib/fa/circle-o'
 import classnames from 'classnames'
+import {getCircleIconTitle} from './utilities'
 
 import './CircleIcon.css'
 
+export type Ties = {
+  trade_with_government: boolean,
+  contact_with_politics: boolean,
+  political_entity: boolean,
+}
 type OwnProps = {
-  data: {
-    trade_with_government: boolean,
-    contact_with_politics: boolean,
-    political_entity: boolean,
-  },
+  data: Ties,
   className?: string,
   size?: string,
 }
@@ -22,6 +24,7 @@ const CircleIcon = ({data, className, size = '16'}: OwnProps) => (
       politics: data.contact_with_politics,
       politician: data.political_entity,
     })}
+    title={getCircleIconTitle(data)}
   >
     <Circle size={size} />
   </span>
