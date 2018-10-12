@@ -3,7 +3,6 @@ import 'regenerator-runtime/runtime'
 import 'whatwg-fetch'
 import 'react-app-polyfill/ie9' // For IE 9-11 support
 import Promise from 'bluebird'
-import ReactGA from 'react-ga'
 
 import React from 'react'
 import ReactDOM from 'react-dom'
@@ -13,21 +12,11 @@ import {dataProvidersConfig} from 'data-provider'
 import './customBootstrap.css'
 import App from './components/App'
 import Loading from './components/Loading/Loading'
+import {GoogleAnalyticsInitializer} from './utils'
 import getConfiguredStore from './configureStore'
 import {Provider} from 'react-redux'
 
 window.Promise = Promise
-class GoogleAnalyticsInitializer extends React.Component {
-  constructor(props) {
-    super(props)
-    ReactGA.initialize('UA-82399296-1', {
-      titleCase: false,
-    })
-  }
-  render() {
-    return this.props.children
-  }
-}
 
 dataProvidersConfig({loadingComponent: <Loading />})
 

@@ -1,5 +1,6 @@
 // @flow
 import React from 'react'
+import ReactGA from 'react-ga'
 import Loading from './components/Loading/Loading'
 import {get, set, pickBy as _pickBy} from 'lodash'
 import produce from 'immer'
@@ -114,6 +115,18 @@ export const withSideEffects = <P: Object>(sideEffectsFunc: SideEffectsFunc<P>) 
     }
 
     render = () => (this.state.done ? <WrappedComponent {...this.props} /> : <Loading />)
+  }
+}
+
+export class GoogleAnalyticsInitializer extends React.Component {
+  constructor(props) {
+    super(props)
+    ReactGA.initialize('UA-82399296-1', {
+      titleCase: false,
+    })
+  }
+  render() {
+    return this.props.children
   }
 }
 
