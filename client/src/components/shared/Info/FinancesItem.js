@@ -2,7 +2,7 @@
 import React from 'react'
 import {isNumber} from 'lodash'
 
-import {icoUrl, ShowNumberCurrency} from '../../../services/utilities'
+import {icoUrl, ShowNumberCurrency, type EnhancedCompanyFinancial} from '../../../services/utilities'
 import Item from './Item'
 import Trend from './Trend'
 import './FinancesItem.css'
@@ -24,7 +24,7 @@ const FinancesItem = ({
         url={icoUrl(ico)}
         linkText={<ShowNumberCurrency num={profit} />}
       >
-        {isNumber(profitTrend) && <Trend trend={profitTrend} />}
+        <Trend trend={profitTrend} />
       </Item>
     )}
     {isNumber(revenue) && (
@@ -33,7 +33,7 @@ const FinancesItem = ({
         url={icoUrl(ico)}
         linkText={<ShowNumberCurrency num={revenue} />}
       >
-        {isNumber(revenueTrend) && <Trend trend={revenueTrend} />}
+        <Trend trend={revenueTrend} />
       </Item>
     )}
   </div>

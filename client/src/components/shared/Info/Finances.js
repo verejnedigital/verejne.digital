@@ -6,18 +6,18 @@ import FinancesItem from './FinancesItem'
 import ToggleBox from '../ToggleBox'
 
 type FinancesProps = {
-  data: EnhancedCompanyFinancial[],
+  data: Array<EnhancedCompanyFinancial>,
   ico: string,
 }
 
 const Finances = ({
-  data: [lastFinances = {}, ...otherFinances],
+  data: [lastFinances, ...otherFinances],
   ico,
   expanded,
   toggle,
 }: FinancesProps) => (
   <Fragment>
-    <FinancesItem data={lastFinances} ico={ico} />
+    {lastFinances && <FinancesItem data={lastFinances} ico={ico} />}
     {!!otherFinances.length && (
       <ToggleBox buttonText="Staršie záznamy" buttonInfo={otherFinances.length}>
         {otherFinances.map((finances) => <FinancesItem key={finances.year} data={finances} ico={ico} />)}
