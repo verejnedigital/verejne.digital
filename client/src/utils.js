@@ -118,8 +118,8 @@ export const withSideEffects = <P: Object>(sideEffectsFunc: SideEffectsFunc<P>) 
   }
 }
 
-export class GoogleAnalyticsInitializer extends React.Component {
-  constructor(props) {
+export class GoogleAnalyticsInitializer extends React.Component<*> {
+  constructor(props: Object) {
     super(props)
     ReactGA.initialize('UA-82399296-1', {
       titleCase: false,
