@@ -22,6 +22,7 @@ type Props = {
   history: RouterHistory,
   location: Location,
   match: Match,
+  refresh: () => void,
 }
 
 class Navigation extends Component<Props, State> {

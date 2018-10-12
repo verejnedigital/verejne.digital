@@ -138,7 +138,7 @@ export const pickBy = <T: {}>(obj: T, predicate: (value: any) => boolean): T =>
 // there is no nice way to handle object.values in flow currently - use this instead
 export const values = <T>(obj: {[string]: T}): Array<T> => Object.keys(obj).map((k) => obj[k])
 
-export const refreshState = (updateValue) => {
+export const refreshState = (updateValue: (Array<string>, *) => void) => () => {
   updateValue(['notices', 'searchQuery'], '')
   updateValue(['profile', 'query'], '')
   const publicly = {
