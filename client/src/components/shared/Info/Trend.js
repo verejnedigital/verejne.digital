@@ -7,7 +7,7 @@ type TrendProps = {|
 |}
 
 const Trend = ({trend}: TrendProps) =>
-  typeof trend === 'number' &&
+  typeof trend === 'number' && (
     <span>
       &nbsp;(
       <span title="Oproti predchádzajúcemu roku" className={trend > 0 ? 'profit' : 'deficit'}>
@@ -15,5 +15,6 @@ const Trend = ({trend}: TrendProps) =>
       </span>
       )
     </span>
+  )
 
 export default Trend
