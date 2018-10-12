@@ -12,6 +12,7 @@ import {dataProvidersConfig} from 'data-provider'
 import './customBootstrap.css'
 import App from './components/App'
 import Loading from './components/Loading/Loading'
+import {GoogleAnalyticsInitializer} from './utils'
 import getConfiguredStore from './configureStore'
 import {Provider} from 'react-redux'
 
@@ -36,12 +37,14 @@ class DispatchProvider extends React.Component {
 
 const store = getConfiguredStore()
 ReactDOM.render(
-  <Provider store={store}>
-    <BrowserRouter basename={process.env.REACT_APP_BASENAME}>
-      <DispatchProvider dispatch={store.dispatch}>
-        <App />
-      </DispatchProvider>
-    </BrowserRouter>
-  </Provider>,
+  <GoogleAnalyticsInitializer>
+    <Provider store={store}>
+      <BrowserRouter basename={process.env.REACT_APP_BASENAME}>
+        <DispatchProvider dispatch={store.dispatch}>
+          <App />
+        </DispatchProvider>
+      </BrowserRouter>
+    </Provider>
+  </GoogleAnalyticsInitializer>,
   document.getElementById('root')
 )

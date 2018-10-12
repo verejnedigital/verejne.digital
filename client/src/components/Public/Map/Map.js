@@ -14,6 +14,7 @@ import './GoogleMap.css'
 import {map} from 'lodash'
 import ClusterMarker from './ClusterMarker/ClusterMarker'
 import {branch, compose, renderComponent, withHandlers} from 'recompose'
+import withTracker from '../../shared/withTracker'
 import Loading from '../../Loading/Loading'
 import GoogleMap from '../../GoogleMap/GoogleMap'
 import {withDataProviders} from 'data-provider'
@@ -95,6 +96,7 @@ export default compose(
       )
     },
   }),
+  withTracker,
   // display loading only before first fetch
   branch((props) => !props.addresses, renderComponent(Loading))
 )(Map)
