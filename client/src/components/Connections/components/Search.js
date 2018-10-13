@@ -27,11 +27,9 @@ const _searchConnection = (props: Props) => {
       props.history.push(
         `/prepojenia?eid1=${props.searchValue1.trim()}&eid2=${props.searchValue2.trim()}`
       )
-    }
-    //TODO fix notable connections
-    /*else {
+    } else {
       props.history.push(`/prepojenia?eid1=${props.searchValue1.trim()}`)
-    }*/
+    }
   }
 }
 
@@ -45,7 +43,7 @@ const Search = ({
 }: Props) => (
   <div>
     <h2>Vyhľadaj</h2>
-    <p>Najkratšie spojenie medzi dvojicou:</p>
+    <p>Zaujímavé spojenia jednotlivca alebo najkratšie spojenie medzi dvojicou:</p>
     <Form>
       <FormGroup>
         <Label for="searchValue1">Prvá firma/osoba*</Label>
@@ -59,7 +57,7 @@ const Search = ({
         />
       </FormGroup>
       <FormGroup>
-        <Label htmlFor="searchValue2">Druhá firma/osoba*</Label>
+        <Label htmlFor="searchValue2">Druhá firma/osoba</Label>
         <Input
           id="searchValue2"
           className="form-control"
