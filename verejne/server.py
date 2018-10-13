@@ -149,7 +149,7 @@ def initialise_app():
 
 
 def main(args_dict):
-    initialise_app(args_dict['serving_directory'])
+    initialise_app()
 
     host, port = args_dict['listen'].split(':')
     httpserver.serve(
@@ -168,9 +168,5 @@ if __name__ == '__main__':
         '--listen',
         default='127.0.0.1:8080',
         help='host:port to listen on')
-    parser.add_argument(
-        '--serving_directory',
-        default='/data/www/verejne.digital/serving/prod/',
-        help='Directory with serving data')
     args_dict = vars(parser.parse_args())
     main(args_dict)
