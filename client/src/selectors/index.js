@@ -349,3 +349,7 @@ export const connectionDetailSelector = (
 
 export const addNeighboursLimitSelector = (state: State): number | null =>
   state.connections.addNeighboursLimit
+
+export const isItCandidatesListSelector = (state: State, props: ContextRouter): boolean =>
+  props.location.search.includes('kandidati_bratislava') ||
+  props.location.search.includes('kandidati_prezident')

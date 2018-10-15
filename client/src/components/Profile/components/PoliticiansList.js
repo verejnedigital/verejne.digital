@@ -2,33 +2,30 @@
 import React from 'react'
 import Politician from './Politician'
 import {Table} from 'reactstrap'
-import {isItCandidatesList} from '../utilities'
 import PoliticiansListWrapper from './PoliticiansListWrapper'
-import {withRouter} from 'react-router-dom'
+import {withRouter} from 'react-router'
+import {connect} from 'react-redux'
 import {compose} from 'redux'
+import {isItCandidatesListSelector} from '../../../selectors'
 import './PoliticiansList.css'
 
-import type {Politician as PoliticianType} from '../../../state'
-import type {RouterHistory} from 'react-router'
+import type {ContextRouter} from 'react-router-dom'
+import type {Politician as PoliticianType, State} from '../../../state'
 
 type PoliticianListProps = {
   politicians: Array<PoliticianType>,
-  history: RouterHistory,
+  isItCandidatesList: boolean,
 }
 
-const PoliticiansList = ({politicians, history}: PoliticianListProps) => (
+const PoliticiansList = ({politicians, isItCandidatesList}: PoliticianListProps) => (
   <Table id="politicians-table">
     <thead>
       <tr>
         <th />
         <th />
         <th className="text-left column-title">Meno a priezvisko</th>
-        {!isItCandidatesList(history.location.search) && (
-          <th className="text-left column-title">Obdobie</th>
-        )}
-        {!isItCandidatesList(history.location.search) && (
-          <th className="party-column column-title">Strana</th>
-        )}
+        {!isItCandidatesList && <th className="text-left column-title">Obdobie</th>}
+        {!isItCandidatesList && <th className="party-column column-title">Strana</th>}
         <th className="number-column column-title" title="Domy, byty a iné stavby">
           Stavby
         </th>
@@ -46,5 +43,8 @@ const PoliticiansList = ({politicians, history}: PoliticianListProps) => (
 
 export default compose(
   PoliticiansListWrapper,
-  withRouter
+  withRouter,
+  connect((state: State, props: ContextRouter) => ({
+    isItCandidatesList: isItCandidatesListSelector(state, props),
+  }))
 )(PoliticiansList)

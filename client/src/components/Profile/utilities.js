@@ -65,6 +65,3 @@ export const getGroupFromQuery = (group: string): string =>
       : group === 'kandidati_prezident'
         ? 'candidates_2019_president'
         : ''
-
-export const isItCandidatesList = (url: string): boolean =>
-  url.includes('kandidati_bratislava') || url.includes('kandidati_prezident')
