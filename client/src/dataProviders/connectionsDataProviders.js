@@ -32,6 +32,20 @@ const dispatchSubgraphData = (
   )
 }
 
+//when notable_connections provides query atribute for nodes, pass plain data to transformer
+const tempQueryMarker = (data, eid) => {
+  const eids = typeof eid === 'number' ? [eid] : eid
+  const {vertices: unmarkedVertices} = data
+  const markedVertices = []
+  unmarkedVertices.forEach((v) => {
+    markedVertices.push({
+      ...v,
+      query: eids.indexOf(v.eid) !== -1,
+    })
+  })
+  return {...data, vertices: markedVertices}
+}
+
 const dispatchNotableSubgraphData = (eid: number | number[], transformer: (Object) => Object) => (
   ref: string,
   data: any,
@@ -40,7 +54,7 @@ const dispatchNotableSubgraphData = (eid: number | number[], transformer: (Objec
   dispatch(
     receiveData(
       ['connections', 'subgraph'],
-      {id: `${eid.toString()}`, data: transformer(data)},
+      {id: `${eid.toString()}`, data: transformer(tempQueryMarker(data, eid))},
       ref
     )
   )

@@ -90,37 +90,11 @@ class MyServer(webapp2.RequestHandler):
     self.response.write(json.dumps(j, separators=(',',':')))
 
 
-class Connection(MyServer):
-  def get(self):
-    start, end = self.parse_start_end()
-    relations_old = webapp2.get_app().registry['relations_old']
-    response = relations_old.bfs(start, end)
-    self.returnJSON(response)
-
-
 class AShortestPath(MyServer):
   def get(self):
     start, end = self.parse_start_end()
     relations = webapp2.get_app().registry['relations']
     response = relations.bfs(start, end)  # Assumes unit edge lengths!
-    self.returnJSON(response)
-
-
-class ShortestPath(MyServer):
-  def get(self):
-    start, end = self.parse_start_end()
-    relations_old = webapp2.get_app().registry['relations_old']
-    response = relations_old.dijkstra(start, end)
-    self.returnJSON(response)
-
-
-class Neighbourhood(MyServer):
-  def get(self):
-    start = self._parse_eid_list('eid')
-    cap = self._parse_int('cap')
-    relations_old = webapp2.get_app().registry['relations_old']
-    response = relations_old.dijkstra(
-      start, [], cap=cap, return_all=True)
     self.returnJSON(response)
 
 
@@ -156,6 +130,15 @@ class NotableConnections(MyServer):
     max_order = self._parse_int(
       'max_order', default=100, max_value=200)
 
+    # Special case due to current media coverage.
+    first_eid_name = webapp2.get_app().registry['db'].query(
+        'SELECT name FROM entities WHERE id=%s;',
+        [start[0]]
+    )[0]['name']
+    if u'Kočner' in first_eid_name:
+      target_order = 120
+      max_order = 120
+
     # Build subgraph of connections to notable entities:
     subgraph = relations.get_notable_connections_subgraph(
       start, notable_eids, radius, max_nodes_to_explore, target_order,
@@ -168,10 +151,7 @@ class NotableConnections(MyServer):
 
 
 app = webapp2.WSGIApplication([
-    ('/connection', Connection),
     ('/a_shortest_path', AShortestPath),
-    ('/shortest', ShortestPath),
-    ('/neighbourhood', Neighbourhood),
     ('/subgraph', Subgraph),
     ('/notable_connections', NotableConnections),
 ], debug=False)
@@ -212,7 +192,7 @@ def _initialise_notable_eids(db):
   return notable_eids
 
 
-def initialise_app(max_relations_to_load, disable_old_database=False):
+def initialise_app(max_relations_to_load):
   """Precomputes values shared across requests to this app.
 
   The registry property is intended for storing these precomputed
@@ -225,27 +205,10 @@ def initialise_app(max_relations_to_load, disable_old_database=False):
   db.execute('SET search_path to ' + schema + ';')
   app.registry['db'] = db
 
+  # Build Relations object and a set of notable eIDs:
   app.registry['relations'] = _initialise_relations(
     db, max_relations_to_load)
   app.registry['notable_eids'] = _initialise_notable_eids(db)
-
-  # TEMP: For faster unit testing:
-  if disable_old_database:
-    return
-
-  # TEMP: Construct Relations using old database data:
-  db_old = DatabaseConnection(path_config='db_config_old.yaml', search_path='mysql')
-  app.registry['db_old'] = db_old
-  q = """SELECT eid1, eid2, length FROM related LIMIT %s;"""
-  q_data = [max_relations_to_load]
-  edge_list_old = []
-  for row in db_old.query(q, q_data):
-    edge_list_old.append(
-      (row['eid1'], row['eid2'], float(row['length'])))
-    edge_list_old.append(
-      (row['eid2'], row['eid1'], float(row['length'])))
-  relations_old = Relations(edge_list_old)
-  app.registry['relations_old'] = relations_old
 
 
 def main(args):

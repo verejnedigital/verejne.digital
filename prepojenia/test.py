@@ -1,4 +1,3 @@
-
 """Unit tests for server prepojenia.
 
 Run all unit test from command line as:
@@ -29,11 +28,6 @@ def _request_json(url, test_handler):
 
 
 class TestHandlers(unittest.TestCase):
-
-  def test_connection(self):
-    url = '/connection?eid1=39541,78864,94764,229752&eid2=136671,229753'
-    content = _request_json(url, self)
-    print('Connection:\n%s' % (content))
 
   def test_a_shortest_path(self):
     url = '/a_shortest_path?eid1=3264887&eid2=706143,1184394,1662599,1703776,2349437,3135421'
@@ -67,7 +61,7 @@ class TestHandlers(unittest.TestCase):
         len(content['vertices']), len(content['edges']), content))
 
   def test_notable_connections(self):
-    url = '/notable_connections?eid=623885,1035271,1261600,1389045,1562426,1588169,1984031,2152740,2287439'
+    url = '/notable_connections?eid=921345,1110203,1381426,1398694,1439043,1458476,1503874,1503875,1528045,1606681,1656070,1711737,1822508,1972319,2143164,2172543,2286309'
     content = _request_json(url, self)
     self.assertIsInstance(content, dict)
     self.assertTrue('vertices' in content)
@@ -115,9 +109,7 @@ class TestHandlers(unittest.TestCase):
 
 def main():
   max_relations_to_load = 123456789
-  disable_old_database = True
-
-  server.initialise_app(max_relations_to_load, disable_old_database)
+  server.initialise_app(max_relations_to_load)
   unittest.main()
 
 

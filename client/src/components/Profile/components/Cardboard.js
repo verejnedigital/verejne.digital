@@ -1,6 +1,7 @@
 // @flow
 import React, {Fragment} from 'react'
-import {getTerm, mergeConsecutiveTerms} from '../utilities'
+import {withProps} from 'recompose'
+import {getTerm, mergeConsecutiveTerms, splitOfficesByYear, type SplitOffices} from '../utilities'
 
 import type {PoliticianDetail} from '../../../state'
 
@@ -10,7 +11,7 @@ type CardboardProps = {
   politician: PoliticianDetail,
 }
 
-const Cardboard = ({politician}: CardboardProps) => (
+const Cardboard = ({politician, currentOffices, pastOffices}: CardboardProps & SplitOffices) => (
   <div className="profile-cardboard">
     <img
       className="picture"
@@ -22,8 +23,8 @@ const Cardboard = ({politician}: CardboardProps) => (
         {politician.firstname} {politician.surname}
         {politician.title && `, ${politician.title}`}
       </h3>
-      {politician.offices &&
-        mergeConsecutiveTerms(politician.offices).map((office, i) => (
+      {currentOffices.length > 0 &&
+        currentOffices.map((office, i) => (
           <dl className="row" key={i}>
             <dt className="col-md-1 col-sm-0">Funkcia</dt>
             <dd className="col-md-11 col-sm-12">
@@ -41,8 +42,33 @@ const Cardboard = ({politician}: CardboardProps) => (
             )}
           </dl>
         ))}
+      {pastOffices.length > 0 && (
+        <dl className="row" key="past">
+          <dt className="col-md-1 col-sm-0">Minulé funkcie</dt>
+          <dd className="col-md-11 col-sm-12">
+            {pastOffices.map((office, i) => (
+              <div key={i}>
+                {politician.surname.endsWith('ová')
+                  ? office.office_name_female
+                  : office.office_name_male}
+                {getTerm(office) && `, ${getTerm(office)}`}
+                {office.party_abbreviation && (
+                  <span title={office.party_nom}>{`, ${office.party_abbreviation}`}</span>
+                )}
+              </div>
+            ))}
+          </dd>
+        </dl>
+      )}
     </div>
   </div>
 )
 
-export default Cardboard
+export default withProps((props: CardboardProps) => {
+  const mergedOffices = mergeConsecutiveTerms(props.politician.offices)
+  const splitOffices = splitOfficesByYear(mergedOffices, new Date().getFullYear())
+  return {
+    ...props,
+    ...splitOffices,
+  }
+})(Cardboard)

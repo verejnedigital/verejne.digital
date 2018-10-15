@@ -89,11 +89,14 @@ const Subgraph = ({
       <Col lg="7" md="12">
         Ovládanie:
         <ul>
-          <li>Ťahanie vrchola: premiestnenie vrchola v grafe</li>
           <li>
-            Klik na vrchol: načítať a zobraziť detailné informácie o vrchole (v boxe pod grafom)
+            <i>Ťahaním</i> mena ho premiestnite.
           </li>
-          <li>Dvojklik na vrchol: pridať do grafu {limitSettingsOpen
+          <li>
+            <i>Kliknutím</i> na meno zobrazíte detailné informácie v boxe pod grafom.
+          </li>
+          <li>
+            <i>Dvojkliknutím</i> na meno pridáte ďalších {limitSettingsOpen
             ? <Input
               className="limit-input"
               value={limit || ''}
@@ -103,8 +106,10 @@ const Subgraph = ({
               autoFocus
             />
             : <b className="limit" onClick={openLimitSettings}>{limit}</b>
-          } nezobrazených susedov</li>
-          <li>Potrasenie vrcholom: odobrať vrchol z grafu (aj jeho výlučných susedov)</li>
+          } nezobrazených susedov.</li>
+          <li>
+            <i>Potrasením</i> mena ho odstránite zo schémy (spolu s jeho výlučnými susedmi).
+          </li>
         </ul>
       </Col>
       <Col lg="5" md="12">

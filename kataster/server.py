@@ -95,7 +95,7 @@ class InfoPolitician(MyServer):
       db_profil, politician_id)
     politician['offices'] = offices
 
-    # Add entity information from database vd.
+    # Retrieve eids of matched entities from database vd.
     db = webapp2.get_app().registry['db']
     rows = db.query(
         """
@@ -104,7 +104,12 @@ class InfoPolitician(MyServer):
         """,
         [politician_id]
     )
-    eids = [row['eid'] for row in rows]
+    eids = set(row['eid'] for row in rows)
+
+    # Retrieve eids of entities with a matching name.
+    eids.update(db_search.get_eids_with_matching_name(db, politician))
+
+    # Add entity information from database vd.
     politician['entities'] = get_GetInfos(db, eids)
 
     self.returnJSON(politician)
@@ -198,7 +203,7 @@ def initialise_app():
 
   db = DatabaseConnection(path_config='db_config.yaml')
   schema = db.get_latest_schema('prod_')
-  db.execute('SET search_path to ' + schema + ';')
+  db.execute('SET search_path to ' + schema + ',public;')
   app.registry['db'] = db
 
 

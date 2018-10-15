@@ -1,7 +1,5 @@
 """Defines the class Relations, representing a graph of entities."""
 
-import collections
-import heapq
 import Queue
 import random
 import six
@@ -72,58 +70,6 @@ class Relations:
       path.append(cur)
       cur = pred[cur]
     if not swapped: path.reverse()
-    return path
-
-  # Start exploring from list start. Never explore beyond distance cap.
-  # If return_all is True, return distances of all explored vertices from the start set
-  # If return_all is False, return the shortest path to a vertex in the list end
-  def dijkstra(self, start, end, cap=999999999, return_all=False):
-    # If start and end share entities, return the intersection
-    common = list(set(start).intersection(set(end)))
-    if (len(common)>0): return [common[0]]
-
-    pred = {}
-    distances = {}
-    h = []
-
-    def add(vertex, d, p):
-      # already in the heap with smaller distance; ignore the edge
-      if (distances.get(vertex, 999999999) <= d): return
-      if (d > cap): return
-      pred[vertex] = p
-      distances[vertex] = d
-      heapq.heappush(h, (d, vertex))
-
-    # add start vertices
-    for i in start: add(i, 0, -1)
-
-    found = -1
-    while len(h) > 0:
-      entry = heapq.heappop(h)
-      vertex = entry[1]
-      if vertex in end:
-        found = vertex
-        break
-      if not (vertex in self.start_index): continue
-      distance = entry[0]
-      # Vertex processed at smaller distance; ignore
-      if (distance > distances.get(vertex, 999999999)): continue
-      from_index = self.start_index[vertex]
-      for edge_index in xrange(from_index, len(self.edges)):
-        edge = self.edges[edge_index]
-        # If outside of edges from the 'vertex'; stop
-        if (edge[0] != vertex): break
-        add(edge[1], distance + edge[2], vertex)
-
-    if return_all: return distances
-
-    if found == -1: return []
-    path = []
-    cur = found
-    while cur != -1:
-      path.append(cur)
-      cur = pred[cur]
-    path.reverse()
     return path
 
   def _outgoing_edges(self, vertex):
@@ -283,6 +229,9 @@ class Relations:
     subgraph_vertices = []
     for batch in entities_with_d:
       order_now = len(subgraph_vertices)
+      if verbose:
+        print("Order now %d, batch %d, target %d, max %d" % (
+            order_now, len(batch), target_order, max_order))
       if order_now > 0 and order_now + len(batch) > target_order:
         break
       if order_now == 0 and len(batch) > max_order:
