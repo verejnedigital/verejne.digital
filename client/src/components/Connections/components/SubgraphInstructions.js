@@ -8,6 +8,7 @@ import {updateValue} from '../../../actions/sharedActions'
 import {addNeighboursLimitSelector} from '../../../selectors'
 import {setAddNeighboursLimit} from '../../../actions/connectionsActions'
 import {ADD_NEIGHBOURS_LIMIT} from '../../../constants'
+import './SubgraphInstructions.scss'
 
 import type {State} from '../../../state'
 
@@ -32,7 +33,7 @@ const SubgraphInstructions = ({
   closeLimitSettings,
   submitOnEnter,
 }: Props) => (
-  <React.Fragment>
+  <div className="graph-instructions">
     Ovládanie:
     <ul>
       <li>
@@ -57,7 +58,7 @@ const SubgraphInstructions = ({
         <i>Potrasením</i> mena ho odstránite zo schémy (spolu s jeho výlučnými susedmi).
       </li>
     </ul>
-  </React.Fragment>
+  </div>
 )
 
 export default compose(

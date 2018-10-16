@@ -4,10 +4,7 @@ import {compose} from 'redux'
 import {connect} from 'react-redux'
 import {withHandlers} from 'recompose'
 import GraphCompnent from 'react-graph-vis'
-import {Col, Row} from 'reactstrap'
 import {addNeighboursLimitSelector} from '../../../selectors'
-import Legend from '../../shared/Legend/Legend'
-import SubgraphInstructions from './SubgraphInstructions'
 import CompanyDetails from './../../shared/CompanyDetails'
 import {updateValue} from '../../../actions/sharedActions'
 import SubgraphWrapper from '../dataWrappers/SubgraphWrapper'
@@ -72,14 +69,6 @@ const Subgraph = ({
   handleDragEnd,
 }: Props) => (
   <div className="subgraph">
-    <Row>
-      <Col lg="7" md="12">
-        <SubgraphInstructions />
-      </Col>
-      <Col lg="5" md="12">
-        <Legend />
-      </Col>
-    </Row>
     <div className="graph mt-1">
       <GraphCompnent
         graph={subgraph}
