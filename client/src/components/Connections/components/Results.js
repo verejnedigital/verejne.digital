@@ -27,7 +27,8 @@ const Results = (props: Props) => (
         </Button>
       </div>
     )}
-    {(props.graphShown || !props.entitySearch2) && <Subgraph preloadNodes {...props} />}
+    {(props.graphShown || !props.entitySearch2) && props.entity1.eids.length > 0 &&
+      <Subgraph preloadNodes {...props} />}
     {props.entitySearch2 && <InfoLoader eids={props.connections} />}
   </div>
 )
