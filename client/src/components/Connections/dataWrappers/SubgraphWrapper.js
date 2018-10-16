@@ -20,17 +20,16 @@ import type {
   Graph,
 } from '../../../state'
 import {MAX_ENTITY_REQUEST_COUNT} from '../../../constants'
-import type {EntityProps} from './EntityWrapper'
 import type {ConnectionProps} from './ConnectionWrapper'
 
-export type OwnProps = {
-  preloadNodes: boolean,
-}
-
 export type SubgraphProps = {
-  selectedEids: Array<number>,
   subgraph: Graph,
+  eids1: Array<number>,
+  eids2: Array<number>,
   entityDetails: ObjectMap<NewEntityDetail>,
+  selectedEids: Array<number>,
+  notable: boolean,
+  preloadNodes: boolean,
 }
 
 const ConnectionWrapper = (WrappedComponent: ComponentType<*>) => {
@@ -38,20 +37,20 @@ const ConnectionWrapper = (WrappedComponent: ComponentType<*>) => {
     isNil(props.subgraph) ? null : <WrappedComponent {...props} />
 
   return compose(
-    withDataProviders(({entity1, entity2}: EntityProps) => [
-      entity2.query.length > 0
-        ? connectionSubgraphProvider(entity1.eids, entity2.eids, transformRaw)
-        : notableConnectionSubgraphProvider(entity1.eids, transformRaw),
+    withDataProviders(({eids1, eids2, notable}: SubgraphProps) => [
+      notable
+        ? connectionSubgraphProvider(eids1, eids2 || [], transformRaw)
+        : notableConnectionSubgraphProvider(eids1, transformRaw),
     ]),
     // TODO extract selectors
-    connect((state: State, props: EntityProps & ConnectionProps) => ({
+    connect((state: State, props: SubgraphProps & ConnectionProps) => ({
       selectedEids: state.connections.selectedEids,
       subgraph: enhanceGraph(
-        (props.entity2.query.length > 0
+        (props.notable
           ? state.connections.subgraph[
-            `${props.entity1.eids.join()}-${props.entity2.eids.join()}`
+            `${props.eids1.join()}-${props.eids2.join()}`
           ]
-          : state.connections.subgraph[`${props.entity1.eids.join()}`]
+          : state.connections.subgraph[`${props.eids1.join()}`]
         ).data,
         allEntityDetailsSelector(state),
         props.connections
@@ -59,7 +58,7 @@ const ConnectionWrapper = (WrappedComponent: ComponentType<*>) => {
       entityDetails: allEntityDetailsSelector(state),
     })),
     branch(
-      ({preloadNodes, subgraph}: OwnProps & SubgraphProps) => subgraph != null && preloadNodes,
+      ({preloadNodes, subgraph}: SubgraphProps) => subgraph != null && preloadNodes,
       withDataProviders(({subgraph: {nodes}}: SubgraphProps) =>
         chunk(nodes.map(({id}) => id), MAX_ENTITY_REQUEST_COUNT).map((ids) =>
           entityDetailProvider(ids, false)

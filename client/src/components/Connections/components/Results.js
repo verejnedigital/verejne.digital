@@ -39,7 +39,13 @@ const Results = (props: Props) => (
             <Legend />
           </Col>
         </Row>
-        <Subgraph preloadNodes {...props} />
+        <Subgraph
+          preloadNodes
+          eids1={props.entity1.eids}
+          eids2={props.entity2.eids}
+          notable={props.entity2.query.length > 0}
+          connections={props.connections}
+        />
       </React.Fragment>
     )}
     {props.entitySearch2 && <InfoLoader eids={props.connections} />}

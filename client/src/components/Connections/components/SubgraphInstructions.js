@@ -8,7 +8,7 @@ import {updateValue} from '../../../actions/sharedActions'
 import {addNeighboursLimitSelector} from '../../../selectors'
 import {setAddNeighboursLimit} from '../../../actions/connectionsActions'
 import {ADD_NEIGHBOURS_LIMIT} from '../../../constants'
-import './SubgraphInstructions.scss'
+import './SubgraphInstructions.css'
 
 import type {State} from '../../../state'
 
