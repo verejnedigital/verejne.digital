@@ -9,7 +9,7 @@ import './Public.css'
 const Public = () => (
   <div className="wrapper">
     <Sidebar />
-    <EntitySearchModal />
+    <EntitySearchModal className="entity-search-modal" />
     <Map />
     <Legend positionAbsolute closable />
 
