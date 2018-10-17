@@ -29,12 +29,15 @@ const GraphControls = ({
   <Col sm="12" lg="7">
     Ovládanie:
     <ul>
-      <li>Ťahanie vrchola: premiestnenie vrchola v grafe</li>
-      <li>Klik na vrchol: načítať a zobraziť detailné informácie o vrchole (v boxe pod grafom)</li>
       <li>
-        Dvojklik na vrchol: pridať do grafu{' '}
-        {limitSettingsOpen ? (
-          <Input
+        <i>Ťahaním</i> mena ho premiestnite.
+      </li>
+      <li>
+        <i>Kliknutím</i> na meno zobrazíte detailné informácie v boxe pod grafom.
+      </li>
+      <li>
+        <i>Dvojkliknutím</i> na meno pridáte ďalších {limitSettingsOpen
+          ? <Input
             className="limit-input"
             value={limit || ''}
             onChange={handleLimitChange}
@@ -42,14 +45,11 @@ const GraphControls = ({
             onKeyPress={submitOnEnter}
             autoFocus
           />
-        ) : (
-          <b className="limit" onClick={openLimitSettings}>
-            {limit}
-          </b>
-        )}{' '}
-        nezobrazených susedov
+          : <b className="limit" onClick={openLimitSettings}>{limit}</b>
+        } nezobrazených susedov.</li>
+      <li>
+        <i>Potrasením</i> mena ho odstránite zo schémy (spolu s jeho výlučnými susedmi).
       </li>
-      <li>Potrasenie vrcholom: odobrať vrchol z grafu (aj jeho výlučných susedov)</li>
     </ul>
   </Col>
 )

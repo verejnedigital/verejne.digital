@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+"""Functions for retrieving information from the database."""
+
+import re
+
 from utils import Mercator_to_WGS84
 
 
@@ -65,6 +69,53 @@ def get_offices_of_person(db, person_id):
         PersonOffices.term_end DESC
       ;"""
   return db.query(query, [person_id])
+
+
+def _is_matching_name(name, person):
+  """Returns whether `name` is deemed to "match" `person`."""
+
+  firstname = person['firstname']
+  surname = person['surname']
+  name_tokens = re.split(' |-', name)
+  firstname_match = (
+    firstname in name_tokens or
+    (firstname == u'Robert' and u'Róbert' in name_tokens) or
+    (firstname == u'Róbert' and u'Robert' in name_tokens) or
+    (firstname == u'Marian' and u'Marián' in name_tokens) or
+    (firstname == u'Marián' and u'Marian' in name_tokens))
+  surname_match = surname in name_tokens
+  return (firstname_match and surname_match)
+
+
+def get_eids_with_matching_name(db, person, verbose=False):
+  """Returns an iterable of eids with names matching `person`.
+
+  Args:
+    db: DatabaseConnection with search_path set to production schema.
+    person: Dict containing (at least) "firstname" and "surname".
+    verbose: Boolean indicating whether to report failed matches.
+  Returns:
+    Iterable of integers, the eids of entities with name matching the
+    name of `person`.
+  """
+  person_name = u'{0} {1}'.format(
+      person['firstname'], person['surname'])
+  rows = db.query(
+      """
+      SELECT entities.id AS eid, entities.name
+      FROM entities_search
+      INNER JOIN entities ON entities.id=entities_search.id
+      WHERE
+        search_vector @@ plainto_tsquery('simple', unaccent(%s));
+      """,
+      [person_name]
+  )
+  for row in rows:
+    if _is_matching_name(row['name'], person):
+      yield row['eid']
+    elif verbose:
+      print("%s did not match (%s, %s)!" % (
+        row['name'], person['firstname'], person['surname']))
 
 
 def get_Parcels_owned_by_Person(db, PersonId):

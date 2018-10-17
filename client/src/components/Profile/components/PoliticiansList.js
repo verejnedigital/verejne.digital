@@ -2,26 +2,30 @@
 import React from 'react'
 import Politician from './Politician'
 import {Table} from 'reactstrap'
-
 import PoliticiansListWrapper from './PoliticiansListWrapper'
-
+import {withRouter} from 'react-router'
+import {connect} from 'react-redux'
+import {compose} from 'redux'
+import {isItCandidatesListSelector} from '../../../selectors'
 import './PoliticiansList.css'
 
-import type {Politician as PoliticianType} from '../../../state'
+import type {ContextRouter} from 'react-router-dom'
+import type {Politician as PoliticianType, State} from '../../../state'
 
 type PoliticianListProps = {
   politicians: Array<PoliticianType>,
+  isItCandidatesList: boolean,
 }
 
-const PoliticiansList = ({politicians}: PoliticianListProps) => (
+const PoliticiansList = ({politicians, isItCandidatesList}: PoliticianListProps) => (
   <Table id="politicians-table">
     <thead>
       <tr>
         <th />
         <th />
         <th className="text-left column-title">Meno a priezvisko</th>
-        <th className="text-left column-title">Obdobie</th>
-        <th className="party-column column-title">Strana</th>
+        {!isItCandidatesList && <th className="text-left column-title">Obdobie</th>}
+        {!isItCandidatesList && <th className="party-column column-title">Strana</th>}
         <th className="number-column column-title" title="Domy, byty a iné stavby">
           Stavby
         </th>
@@ -30,9 +34,17 @@ const PoliticiansList = ({politicians}: PoliticianListProps) => (
       </tr>
     </thead>
     <tbody>
-      {politicians.map((politician) => <Politician key={politician.id} politician={politician} />)}
+      {politicians.map((politician) => (
+        <Politician key={politician.id} politician={politician} />
+      ))}
     </tbody>
   </Table>
 )
 
-export default PoliticiansListWrapper(PoliticiansList)
+export default compose(
+  PoliticiansListWrapper,
+  withRouter,
+  connect((state: State, props: ContextRouter) => ({
+    isItCandidatesList: isItCandidatesListSelector(state, props),
+  }))
+)(PoliticiansList)
