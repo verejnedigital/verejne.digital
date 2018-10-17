@@ -2,14 +2,12 @@
 import React from 'react'
 import {compose} from 'redux'
 import {connect} from 'react-redux'
-import {withHandlers, withState} from 'recompose'
+import {withHandlers} from 'recompose'
 import GraphCompnent from 'react-graph-vis'
-import {Col, Row, Input} from 'reactstrap'
 import {addNeighboursLimitSelector} from '../../../selectors'
 import Legend from '../../shared/Legend/Legend'
 import CompanyDetails from './../../shared/CompanyDetails'
 import {updateValue} from '../../../actions/sharedActions'
-import {setAddNeighboursLimit} from '../../../actions/connectionsActions'
 import SubgraphWrapper from '../dataWrappers/SubgraphWrapper'
 import {options as graphOptions, getNodeEid, addNeighbours, removeNodes} from './graph/utils'
 import {checkShaking, resetGesture} from './graph/gestures'
@@ -40,24 +38,17 @@ export type GraphEvent = {|
 export type OwnProps = {
   preloadNodes: boolean,
   limit: number,
-  limitSettingsOpen: boolean,
-  setLimitSettingsOpen: (open: boolean) => void,
 } & EntityProps &
   ConnectionProps
 
 type DispatchProps = {
   updateValue: Function,
-  setAddNeighboursLimit: Function,
 }
 type Handlers = {
   handleSelect: (e: GraphEvent) => void,
   handleDoubleClick: (e: GraphEvent) => void,
   handleDrag: (e: GraphEvent) => void,
   handleDragEnd: (e: GraphEvent) => void,
-  handleLimitChange: (e: Event) => void,
-  openLimitSettings: (e: Event) => void,
-  closeLimitSettings: (e: Event) => void,
-  submitOnEnter: (e: KeyboardEvent) => void,
 }
 
 type Props = OwnProps & SubgraphProps & DispatchProps & Handlers
@@ -78,39 +69,10 @@ const Subgraph = ({
   handleDrag,
   handleDragEnd,
   limit,
-  handleLimitChange,
-  limitSettingsOpen,
-  openLimitSettings,
-  closeLimitSettings,
-  submitOnEnter,
+  legendShown,
+  toggleLegendShown,
 }: Props) => (
   <div className="subgraph">
-    <Row>
-      <Col lg="7" md="12">
-        Ovládanie:
-        <ul>
-          <li>Ťahanie vrchola: premiestnenie vrchola v grafe</li>
-          <li>
-            Klik na vrchol: načítať a zobraziť detailné informácie o vrchole (v boxe pod grafom)
-          </li>
-          <li>Dvojklik na vrchol: pridať do grafu {limitSettingsOpen
-            ? <Input
-              className="limit-input"
-              value={limit || ''}
-              onChange={handleLimitChange}
-              onBlur={closeLimitSettings}
-              onKeyPress={submitOnEnter}
-              autoFocus
-            />
-            : <b className="limit" onClick={openLimitSettings}>{limit}</b>
-          } nezobrazených susedov</li>
-          <li>Potrasenie vrcholom: odobrať vrchol z grafu (aj jeho výlučných susedov)</li>
-        </ul>
-      </Col>
-      <Col lg="5" md="12">
-        <Legend />
-      </Col>
-    </Row>
     <div className="graph mt-1">
       <GraphCompnent
         graph={subgraph}
@@ -124,6 +86,7 @@ const Subgraph = ({
         style={graphStyle}
       />
     </div>
+    <Legend defaultOpen={false} closable graphControlls />
     {selectedEids.map((eid) => (
       <div className="info-loader" key={eid}>
         <CompanyDetails eid={eid} />
@@ -137,9 +100,8 @@ export default compose(
     (state: State) => ({
       limit: addNeighboursLimitSelector(state),
     }),
-    {updateValue, setAddNeighboursLimit}
+    {updateValue}
   ),
-  withState('limitSettingsOpen', 'setLimitSettingsOpen', false),
   SubgraphWrapper,
   withHandlers({
     handleSelect: (props: OwnProps & DispatchProps & SubgraphProps) => ({nodes}: GraphEvent) => {
@@ -192,26 +154,5 @@ export default compose(
       }
     },
     handleDragEnd: () => resetGesture,
-    handleLimitChange: (props: OwnProps & DispatchProps & SubgraphProps) => (e: Event) => {
-      if (e.target instanceof HTMLInputElement) {
-        const {value} = e.target
-        const limit = Number(value)
-        if (value === '' || (Number.isInteger(limit) && limit >= 0)) {
-          props.setAddNeighboursLimit(value === '' ? null : limit)
-        }
-      }
-    },
-    openLimitSettings: (props: OwnProps & DispatchProps & SubgraphProps) => () =>
-      props.setLimitSettingsOpen(true),
-    closeLimitSettings: (props: OwnProps & DispatchProps & SubgraphProps) => () => {
-      props.limit || props.setAddNeighboursLimit(ADD_NEIGHBOURS_LIMIT)
-      props.setLimitSettingsOpen(false)
-    },
-    submitOnEnter: (props: OwnProps & DispatchProps & SubgraphProps) => (e: KeyboardEvent) => {
-      if (e.key === 'Enter') {
-        props.limit || props.setAddNeighboursLimit(ADD_NEIGHBOURS_LIMIT)
-        props.setLimitSettingsOpen(false)
-      }
-    },
   })
 )(Subgraph)

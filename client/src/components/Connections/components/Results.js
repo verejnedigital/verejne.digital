@@ -34,7 +34,7 @@ const Results = (props: Props) => (
 
 export default compose(
   EntitySearchWrapper,
-  withState('graphShown', 'setGraphShown', false),
+  withState('graphShown', 'setGraphShown', true),
   withHandlers({
     toggleGraphShown: ({setGraphShown, graphShown}) => () => setGraphShown(!graphShown),
   }),
