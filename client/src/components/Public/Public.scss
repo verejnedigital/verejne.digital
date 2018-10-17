@@ -2,3 +2,9 @@
   overflow: hidden;
   height: 100%;
 }
+
+.entity-search-modal {
+  .modal-body {
+      min-height: 150px;
+  }
+}
