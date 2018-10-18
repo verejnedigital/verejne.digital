@@ -22,7 +22,6 @@ export const addressesProvider = (addressesUrl: string) => {
       },
     ],
     onData: [dispatchAddresses],
-    keepAliveFor: 60 * 60 * 1000,
     needed: false,
   }
 }
