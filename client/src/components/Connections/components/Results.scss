@@ -1,3 +1,5 @@
+@import "../../variables.scss";
+
 .showGraphButtonWrap {
   margin-bottom: 10px;
   width: 100%;
@@ -6,6 +8,21 @@
 }
 
 .showGraphButton {
-  position: relative;
-  float: right;
+  cursor: pointer;
+  z-index: 10;
+
+  &.open {
+    background: white;
+    padding: .3rem;
+    border: 1px solid $border-color;
+    box-shadow: 0 4px 12px 0 $shadow-color;
+    margin-bottom: 15px;
+  }
+
+  &.close {
+    position: absolute;
+    right: 15px;
+    top: 5px;
+    padding: 0 5px;
+  }
 }

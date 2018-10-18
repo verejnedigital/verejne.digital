@@ -2,7 +2,6 @@
 import React from 'react'
 import {compose} from 'redux'
 import {branch, renderComponent, withState, withHandlers} from 'recompose'
-import {Button} from 'reactstrap'
 import ConnectionWrapper, {type ConnectionProps} from '../dataWrappers/ConnectionWrapper'
 import EntityWrapper, {type EntityProps} from '../dataWrappers/EntityWrapper'
 import EntitySearchWrapper, {type EntitySearchProps} from '../dataWrappers/EntitySearchWrapper'
@@ -13,7 +12,7 @@ import './Results.css'
 
 type StateProps = {
   graphShown: boolean,
-  toggleGraphShown: () => void,
+  toggleGraphShown: (e: MouseEvent) => void,
 }
 
 type Props = EntitySearchProps & EntityProps & ConnectionProps & StateProps
@@ -21,11 +20,13 @@ type Props = EntitySearchProps & EntityProps & ConnectionProps & StateProps
 const Results = (props: Props) => (
   <div>
     {props.entitySearch2 && (
-      <div className="showGraphButtonWrap">
-        <Button color="primary" onClick={props.toggleGraphShown} className="showGraphButton">
-          {props.graphShown ? 'Skryť graf' : 'Zobraziť graf'}
-        </Button>
-      </div>
+      <button
+        type="button"
+        className={`showGraphButton ${props.graphShown ? 'close' : 'open'}`}
+        onClick={props.toggleGraphShown}
+      >
+        {props.graphShown ? <span>&times;</span> : 'Zobraziť graf'}
+      </button>
     )}
     {(props.graphShown || !props.entitySearch2) && <Subgraph preloadNodes {...props} />}
     {props.entitySearch2 && <InfoLoader eids={props.connections} />}
@@ -36,7 +37,10 @@ export default compose(
   EntitySearchWrapper,
   withState('graphShown', 'setGraphShown', true),
   withHandlers({
-    toggleGraphShown: ({setGraphShown, graphShown}) => () => setGraphShown(!graphShown),
+    toggleGraphShown: ({setGraphShown, graphShown}) => (e: MouseEvent) => {
+      e.target instanceof HTMLElement && e.target.blur()
+      setGraphShown(!graphShown)
+    },
   }),
   branch(
     ({entitySearch1}: EntitySearchProps) => entitySearch1 !== '',
