@@ -5,7 +5,7 @@ import CircleIcon from 'react-icons/lib/fa/circle-o'
 import FilledCircleIcon from 'react-icons/lib/fa/circle'
 import {compose, withState, withHandlers} from 'recompose'
 import {Row, Col} from 'reactstrap'
-import GraphControlls from '../../Connections/components/GraphControlls'
+import GraphControls from '../../Connections/components/GraphControls'
 import {FACEBOOK_LIKE_SRC} from '../../../constants'
 import './Legend.css'
 import MapIcon from '../../../assets/mapIcon.svg'
@@ -16,10 +16,10 @@ type Props = {
   positionAbsolute?: boolean,
   closable?: boolean,
   defaultOpen?: boolean,
-  graphControlls?: boolean,
+  graphControls?: boolean,
 }
 
-const Legend = ({legendOpen, toggleLegend, positionAbsolute, closable, graphControlls}: Props) =>
+const Legend = ({legendOpen, toggleLegend, positionAbsolute, closable, graphControls}: Props) =>
   legendOpen ? (
     <div className={classnames('legend', {'position-absolute': positionAbsolute})}>
       <div className="legend__header">
@@ -38,8 +38,8 @@ const Legend = ({legendOpen, toggleLegend, positionAbsolute, closable, graphCont
         )}
       </div>
       <Row>
-        {graphControlls && <GraphControlls />}
-        <Col sm="12" lg={graphControlls ? 5 : 12}>
+        {graphControls && <GraphControls />}
+        <Col sm="12" lg={graphControls ? 5 : 12}>
           <p>Legenda</p>
           <p>
             <CircleIcon className="svg" />
