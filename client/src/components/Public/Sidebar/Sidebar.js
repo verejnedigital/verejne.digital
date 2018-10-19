@@ -117,10 +117,22 @@ const Content = compose(
       updateValue(['publicly', 'autocompleteValue'], value, 'Set autocomplete value'),
     setZoomToLocation: ({zoomToLocation, updateValue, setDrawer}) => (value, id) => {
       updateValue(['publicly', 'autocompleteValue'], value, 'Set autocomplete value')
-      geocodeByAddress(value)
-        .then((results) => getLatLng(results[0]))
-        .then((location) => zoomToLocation(location, ENTITY_CLOSE_ZOOM))
-      setDrawer(false)
+      value !== '' &&
+        geocodeByAddress(value)
+          .then((results) => getLatLng(results[0]))
+          .then((location) => {
+            zoomToLocation(location, ENTITY_CLOSE_ZOOM)
+            setDrawer(false)
+          })
+          .catch((error: string | Error) => {
+            if (error instanceof Error) {
+              //Errors from getLatLng
+              throw error
+            } else if (error !== 'ZERO_RESULTS') {
+              //String rejections from geocodeByAddress, ignore no results
+              throw new Error(`geocodebyAddress rejected with status: ${error}`)
+            }
+          })
     },
   })
 )(_Content)
