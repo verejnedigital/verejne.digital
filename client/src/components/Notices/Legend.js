@@ -1,5 +1,5 @@
 // @flow
-import React, {Fragment} from 'react'
+import React from 'react'
 import {Row, Col} from 'reactstrap'
 
 import {formatSimilarPercent, getWarningSymbol} from './LegendSymbols'
@@ -7,7 +7,7 @@ import './Legend.css'
 import './LegendSymbols.css'
 
 const Legend = () => (
-  <Fragment>
+  <div className="notice-legend">
     <Row>
       <Col xs={{size: 10, offset: 2}}>
         <h3 className="notice-legend-label">Legenda:</h3>
@@ -30,7 +30,7 @@ const Legend = () => (
         podozrivé obstarávanie
       </Col>
     </Row>
-  </Fragment>
+  </div>
 )
 
 export default Legend

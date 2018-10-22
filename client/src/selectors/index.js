@@ -80,7 +80,7 @@ export const noticesOrderingSelector = createSelector(
   (query): NoticesOrdering => query.ordering || 'date'
 )
 
-export const noticesLengthSelector = createSelector(searchFilteredNoticesSelector, (notices) => {
+export const noticesLengthSelector = createSelector(activeNoticesSelector, (notices) => {
   return notices.length
 })
 
