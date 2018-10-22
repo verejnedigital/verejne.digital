@@ -43,7 +43,7 @@ const Results = (props: Props) => (
           preloadNodes
           eids1={props.entity1.eids}
           eids2={props.entity2.eids}
-          notable={props.entity2.query.length > 0}
+          notable={props.entity2.query.length === 0}
           connections={props.connections}
         />
       </React.Fragment>

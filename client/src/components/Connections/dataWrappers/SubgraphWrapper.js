@@ -39,18 +39,18 @@ const ConnectionWrapper = (WrappedComponent: ComponentType<*>) => {
   return compose(
     withDataProviders(({eids1, eids2, notable}: SubgraphProps) => [
       notable
-        ? connectionSubgraphProvider(eids1, eids2 || [], transformRaw)
-        : notableConnectionSubgraphProvider(eids1, transformRaw),
+        ? notableConnectionSubgraphProvider(eids1, transformRaw)
+        : connectionSubgraphProvider(eids1, eids2 || [], transformRaw),
     ]),
     // TODO extract selectors
     connect((state: State, props: SubgraphProps & ConnectionProps) => ({
       selectedEids: state.connections.selectedEids,
       subgraph: enhanceGraph(
         (props.notable
-          ? state.connections.subgraph[
+          ? state.connections.subgraph[`${props.eids1.join()}`]
+          : state.connections.subgraph[
             `${props.eids1.join()}-${props.eids2.join()}`
           ]
-          : state.connections.subgraph[`${props.eids1.join()}`]
         ).data,
         allEntityDetailsSelector(state),
         props.connections
