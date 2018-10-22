@@ -2,8 +2,7 @@
 import React, {Component} from 'react'
 import {compose, withHandlers} from 'recompose'
 import {connect} from 'react-redux'
-import {updateValue} from '../actions/sharedActions'
-import {refreshState} from '../utils'
+import {refreshState} from '../actions/sharedActions'
 import {NavLink, withRouter} from 'react-router-dom'
 import {Collapse, Navbar, NavbarToggler, NavItem, Nav} from 'reactstrap'
 
@@ -107,11 +106,11 @@ class Navigation extends Component<Props, State> {
 export default compose(
   withRouter,
   connect(null,
-    {updateValue}
+    {refreshState}
   ),
   withHandlers({
-    refresh: ({updateValue}) => () => {
-      refreshState(updateValue)
+    refresh: ({refreshState}) => () => {
+      refreshState()
     },
   }),
 )(Navigation)
