@@ -60,11 +60,13 @@ const AutoComplete = ({
         zIndex: 1,
       }
       return (
-        <div
-          className="autocomplete-suggestions-menu"
-          style={{...this.menuStyle, ...menuStyle}}
-          children={items}
-        />
+        items.length > 0
+          ? <div
+            className="autocomplete-suggestions-menu"
+            style={{...this.menuStyle, ...menuStyle}}
+            children={items}
+          />
+          : <div />
       )
     }}
   />
