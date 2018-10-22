@@ -18,6 +18,18 @@
   }
 }
 
+.modal-body {
+  .autocomplete-suggestions-menu {
+    width: calc(100% - 38px);
+  }
+  #entity-input {
+    width: 100%;
+  }
+  .autocomplete-wrapper {
+    width: calc(100% - 42px);
+  }
+}
+
 .autocomplete-item {
   color: $search-color;
   padding: 0.3rem;

@@ -27,6 +27,7 @@ import {
   setEntitySearchFor,
   setEntitySearchLoaded,
 } from '../../../actions/publicActions'
+import SearchIcon from 'react-icons/lib/fa/search'
 import {updateValue} from '../../../actions/sharedActions'
 import {FIND_ENTITY_TITLE} from '../../../constants'
 import {resultPlurality} from '../../../services/utilities'
@@ -73,7 +74,7 @@ const EntitySearchModal = ({
             <AutoComplete />
             <InputGroupAddon addonType="append">
               <Button color="primary" onClick={findEntities}>
-                {FIND_ENTITY_TITLE}
+                <SearchIcon />
               </Button>
             </InputGroupAddon>
           </InputGroup>

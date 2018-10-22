@@ -50,6 +50,9 @@ const AutoComplete = ({
       type: 'text',
       placeholder: FIND_ENTITY_TITLE,
     }}
+    wrapperProps={{
+      className: 'autocomplete-wrapper',
+    }}
     renderMenu={function(items, value) {
       // this.menuStyle is react-autocomplete's default
       // we're using menuStyle to partially override it
