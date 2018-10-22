@@ -57,6 +57,8 @@ const graphStyle = {
   height: '600px',
 }
 
+// ako explicitne props potrebuje Subgraph component iba
+// eids1 a notable (ak je true, ak false, tak aj eids2)
 const Subgraph = ({
   subgraph,
   selectedEids,
@@ -111,8 +113,8 @@ export default compose(
       }
       const subgraphId =
         props.notable
-          ? `${props.eids1.join()}-${props.eids2.join()}`
-          : `${props.eids1.join()}`
+          ? `${props.eids1.join()}`
+          : `${props.eids1.join()}-${props.eids2.join()}`
       const clickedEid = getNodeEid(nodes[0])
 
       if (props.entityDetails[clickedEid.toString()]) {
@@ -139,8 +141,8 @@ export default compose(
       if (checkShaking(pointer.canvas)) {
         const subgraphId =
           props.notable
-            ? `${props.eids1.join()}-${props.eids2.join()}`
-            : `${props.eids1.join()}`
+            ? `${props.eids1.join()}`
+            : `${props.eids1.join()}-${props.eids2.join()}`
         props.updateValue(
           ['connections', 'subgraph', subgraphId, 'data'],
           removeNodes(props.subgraph, nodes.map(getNodeEid), true)
