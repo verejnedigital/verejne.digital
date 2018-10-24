@@ -84,17 +84,6 @@ const DetailPage = ({
     <Cardboard key="cardboard" politician={politician} />
     <Row tag="article" key="politician" className="profile">
       <Col tag="section">
-        {politician.entities &&
-          size(politician.entities) > 0 && (
-          <section className="mb-4">
-            <h5 className="ml-2">
-                Pozor, možno iba {size(politician.entities) > 1 ? 'menovci' : 'menovec'}.
-            </h5>
-            {map(politician.entities, (e, i) => (
-              <Info key={i} data={e} />
-            ))}
-          </section>
-        )}
         <div className="profile-tabs">
           {assetsYears.map((y) => (
             <Link
@@ -136,6 +125,17 @@ const DetailPage = ({
               />
             </section>
           </Fragment>
+        )}
+        {politician.entities &&
+          size(politician.entities) > 0 && (
+          <section className="mb-4">
+            <h5 className="ml-2">
+              Informácie z obchodného registra môžu obsahovať menovcov.
+            </h5>
+            {map(politician.entities, (e, i) => (
+              <Info key={i} data={e} />
+            ))}
+          </section>
         )}
       </Col>
       <Col tag="section">
