@@ -331,7 +331,7 @@ export const entitySearchSuggestionsSelector = createSelector(
   entitySearchSuggestionEidsSelector,
   (details, eids): Array<string> => {
     return eids
-      .map((eid) => (details[eid.toString()] ? details[eid.toString()].name : null))
+      .map((eid) => (details[eid.toString()] ? details[eid.toString()].name : ''))
       .filter((name, index, array) => name && array.indexOf(name) === index)
   }
 )
@@ -353,3 +353,16 @@ export const addNeighboursLimitSelector = (state: State): number | null =>
 export const isItCandidatesListSelector = (state: State, props: ContextRouter): boolean =>
   props.location.search.includes('kandidati_bratislava') ||
   props.location.search.includes('kandidati_prezident')
+
+export const autocompleteSuggestionEidsSelector = (state: State, query: string): Array<number> => (
+  state.entitySearch[query] && state.entitySearch[query].eids
+) || []
+
+export const autocompleteSuggestionsSelector =
+  (state: State, value: string): Array<string> => {
+    const details = state.entityDetails
+    const eids = (state.entitySearch[value] && state.entitySearch[value].eids) || []
+    return eids
+      .map((eid) => (details[eid.toString()] ? details[eid.toString()].name : ''))
+      .filter((name, index, array) => name && array.indexOf(name) === index)
+  }
