@@ -3,9 +3,10 @@ import React from 'react'
 import {withRouter} from 'react-router-dom'
 import {withHandlers, withState} from 'recompose'
 import {compose} from 'redux'
-import {Form, FormGroup, Label, Input, Button} from 'reactstrap'
+import {Form, FormGroup, Label, Button} from 'reactstrap'
 import type {ContextRouter} from 'react-router'
 import EntitySearchWrapper, {type EntitySearchProps} from '../dataWrappers/EntitySearchWrapper'
+import AutoComplete from '../../shared/AutoComplete/AutoComplete'
 import './Search.css'
 
 type EmptyHandler = () => void
@@ -16,6 +17,8 @@ type Props = {
   searchValue2: string,
   setSearchValue1: EventHandler,
   setSearchValue2: EventHandler,
+  handleSelect1: EmptyHandler,
+  handleSelect2: EmptyHandler,
   searchOnEnter: EventHandler,
   searchConnection: EmptyHandler,
 } & EntitySearchProps &
@@ -38,6 +41,8 @@ const Search = ({
   searchValue2,
   setSearchValue1,
   setSearchValue2,
+  handleSelect1,
+  handleSelect2,
   searchOnEnter,
   searchConnection,
 }: Props) => (
@@ -47,25 +52,26 @@ const Search = ({
     <Form>
       <FormGroup>
         <Label for="searchValue1">Prvá firma/osoba*</Label>
-        <Input
-          id="searchValue1"
-          type="text"
+        <AutoComplete
           value={searchValue1}
-          onChange={setSearchValue1}
-          onKeyPress={searchOnEnter}
-          placeholder="Zadaj prvú firmu / človeka"
+          onChangeHandler={setSearchValue1}
+          onSelectHandler={handleSelect1}
+          inputProps={{
+            onKeyPress: searchOnEnter,
+            placeholder: 'Zadaj prvú firmu / človeka',
+          }}
         />
       </FormGroup>
       <FormGroup>
         <Label htmlFor="searchValue2">Druhá firma/osoba</Label>
-        <Input
-          id="searchValue2"
-          className="form-control"
-          type="text"
+        <AutoComplete
           value={searchValue2}
-          onChange={setSearchValue2}
-          onKeyPress={searchOnEnter}
-          placeholder="Zadaj druhú firmu / človeka"
+          onChangeHandler={setSearchValue2}
+          onSelectHandler={handleSelect2}
+          inputProps={{
+            onKeyPress: searchOnEnter,
+            placeholder: 'Zadaj druhú firmu / človeka',
+          }}
         />
       </FormGroup>
       <Button color="primary" onClick={searchConnection}>
@@ -83,6 +89,8 @@ export default compose(
   withHandlers({
     setSearchValue1: ({setSearchValue1}) => (e) => setSearchValue1(e.target.value),
     setSearchValue2: ({setSearchValue2}) => (e) => setSearchValue2(e.target.value),
+    handleSelect1: ({setSearchValue1}) => (value) => setSearchValue1(value),
+    handleSelect2: ({setSearchValue2}) => (value) => setSearchValue2(value),
     searchOnEnter: (props: Props) => (e) => {
       if (e.key === 'Enter') {
         _searchConnection(props)

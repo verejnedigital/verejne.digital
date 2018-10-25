@@ -21,6 +21,7 @@ type AutoCompleteProps = {
   value: string,
   onChangeHandler: (e: Event) => void,
   onSelectHandler: (value: string) => void,
+  inputProps?: Object,
   wrapperProps?: Object,
   menuClassName?: string,
   suggestions?: Array<string>,
@@ -31,6 +32,7 @@ const AutoComplete = ({
   value,
   onChangeHandler,
   onSelectHandler,
+  inputProps,
   wrapperProps,
   menuClassName,
   suggestions,
@@ -44,12 +46,12 @@ const AutoComplete = ({
     onChange={onChangeHandler}
     onSelect={onSelectHandler}
     autoHighlight={false}
-    inputProps={{
+    inputProps={{...{
       id: 'entity-input',
       className: 'form-control',
       type: 'text',
       placeholder: FIND_ENTITY_TITLE,
-    }}
+    }, ...inputProps}}
     wrapperProps={wrapperProps}
     renderMenu={function(items, value) {
       // this.menuStyle is react-autocomplete's default
@@ -58,6 +60,7 @@ const AutoComplete = ({
         padding: '0px',
         borderRadius: '0px',
         background: 'white',
+        border: '1px solid #cddae3',
         zIndex: 1,
       }
       return suggestions && suggestions.length > 0
