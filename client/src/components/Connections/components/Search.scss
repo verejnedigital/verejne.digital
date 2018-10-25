@@ -10,8 +10,29 @@
   box-shadow: 0 4px 12px 0 $shadow-color;
 }
 
-h2 {
-  // TODO: Refactor
-  font-family: "Source Code Pro", monospace;
-  font-weight: 200;
+.connections-autocomplete-input {
+  width: 270px;
+  @media screen and (min-width: 768px) {
+    width: 100%;
+  }
+}
+.connections-autocomplete-wrapper {
+  display: block !important;
+}
+.connections-search-wrapper {
+  @media screen and (max-width: 767px) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  h2 {
+    font-family: "Source Code Pro", monospace;
+    font-weight: 200;
+  }
+}
+.connections-autocomplete-suggestions {
+  max-height: 10rem;
+  @media screen and (min-width: 768px) {
+    max-height: 20rem;
+  }
 }

@@ -17,13 +17,15 @@ import classnames from 'classnames'
 
 import type {State} from '../../../state'
 
+import './AutoComplete.css'
+
 type AutoCompleteProps = {
   value: string,
   onChangeHandler: (e: Event) => void,
   onSelectHandler: (value: string) => void,
+  menuClassName?: string,
   inputProps?: Object,
   wrapperProps?: Object,
-  menuClassName?: string,
   suggestions?: Array<string>,
   renderItem?: (suggestion: string, isHighlighted: boolean) => Node,
 }
@@ -32,9 +34,9 @@ const AutoComplete = ({
   value,
   onChangeHandler,
   onSelectHandler,
+  menuClassName,
   inputProps,
   wrapperProps,
-  menuClassName,
   suggestions,
   renderItem,
 }: AutoCompleteProps) => (
@@ -47,30 +49,19 @@ const AutoComplete = ({
     onSelect={onSelectHandler}
     autoHighlight={false}
     inputProps={{...{
-      id: 'entity-input',
       className: 'form-control',
       type: 'text',
       placeholder: FIND_ENTITY_TITLE,
     }, ...inputProps}}
     wrapperProps={wrapperProps}
-    renderMenu={function(items, value) {
-      // this.menuStyle is react-autocomplete's default
-      // we're using menuStyle to partially override it
-      const menuStyle = {
-        padding: '0px',
-        borderRadius: '0px',
-        background: 'white',
-        border: '1px solid #cddae3',
-        zIndex: 1,
-      }
-      return suggestions && suggestions.length > 0
+    renderMenu={(items, value) =>
+      suggestions && suggestions.length > 0
         ? (<div
-          className={menuClassName || ''}
-          style={{...this.menuStyle, ...menuStyle}}
+          className={classnames('autocomplete-suggestions-menu', menuClassName)}
           children={items}
         />)
         : <div />
-    }}
+    }
   />
 )
 

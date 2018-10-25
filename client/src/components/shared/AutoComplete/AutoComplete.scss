@@ -1,0 +1,59 @@
+@import "../../variables.scss";
+
+#entity-input {
+  width: $verejne-sidebar-width - 80px;
+  height: auto;
+
+  @media screen and (max-width: 575px) {
+    width: 100%;
+  }
+}
+
+.autocomplete-suggestions-menu {
+  border: 1px solid $border-color;
+  width: $verejne-sidebar-width;
+
+  @media screen and (max-width: 575px) {
+    width: calc(90% - 1rem);
+  }
+}
+
+.autocomplete-item {
+  color: $search-color;
+  padding: 0.3rem;
+  cursor: pointer;
+  background-color: white;
+
+  &--active {
+    background-color: $asset-hover-color;
+  }
+
+  border-bottom: 1px solid $border-color;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.input-group.autocomplete-holder > div:first-child {
+  @media screen and (max-width: 575px) {
+    width: calc(100% - 82px);
+  }
+}
+
+.autocomplete__input {
+  height: auto;
+}
+
+.autocomplete-suggestions-menu {
+  box-shadow: 0 4px 12px 0 $shadow-color;
+  font-size: 90%;
+  position: absolute;
+  overflow: auto;
+  padding: 0px;
+  borderRadius: 0px;
+  background: white;
+  z-index: 1;
+  border: '1px solid $borderColor';
+  width: 100%;
+}

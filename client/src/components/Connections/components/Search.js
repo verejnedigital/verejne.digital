@@ -46,7 +46,7 @@ const Search = ({
   searchOnEnter,
   searchConnection,
 }: Props) => (
-  <div>
+  <div className="connections-search-wrapper">
     <h2>Vyhľadaj</h2>
     <p>Zaujímavé spojenia jednotlivca alebo najkratšie spojenie medzi dvojicou:</p>
     <Form>
@@ -56,9 +56,14 @@ const Search = ({
           value={searchValue1}
           onChangeHandler={setSearchValue1}
           onSelectHandler={handleSelect1}
+          menuClassName="connections-autocomplete-suggestions"
           inputProps={{
+            className: 'form-control connections-autocomplete-input',
             onKeyPress: searchOnEnter,
             placeholder: 'Zadaj prvú firmu / človeka',
+          }}
+          wrapperProps={{
+            className: 'connections-autocomplete-wrapper',
           }}
         />
       </FormGroup>
@@ -68,9 +73,14 @@ const Search = ({
           value={searchValue2}
           onChangeHandler={setSearchValue2}
           onSelectHandler={handleSelect2}
+          menuClassName="connections-autocomplete-suggestions"
           inputProps={{
+            className: 'form-control connections-autocomplete-input',
             onKeyPress: searchOnEnter,
             placeholder: 'Zadaj druhú firmu / človeka',
+          }}
+          wrapperProps={{
+            className: 'connections-autocomplete-wrapper',
           }}
         />
       </FormGroup>
