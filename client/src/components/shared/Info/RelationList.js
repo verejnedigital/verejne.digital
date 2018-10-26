@@ -1,7 +1,7 @@
 // @flow
 import React from 'react'
 import {Badge} from 'reactstrap'
-import {orderBy} from 'lodash'
+import {sortBy} from 'lodash'
 
 import RecursiveInfo from './RecursiveInfo'
 import {showRelationType, getRelationTitle, getColor} from '../utilities'
@@ -24,7 +24,12 @@ type TitleBadgeProps = {
 
 export default ({data, name, useNewApi}: RelationListProps) => (
   <ul className="list-unstyled info-button-list">
-    {orderBy(data, ['edge_types']).map((related: RelatedEntity) => (
+    {sortBy(data, [
+      'political_entity',
+      'contact_with_politics',
+      'trade_with_government',
+      'edge_types',
+    ]).reverse().map((related: RelatedEntity) => (
       <RelationItem key={related.eid} related={related} name={name} />
     ))}
   </ul>
@@ -33,8 +38,7 @@ export default ({data, name, useNewApi}: RelationListProps) => (
 const RelationItem = ({related, name}: RelationItemProps) => (
   <li key={related.eid} className="">
     <RecursiveInfo
-      name={related.name}
-      eid={related.eid}
+      related={related}
       badge={<TitleBadge key={related.eid} related={related} name={name} />}
     />
   </li>
