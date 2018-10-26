@@ -54,6 +54,10 @@ class EntitySearchResult extends PureComponent<EntitySearchResultProps> {
       isEqual
     )
     makeLocationsSelected(locations)
+
+    if (locations.length === 0) {
+      return
+    }
     const {center, zoom} = getBoundsFromLocations(
       locations,
       window.innerWidth,
