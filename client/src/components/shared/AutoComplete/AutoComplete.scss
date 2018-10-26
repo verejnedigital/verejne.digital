@@ -1,23 +1,5 @@
 @import "../../variables.scss";
 
-#entity-input {
-  width: $verejne-sidebar-width - 80px;
-  height: auto;
-
-  @media screen and (max-width: 575px) {
-    width: 100%;
-  }
-}
-
-.autocomplete-suggestions-menu {
-  border: 1px solid $border-color;
-  width: $verejne-sidebar-width;
-
-  @media screen and (max-width: 575px) {
-    width: calc(90% - 1rem);
-  }
-}
-
 .autocomplete-item {
   color: $search-color;
   padding: 0.3rem;
@@ -35,16 +17,6 @@
   }
 }
 
-.input-group.autocomplete-holder > div:first-child {
-  @media screen and (max-width: 575px) {
-    width: calc(100% - 82px);
-  }
-}
-
-.autocomplete__input {
-  height: auto;
-}
-
 .autocomplete-suggestions-menu {
   box-shadow: 0 4px 12px 0 $shadow-color;
   font-size: 90%;
@@ -53,7 +25,7 @@
   padding: 0px;
   borderRadius: 0px;
   background: white;
-  z-index: 1;
-  border: '1px solid $borderColor';
+  z-index: 2;
+  border: 1px solid $border-color;
   width: 100%;
 }

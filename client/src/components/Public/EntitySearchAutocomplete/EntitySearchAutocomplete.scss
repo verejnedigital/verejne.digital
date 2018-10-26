@@ -6,3 +6,21 @@
     margin-left: 1px;
   }
 }
+
+.publicly-autocomplete-input {
+  width: $verejne-sidebar-width - 80px;
+  height: auto;
+
+  @media screen and (max-width: 575px) {
+    width: 100%;
+  }
+}
+.publicly-autocomplete-menu {
+  max-height: calc(100vh - 62px);
+}
+
+.input-group.autocomplete-holder > div:first-child {
+  @media screen and (max-width: 575px) {
+    width: calc(100% - 82px);
+  }
+}

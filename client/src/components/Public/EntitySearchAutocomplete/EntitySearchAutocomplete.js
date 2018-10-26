@@ -1,7 +1,6 @@
 // @flow
 import React from 'react'
 import {compose, withHandlers} from 'recompose'
-import {withDataProviders} from 'data-provider'
 import {Form, InputGroup, InputGroupAddon, Button} from 'reactstrap'
 import {connect} from 'react-redux'
 
@@ -20,11 +19,7 @@ import {
   entitySearchLoadedSelector,
   entitySearchForSelector,
 } from '../../../selectors'
-import {
-  entitySearchProvider,
-  entityDetailProvider,
-} from '../../../dataProviders/sharedDataProviders'
-import AutoComplete from '../AutoComplete/AutoComplete'
+import AutoComplete from '../../shared/AutoComplete/AutoComplete'
 import SearchIcon from 'react-icons/lib/fa/search'
 import ModalIcon from 'react-icons/lib/fa/clone'
 
@@ -59,10 +54,21 @@ const EntitySearchAutocomplete = ({
   closeAddressDetail,
   findEntities,
   setEntitySearchLoaded,
+  onChangeHandler,
+  onSelectHandler,
 }: EntitySearchAutocompleteProps) => (
   <Form onSubmit={findEntities}>
     <InputGroup className="autocomplete-holder">
-      <AutoComplete />
+      <AutoComplete
+        value={entitySearchValue}
+        onChangeHandler={onChangeHandler}
+        onSelectHandler={onSelectHandler}
+        menuClassName="publicly-autocomplete-menu"
+        inputProps={{
+          className: 'form-control publicly-autocomplete-input',
+          placeholder: FIND_ENTITY_TITLE,
+        }}
+      />
       <InputGroupAddon title={FIND_ENTITY_TITLE} addonType="append">
         <Button className="addon-button" color="primary" onClick={findEntities}>
           <SearchIcon />
@@ -115,11 +121,26 @@ export default compose(
       setEntitySearchOpen(true)
       setDrawer(true)
     },
+    onChangeHandler: ({setEntitySearchValue}) => (e: Event) => setEntitySearchValue(e.target.value),
+    onSelectHandler: ({
+      setEntitySearchValue,
+      entitySearchValue,
+      setEntitySearchFor,
+      closeAddressDetail,
+      setEntitySearchOpen,
+      setDrawer,
+      setEntitySearchLoaded,
+      entitySearchFor,
+    }) => (value) => {
+      setEntitySearchValue(value)
+      if (entitySearchValue.trim() === '') {
+        return
+      }
+      entitySearchFor !== entitySearchValue && setEntitySearchLoaded(false)
+      setEntitySearchFor(value)
+      closeAddressDetail()
+      setEntitySearchOpen(true)
+      setDrawer(true)
+    },
   }),
-  withDataProviders(({entitySearchValue, suggestionEids}) => [
-    ...(entitySearchValue.trim() !== ''
-      ? [entitySearchProvider(entitySearchValue, false, false)]
-      : []),
-    ...(suggestionEids.length > 0 ? [entityDetailProvider(suggestionEids, false)] : []),
-  ])
 )(EntitySearchAutocomplete)

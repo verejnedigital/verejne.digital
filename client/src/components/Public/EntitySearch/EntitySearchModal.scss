@@ -1,0 +1,14 @@
+@import "../../variables.scss";
+
+.modal-body {
+  .publicly-modal-autocomplete-menu {
+    width: calc(100% - 3px);
+    max-height: calc(100vh - 150px);
+  }
+  .publicly-modal-autocomplete-input {
+    width: 100%;
+  }
+  .publicly-modal-autocomplete-wrapper {
+    width: calc(100% - 42px);
+  }
+}
