@@ -41,12 +41,13 @@ type EntitySearchProps = {|
   toggleModalOpen: () => void,
   className: string,
   entitySearchValue: string,
-  setEntitySearchValue: (updateValue: string) => void,
+  setEntitySearchValue: (e: Event) => void,
   findEntities: (setEntitySearchFor: Function, entitySearchValue: string) => void,
   entitySearchEids: Array<number>,
   entitySearchFor: string,
   entitySearchLoaded: boolean,
   setEntitySearchLoaded: (loaded: boolean) => void,
+  onSelectHandler: (value: string) => void,
 |}
 
 const EntitySearchModal = ({

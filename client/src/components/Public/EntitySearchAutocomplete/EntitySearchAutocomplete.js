@@ -41,6 +41,8 @@ type EntitySearchAutocompleteProps = {
   closeAddressDetail: () => void,
   findEntities: (e: Event) => void,
   setEntitySearchLoaded: (loaded: boolean) => void,
+  onChangeHandler: (e: Event) => void,
+  onSelectHandler: (value: string) => void,
 }
 
 const EntitySearchAutocomplete = ({
@@ -121,7 +123,7 @@ export default compose(
       setEntitySearchOpen(true)
       setDrawer(true)
     },
-    onChangeHandler: ({setEntitySearchValue}) => (e: Event) => setEntitySearchValue(e.target.value),
+    onChangeHandler: ({setEntitySearchValue}) => (e) => setEntitySearchValue(e.target.value),
     onSelectHandler: ({
       setEntitySearchValue,
       entitySearchValue,

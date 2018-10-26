@@ -11,14 +11,15 @@ import './Search.css'
 
 type EmptyHandler = () => void
 type EventHandler = (e: Event) => void
+type selectHandler = (value: string) => void
 
 type Props = {
   searchValue1: string,
   searchValue2: string,
   setSearchValue1: EventHandler,
   setSearchValue2: EventHandler,
-  handleSelect1: EmptyHandler,
-  handleSelect2: EmptyHandler,
+  handleSelect1: selectHandler,
+  handleSelect2: selectHandler,
   searchOnEnter: EventHandler,
   searchConnection: EmptyHandler,
 } & EntitySearchProps &
