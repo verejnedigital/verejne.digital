@@ -1,6 +1,7 @@
 """Utility methods for production data generation."""
 
 import six
+import yaml
 
 
 def longest_common_prefix(str1, str2):
@@ -10,3 +11,10 @@ def longest_common_prefix(str1, str2):
     if str1[i] != str2[i]:
       return i
   return limit
+
+
+def yaml_load(path):
+  """Returns content of YAML file at `path` as a Python object."""
+  with open(path, 'r') as f:
+    data_yaml = yaml.load(f)
+  return data_yaml

@@ -48,7 +48,8 @@ class TestHandlers(unittest.TestCase):
     content = _request_json('/public_dumps_info', self)
     self.assertIsInstance(content, list)
     self.assertTrue(content)
-    print('PublicDumpsInfo responded with %d items.' % (len(content)))
+    print('PublicDumpsInfo responded with %d items:' % (len(content)))
+    print(json.dumps(content, indent=2))
 
 
 if __name__ == '__main__':

@@ -25,4 +25,4 @@ svc -t /service/data;
 echo "Issued commands to restart all apps.";
 
 # Regenerate public dumps:
-su - datautils -c "cd ${DIR}; cd ..; python generate_public_dumps.py --verbose;";
+su - datautils -c "cd ${DIR}; python generate_public_dumps.py;";
