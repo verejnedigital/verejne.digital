@@ -11,3 +11,12 @@ $headings-font-weight: bold;
 
 // Bootstrap and its default variables
 @import "node_modules/bootstrap/scss/bootstrap";
+
+// Your style overrides
+@import "components/variables.scss";
+.form-control {
+  border-radius: 2px;
+  border: solid 2px $border-color;
+  background-color: $component-background;
+  box-shadow: 0 4px 12px 0 $shadow-color;
+}
