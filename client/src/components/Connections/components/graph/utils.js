@@ -118,7 +118,6 @@ export const options = {
     },
   },
   physics: {
-    mass: 2,
     enabled: true,
     barnesHut: {
       gravitationalConstant: -3000,
