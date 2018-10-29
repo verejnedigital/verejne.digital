@@ -8,10 +8,9 @@ import {addNeighboursLimitSelector} from '../../../selectors'
 import CompanyDetails from './../../shared/CompanyDetails'
 import {updateValue} from '../../../actions/sharedActions'
 import SubgraphWrapper from '../dataWrappers/SubgraphWrapper'
-import {options as graphOptions, getNodeEid, addNeighbours, removeNodes} from './graph/utils'
+import {options as graphOptions, getNodeEid, addNeighbours, removeNodes, getSubgraphId} from './graph/utils'
 import {checkShaking, resetGesture} from './graph/gestures'
 import type {SubgraphProps} from '../dataWrappers/SubgraphWrapper'
-import type {EntityProps} from '../dataWrappers/EntityWrapper'
 import type {ConnectionProps} from '../dataWrappers/ConnectionWrapper'
 import type {GraphId, Node, State} from '../../../state'
 import type {Point} from './graph/utils'
@@ -37,8 +36,7 @@ export type GraphEvent = {|
 export type OwnProps = {
   preloadNodes: boolean,
   limit: number,
-} & EntityProps &
-  ConnectionProps
+} & ConnectionProps
 
 type DispatchProps = {
   updateValue: Function,
@@ -57,8 +55,7 @@ const graphStyle = {
   height: '600px',
 }
 
-// ako explicitne props potrebuje Subgraph component iba
-// eids1 a notable (ak je true, ak false, tak aj eids2)
+// Subgraph requires notable and eids1, if notable is false, also eids2
 const Subgraph = ({
   subgraph,
   selectedEids,
@@ -111,16 +108,12 @@ export default compose(
       if (!nodes.length) {
         return
       }
-      const subgraphId =
-        props.notable
-          ? `${props.eids1.join()}`
-          : `${props.eids1.join()}-${props.eids2.join()}`
       const clickedEid = getNodeEid(nodes[0])
 
       if (props.entityDetails[clickedEid.toString()]) {
         const related = props.entityDetails[clickedEid.toString()].related
         props.updateValue(
-          ['connections', 'subgraph', subgraphId, 'data'],
+          ['connections', 'subgraph', getSubgraphId(props), 'data'],
           addNeighbours(
             props.subgraph,
             clickedEid,
@@ -139,12 +132,8 @@ export default compose(
         return
       }
       if (checkShaking(pointer.canvas)) {
-        const subgraphId =
-          props.notable
-            ? `${props.eids1.join()}`
-            : `${props.eids1.join()}-${props.eids2.join()}`
         props.updateValue(
-          ['connections', 'subgraph', subgraphId, 'data'],
+          ['connections', 'subgraph', getSubgraphId(props), 'data'],
           removeNodes(props.subgraph, nodes.map(getNodeEid), true)
         )
         props.updateValue(['connections', 'selectedEids'], [])
