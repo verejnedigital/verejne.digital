@@ -347,6 +347,11 @@ export const connectionDetailSelector = (
   return state.connections.detail[query] ? state.connections.detail[query].ids : []
 }
 
+export const subgraphSelectedEidsSelector = (state: State) => state.connections.selectedEids
+
+export const subgraphSelector = (state: State, query: string) =>
+  state.connections.subgraph[query]
+
 export const addNeighboursLimitSelector = (state: State): number | null =>
   state.connections.addNeighboursLimit
 

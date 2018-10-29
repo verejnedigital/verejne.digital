@@ -2,6 +2,7 @@
 import type {GraphId, Node, Edge, Graph, RelatedEntity, NewEntityDetail} from '../../../../state'
 import {orderBy} from 'lodash'
 import type {ObjectMap} from '../../../../types/commonTypes'
+import type {SubgraphProps} from '../../dataWrappers/SubgraphWrapper'
 
 export type Point = {|
   x: number,
@@ -306,3 +307,8 @@ export function transformRaw(rawGraph: {vertices: Array<RawNode>, edges: Array<R
 
   return {nodes, edges, nodeIds}
 }
+
+export const getSubgraphId = ({notable, eids1, eids2}: SubgraphProps) =>
+  notable
+    ? `${eids1.join()}`
+    : `${eids1.join()}-${eids2.join()}`
