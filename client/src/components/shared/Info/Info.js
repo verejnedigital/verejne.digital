@@ -64,7 +64,7 @@ const Info = ({data, onClose, showOnMap, className}: InfoProps) => (
           >
             <img
               src={mapIcon}
-              alt="MapMarker"
+              alt=""
               style={{width: '16px', height: '25px'}}
               className="mb-2"
             />
