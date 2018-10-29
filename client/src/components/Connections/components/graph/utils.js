@@ -118,13 +118,14 @@ export const options = {
     },
   },
   physics: {
+    mass: 2,
     enabled: true,
     barnesHut: {
       gravitationalConstant: -3000,
       centralGravity: 0.3,
       springLength: 80,
       springConstant: 0.004,
-      damping: 0.1,
+      damping: 0.8,
       avoidOverlap: 0.01,
     },
   },
