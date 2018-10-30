@@ -34,3 +34,14 @@ dumps:
         eufunds
     notebook_url:
       https://colab.research.google.com/drive/1EliPM69jvvtwoVJU-efP5K2bOX28XIlt
+  contracts:
+    query: |
+      SELECT
+        id, eid, supplier_eid,
+        contract_price_amount, contract_price_total_amount,
+        subject, signed_on, effective_from, effective_to,
+        status_id, contract_id, contract_identifier
+      FROM
+        contracts
+    notebook_url:
+      None
