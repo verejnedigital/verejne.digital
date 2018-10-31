@@ -29,5 +29,5 @@ export const updateValue = <T: *>(path: Path, data: T, type?: string): GenericAc
 export const refreshState = () => ({
   type: 'refresh state',
   path: null,
-  reducer: (state: State) => (merge({}, state, refreshedUIState))
+  reducer: (state: State) => (merge({}, state, refreshedUIState)),
 })
