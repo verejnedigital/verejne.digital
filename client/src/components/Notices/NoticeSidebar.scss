@@ -8,7 +8,8 @@
 .notice-list-title {
   font-weight: 200;
   font-size: 3rem;
-  padding: 2rem;
+  padding-top: 1em;
+  padding-bottom: 1em;
   text-align: center;
 }
 
@@ -16,5 +17,10 @@
   .notice-list-title,
   .notice-list-text {
     text-align: center;
+  }
+}
+@media screen and (max-width: 400px) {
+  .notice-list-title {
+    font-size: 2rem;
   }
 }

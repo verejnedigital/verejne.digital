@@ -394,7 +394,7 @@ def get_GetInfos(db, eIDs):
             AND related.eid<>related.eid_relation
         ),
         grouped AS (
-          /* Group edges going from same souce to same destination. */
+          /* Group edges with identical source and destination. */
           SELECT
             merged.source,
             merged.target,
@@ -410,11 +410,19 @@ def get_GetInfos(db, eIDs):
           grouped.edge_types,
           grouped.edge_type_texts,
           grouped.edge_effective_to_dates,
-          entities.name, address.lat, address.lng, address.address
+          entities.name,
+          entity_flags.trade_with_government,
+          entity_flags.political_entity,
+          entity_flags.contact_with_politics,
+          address.lat,
+          address.lng,
+          address.address
         FROM
           grouped
         INNER JOIN
           entities ON entities.id=grouped.target
+        INNER JOIN
+          entity_flags ON entity_flags.eid=entities.id
         INNER JOIN
           address ON address.id=entities.address_id
         ;

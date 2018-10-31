@@ -5,18 +5,17 @@ import {connect} from 'react-redux'
 import {withHandlers} from 'recompose'
 import GraphCompnent from 'react-graph-vis'
 import {addNeighboursLimitSelector} from '../../../selectors'
-import Legend from '../../shared/Legend/Legend'
 import CompanyDetails from './../../shared/CompanyDetails'
 import {updateValue} from '../../../actions/sharedActions'
 import SubgraphWrapper from '../dataWrappers/SubgraphWrapper'
-import {options as graphOptions, getNodeEid, addNeighbours, removeNodes} from './graph/utils'
+import {options as graphOptions, getNodeEid, addNeighbours, removeNodes, getSubgraphId} from './graph/utils'
 import {checkShaking, resetGesture} from './graph/gestures'
 import type {SubgraphProps} from '../dataWrappers/SubgraphWrapper'
-import type {EntityProps} from '../dataWrappers/EntityWrapper'
 import type {ConnectionProps} from '../dataWrappers/ConnectionWrapper'
 import type {GraphId, Node, State} from '../../../state'
 import type {Point} from './graph/utils'
 import {ADD_NEIGHBOURS_LIMIT} from '../../../constants'
+import Legend from '../../shared/Legend/Legend'
 
 import './Subgraph.css'
 import './InfoLoader.css'
@@ -38,8 +37,7 @@ export type GraphEvent = {|
 export type OwnProps = {
   preloadNodes: boolean,
   limit: number,
-} & EntityProps &
-  ConnectionProps
+} & ConnectionProps
 
 type DispatchProps = {
   updateValue: Function,
@@ -58,6 +56,7 @@ const graphStyle = {
   height: '600px',
 }
 
+// Subgraph requires notable and eids1, if notable is false, also eids2
 const Subgraph = ({
   subgraph,
   selectedEids,
@@ -68,9 +67,6 @@ const Subgraph = ({
   handleDoubleClick,
   handleDrag,
   handleDragEnd,
-  limit,
-  legendShown,
-  toggleLegendShown,
 }: Props) => (
   <div className="subgraph">
     <div className="graph mt-1">
@@ -114,16 +110,12 @@ export default compose(
       if (!nodes.length) {
         return
       }
-      const subgraphId =
-        props.entity2.query.length > 0
-          ? `${props.entity1.eids.join()}-${props.entity2.eids.join()}`
-          : `${props.entity1.eids.join()}`
       const clickedEid = getNodeEid(nodes[0])
 
       if (props.entityDetails[clickedEid.toString()]) {
         const related = props.entityDetails[clickedEid.toString()].related
         props.updateValue(
-          ['connections', 'subgraph', subgraphId, 'data'],
+          ['connections', 'subgraph', getSubgraphId(props), 'data'],
           addNeighbours(
             props.subgraph,
             clickedEid,
@@ -142,12 +134,8 @@ export default compose(
         return
       }
       if (checkShaking(pointer.canvas)) {
-        const subgraphId =
-          props.entity2.query.length > 0
-            ? `${props.entity1.eids.join()}-${props.entity2.eids.join()}`
-            : `${props.entity1.eids.join()}`
         props.updateValue(
-          ['connections', 'subgraph', subgraphId, 'data'],
+          ['connections', 'subgraph', getSubgraphId(props), 'data'],
           removeNodes(props.subgraph, nodes.map(getNodeEid), true)
         )
         props.updateValue(['connections', 'selectedEids'], [])

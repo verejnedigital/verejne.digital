@@ -1,32 +1,39 @@
+// @flow
 import React from 'react'
 import {compose} from 'redux'
 import {connect} from 'react-redux'
 import {withHandlers, withState} from 'recompose'
-import {Col, Input} from 'reactstrap'
+import {Input} from 'reactstrap'
+import {updateValue} from '../../../actions/sharedActions'
 import {addNeighboursLimitSelector} from '../../../selectors'
 import {setAddNeighboursLimit} from '../../../actions/connectionsActions'
 import {ADD_NEIGHBOURS_LIMIT} from '../../../constants'
+import './SubgraphInstructions.css'
+
+import type {State} from '../../../state'
 
 type Props = {
   limit: number,
-  limitSettingsOpen: boolean,
-  setLimitSettingsOpen: (open: boolean) => void,
   handleLimitChange: (e: Event) => void,
+  limitSettingsOpen: boolean,
   openLimitSettings: (e: Event) => void,
   closeLimitSettings: (e: Event) => void,
   submitOnEnter: (e: KeyboardEvent) => void,
+  updateValue: Function,
   setAddNeighboursLimit: Function,
+  setLimitSettingsOpen: (open: boolean) => void,
 }
 
-const GraphControls = ({
-  limitSettingsOpen,
-  openLimitSettings,
+
+const SubgraphInstructions = ({
   limit,
   handleLimitChange,
+  limitSettingsOpen,
+  openLimitSettings,
   closeLimitSettings,
   submitOnEnter,
-}) => (
-  <Col sm="12" lg="7">
+}: Props) => (
+  <div className="graph-instructions">
     Ovládanie:
     <ul>
       <li>
@@ -51,38 +58,38 @@ const GraphControls = ({
         <i>Potrasením</i> mena ho odstránite zo schémy (spolu s jeho výlučnými susedmi).
       </li>
     </ul>
-  </Col>
+  </div>
 )
+
 export default compose(
-  withState('limitSettingsOpen', 'setLimitSettingsOpen', false),
   connect(
-    (state) => ({
+    (state: State) => ({
       limit: addNeighboursLimitSelector(state),
     }),
-    {setAddNeighboursLimit}
+    {updateValue, setAddNeighboursLimit}
   ),
+  withState('limitSettingsOpen', 'setLimitSettingsOpen', false),
   withHandlers({
-    handleLimitChange: ({setAddNeighboursLimit}: Props) => (e: Event) => {
+    handleLimitChange: (props: Props) => (e: Event) => {
       if (e.target instanceof HTMLInputElement) {
         const {value} = e.target
         const limit = Number(value)
         if (value === '' || (Number.isInteger(limit) && limit >= 0)) {
-          setAddNeighboursLimit(value === '' ? null : limit)
+          props.setAddNeighboursLimit(value === '' ? null : limit)
         }
       }
     },
-    openLimitSettings: ({setLimitSettingsOpen}: Props) => () => setLimitSettingsOpen(true),
-    closeLimitSettings: ({limit, setAddNeighboursLimit, setLimitSettingsOpen}: Props) => () => {
-      limit || setAddNeighboursLimit(ADD_NEIGHBOURS_LIMIT)
-      setLimitSettingsOpen(false)
+    openLimitSettings: (props: Props) => () =>
+      props.setLimitSettingsOpen(true),
+    closeLimitSettings: (props: Props) => () => {
+      props.limit || props.setAddNeighboursLimit(ADD_NEIGHBOURS_LIMIT)
+      props.setLimitSettingsOpen(false)
     },
-    submitOnEnter: ({limit, setAddNeighboursLimit, setLimitSettingsOpen}: Props) => (
-      e: KeyboardEvent
-    ) => {
+    submitOnEnter: (props: Props) => (e: KeyboardEvent) => {
       if (e.key === 'Enter') {
-        limit || setAddNeighboursLimit(ADD_NEIGHBOURS_LIMIT)
-        setLimitSettingsOpen(false)
+        props.limit || props.setAddNeighboursLimit(ADD_NEIGHBOURS_LIMIT)
+        props.setLimitSettingsOpen(false)
       }
     },
   })
-)(GraphControls)
+)(SubgraphInstructions)

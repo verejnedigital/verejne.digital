@@ -68,8 +68,7 @@ class TestHandlers(unittest.TestCase):
     self.assertIsInstance(content, dict)
     self.assertTrue(content)
     print('InfoPolitician(%d) responded:' % (politician_id))
-    for key in content:
-      print("%s: %s" % (key, content[key]))
+    print(json.dumps(content, indent=2, ensure_ascii=False))
 
   def test_asset_declarations(self):
     politician_id = 717

@@ -80,7 +80,7 @@ export const noticesOrderingSelector = createSelector(
   (query): NoticesOrdering => query.ordering || 'date'
 )
 
-export const noticesLengthSelector = createSelector(searchFilteredNoticesSelector, (notices) => {
+export const noticesLengthSelector = createSelector(activeNoticesSelector, (notices) => {
   return notices.length
 })
 
@@ -346,6 +346,11 @@ export const connectionDetailSelector = (
   const query = `${eids1.join()}-${eids2.join()}`
   return state.connections.detail[query] ? state.connections.detail[query].ids : []
 }
+
+export const subgraphSelectedEidsSelector = (state: State) => state.connections.selectedEids
+
+export const subgraphSelector = (state: State, query: string) =>
+  state.connections.subgraph[query]
 
 export const addNeighboursLimitSelector = (state: State): number | null =>
   state.connections.addNeighboursLimit

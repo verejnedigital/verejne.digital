@@ -291,6 +291,9 @@ export type RelatedEntity = {
   lat: number,
   lng: number,
   address: string,
+  political_entity: boolean,
+  contact_with_politics: boolean,
+  trade_with_government: boolean,
 }
 
 export type NewEntityDetail = {

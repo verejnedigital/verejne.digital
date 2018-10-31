@@ -1,7 +1,12 @@
 // @flow
 import React from 'react'
+import {isNumber} from 'lodash'
 
-import {icoUrl, ShowNumberCurrency} from '../../../services/utilities'
+import {
+  icoUrl,
+  ShowNumberCurrency,
+  type EnhancedCompanyFinancial,
+} from '../../../services/utilities'
 import Item from './Item'
 import Trend from './Trend'
 import './FinancesItem.css'
@@ -17,22 +22,22 @@ const FinancesItem = ({
 }: FinancesItemProps) => (
   <div className="finances-item">
     {employees && <Item label={`Zamestnanci v ${year}`}>{employees}</Item>}
-    {profit && (
+    {isNumber(profit) && (
       <Item
         label={`Zisk v ${year}`}
         url={icoUrl(ico)}
         linkText={<ShowNumberCurrency num={profit} />}
       >
-        {profitTrend && <Trend trend={profitTrend} />}
+        <Trend trend={profitTrend} />
       </Item>
     )}
-    {revenue && (
+    {isNumber(revenue) && (
       <Item
         label={`Tržby v ${year}`}
         url={icoUrl(ico)}
         linkText={<ShowNumberCurrency num={revenue} />}
       >
-        {revenueTrend && <Trend trend={revenueTrend} />}
+        <Trend trend={revenueTrend} />
       </Item>
     )}
   </div>

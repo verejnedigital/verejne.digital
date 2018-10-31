@@ -4,14 +4,9 @@ These functions are primarily invoked by server hooks of our backend
 application data.
 """
 
-import argparse
 import collections
-import csv
 import datetime
 import os
-import subprocess
-import sys
-import urllib
 
 from db.db import DatabaseConnection
 import utils
@@ -176,7 +171,7 @@ def get_public_dumps_info():
   """Returns list of dicts describing our public CSV dumps."""
 
   # Read public dumps YAML configuration file:
-  config = utils.yaml_load('../data/public_dumps.yaml')
+  config = utils.yaml_load('prod_generation/public_dumps.yaml')
   dir_save = config['save_directory']
   dumps = config['dumps']
 
@@ -197,6 +192,6 @@ def get_public_dumps_info():
         'name': dump_name,
         'notebook_url': dumps[dump_name]['notebook_url'],
         'query': dumps[dump_name]['query'].strip(),
-        'url': 'https://verejne.digital/data/%s' % (filename)
+        'url': 'https://verejne.digital/resources/csv/%s' % (filename)
     })
   return result

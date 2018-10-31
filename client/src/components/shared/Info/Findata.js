@@ -11,7 +11,9 @@ type FindataProps = {
   data: FinancialData,
 }
 
-const Findata = ({data: {established_on, finances, ico, terminated_on}}: FindataProps) => (
+const Findata = ({
+  data: {established_on: establishedOn, finances, ico, terminated_on: terminatedOn},
+}: FindataProps) => (
   <Fragment>
     <Item
       label="IČO"
@@ -19,13 +21,15 @@ const Findata = ({data: {established_on, finances, ico, terminated_on}}: Findata
       // TODO link to zrsr when there is a way to tell companies and persons apart
       linkText={ico}
     >
-      &nbsp;(<ExternalLink isMapView={false} url={icoUrl(ico)}>
+      &nbsp;(
+      <ExternalLink isMapView={false} url={icoUrl(ico)}>
         Detaily o firme
-      </ExternalLink>)
+      </ExternalLink>
+      )
     </Item>
-    {established_on && <Item label="Založená">{showDate(established_on)}</Item>}
-    {terminated_on && <Item label="Zaniknutá">{showDate(terminated_on)}</Item>}
-    <Finances data={finances} ico />
+    {establishedOn && <Item label="Založená">{showDate(establishedOn)}</Item>}
+    {terminatedOn && <Item label="Zaniknutá">{showDate(terminatedOn)}</Item>}
+    <Finances data={finances} ico={ico} />
   </Fragment>
 )
 

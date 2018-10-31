@@ -102,11 +102,13 @@ def get_eids_with_matching_name(db, person, verbose=False):
       person['firstname'], person['surname'])
   rows = db.query(
       """
-      SELECT entities.id AS eid, entities.name
+      SELECT entities.id AS eid, entities.name, lat, lng
       FROM entities_search
       INNER JOIN entities ON entities.id=entities_search.id
+      INNER JOIN address ON address.id=entities.address_id
       WHERE
-        search_vector @@ plainto_tsquery('simple', unaccent(%s));
+        search_vector @@ plainto_tsquery('simple', unaccent(%s))
+        AND (lat <> 49.137092 OR lng <> 20.4312365);
       """,
       [person_name]
   )

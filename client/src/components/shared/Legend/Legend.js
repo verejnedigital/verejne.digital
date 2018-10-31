@@ -5,7 +5,7 @@ import CircleIcon from 'react-icons/lib/fa/circle-o'
 import FilledCircleIcon from 'react-icons/lib/fa/circle'
 import {compose, withState, withHandlers} from 'recompose'
 import {Row, Col} from 'reactstrap'
-import GraphControls from '../../Connections/components/GraphControls'
+import SubgraphInstructions from '../../Connections/components/SubgraphInstructions'
 import {FACEBOOK_LIKE_SRC} from '../../../constants'
 import './Legend.css'
 import MapIcon from '../../../assets/mapIcon.svg'
@@ -38,7 +38,11 @@ const Legend = ({legendOpen, toggleLegend, positionAbsolute, closable, graphCont
         )}
       </div>
       <Row>
-        {graphControls && <GraphControls />}
+        {graphControls && (
+          <Col lg="7" md="12">
+            <SubgraphInstructions />
+          </Col>
+        )}
         <Col sm="12" lg={graphControls ? 5 : 12}>
           <p>Legenda</p>
           <p>

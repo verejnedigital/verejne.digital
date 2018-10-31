@@ -3,50 +3,45 @@
 .notice-list {
   hr {
     border-top-color: $border-color;
-    width: 80%;
-  }
-}
-
-.pagination-wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.scroll-container {
-  margin: auto;
-  max-height: 100%;
-  overflow: auto;
-}
-
-.notice-list-sidebar {
-  background-color: $component-background;
-  position: fixed;
-  top: $navbar-height;
-  bottom: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  padding-left: 1rem;
-  padding-right: 3rem;
-
-  @media screen and (max-width: 1200px) {
-    position: relative;
-    top: 0;
-    margin-bottom: 2rem;
-    padding-top: 2rem;
-    padding-right: 1rem;
+    width: 85%;
+    @media screen and (max-width: 767px) {
+      width: 90%;
+    }
+    @media screen and (max-width: 649px) {
+      width: 95%;
+    }
+    @media screen and (max-width: 575px) {
+      width: 100%;
+    }
   }
 }
 
 .notice-input {
-  width: 40%;
   margin-left: auto;
   margin-right: auto;
+  width: 80%;
+  @media screen and (min-width: 576px) {
+    width: 60%;
+  }
+  @media screen and (min-width: 650px) {
+    width: 50%;
+  }
+  @media screen and (min-width: 768px) {
+    width: 35%;
+  }
 }
 
 .notice-list-table {
-  width: 80%;
+  width: 85%;
+  @media screen and (max-width: 767px) {
+    width: 90%;
+  }
+  @media screen and (max-width: 649px) {
+    width: 95%;
+  }
+  @media screen and (max-width: 575px) {
+    width: 100%;
+  }
   border: 10px;
   margin-left: auto;
   margin-right: auto;
@@ -63,4 +58,8 @@
     overflow: hidden;
     margin-top: 0;
   }
+}
+
+.notice-search-result-text {
+  text-align: center;
 }

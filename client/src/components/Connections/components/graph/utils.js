@@ -1,11 +1,21 @@
 // @flow
-import type {GraphId, Node, Edge, Graph, RelatedEntity} from '../../../../state'
+import type {GraphId, Node, Edge, Graph, RelatedEntity, NewEntityDetail} from '../../../../state'
 import {orderBy} from 'lodash'
+import type {ObjectMap} from '../../../../types/commonTypes'
+import type {SubgraphProps} from '../../dataWrappers/SubgraphWrapper'
 
 export type Point = {|
   x: number,
   y: number,
 |}
+
+type RawNode = {
+  eid: number,
+  entity_name: string,
+  query: boolean,
+  distance: number,
+}
+type RawEdge = [number, number]
 
 // TODO read this from sass variables:
 const variables = {
@@ -213,3 +223,92 @@ export const removeNodes = (
   })
   return {nodes, edges, nodeIds}
 }
+
+export function findGroup(data: NewEntityDetail) {
+  return data.political_entity
+    ? 'politician'
+    : data.trade_with_government && data.contact_with_politics
+      ? 'politContracts'
+      : data.trade_with_government
+        ? 'contracts'
+        : data.contact_with_politics
+          ? 'politTies'
+          : 'normal'
+}
+
+export function bold(makeBold: boolean, str: string) {
+  return makeBold ? `*${str}*` : str
+}
+
+export function enhanceGraph(
+  {nodes: oldNodes, edges: oldEdges, nodeIds}: Graph,
+  entityDetails: ObjectMap<NewEntityDetail>,
+  primaryConnEids: Array<number>
+) {
+  const edges = oldEdges.map(({from, to}) => ({
+    from,
+    to,
+    // primary edges (corresponding to the 1 shortest connection found) are wider
+    width:
+      primaryConnEids && primaryConnEids.indexOf(from) !== -1 && primaryConnEids.indexOf(to) !== -1
+        ? 5
+        : 1,
+  }))
+
+  // adds entity info to graph
+  const nodes = oldNodes.map(({id, label, x, y, ...props}) => {
+    if (!entityDetails[id.toString()]) {
+      return {id, label, group: 'notLoaded', shape: 'box', x, y, ...props}
+    }
+    const entity = entityDetails[id.toString()]
+    const poi = props.is_query
+    if (props.leaf && entity.related.length) {
+      // add more edges to this leaf if available, then mark as non-leaf
+      entity.related.forEach(({eid}: RelatedEntity) => {
+        if (nodeIds[eid]) {
+          addEdgeIfMissing(id, eid, edges)
+        }
+      })
+    }
+
+    return {
+      // delete x, y to prevent jumping on node load
+      ...props,
+      id,
+      label: bold(poi, `${entity.name} (${entity.related.length})`),
+      group: findGroup(entity),
+      shape: 'infoBox',
+      leaf: false,
+    }
+  })
+  return {nodes, edges, nodeIds}
+}
+
+export function transformRaw(rawGraph: {vertices: Array<RawNode>, edges: Array<RawEdge>}): Graph {
+  // transforms graph data for react-graph-vis
+  const {vertices: rawNodes, edges: rawEdges} = rawGraph
+  const nodes: Array<Node> = []
+  const edges: Array<Edge> = []
+  const nodeIds: {[GraphId]: boolean} = {}
+
+  rawNodes.forEach((n: RawNode) => {
+    nodes.push({
+      id: n.eid,
+      label: n.entity_name,
+      is_query: n.query,
+      shape: 'infoBox',
+    })
+    nodeIds[n.eid] = true
+  })
+
+  rawEdges.forEach(([from, to]: RawEdge) => {
+    nodeIds[from] && nodeIds[to] && edges.push({from, to})
+  })
+
+  return {nodes, edges, nodeIds}
+}
+
+export const getSubgraphId = ({notable, eids1, eids2}: SubgraphProps) =>
+  notable
+    ? `${eids1.join()}`
+    : `${eids1.join()}-${eids2.join()}`

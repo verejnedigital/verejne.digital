@@ -20,8 +20,13 @@
   }
 }
 
+.bulletin > .table-responsive {
+  box-shadow: 0 4px 12px 0 $shadow-color;
+}
+
 .bulletin-table {
   margin-bottom: 0;
+  border: 2px solid $border-color;
 }
 
 .bulletin-table tr th {

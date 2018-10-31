@@ -180,6 +180,7 @@ export const DEFAULT_ENTITIES_REQUEST_PARAMS = {
 }
 
 export const FIND_ENTITY_TITLE = 'Hľadaj firmu / človeka'
+export const OPEN_MODAL_TOOLTIP = 'Otvor modálne okno'
 
 export const LOADING_CIRCLE_COLOR = '#0062db'
 export const NAVBAR_HEIGHT = 45

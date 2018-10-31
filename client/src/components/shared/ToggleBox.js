@@ -1,11 +1,11 @@
 // @flow
-import React, {Node} from 'react'
+import React, {type Node} from 'react'
 import {compose, withState, withHandlers} from 'recompose'
 import {Badge, Button} from 'reactstrap'
 import ChevronUp from 'react-icons/lib/fa/chevron-up'
 import ChevronDown from 'react-icons/lib/fa/chevron-down'
 
-import type {StateUpdater} from '../../../types/commonTypes'
+import type {StateUpdater} from '../../types/commonTypes'
 import './ToggleBox.css'
 
 type ToggleBoxProps = {|

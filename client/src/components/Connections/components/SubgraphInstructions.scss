@@ -1,0 +1,14 @@
+@import '../../variables.scss';
+
+.graph-instructions {
+  .limit {
+    cursor: pointer;
+  }
+
+  .limit-input {
+    display: inline-block;
+    padding: 0;
+    width: 2rem;
+    max-height: 1.3rem;
+  }
+}

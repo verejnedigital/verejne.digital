@@ -28,7 +28,15 @@ const Results = (props: Props) => (
         {props.graphShown ? <span>&times;</span> : 'Zobraziť graf'}
       </button>
     )}
-    {(props.graphShown || !props.entitySearch2) && <Subgraph preloadNodes {...props} />}
+    {(props.graphShown || !props.entitySearch2) && props.entity1.eids.length > 0 && (
+      <Subgraph
+        preloadNodes
+        eids1={props.entity1.eids}
+        eids2={props.entity2.eids}
+        notable={props.entity2.query.length === 0}
+        connections={props.connections}
+      />
+    )}
     {props.entitySearch2 && <InfoLoader eids={props.connections} />}
   </div>
 )
