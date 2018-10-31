@@ -4,6 +4,8 @@ import classnames from 'classnames'
 import CircleIcon from 'react-icons/lib/fa/circle-o'
 import FilledCircleIcon from 'react-icons/lib/fa/circle'
 import {compose, withState, withHandlers} from 'recompose'
+import {Row, Col} from 'reactstrap'
+import SubgraphInstructions from '../../Connections/components/SubgraphInstructions'
 import {FACEBOOK_LIKE_SRC} from '../../../constants'
 import './Legend.css'
 import MapIcon from '../../../assets/mapIcon.svg'
@@ -13,9 +15,11 @@ type Props = {
   toggleLegend: () => void,
   positionAbsolute?: boolean,
   closable?: boolean,
+  defaultOpen?: boolean,
+  graphControls?: boolean,
 }
 
-const Legend = ({legendOpen, toggleLegend, positionAbsolute, closable}: Props) =>
+const Legend = ({legendOpen, toggleLegend, positionAbsolute, closable, graphControls}: Props) =>
   legendOpen ? (
     <div className={classnames('legend', {'position-absolute': positionAbsolute})}>
       <div className="legend__header">
@@ -33,35 +37,44 @@ const Legend = ({legendOpen, toggleLegend, positionAbsolute, closable}: Props) =
           </button>
         )}
       </div>
-      <p>Legenda</p>
-      <p>
-        <CircleIcon className="svg" />
-        Firma / Osoba
-      </p>
-      <p>
-        <FilledCircleIcon className="svg" />
-        Obchod so štátom
-      </p>
-      <p>
-        <CircleIcon className="svg orange" />
-        Kontakt s politikou
-      </p>
-      <p>
-        <FilledCircleIcon className="svg purple" />
-        Politik
-      </p>
-      <p>
-        <FilledCircleIcon className="svg orange" />
-        Kontakt s politikou a obchod so štátom
-      </p>
-      <p>
-        <img src={MapIcon} className="map-icon-image" alt="mapIconImage" />
-        Okres / mestská časť
-      </p>
-      <p>
-        <span className="legend-marker">0</span>
-        <span>Skupina entít</span>
-      </p>
+      <Row>
+        {graphControls && (
+          <Col lg="7" md="12">
+            <SubgraphInstructions />
+          </Col>
+        )}
+        <Col sm="12" lg={graphControls ? 5 : 12}>
+          <p>Legenda</p>
+          <p>
+            <CircleIcon className="svg" />
+            Firma / Osoba
+          </p>
+          <p>
+            <FilledCircleIcon className="svg" />
+            Obchod so štátom
+          </p>
+          <p>
+            <CircleIcon className="svg orange" />
+            Kontakt s politikou
+          </p>
+          <p>
+            <FilledCircleIcon className="svg purple" />
+            Politik
+          </p>
+          <p>
+            <FilledCircleIcon className="svg orange" />
+            Kontakt s politikou a obchod so štátom
+          </p>
+          <p>
+            <img src={MapIcon} className="map-icon-image" alt="mapIconImage" />
+            Okres / mestská časť
+          </p>
+          <p>
+            <span className="legend-marker">0</span>
+            <span>Skupina entít</span>
+          </p>
+        </Col>
+      </Row>
     </div>
   ) : (
     <button
@@ -74,7 +87,7 @@ const Legend = ({legendOpen, toggleLegend, positionAbsolute, closable}: Props) =
   )
 
 export default compose(
-  withState('legendOpen', 'setLegendOpen', true),
+  withState('legendOpen', 'setLegendOpen', ({defaultOpen = true}) => defaultOpen),
   withHandlers({
     toggleLegend: ({setLegendOpen}) => () => setLegendOpen((current: boolean) => !current),
   })
