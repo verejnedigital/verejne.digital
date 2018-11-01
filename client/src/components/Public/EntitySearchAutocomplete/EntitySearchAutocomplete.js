@@ -15,7 +15,6 @@ import {
 } from '../../../actions/publicActions'
 import {
   entitySearchValueSelector,
-  entitySearchSuggestionEidsSelector,
   entitySearchLoadedSelector,
   entitySearchForSelector,
 } from '../../../selectors'
@@ -31,7 +30,6 @@ import './EntitySearchAutocomplete.css'
 
 type EntitySearchAutocompleteProps = {
   entitySearchValue: string,
-  suggestionEids: Array<number>,
   entitySearchFor: string,
   setEntitySearchValue: (value: string) => void,
   setEntitySearchFor: (value: string) => void,
@@ -47,7 +45,6 @@ type EntitySearchAutocompleteProps = {
 
 const EntitySearchAutocomplete = ({
   entitySearchValue,
-  suggestionEids,
   setEntitySearchValue,
   setEntitySearchFor,
   toggleModalOpen,
@@ -89,7 +86,6 @@ export default compose(
   connect(
     (state: State) => ({
       entitySearchValue: entitySearchValueSelector(state),
-      suggestionEids: entitySearchSuggestionEidsSelector(state),
       entitySearchLoaded: entitySearchLoadedSelector(state),
       entitySearchFor: entitySearchForSelector(state),
     }),
