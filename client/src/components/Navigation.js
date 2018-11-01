@@ -1,7 +1,9 @@
 // @flow
 import React from 'react'
+import {compose, withHandlers, withState} from 'recompose'
+import {connect} from 'react-redux'
+import {refreshState} from '../actions/sharedActions'
 import {NavLink} from 'react-router-dom'
-import {compose, withState} from 'recompose'
 import {Collapse, Navbar, NavbarToggler, NavItem, Nav} from 'reactstrap'
 
 import FbIcon from 'react-icons/lib/fa/facebook-square'
@@ -11,34 +13,35 @@ import './Navigation.css'
 type Props = {
   navigationOpen: boolean,
   setNavigationOpen: (open: boolean) => void,
+  closeNavigation: () => void,
+  handleNavClick: () => void,
 }
 
-//class Navigation extends Component<Props, State> {
-const Navigation = ({navigationOpen, setNavigationOpen}: Props) => (
+const Navigation = ({navigationOpen, toggleNavigation, closeNavigation, handleNavClick}: Props) => (
   <Navbar light expand="lg">
     <NavLink to="/" className="navbar-brand">
       <b>verejne</b>.digital
     </NavLink>
-    <NavbarToggler onClick={() => setNavigationOpen(!navigationOpen)} />
+    <NavbarToggler onClick={toggleNavigation} />
     <Collapse isOpen={navigationOpen} navbar>
       <Nav navbar className="mr-auto">
         <NavItem>
-          <NavLink to="/verejne" className="nav-link" onClick={() => setNavigationOpen(false)}>
+          <NavLink to="/verejne" className="nav-link" onClick={handleNavClick}>
             Verejné dáta
           </NavLink>
         </NavItem>
         <NavItem>
-          <NavLink to="/profil" className="nav-link" onClick={() => setNavigationOpen(false)}>
+          <NavLink to="/profil" className="nav-link" onClick={handleNavClick}>
             Profil
           </NavLink>
         </NavItem>
         <NavItem>
-          <NavLink to="/prepojenia" className="nav-link" onClick={() => setNavigationOpen(false)}>
+          <NavLink to="/prepojenia" className="nav-link" onClick={handleNavClick}>
             Prepojenia
           </NavLink>
         </NavItem>
         <NavItem>
-          <NavLink to="/obstaravania" className="nav-link" onClick={() => setNavigationOpen(false)}>
+          <NavLink to="/obstaravania" className="nav-link" onClick={handleNavClick}>
             Obstarávania
           </NavLink>
         </NavItem>
@@ -50,7 +53,7 @@ const Navigation = ({navigationOpen, setNavigationOpen}: Props) => (
             target="_blank"
             rel="noopener noreferrer"
             className="nav-link"
-            onClick={() => setNavigationOpen(false)}
+            onClick={closeNavigation}
           >
             O projekte
           </a>
@@ -61,7 +64,7 @@ const Navigation = ({navigationOpen, setNavigationOpen}: Props) => (
             target="_blank"
             rel="noopener noreferrer"
             className="nav-link"
-            onClick={() => setNavigationOpen(false)}
+            onClick={closeNavigation}
           >
             Kontakt <FbIcon />
           </a>
@@ -73,4 +76,15 @@ const Navigation = ({navigationOpen, setNavigationOpen}: Props) => (
 
 export default compose(
   withState('navigationOpen', 'setNavigationOpen', false),
+  connect(null,
+    {refreshState}
+  ),
+  withHandlers({
+    refresh: ({refreshState, setNavigationOpen}) => () => {
+      refreshState()
+      setNavigationOpen(false)
+    },
+    toggleNavigation: ({setNavigationOpen}) => () => setNavigationOpen((show) => !show),
+    closeNavigation: ({setNavigationOpen}) => () => setNavigationOpen(false),
+  }),
 )(Navigation)

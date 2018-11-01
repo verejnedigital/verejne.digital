@@ -2,8 +2,6 @@
 <head>
 <meta charset="utf-8">
 <title>verejne.digital data</title>
-<link href="lib/prism.css" rel="stylesheet" />
-<script src="lib/prism.js"></script>
 <style>
     html, body {
         background-color: #f1f4f5;
@@ -174,9 +172,8 @@
 
                 // Add row to table
                 tableElement.innerHTML += "<tr>" + row_html + "</tr>";
-                Prism.highlightElement(document.getElementById(code_id));
             }
-            
+
         }).error(function() {
             document.getElementById("table_dumps").innerHTML = '<tr><td style="color:red">Error retrieving dump data information</td></tr>';
         });
@@ -214,7 +211,7 @@
 
     <!-- Section 3: List raw data sources -->
     <h2 id="sourcedata">Zdrojové dáta</h2>
-    
+
     <table id="table_sources">
     <tr>
         <th>Názov zdroja</th>

@@ -15,6 +15,7 @@ import type {ConnectionProps} from '../dataWrappers/ConnectionWrapper'
 import type {GraphId, Node, State} from '../../../state'
 import type {Point} from './graph/utils'
 import {ADD_NEIGHBOURS_LIMIT} from '../../../constants'
+import Legend from '../../shared/Legend/Legend'
 
 import './Subgraph.css'
 import './InfoLoader.css'
@@ -81,6 +82,7 @@ const Subgraph = ({
         style={graphStyle}
       />
     </div>
+    <Legend defaultOpen={false} closable graphControls />
     {selectedEids.map((eid) => (
       <div className="info-loader" key={eid}>
         <CompanyDetails eid={eid} />
