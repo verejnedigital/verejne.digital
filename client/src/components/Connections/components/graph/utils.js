@@ -124,7 +124,7 @@ export const options = {
       centralGravity: 0.3,
       springLength: 80,
       springConstant: 0.004,
-      damping: 0.1,
+      damping: 0.8,
       avoidOverlap: 0.01,
     },
   },
