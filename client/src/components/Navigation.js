@@ -12,7 +12,7 @@ import './Navigation.css'
 
 type Props = {
   navigationOpen: boolean,
-  setNavigationOpen: (open: boolean) => void,
+  toggleNavigation: (open: boolean) => void,
   closeNavigation: () => void,
   handleNavClick: () => void,
 }
@@ -80,7 +80,7 @@ export default compose(
     {refreshState}
   ),
   withHandlers({
-    refresh: ({refreshState, setNavigationOpen}) => () => {
+    handleNavClick: ({refreshState, setNavigationOpen}) => () => {
       refreshState()
       setNavigationOpen(false)
     },
