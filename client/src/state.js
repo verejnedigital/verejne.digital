@@ -342,7 +342,7 @@ export type PoliticianDetail = {|
   office_name_male: string,
   term_start: number,
   office_name_female: string,
-  offices: Array<PoliticianOffice>
+  offices: Array<PoliticianOffice>,
 |}
 
 export type Politician = {|
@@ -362,6 +362,33 @@ export type Politician = {|
   office_name_female: string,
   id: number,
 |}
+
+export const refreshedUIState = {
+  notices: {searchQuery: ''},
+  profile: {query: ''},
+  publicly: {
+    autocompleteValue: '',
+    entitySearchValue: '',
+    entitySearchOpen: false,
+    entityModalOpen: false,
+    entitySearchFor: '',
+    entitySearchLoaded: false,
+    showInfo: {},
+    openedAddressDetail: [],
+    drawerOpen: false,
+    selectedLocations: [],
+  },
+  mapOptions: {
+    center: SLOVAKIA_COORDINATES,
+    zoom: 8,
+    bounds: undefined,
+  },
+  connections: {
+    selectedEids: [],
+    addNeighboursLimit: ADD_NEIGHBOURS_LIMIT,
+  },
+}
+
 // Each property must begin with '+' to be made read only and each object
 // must be enclosed in '|' so no properties can be added to state at runtime
 export type State = {|
@@ -380,7 +407,6 @@ export type State = {|
     +query: string,
   |},
   +publicly: {|
-    +currentPage: number,
     +autocompleteValue: string,
     +entitySearchValue: string,
     +entitySearchOpen: boolean,
@@ -416,7 +442,6 @@ const getInitialState = (): State => ({
     query: '',
   },
   publicly: {
-    currentPage: 1,
     autocompleteValue: '',
     entitySearchValue: '',
     entitySearchOpen: false,

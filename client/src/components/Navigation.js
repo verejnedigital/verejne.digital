@@ -1,5 +1,8 @@
 // @flow
 import React, {Component} from 'react'
+import {compose, withHandlers} from 'recompose'
+import {connect} from 'react-redux'
+import {refreshState} from '../actions/sharedActions'
 import {NavLink, withRouter} from 'react-router-dom'
 import {Collapse, Navbar, NavbarToggler, NavItem, Nav} from 'reactstrap'
 
@@ -18,6 +21,7 @@ type Props = {
   history: RouterHistory,
   location: Location,
   match: Match,
+  refresh: () => void,
 }
 
 class Navigation extends Component<Props, State> {
@@ -44,29 +48,29 @@ class Navigation extends Component<Props, State> {
   render() {
     return (
       <Navbar light expand="lg">
-        <NavLink to="/" className="navbar-brand">
+        <NavLink to="/" className="navbar-brand" onClick={this.props.refresh}>
           <b>verejne</b>.digital
         </NavLink>
         <NavbarToggler onClick={this.toggle} />
         <Collapse isOpen={this.state.isOpen} navbar>
           <Nav navbar className="mr-auto">
             <NavItem>
-              <NavLink to="/verejne" className="nav-link">
+              <NavLink to="/verejne" className="nav-link" onClick={this.props.refresh}>
                 Verejné dáta
               </NavLink>
             </NavItem>
             <NavItem>
-              <NavLink to="/profil" className="nav-link">
+              <NavLink to="/profil" className="nav-link" onClick={this.props.refresh}>
                 Profil
               </NavLink>
             </NavItem>
             <NavItem>
-              <NavLink to="/prepojenia" className="nav-link">
+              <NavLink to="/prepojenia" className="nav-link" onClick={this.props.refresh}>
                 Prepojenia
               </NavLink>
             </NavItem>
             <NavItem>
-              <NavLink to="/obstaravania" className="nav-link">
+              <NavLink to="/obstaravania" className="nav-link" onClick={this.props.refresh}>
                 Obstarávania
               </NavLink>
             </NavItem>
@@ -99,4 +103,14 @@ class Navigation extends Component<Props, State> {
   }
 }
 
-export default withRouter(Navigation)
+export default compose(
+  withRouter,
+  connect(null,
+    {refreshState}
+  ),
+  withHandlers({
+    refresh: ({refreshState}) => () => {
+      refreshState()
+    },
+  }),
+)(Navigation)

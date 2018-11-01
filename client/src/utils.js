@@ -39,9 +39,11 @@ export const mapObjToId = (data: Object, id: number | string) => ({
 
 export const immutableSet = (obj: Object, path: ?Path, value: any) =>
   path && path.length
-    ? produce((obj): void => {
-      set(obj, path, value)
-    })(obj)
+    ? produce(
+      (obj): void => {
+        set(obj, path, value)
+      }
+    )(obj)
     : value
 /*
  * Forward reducer transform to a particular state path.

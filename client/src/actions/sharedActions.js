@@ -1,5 +1,7 @@
 // @flow
+import {merge} from 'lodash'
 import {mappingFn as defaultMappingFn} from '../utils'
+import {refreshedUIState, type State} from '../state'
 
 import type {GenericAction, Path} from '../types/reduxTypes'
 
@@ -22,4 +24,10 @@ export const updateValue = <T: *>(path: Path, data: T, type?: string): GenericAc
   payload: data,
   path,
   reducer: (state: T, data: T) => data,
+})
+
+export const refreshState = () => ({
+  type: 'refresh state',
+  path: null,
+  reducer: (state: State) => (merge({}, state, refreshedUIState)),
 })
