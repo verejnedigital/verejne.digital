@@ -1,0 +1,31 @@
+@import "../../variables.scss";
+
+.autocomplete-item {
+  color: $search-color;
+  padding: 0.3rem;
+  cursor: pointer;
+  background-color: white;
+
+  &--active {
+    background-color: $asset-hover-color;
+  }
+
+  border-bottom: 1px solid $border-color;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.autocomplete-suggestions-menu {
+  box-shadow: 0 4px 12px 0 $shadow-color;
+  font-size: 90%;
+  position: absolute;
+  overflow: auto;
+  padding: 0px;
+  borderRadius: 0px;
+  background: white;
+  z-index: 2;
+  border: 1px solid $border-color;
+  width: 100%;
+}

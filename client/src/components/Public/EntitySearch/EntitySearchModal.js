@@ -31,20 +31,23 @@ import SearchIcon from 'react-icons/lib/fa/search'
 import {updateValue} from '../../../actions/sharedActions'
 import {FIND_ENTITY_TITLE} from '../../../constants'
 import {resultPlurality} from '../../../services/utilities'
-import AutoComplete from '../AutoComplete/AutoComplete'
+import AutoComplete from '../../shared/AutoComplete/AutoComplete'
 import type {State} from '../../../state'
+
+import './EntitySearchModal.css'
 
 type EntitySearchProps = {|
   entitySearchModalOpen: boolean,
   toggleModalOpen: () => void,
   className: string,
   entitySearchValue: string,
-  setEntitySearchValue: (updateValue: string) => void,
+  setEntitySearchValue: (e: Event) => void,
   findEntities: (setEntitySearchFor: Function, entitySearchValue: string) => void,
   entitySearchEids: Array<number>,
   entitySearchFor: string,
   entitySearchLoaded: boolean,
   setEntitySearchLoaded: (loaded: boolean) => void,
+  onSelectHandler: (value: string) => void,
 |}
 
 const EntitySearchModal = ({
@@ -58,6 +61,7 @@ const EntitySearchModal = ({
   entitySearchFor,
   entitySearchLoaded,
   setEntitySearchLoaded,
+  onSelectHandler,
 }: EntitySearchProps) => (
   <Modal
     isOpen={entitySearchModalOpen}
@@ -71,7 +75,19 @@ const EntitySearchModal = ({
       <Form onSubmit={findEntities}>
         <FormGroup>
           <InputGroup>
-            <AutoComplete />
+            <AutoComplete
+              value={entitySearchValue}
+              onChangeHandler={setEntitySearchValue}
+              onSelectHandler={onSelectHandler}
+              menuClassName="publicly-modal-autocomplete-menu"
+              inputProps={{
+                className: 'form-control publicly-modal-autocomplete-input',
+                placeholder: FIND_ENTITY_TITLE,
+              }}
+              wrapperProps={{
+                className: 'publicly-modal-autocomplete-wrapper',
+              }}
+            />
             <InputGroupAddon addonType="append">
               <Button color="primary" onClick={findEntities}>
                 <SearchIcon />
@@ -118,6 +134,24 @@ export default compose(
       }
       entitySearchFor !== entitySearchValue && setEntitySearchLoaded(false)
       setEntitySearchFor(entitySearchValue)
+    },
+    onSelectHandler: ({
+      setEntitySearchFor,
+      entitySearchValue,
+      setEntitySearchLoaded,
+      entitySearchFor,
+      updateValue,
+    }) => (value) => {
+      if (entitySearchValue.trim() === '') {
+        return
+      }
+      entitySearchFor !== entitySearchValue && setEntitySearchLoaded(false)
+      setEntitySearchFor(value)
+      updateValue(
+        ['publicly', 'entitySearchValue'],
+        value,
+        'Set entity search field value'
+      )
     },
     setEntitySearchValue: ({updateValue}) => (e) =>
       updateValue(

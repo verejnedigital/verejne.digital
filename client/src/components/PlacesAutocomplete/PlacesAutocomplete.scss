@@ -1,6 +1,9 @@
 @import '../variables.scss';
 
 .autocomplete {
+  .autocomplete__input {
+    height: auto;
+  }
   &__input {
     width: 100%;
   }

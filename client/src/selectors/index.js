@@ -321,20 +321,6 @@ export const sortedEntitySearchDetailsSelector = createSelector(
       'trade_with_government',
     ]).reverse()
 )
-export const entitySearchSuggestionEidsSelector = createSelector(
-  entitySearchesSelector,
-  entitySearchValueSelector,
-  (searches, query): Array<number> => (searches[query] && searches[query].eids) || []
-)
-export const entitySearchSuggestionsSelector = createSelector(
-  allEntityDetailsSelector,
-  entitySearchSuggestionEidsSelector,
-  (details, eids): Array<string> => {
-    return eids
-      .map((eid) => (details[eid.toString()] ? details[eid.toString()].name : null))
-      .filter((name, index, array) => name && array.indexOf(name) === index)
-  }
-)
 
 export const drawerOpenSelector = (state: State) => state.publicly.drawerOpen
 
@@ -358,3 +344,16 @@ export const addNeighboursLimitSelector = (state: State): number | null =>
 export const isItCandidatesListSelector = (state: State, props: ContextRouter): boolean =>
   props.location.search.includes('kandidati_bratislava') ||
   props.location.search.includes('kandidati_prezident')
+
+export const autocompleteSuggestionEidsSelector = (state: State, query: string): Array<number> => (
+  state.entitySearch[query] && state.entitySearch[query].eids
+) || []
+
+export const autocompleteSuggestionsSelector =
+  (state: State, value: string): Array<string> => {
+    const details = allEntityDetailsSelector(state)
+    const eids = autocompleteSuggestionEidsSelector(state, value)
+    return eids
+      .map((eid) => (details[eid.toString()] ? details[eid.toString()].name : ''))
+      .filter((name, index, array) => name && array.indexOf(name) === index)
+  }
