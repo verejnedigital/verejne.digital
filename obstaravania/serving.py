@@ -11,8 +11,8 @@ import yaml
 from sqlalchemy import update
 from jinja2 import Template
 
-from data_model import Firma, Obstaravanie, Firma, Candidate, Session, Notification, NotificationStatus
-from utils import obstaravanieToJson, getEidForIco, generateReport, getAddressForIco
+from data_model import Obstaravanie, Session, Notification, NotificationStatus
+from utils import obstaravanieToJson, generateReport, getAddressForIco
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../data/db')))
 from db import DatabaseConnection
@@ -105,52 +105,6 @@ class ServeObstaravanie(MyServer):
             with open("obstaravanie.tmpl") as f:
                 singleTemplate = Template(f.read().decode("utf8"))
             html = singleTemplate.render(obstaravanie=j)
-            self.response.write(html.encode("utf8"))
-
-
-class InfoObstaravanie(MyServer):
-    def get(self):
-        try:
-            oid = int(self.request.GET["id"])
-        except:
-            self.abort(400, 'Error: Malformed id.')
-
-        with Session() as session:
-            obstaravanie = session.query(Obstaravanie).filter_by(id=oid).first()
-            if obstaravanie is None:
-                self.abort(404, 'Error: No matching id.')
-            j = obstaravanieToJson(obstaravanie, 20, 20)
-            self.returnJSON(j)
-
-
-class ServeCompany(MyServer):
-    def get(self):
-        try:
-            company_id = int(self.request.GET["id"])
-        except:
-            self.abort(400, 'Error: Malformed id.')
-        with Session() as session:
-            company = session.query(Firma).filter_by(id=company_id).first()
-            if company is None:
-                self.abort(404, 'Error: No matchind id.')
-            result = {
-                "name": company.name,
-                "ico": company.ico,
-                "eid": getEidForIco(company.ico)
-            }
-            candidates = []
-            for candidate in session.query(Candidate). \
-                filter_by(company_id=company_id). \
-                order_by(-Candidate.score):
-                candidates.append([
-                        candidate.score,
-                        obstaravanieToJson(candidate.obstaravanie, candidates=0, full_candidates=0),
-                        obstaravanieToJson(candidate.reason, candidates=0, full_candidates=0)
-                ])
-            result["obstaravania"] = candidates
-            with open("firma.tmpl") as f:
-                singleTemplate = Template(f.read().decode("utf8"))
-            html = singleTemplate.render(firma=result)
             self.response.write(html.encode("utf8"))
 
 
@@ -322,8 +276,6 @@ class ListNotices(MyServer):
 # Setup of the webapp2 WSGI application
 app = webapp2.WSGIApplication([
     ('/obstaravanie', ServeObstaravanie),
-    ('/info_obstaravanie', InfoObstaravanie),
-    ('/obstaravanieFirma', ServeCompany),
     ('/notifications', ServeNotifications),
     ('/updateNotifications', UpdateNotifications),
     ('/info_notice', InfoNotice),
