@@ -6,9 +6,7 @@ import os
 from paste import httpserver
 import sys
 import webapp2
-import yaml
 
-from sqlalchemy import update
 from jinja2 import Template
 
 from data_model import Obstaravanie, Session, Notification, NotificationStatus
