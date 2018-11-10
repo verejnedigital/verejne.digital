@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from data_model import Firma, Obstaravanie, Firma, Candidate, Notification
+from data_model import Obstaravanie, Candidate, Notification
 import db_old
 from dateutil.parser import parse
 import json
