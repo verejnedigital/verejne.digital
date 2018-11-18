@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """Runs the server for backend application `prepojenia`."""
+
 import argparse
 import json
 import os
@@ -29,18 +30,18 @@ class MyServer(webapp2.RequestHandler):
       value = int(self.request.GET[parameter])
     except:
       self.abort(400, detail='Parameter "%s" must be integer' % (
-        parameter))
+          parameter))
     if max_value and (value > max_value):
       self.abort(400, detail='Parameter "%s" must be <= %d' % (
-        parameter, max_value))
+          parameter, max_value))
     return value
 
   def _parse_eid_list(self, parameter, limit=50):
     """Parses eids from comma-separated GET string `parameter`."""
     try:
       eids = [
-        int(x)
-        for x in (self.request.GET[parameter].split(','))[:limit]
+          int(x)
+          for x in (self.request.GET[parameter].split(','))[:limit]
       ]
     except:
       self.abort(400, detail='Could not parse %s' % (parameter))

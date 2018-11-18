@@ -39,7 +39,7 @@ class TestHandlers(unittest.TestCase):
     print(content)
 
   def test_getInfos(self):
-    url = '/getInfos?eids=103,215521,82680,293097,389093,389094,2352916'
+    url = '/getInfos?eids=103,215521,82680,293097,389093,389094,2352916&max_contracts_recents=7'
     content = _request_json(url, self)
     self.assertIsInstance(content, dict)
     self.assertTrue(content)

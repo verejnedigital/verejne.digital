@@ -278,7 +278,12 @@ def _add_notices_largest(db, eIDs, result, max_per_eID):
 
 
 # --- MAIN METHOD ---
-def get_GetInfos(db, eIDs):
+def get_GetInfos(db,
+                 eIDs,
+                 max_eufunds_largest,
+                 max_contracts_recents,
+                 max_contracts_largest,
+                 max_notices_recent):
     """Returns information about entities with the given eIDs.
 
     Args:
@@ -286,17 +291,19 @@ def get_GetInfos(db, eIDs):
           current production schema.
       eIDs: A list of integers, the entity IDs ("eIDs") for which
           information is being requested.
+      max_eufunds_largest: Integer specifying the maximum number of
+          largest EU fund allocations to return for each entity.
+      max_contracts_recents: Integer specifying the maximum number of
+          most recent awarded contracts to return for each entity.
+      max_contracts_largest: Integer specifying the maximum number of
+          largest awarded contracts to return for each entity.
+      max_notices_recent: Integer specifying the maximum number of
+          notices to return for each entity.
     Returns:
       Dictionary of the form {eID: information}, where `information`
       is itself a dictionary mapping keys to corresponding values
       about the entity with id `eID`.
     """
-
-    # Parameters controlling how much information to return:
-    max_eufunds_largest = 15
-    max_contracts_recents = 5
-    max_contracts_largest = 15
-    max_notices_recent = 5
 
     # Initialise result dictionary:
     result = {eID: {} for eID in eIDs}
