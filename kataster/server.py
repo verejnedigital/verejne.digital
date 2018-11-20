@@ -110,7 +110,7 @@ class InfoPolitician(MyServer):
     eids.update(db_search.get_eids_with_matching_name(db, politician))
 
     # Add entity information from database vd.
-    politician['entities'] = get_GetInfos(db, eids)
+    politician['entities'] = get_GetInfos(db, eids, 10, 5, 15, 5)
 
     self.returnJSON(politician)
 
