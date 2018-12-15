@@ -1,6 +1,17 @@
 1_rpo:
     source_schema: "ekosystem_rpo"
     command: "
+        WITH economic_activities AS (
+          SELECT
+            organization_id,
+            array_agg(description) AS activity_descriptions,
+            array_agg(effective_from) AS effective_from,
+            array_agg(effective_to) AS effective_to
+          FROM
+            organization_economic_activity_entries
+          GROUP BY
+            organization_id
+        )
         SELECT DISTINCT ON(organizations.id)
           organizations.id AS org_id,
           organization_identifier_entries.ipo AS ico,
@@ -18,27 +29,40 @@
             organization_address_entries.municipality,
             organization_address_entries.country
           ) AS address,
-          organization_legal_form_entries.legal_form_id AS legal_form_id
+          organization_legal_form_entries.legal_form_id AS legal_form_id,
+          economic_activities.activity_descriptions,
+          economic_activities.effective_from AS activity_effective_from,
+          economic_activities.effective_to AS activity_effective_to
         FROM
-          organizations,
-          organization_identifier_entries,
-          organization_name_entries,
-          organization_address_entries,
-          organization_legal_form_entries
-        WHERE
+          organizations
+        LEFT JOIN
+          organization_identifier_entries ON
           organizations.id=organization_identifier_entries.organization_id
-          AND
+        INNER JOIN
+          organization_name_entries ON
           organizations.id=organization_name_entries.organization_id
-          AND
+        INNER JOIN
+          organization_address_entries ON
           organizations.id=organization_address_entries.organization_id
-          AND
+        LEFT JOIN
+          organization_legal_form_entries ON
           organizations.id=organization_legal_form_entries.organization_id
+        LEFT JOIN
+          economic_activities ON
+          organizations.id=economic_activities.organization_id
+        ORDER BY
+          organizations.id,
+          organization_identifier_entries.effective_to DESC,
+          organization_name_entries.effective_to DESC,
+          organization_address_entries.effective_to DESC,
+          organization_legal_form_entries.effective_to DESC
         "
     save_org_id: true
     tables:
             CompanyInfo:
                     columns: ["ico", "established_on",
-                              "terminated_on", "legal_form_id"]
+                              "terminated_on", "legal_form_id",
+                              "activity_descriptions"]
                     create_command: "
                        CREATE TABLE CompanyInfo (
                                 id SERIAL PRIMARY KEY,
@@ -46,7 +70,8 @@
                                 ico INT8,
                                 established_on DATE,
                                 terminated_on DATE,
-                                legal_form_id INTEGER
+                                legal_form_id INTEGER,
+                                activity_descriptions TEXT
                        );
                        CREATE UNIQUE INDEX ON CompanyInfo(eid);
                        CREATE UNIQUE INDEX ON CompanyInfo(ico);
@@ -274,5 +299,4 @@
                        CREATE INDEX ON ProfilMapping(eid);
                        CREATE INDEX ON ProfilMapping(profil_id);
                        CREATE UNIQUE INDEX ON ProfilMapping(eid, profil_id);
-                       REFRESH MATERIALIZED VIEW entities_search;
                     "

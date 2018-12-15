@@ -71,9 +71,6 @@ def CreateAndSetProdSchema(db, prod_schema_name):
             );
             CREATE INDEX ON Entities(name);
             CREATE INDEX ON Entities(address_id);
-            CREATE MATERIALIZED VIEW entities_search AS SELECT id, to_tsvector('simple',unaccent(name)) as search_vector FROM entities WITH NO DATA;
-            CREATE INDEX ON entities_search(search_vector);
-            CREATE INDEX ON entities_search USING gin(search_vector);
         """)
 
 
@@ -386,6 +383,18 @@ def main(args_dict):
 
     # Run post processing
     post_process.do_post_processing(db_prod, test_mode)
+
+    # Create materialized view for entity search after all entities
+    # have been created.
+    db_prod.execute("""
+        CREATE MATERIALIZED VIEW entities_search AS
+          SELECT
+            id,
+            to_tsvector('simple', unaccent(name)) as search_vector
+          FROM entities;
+          CREATE INDEX ON entities_search(search_vector);
+          CREATE INDEX ON entities_search USING gin(search_vector);
+    """)
 
     # Grant apps read-only access to the newly created schema and tables within
     db_prod.grant_usage_and_select_on_schema(prod_schema_name, 'data')
