@@ -1,0 +1,35 @@
+- name:
+    Verejné obstarávania
+  url:
+    https://colab.research.google.com/drive/1Mks1kPcm93TptUEudD-0Ff1jPkRsrJF1
+  author:
+    verejne.digital
+  description:
+    Ukážka načítania a zobrazenia dát o verejných obstarávaniach,
+    ukážka embeddingu s použitím TensorFlow, a ukážka použitia nášho
+    REST API.
+- name:
+    Predsedovia a poslanci VÚC
+  url:
+    https://colab.research.google.com/drive/1nNRr-IYn4UO6OYvQ7DDCukHEXns4MQuf
+  author:
+    verejne.digital
+  description:
+    Zobrazenie krátkych existujúcich prepojení medzi funkcionármi VÚC
+    (župani a poslanci) a rôznymi mediálne známymi osobami.
+- name:
+    Firmy
+  url:
+    https://colab.research.google.com/drive/1AGgWhh4ZxLDJoLd34rD7Aw3wzpaLRXXB
+  author:
+    verejne.digital
+  description:
+    Ukážka načítania a zobrazenie dát o firmách.
+- name:
+    Eurofondy
+  url:
+    https://colab.research.google.com/drive/1EliPM69jvvtwoVJU-efP5K2bOX28XIlt
+  author:
+    verejne.digital
+  description:
+    Ukážka načítania a zobrazenia dát o eurofondoch.

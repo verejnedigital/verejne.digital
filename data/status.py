@@ -195,3 +195,11 @@ def get_public_dumps_info():
         'url': 'https://verejne.digital/resources/csv/%s' % (filename)
     })
   return result
+
+
+def get_colabs_info():
+  """Returns a list of all registered Colab notebooks."""
+
+  # Read YAML file describing all registered Colab notebooks.
+  colabs = utils.yaml_load('colabs.yaml')
+  return colabs

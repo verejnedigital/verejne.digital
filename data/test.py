@@ -51,6 +51,13 @@ class TestHandlers(unittest.TestCase):
     print('PublicDumpsInfo responded with %d items:' % (len(content)))
     print(json.dumps(content, indent=2))
 
+  def test_colabs_info(self):
+    content = _request_json('/colabs_info', self)
+    self.assertIsInstance(content, list)
+    self.assertTrue(content)
+    print('ColabsInfo responded with %d items:' % (len(content)))
+    print(json.dumps(content, indent=2))
+
 
 if __name__ == '__main__':
   unittest.main()
