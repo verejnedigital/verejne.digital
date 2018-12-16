@@ -15,8 +15,6 @@ dumps:
         entities
       INNER JOIN
         entity_flags ON entity_flags.eid=entities.id
-    notebook_url:
-      None
   related:
     query: |
       SELECT
@@ -28,8 +26,6 @@ dumps:
         COALESCE(to_char(related.effective_from, 'YYYY-MM-DD'), '')
           AS effective_from
       FROM related
-    notebook_url:
-      None
   companies:
     query: |
       SELECT
@@ -41,8 +37,6 @@ dumps:
         companyinfo ON companyinfo.eid=entities.id
       INNER JOIN
         address ON address.id=entities.address_id;
-    notebook_url:
-      https://colab.research.google.com/drive/1AGgWhh4ZxLDJoLd34rD7Aw3wzpaLRXXB
   obstaravania:
     query: |
       SELECT
@@ -51,16 +45,12 @@ dumps:
         total_final_value_amount, total_final_value_currency
       FROM
         notices
-    notebook_url:
-      https://colab.research.google.com/drive/1Mks1kPcm93TptUEudD-0Ff1jPkRsrJF1
   eurofondy:
     query: |
       SELECT
         eid, title, description, link, price, state, call_state, call_title
       FROM
         eufunds
-    notebook_url:
-      https://colab.research.google.com/drive/1EliPM69jvvtwoVJU-efP5K2bOX28XIlt
   contracts:
     query: |
       SELECT
@@ -70,8 +60,6 @@ dumps:
         status_id, contract_id, contract_identifier
       FROM
         contracts
-    notebook_url:
-      None
   offices:
     query: |
       SELECT
@@ -95,5 +83,3 @@ dumps:
         offices ON offices.id=personoffices.officeid
       LEFT JOIN
         parties ON parties.id=personoffices.party_nomid
-    notebook_url:
-      None

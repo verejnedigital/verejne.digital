@@ -190,7 +190,6 @@ def get_public_dumps_info():
     # Append dump info to results:
     result.append({
         'name': dump_name,
-        'notebook_url': dumps[dump_name]['notebook_url'],
         'query': dumps[dump_name]['query'].strip(),
         'url': 'https://verejne.digital/resources/csv/%s' % (filename)
     })
