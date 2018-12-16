@@ -3,6 +3,33 @@
 save_directory:
   /data/www/verejne.digital/resources/csv/
 dumps:
+  entities:
+    query: |
+      SELECT
+        entities.id AS eid,
+        name,
+        entity_flags.trade_with_government,
+        entity_flags.contact_with_politics,
+        entity_flags.political_entity
+      FROM
+        entities
+      INNER JOIN
+        entity_flags ON entity_flags.eid=entities.id
+    notebook_url:
+      None
+  related:
+    query: |
+      SELECT
+        eid,
+        eid_relation,
+        stakeholder_type_id,
+        COALESCE(to_char(related.effective_to, 'YYYY-MM-DD'), '')
+          AS effective_to,
+        COALESCE(to_char(related.effective_from, 'YYYY-MM-DD'), '')
+          AS effective_from
+      FROM related
+    notebook_url:
+      None
   companies:
     query: |
       SELECT
@@ -43,5 +70,30 @@ dumps:
         status_id, contract_id, contract_identifier
       FROM
         contracts
+    notebook_url:
+      None
+  offices:
+    query: |
+      SELECT
+        entities.id AS eid,
+        persons.id AS person_id,
+        offices.name_male AS office_name_male,
+        offices.name_female AS office_name_female,
+        personoffices.office_location,
+        personoffices.term_start,
+        personoffices.term_end,
+        parties.abbreviation AS party_nom
+      FROM
+        entities
+      INNER JOIN
+        profilmapping ON profilmapping.eid=entities.id
+      INNER JOIN
+        persons ON persons.id=profilmapping.profil_id
+      INNER JOIN
+        personoffices ON personoffices.personid=persons.id
+      INNER JOIN
+        offices ON offices.id=personoffices.officeid
+      LEFT JOIN
+        parties ON parties.id=personoffices.party_nomid
     notebook_url:
       None
