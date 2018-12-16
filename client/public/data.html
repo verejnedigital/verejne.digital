@@ -153,6 +153,27 @@
             document.getElementById("table_prod").innerHTML = '<tr><td style="color:red">Error retrieving prod data information</td></tr>';
         });
     }
+    function print_colabs_info() {
+        var url = "https://verejne.digital/api/d/colabs_info";
+        $.get(url, function(response) {
+            var tableElement = document.getElementById("table_colabs");
+            for (var i = 0; i < response.length; i++) {
+                var colab = response[i];
+                var row_html = "";
+                row_html += "<td><p><i>" + colab.name + "</i></p>";
+                row_html += "<p><a href='" + colab.url + "' target='_blank'>Otvoriť Google Colab</a></p>";
+                row_html += "</td>";
+                row_html += "<td>" + colab.description + "</td>";
+                row_html += "<td>" + colab.author + "</td>";
+
+                // Add row to table
+                tableElement.innerHTML += "<tr>" + row_html + "</tr>";
+            }
+
+        }).error(function() {
+            document.getElementById("table_dumps").innerHTML = '<tr><td style="color:red">Error retrieving dump data information</td></tr>';
+        });
+    }
     function print_public_data_dumps() {
         var url = "https://verejne.digital/api/d/public_dumps_info";
         $.get(url, function(response) {
@@ -161,9 +182,7 @@
                 var dump = response[i];
                 var row_html = "";
                 row_html += "<td><p><i>" + dump.name + "</i></p>"
-                row_html += "<p><a href='" + dump.notebook_url + "' target='_blank'>Vyskúšať priamo v Google Colab</a></p>";
-                row_html += "<p>alebo</p>";
-                row_html += "<p><a href='" + dump.url + "'>Stiahnuť CSV súbor</a></p>";
+                row_html += "<p><a href='" + dump.url + "'>" + dump.url + "</a></p>";
                 row_html += "</td><td><pre>"
                 var code_id = "dump-sql-code-" + i;
                 row_html += "<code id='" + code_id + "' class='language-sql'>" + dump.query + "</code>";
@@ -198,8 +217,18 @@
         (databázová schéma <span id='prod_schema_name' style='font-weight: bold;'></span>)
     </p>
 
-    <!-- Section 2: List our public data views/dumps -->
-    <h2>Verejné pohľady</h2>
+    <!-- Section 2: List Colabs and our public dumps -->
+    <h2>Colaby a dumpy</h2>
+    <p>Colaby využívajúce našu produkčnú databázu. Dáta sa načítavajú z CSV dumpov popísaných nižšie.</p>
+    <table id="table_colabs">
+        <tr>
+            <th>Meno</th>
+            <th>Popis</th>
+            <th>Autor</th>
+        </tr>
+        <script> print_colabs_info(); </script>
+    </table>
+    <p>Zoznam CSV dumpov, ktoré je možné používať v Colaboch, prípadne priamo stiahnuť na lokálnu experimentáciu.</p>
     <table id="table_dumps">
         <tr>
             <th>Dump</th>
@@ -207,7 +236,6 @@
         </tr>
         <script> print_public_data_dumps(); </script>
     </table>
-    <p>Už čoskoro plánujeme pridať ďalšie dáta, pohľady a príklady ich použitia.</p>
 
     <!-- Section 3: List raw data sources -->
     <h2 id="sourcedata">Zdrojové dáta</h2>
