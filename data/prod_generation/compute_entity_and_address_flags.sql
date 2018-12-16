@@ -14,25 +14,57 @@ This SQL script is invoked by `post_process.py` and assumes that the
 (post-processed).
 */
 
--- Temporary table listing eid's corresponding to political entities:
+-- Temporary table listing eid's corresponding to political entities.
+-- An entity is considered to be political if it is either a political
+-- party (legal_form_id=254), or if it has a profil id and was not
+-- only an unsuccessful candidate in a regional election (VUC).
 CREATE TABLE political_entities AS (
-  SELECT
+  SELECT DISTINCT
     entities.id AS eid
   FROM
     entities
-  LEFT JOIN companyinfo ON companyinfo.eid=entities.id
-  LEFT JOIN profilmapping ON profilmapping.eid=entities.id
+  LEFT JOIN
+    companyinfo ON companyinfo.eid=entities.id
+  LEFT JOIN
+    profilmapping ON profilmapping.eid=entities.id
+  LEFT JOIN
+    :schema_profil.personoffices
+    ON :schema_profil.personoffices.personid=profilmapping.profil_id
+  LEFT JOIN
+    :schema_profil.offices
+    ON :schema_profil.offices.id=:schema_profil.personoffices.officeid
   WHERE
     companyinfo.legal_form_id=254 OR
-    profilmapping.eid IS NOT NULL
+    :schema_profil.offices.level<>'region' OR
+    :schema_profil.offices.is_candidate=false
 );
 
--- Temporary table listing eid's related to a political entity:
+-- Temporary table listing eid's that have contact with politics.
+-- An entity is considered to have contact with politics if it is a
+-- political entity, or if it has run for office.
 CREATE TABLE political_contacts AS (
-  SELECT
-    DISTINCT(eid_relation) AS eid
-  FROM related
-  INNER JOIN political_entities ON political_entities.eid=related.eid
+  (
+    SELECT DISTINCT
+      eid_relation AS eid
+    FROM
+      related
+    INNER JOIN
+      political_entities ON political_entities.eid=related.eid
+  )
+  UNION
+  (
+    SELECT DISTINCT
+      entities.id AS eid
+    FROM
+      entities
+    LEFT JOIN
+      companyinfo ON companyinfo.eid=entities.id
+    LEFT JOIN
+      profilmapping ON profilmapping.eid=entities.id
+    WHERE
+      companyinfo.legal_form_id=254 OR
+      profilmapping.eid IS NOT NULL
+  )
 );
 
 /* Create the table `entity_flags`.

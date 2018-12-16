@@ -1,4 +1,5 @@
 """Performs post processing on the latest prod schema."""
+
 import argparse
 import os
 import sys
@@ -8,7 +9,7 @@ import math
 from intelligence import embed
 from db.db import DatabaseConnection
 from prod_generation import post_process_neighbours
-import utils
+
 
 class Notice:
     idx = None
@@ -72,7 +73,6 @@ def notices_create_extra_table(db, test_mode):
     if test_mode:
         print(command)
     db.execute(command)
-
 
 
 def arrayize(a, type_str="float"):
@@ -171,9 +171,17 @@ def _post_process_neighbours(db, test_mode):
 
 def _post_process_flags(db, test_mode):
     """Precomputes entity flags and address flags."""
+
+    # Retrieve name of most recent profil schema.
+    profil_schema = db.get_latest_schema('source_internal_profil_')
+
+    # Execute the SQL script, with :schema_profil set.
     path_script = os.path.join(
         "prod_generation", "compute_entity_and_address_flags.sql")
-    utils.execute_script(db, path_script)
+    with open(path_script, "r") as f:
+        sql = f.read()
+        sql = sql.replace(":schema_profil", profil_schema)
+        db.execute(sql)
 
 
 def do_post_processing(db, test_mode=False):

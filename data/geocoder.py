@@ -52,7 +52,7 @@ class Geocoder:
             for row in cur:
                 self.AddToCache(
                         row["address"].encode("utf8"),
-                        row["formatted_address"].encode("utf8"), 
+                        row["formatted_address"].encode("utf8"),
                         row["lat"], row["lng"], update_formatted_address=True
                 )
             print "Finished pre-processing geocoder input cache, size =", len(self.cache)
@@ -67,7 +67,7 @@ class Geocoder:
             for row in cur:
                 self.cache_key_hints[row["address"].encode("utf8")] = row["key_hint"].encode("utf8")
             print "Finished reading key hints, size =", len(self.cache_key_hints)
- 
+
 
     def AddToCache(self, address, formatted_address, lat, lng, update_formatted_address):
         " Add one entry to the cache. The function takes care of generating proper keys"
@@ -299,7 +299,7 @@ class Geocoder:
             self.cache_key_hints[address] = matched_key
 
         # Assume anything shorter than 4 characters is not a valid address.
-        if len(address) <= 3: return None
+        if len(address.strip()) <= 3: return None
         # See if there is a key_hint int the table. If so, add it as the firts key
         # to try the cache lookup on.
         key_hint = self.cache_key_hints.get(address, None)
@@ -325,12 +325,12 @@ class Geocoder:
         if address_id is not None: UpdateKeyHint(address, key_hint, matched_key)
         return address_id
 
-    
+
     def PrintStats(self):
-        print "CACHE_HITS", self.cache_hit
-        print "CACHE_MISS", self.cache_miss
-        print "API_LOOKUPS", self.api_lookups
-        print "API_LOOKUP_FAILS", self.api_lookup_fails
-        print "HAS KEY HINT", self.has_key_hint
-        print "MISSING KEY HINT", self.missing_key_hint
-        print "ADJUST POINT", self.adjust_point
+        print("[geocoder] CACHE_HITS: %d" % (self.cache_hit))
+        print("[geocoder] CACHE_MISS: %d" % (self.cache_miss))
+        print("[geocoder] API_LOOKUPS: %d" % (self.api_lookups))
+        print("[geocoder] API_LOOKUP_FAILS: %d" % (self.api_lookup_fails))
+        print("[geocoder] HAS KEY HINT: %d" % (self.has_key_hint))
+        print("[geocoder] MISSING KEY HINT: %d" % (self.missing_key_hint))
+        print("[geocoder] ADJUST POINT: %d" % (self.adjust_point))

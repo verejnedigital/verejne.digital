@@ -91,7 +91,7 @@ class Entities:
       self.AddICO(eid, ico)
     return eid
 
-  def GetEntity(self, ico, name, address_id):
+  def GetEntity(self, ico, name, address_id, no_new_entity=False):
     eid = None
     if not ico is None:
       # Skontrolujme ci je ICO int!
@@ -113,6 +113,8 @@ class Entities:
       if not ico is None:
         self.AddICO(eid, ico)
       return eid
+    elif no_new_entity:
+      return None
     else:
       eid = self.AddNewEntity(ico, name, parsed_name, address_id)
       return eid

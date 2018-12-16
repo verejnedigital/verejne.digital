@@ -196,7 +196,9 @@ def ProcessSource(db_source, db_prod, geocoder, entities, config, test_mode):
                 # TODO(rasto): is the address lookup necessary here?
                 eid = None
             else:
-                eid = entities.GetEntity(row["ico"], name, addressId)
+                no_new_entity = ('no_new_entity' in row) and row['no_new_entity']
+                eid = entities.GetEntity(row["ico"], name, addressId,
+                                         no_new_entity=no_new_entity)
 
             if found % 20000 == 0:
                 print "Progress:", found
@@ -368,12 +370,11 @@ def main(args_dict):
     config = utils.yaml_load('prod_tables.yaml')
     # This is where all the population happens!!!
     # Go through all the specified data sources and process them, adding data
-    # as needed. We process them in the order!
+    # as needed. We process them in lexicographic order!
     for key in sorted(config.keys()):
         config_per_source = config[key]
         print "Working on source:", key
         ProcessSource(db_source, db_prod, geocoder, entities_lookup, config_per_source, test_mode)
-        print "GEOCODER STATS"
         geocoder.PrintStats()
         entities_lookup.print_statistics()
 

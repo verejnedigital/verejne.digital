@@ -286,12 +286,48 @@
 
 9_profil_mapping:
     source_schema: "internal_profil"
-    command: "select persons.id as profil_id,concat_ws(' ', persons.firstname, persons.surname) as name, concat_ws(' ', addresses.street, addresses.houseno, addresses.municipality, addresses.state) as address, null as ico from persons join personaddresses on personaddresses.personid = persons.id join addresses on addresses.id = personaddresses.addressid"
+    command: "
+        WITH PersonRole AS (
+          SELECT
+            Persons.Id AS PersonId,
+            BOOL_AND(
+              Offices.is_candidate AND Offices.level='region'
+            ) AS no_new_entity
+          FROM
+            Persons
+          INNER JOIN
+            PersonOffices ON PersonOffices.PersonId=Persons.id
+          INNER JOIN
+            Offices ON Offices.id=PersonOffices.OfficeId
+          GROUP BY
+            Persons.ID
+        )
+        SELECT
+          persons.id AS profil_id,
+          concat_ws(' ', persons.firstname, persons.surname) AS name,
+          concat_ws(' ',
+            addresses.street,
+            addresses.houseno,
+            addresses.zip,
+            addresses.municipality,
+            addresses.state
+          ) AS address,
+          NULL AS ico,
+          PersonRole.no_new_entity AS no_new_entity
+        FROM
+          Persons
+        INNER JOIN
+          PersonAddresses ON PersonAddresses.PersonId=Persons.Id
+        INNER JOIN
+          Addresses ON Addresses.Id=PersonAddresses.AddressId
+        INNER JOIN
+          PersonRole ON PersonRole.PersonId=Persons.Id
+        "
     tables:
             ProfilMapping:
                      columns: ["profil_id"]
                      create_command: "
-                       CREATE TABLE ProfilMapping (
+                       CREATE TABLE IF NOT EXISTS ProfilMapping (
                                 id SERIAL PRIMARY KEY,
                                 eid INTEGER REFERENCES Entities(id),
                                 profil_id INTEGER
