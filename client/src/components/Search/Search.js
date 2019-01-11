@@ -1,60 +1,43 @@
 // @flow
-import React from "react";
-import { compose } from "redux";
-import { connect } from "react-redux";
-import { withRouter } from "react-router-dom";
-import type { RouterHistory } from "react-router";
-import { withHandlers, withState } from "recompose";
-import { withDataProviders } from "data-provider";
-import SearchIcon from "react-icons/lib/fa/search";
-import {
-  Row,
-  Col,
-  Container,
-  Button,
-  InputGroup,
-  InputGroupAddon
-} from "reactstrap";
-import {
-  autocompleteSuggestionEidsSelector,
-  autocompleteSuggestionsSelector
-} from "../../selectors/";
-import { updateValue } from "../../actions/sharedActions";
-import {
-  entitySearchProvider,
-  entityDetailProvider
-} from "../../dataProviders/sharedDataProviders";
-import AutoComplete from "../shared/AutoComplete/AutoComplete";
-import Subgraph from "../Connections/components/Subgraph";
-import MapContainer from "../Profile/components/MapContainer";
-import InfoContainer from "./InfoContainer";
-import {
-  FACEBOOK_LIKE_SRC,
-  DEFAULT_MAP_CENTER,
-  COUNTRY_ZOOM
-} from "../../constants";
+import React from 'react'
+import {compose} from 'redux'
+import {connect} from 'react-redux'
+import {withRouter} from 'react-router-dom'
+import type {RouterHistory} from 'react-router'
+import {withHandlers, withState} from 'recompose'
+import {withDataProviders} from 'data-provider'
+import SearchIcon from 'react-icons/lib/fa/search'
+import {Row, Col, Container, Button, InputGroup, InputGroupAddon} from 'reactstrap'
+import {autocompleteSuggestionEidsSelector, autocompleteSuggestionsSelector} from '../../selectors/'
+import {updateValue} from '../../actions/sharedActions'
+import {entitySearchProvider, entityDetailProvider} from '../../dataProviders/sharedDataProviders'
+import AutoComplete from '../shared/AutoComplete/AutoComplete'
+import Subgraph from '../Connections/components/Subgraph'
+import MapContainer from '../Profile/components/MapContainer'
+import InfoContainer from './InfoContainer'
+import {FACEBOOK_LIKE_SRC, DEFAULT_MAP_CENTER, COUNTRY_ZOOM} from '../../constants'
 
-import type { State, GeolocationPoint } from "../../state";
+import type {State, GeolocationPoint} from '../../state'
 
-import "./Search.css";
-import { locationSearchSelector } from "../../selectors";
+import './Search.css'
+import {locationSearchSelector} from '../../selectors'
 
 export type Props = {
   history: RouterHistory,
   searchOnEnter: (e: Event) => void,
-  mapProps: { center: GeolocationPoint, zoom: number },
+  mapProps: {center: GeolocationPoint, zoom: number},
   handleSelect: (value: string) => void,
   inputValue: string,
   onChange: () => void,
   query: string,
-  suggestionEids: Array<number>
-};
+  suggestionEids: Array<number>,
+}
 
-const _SearchInfo = ({ inputValue, history }: Props) => {
-  if (inputValue.trim() !== "") {
-    history.push(`/vyhladavanie?meno=${inputValue.trim()}`);
+const _SearchInfo = ({inputValue, history}: Props) => {
+  if (inputValue.trim() !== '') {
+    history.push(`/vyhladavanie?meno=${inputValue.trim()}`)
   }
-};
+}
 
 const Search = ({
   history,
@@ -64,7 +47,7 @@ const Search = ({
   inputValue,
   onChange,
   query,
-  suggestionEids
+  suggestionEids,
 }: Props) => (
   <Container className="">
     <Col>
@@ -78,10 +61,10 @@ const Search = ({
             onChangeHandler={onChange}
             onSelectHandler={handleSelect}
             inputProps={{
-              onKeyPress: searchOnEnter
+              onKeyPress: searchOnEnter,
             }}
             wrapperProps={{
-              className: "search-autocomplete-wrapper"
+              className: 'search-autocomplete-wrapper',
             }}
           />
           <InputGroupAddon addonType="append">
@@ -125,46 +108,43 @@ const Search = ({
       </>
     )}
   </Container>
-);
+)
 
 export default compose(
   withRouter,
-  withState("inputValue", "setInputValue", ""),
-  withState("searchEids", "setSearchEids", []),
+  withState('inputValue', 'setInputValue', ''),
+  withState('searchEids', 'setSearchEids', []),
   connect(
     (state: State, props: Props) => ({
-      query: locationSearchSelector(state, props).meno || ""
+      query: locationSearchSelector(state, props).meno || '',
     }),
-    { updateValue }
+    {updateValue}
   ),
   connect(
     (state: State, props: Props) => ({
       suggestionEids: autocompleteSuggestionEidsSelector(state, props.query),
-      suggestions: autocompleteSuggestionsSelector(state, props.query)
+      suggestions: autocompleteSuggestionsSelector(state, props.query),
     }),
     {}
   ),
-  withDataProviders(({ query, suggestionEids }) => [
-    ...(query.trim() !== "" ? [entitySearchProvider(query, false, false)] : []),
-    ...(suggestionEids.length > 0
-      ? [entityDetailProvider(suggestionEids, false)]
-      : [])
+  withDataProviders(({query, suggestionEids}) => [
+    ...(query.trim() !== '' ? [entitySearchProvider(query, false, false)] : []),
+    ...(suggestionEids.length > 0 ? [entityDetailProvider(suggestionEids, false)] : []),
   ]),
-  withState("mapProps", "setMapProps", {
+  withState('mapProps', 'setMapProps', {
     center: DEFAULT_MAP_CENTER,
-    zoom: COUNTRY_ZOOM
+    zoom: COUNTRY_ZOOM,
   }),
   withHandlers({
-    searchOnEnter: (props: Props) => e => {
-      if (e.key === "Enter") {
-        _SearchInfo(props);
+    searchOnEnter: (props: Props) => (e) => {
+      if (e.key === 'Enter') {
+        _SearchInfo(props)
       }
     },
-    handleSelect: (props: Props) => value => {
-      props.setInputValue(value);
-      _SearchInfo({ ...props, inputValue: value });
+    handleSelect: (props: Props) => (value) => {
+      props.setInputValue(value)
+      _SearchInfo({...props, inputValue: value})
     },
-    onChange: ({ inputValue, setInputValue }) => e =>
-      setInputValue(e.target.value)
+    onChange: ({inputValue, setInputValue}) => (e) => setInputValue(e.target.value),
   })
-)(Search);
+)(Search)
