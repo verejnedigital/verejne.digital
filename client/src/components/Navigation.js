@@ -1,28 +1,23 @@
 // @flow
-import React from "react";
-import { compose, withHandlers, withState } from "recompose";
-import { connect } from "react-redux";
-import { refreshState } from "../actions/sharedActions";
-import { NavLink } from "react-router-dom";
-import { Collapse, Navbar, NavbarToggler, NavItem, Nav } from "reactstrap";
+import React from 'react'
+import {compose, withHandlers, withState} from 'recompose'
+import {connect} from 'react-redux'
+import {refreshState} from '../actions/sharedActions'
+import {NavLink} from 'react-router-dom'
+import {Collapse, Navbar, NavbarToggler, NavItem, Nav} from 'reactstrap'
 
-import FbIcon from "react-icons/lib/fa/facebook-square";
+import FbIcon from 'react-icons/lib/fa/facebook-square'
 
-import "./Navigation.css";
+import './Navigation.css'
 
 type Props = {
   navigationOpen: boolean,
   toggleNavigation: (open: boolean) => void,
   closeNavigation: () => void,
-  handleNavClick: () => void
-};
+  handleNavClick: () => void,
+}
 
-const Navigation = ({
-  navigationOpen,
-  toggleNavigation,
-  closeNavigation,
-  handleNavClick
-}: Props) => (
+const Navigation = ({navigationOpen, toggleNavigation, closeNavigation, handleNavClick}: Props) => (
   <Navbar light expand="lg">
     <NavLink to="/" className="navbar-brand">
       <b>verejne</b>.digital
@@ -41,29 +36,17 @@ const Navigation = ({
           </NavLink>
         </NavItem>
         <NavItem>
-          <NavLink
-            to="/prepojenia"
-            className="nav-link"
-            onClick={handleNavClick}
-          >
+          <NavLink to="/prepojenia" className="nav-link" onClick={handleNavClick}>
             Prepojenia
           </NavLink>
         </NavItem>
         <NavItem>
-          <NavLink
-            to="/obstaravania"
-            className="nav-link"
-            onClick={handleNavClick}
-          >
+          <NavLink to="/obstaravania" className="nav-link" onClick={handleNavClick}>
             Obstarávania
           </NavLink>
         </NavItem>
         <NavItem>
-          <NavLink
-            to="/vyhladavanie"
-            className="nav-link"
-            onClick={handleNavClick}
-          >
+          <NavLink to="/vyhladavanie" className="nav-link" onClick={handleNavClick}>
             Vyhľadávanie
           </NavLink>
         </NavItem>
@@ -94,21 +77,20 @@ const Navigation = ({
       </Nav>
     </Collapse>
   </Navbar>
-);
+)
 
 export default compose(
-  withState("navigationOpen", "setNavigationOpen", false),
+  withState('navigationOpen', 'setNavigationOpen', false),
   connect(
     null,
-    { refreshState }
+    {refreshState}
   ),
   withHandlers({
-    handleNavClick: ({ refreshState, setNavigationOpen }) => () => {
-      refreshState();
-      setNavigationOpen(false);
+    handleNavClick: ({refreshState, setNavigationOpen}) => () => {
+      refreshState()
+      setNavigationOpen(false)
     },
-    toggleNavigation: ({ setNavigationOpen }) => () =>
-      setNavigationOpen(show => !show),
-    closeNavigation: ({ setNavigationOpen }) => () => setNavigationOpen(false)
+    toggleNavigation: ({setNavigationOpen}) => () => setNavigationOpen((show) => !show),
+    closeNavigation: ({setNavigationOpen}) => () => setNavigationOpen(false),
   })
-)(Navigation);
+)(Navigation)

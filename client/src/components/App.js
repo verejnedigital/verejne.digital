@@ -1,20 +1,20 @@
 // @flow
-import React from "react";
-import Navigation from "./Navigation";
-import { Route } from "react-router-dom";
-import { Switch } from "react-router";
-import Public from "./Public/Public";
-import Connections from "./Connections/Connections";
-import NoticeList from "./Notices/NoticeList";
-import NoticeDetail from "./Notices/NoticeDetail";
-import Profile from "./Profile/Profile";
-import DetailPage from "./Profile/DetailPage";
-import Search from "./Search/Search";
-import Landing from "./Landing/Landing";
+import React from 'react'
+import Navigation from './Navigation'
+import {Route} from 'react-router-dom'
+import {Switch} from 'react-router'
+import Public from './Public/Public'
+import Connections from './Connections/Connections'
+import NoticeList from './Notices/NoticeList'
+import NoticeDetail from './Notices/NoticeDetail'
+import Profile from './Profile/Profile'
+import DetailPage from './Profile/DetailPage'
+import Search from './Search/Search'
+import Landing from './Landing/Landing'
 
-import withTracker from "./shared/withTracker";
+import withTracker from './shared/withTracker'
 
-import "./App.css";
+import './App.css'
 
 const App = () => (
   <div className="application-container">
@@ -33,6 +33,6 @@ const App = () => (
       </Switch>
     </div>
   </div>
-);
+)
 
-export default App;
+export default App
