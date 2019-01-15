@@ -99,8 +99,6 @@ class FakeTextEmbedder:
         for text in texts:
             random_embedding = np.random.uniform(low=0.0, high=1.0, size=(512,))
             embeddings.append(random_embedding)
-        # for text, embedding in zip(texts,embeddings):
-        #     print text, embedding
         return embeddings
 
 def main(args_dict):
@@ -111,7 +109,8 @@ def main(args_dict):
         u"Regenerácia vnútroblokov sídlisk mesta Brezno",
         u"Územný plán mesta Brezno",
         u"Oprava miestnych komunikácií v katastrálnom území mesta Brezno",
-        u"Dovolenkujem na Madagaskare",
+        u"Kompostéry pre obec Kamenec pod Vtáčnikom",
+        u"Most cez potok Kamenec , Bardejov - mestská časť Dlhá Lúka",
         u"Oprava miestnych komunikácií v katastrálnom území Trencin"]
     word2vec_embedder = Word2VecEmbedder(texts)
     embeddings = word2vec_embedder.embed(texts)
