@@ -206,7 +206,13 @@ class InfoNotice(MyServer):
         [notice_id]
     )
     if len(candidates) > 0:
-        notice["candidates_extra"] = candidates 
+        # Make sure that notice.candidates and candidates_extra refer to candidates in the same order.
+        candidates_extra = []
+        for notice_candidate in notice["candidates"]:
+            for candidate in candidates:
+                if notice_candidate == candidate["notice_id"]:
+                    candidates_extra.append(candidate)
+        notice["candidates_extra"] = candidates_extra
 
     # Return information about the notice as a JSON:
     self.returnJSON(notice)
