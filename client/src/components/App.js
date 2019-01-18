@@ -9,6 +9,7 @@ import NoticeList from './Notices/NoticeList'
 import NoticeDetail from './Notices/NoticeDetail'
 import Profile from './Profile/Profile'
 import DetailPage from './Profile/DetailPage'
+import Search from './Search/Search'
 import Landing from './Landing/Landing'
 
 import withTracker from './shared/withTracker'
@@ -28,6 +29,7 @@ const App = () => (
         <Route path="/obstaravania/:id" component={withTracker(NoticeDetail)} />
         <Route path="/profil" exact component={withTracker(Profile)} />
         <Route path="/profil/:id" component={withTracker(DetailPage)} />
+        <Route path="/vyhladavanie" exact component={withTracker(Search)} />
       </Switch>
     </div>
   </div>

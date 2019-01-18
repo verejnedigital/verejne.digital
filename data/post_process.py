@@ -21,8 +21,9 @@ class Notice:
     supplier = None
     norm = None
     price = None
+    title = None
 
-    def __init__(self, idx, embedding, supplier, price):
+    def __init__(self, idx, embedding, supplier, price, title):
         self.idx = idx
         self.supplier = supplier
         self.embedding = embedding
@@ -33,6 +34,7 @@ class Notice:
         self.similarities = []
         self.candidate_prices = []
         self.price = price
+        self.title = title
 
     def get_price_range(self):
         values = []
@@ -101,31 +103,46 @@ def notices_insert_into_extra_table(db, notices, test_mode):
                         + ", " + nullize(price_high) + ");")
 
 
-def notices_find_candidates(notices):
+def notices_find_candidates(notices, test_mode):
     print 'finding candidates'
+    similarity_source_target = []
     for notice in notices:
-        # If we do not know the winner already
-        if notice.supplier is None:
-            # try all other candidates, but keep only similar
-            for notice2 in notices:
-                # candidates are only the notices with known winners / suppliers
-                if not notice2.supplier is None:
-                    similarity = numpy.inner(notice.embedding, notice2.embedding) / (notice.norm * notice2.norm)
-                    if similarity > 0.75 and len(notice.similarities) < 300:
-                        notice.similarities.append(similarity)
-                        notice.candidates.append(notice2.idx)
-                        notice.candidate_prices.append(notice2.price)
-                        if (notice.best_supplier is None) or (similarity > notice.best_similarity):
-                            notice.best_supplier = notice2.supplier
-                            notice.best_similarity = similarity
-            # keep only top 20 candidates and sort them by similarity
-            if len(notice.candidates) > 0:
-                sorted_lists = sorted(
-                    zip(notice.similarities, notice.candidates, notice.candidate_prices),
-                    reverse=True,
-                    key=lambda x: x[0])
-                notice.similarities, notice.candidates, notice.candidate_prices = (
-                  zip(*sorted_lists[:20]))
+        # If we know the winner already
+        if notice.supplier is not None: continue
+        # try all other candidates, but keep only similar
+        for notice2 in notices:
+            # candidates are only the notices with known winners / suppliers
+            if notice2.supplier is None: continue
+            similarity = numpy.inner(notice.embedding, notice2.embedding) / (notice.norm * notice2.norm)
+            if test_mode and similarity > 0.8:
+                similarity_source_target.append((similarity, notice.idx, notice2.idx))
+            # TODO: what if the best ones are outside of first 300. Reimplement with heap
+            if similarity > 0.75 and (test_mode or len(notice.similarities) < 300):
+                notice.similarities.append(similarity)
+                notice.candidates.append(notice2.idx)
+                notice.candidate_prices.append(notice2.price)
+                if (notice.best_supplier is None) or (similarity > notice.best_similarity):
+                    notice.best_supplier = notice2.supplier
+                    notice.best_similarity = similarity
+        # keep only top 20 candidates and sort them by similarity
+        if len(notice.candidates) > 0:
+            sorted_lists = sorted(
+                zip(notice.similarities, notice.candidates, notice.candidate_prices),
+                reverse=True,
+                key=lambda x: x[0])
+            notice.similarities, notice.candidates, notice.candidate_prices = (
+              zip(*sorted_lists[:20]))
+
+    if test_mode:
+        similarity_id_to_title = {
+                notice.idx : notice.title for notice in notices
+        }
+        similarity_source_target = sorted(similarity_source_target)
+        for s_s_t in list(reversed(similarity_source_target))[:1000]:
+            print "S:", s_s_t[0]
+            print "SOURCE:", s_s_t[1], similarity_id_to_title[s_s_t[1]].encode("utf8")
+            print "TARGET:", s_s_t[2], similarity_id_to_title[s_s_t[2]].encode("utf8")
+
     return notices
 
 
@@ -136,21 +153,26 @@ def _post_process_notices(db, test_mode):
     suppliers = []
     notices = []
 
+    columns = [
+        "notice_id",
+        "title as text",
+        "supplier_eid",
+        "total_final_value_amount as price"
+    ]
+    if test_mode:
+        columns.append("title")
     # TODO: once we use universal sentence encoder, use also description, not only title as text to be embedded.
-    query = """
-      SELECT
-        notice_id,
-        title as text,
-        supplier_eid,
-        total_final_value_amount as price
-      FROM notices
-      """ + (" LIMIT 1000" if test_mode else "")
+    query = (
+        "SELECT " + (",".join(columns)) + " FROM notices" +
+        (" ORDER BY notice_id DESC LIMIT 1000" if test_mode else "")
+    )
     rows = db.query(query)
 
     all_texts = [row["text"] for row in rows]
     print 'Number of notices: ', len(all_texts)
     text_embedder = embed.Word2VecEmbedder(all_texts)
     for row in rows:
+        # TODO: also embed short description, add with some weight < 1.0
         embedding = text_embedder.embed([row["text"]])
         if embedding is None or len(embedding) == 0:
             continue
@@ -158,8 +180,10 @@ def _post_process_notices(db, test_mode):
             Notice(row["notice_id"],
                    embedding[0],
                    row["supplier_eid"],
-                   row["price"]))
-    notices = notices_find_candidates(notices)
+                   row["price"],
+                   row.get("title", None))
+        )
+    notices = notices_find_candidates(notices, test_mode)
     notices_insert_into_extra_table(db, notices, test_mode)
 
 
@@ -207,8 +231,8 @@ def do_post_processing(db, test_mode=False):
 
     # Order matters: post processing neighbours creates edges that
     # can be exploited when post processing flags, for example.
-    _post_process_neighbours(db, test_mode)
-    _post_process_flags(db, test_mode)
+    #_post_process_neighbours(db, test_mode)
+    #_post_process_flags(db, test_mode)
     _post_process_notices(db, test_mode)
     _post_process_incomes(db)
 

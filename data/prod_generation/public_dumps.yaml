@@ -83,3 +83,18 @@ dumps:
         offices ON offices.id=personoffices.officeid
       LEFT JOIN
         parties ON parties.id=personoffices.party_nomid
+  assetdeclarations:
+    query: |
+      SELECT
+        id,
+        personid,
+        year,
+        source,
+        regexp_replace(unmovable_assets, '[\n\r]+', '|', 'g') AS unmovable_assets,
+        regexp_replace(movable_assets, '[\n\r]+', '|', 'g') AS movable_assets,
+        income,
+        compensations,
+        other_income,
+        regexp_replace(offices_other, '[\n\r]+', '|', 'g' ) AS offices_other
+      FROM
+        assetdeclarations

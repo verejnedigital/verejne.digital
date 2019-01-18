@@ -45,6 +45,11 @@ const Navigation = ({navigationOpen, toggleNavigation, closeNavigation, handleNa
             Obstarávania
           </NavLink>
         </NavItem>
+        <NavItem>
+          <NavLink to="/vyhladavanie" className="nav-link" onClick={handleNavClick}>
+            Vyhľadávanie
+          </NavLink>
+        </NavItem>
       </Nav>
       <Nav className="ml-auto" navbar>
         <NavItem>
@@ -76,7 +81,8 @@ const Navigation = ({navigationOpen, toggleNavigation, closeNavigation, handleNa
 
 export default compose(
   withState('navigationOpen', 'setNavigationOpen', false),
-  connect(null,
+  connect(
+    null,
     {refreshState}
   ),
   withHandlers({
@@ -86,5 +92,5 @@ export default compose(
     },
     toggleNavigation: ({setNavigationOpen}) => () => setNavigationOpen((show) => !show),
     closeNavigation: ({setNavigationOpen}) => () => setNavigationOpen(false),
-  }),
+  })
 )(Navigation)

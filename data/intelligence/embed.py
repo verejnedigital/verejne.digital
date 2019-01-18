@@ -38,12 +38,13 @@ class Word2VecEmbedder:
     sk_model = None
     word_frequency = {}
     count_words = 0
-    dimension = 300
+    dimension = None
 
     def __init__(self, all_texts):
         # Creating the model
         print "Reading the pretrained model for Word2VecEmbedder"
-        self.sk_model = KeyedVectors.load_word2vec_format('/data/verejne/datautils/embedding_data/slovak.vec', encoding='utf-8', unicode_errors='ignore')
+        self.sk_model = KeyedVectors.load_word2vec_format(
+                '/data/verejne/datautils/embedding_data/slovak.vec', encoding='utf-8', unicode_errors='ignore')
         print "Model contains", len(self.sk_model.vocab), "tokens"
         self.dimension = len(self.sk_model["auto"])
         print ("sídlisk" in self.sk_model)
@@ -63,7 +64,8 @@ class Word2VecEmbedder:
                     self.word_frequency[word] += 1
                 else:
                     self.word_frequency[word] = 1
-        print "Frequency table ready. Number of words:", self.count_words, "Number of distinct words:", len(self.word_frequency)
+        print "Frequency table ready. Number of words:", self.count_words
+        print "Number of distinct words:", len(self.word_frequency)
 
     def multiplier(self, word):
         if word in self.word_frequency:
@@ -72,6 +74,8 @@ class Word2VecEmbedder:
             return 1.0
 
     def embed(self, texts):
+        assert self.sk_model is not None
+        assert self.dimension is not None
         embeddings = []
         if texts is None or len(texts) == 0:
             return

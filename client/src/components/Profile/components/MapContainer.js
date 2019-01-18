@@ -20,6 +20,7 @@ type MapContainerProps = {
   zoom: number,
 }
 
+// TODO fix flow
 class MapContainer extends Component<MapContainerProps> {
   render() {
     return (
@@ -33,7 +34,7 @@ class MapContainer extends Component<MapContainerProps> {
           zoom={this.props.zoom}
         >
           {this.props.assets.map((asset, key) => {
-            return <Marker key={key} title={key + 1} lat={asset.lat} lng={asset.lon} />
+            return <Marker key={key} title={key + 1} lat={asset.lat} lng={asset.lon || asset.lng} />
           })}
         </GoogleMapReact>
       </div>
