@@ -80,9 +80,12 @@ export const noticesOrderingSelector = createSelector(
   (query): NoticesOrdering => query.ordering || 'date'
 )
 
-export const noticesLengthSelector = createSelector(activeNoticesSelector, (notices) => {
-  return notices.length
-})
+export const noticesLengthSelector = createSelector(
+  activeNoticesSelector,
+  (notices) => {
+    return notices.length
+  }
+)
 
 export const mapOptionsSelector = (state: State): MapOptions => state.mapOptions
 export const centerSelector = (state: State): [number, number] => state.mapOptions.center
@@ -103,16 +106,20 @@ export const entityDetailSelector = (state: State, eid: number): NewEntityDetail
   if (!eid) return null
   return state.entityDetails[eid.toString()]
 }
-export const entityDetailsSelector = (state: State, eids: number[]): ObjectMap<NewEntityDetail> =>
-  pick(state.entityDetails, eids)
+export const entityDetailsSelector = (
+  state: State,
+  eids: Array<number>
+): ObjectMap<NewEntityDetail> => pick(state.entityDetails, eids)
+
 export const addressEntitiesSelector = createSelector(
   entitiesSelector,
   openedAddressDetailSelector,
   (entities, addressIds: Array<number>) =>
     filter(entities, (entity) => addressIds.includes(entity.addressId))
 )
-export const addressEntitiesIdsSelector = createSelector(addressEntitiesSelector, (entities) =>
-  entities.map((v) => v.id)
+export const addressEntitiesIdsSelector = createSelector(
+  addressEntitiesSelector,
+  (entities) => entities.map((v) => v.id)
 )
 
 export const sortedAddressEntityDetailsSelector = createSelector(
@@ -290,16 +297,19 @@ export const entitiesUrlSelector = createSelector(
 )
 
 export const autocompleteValueSelector = (state: State) => state.publicly.autocompleteValue
-export const autocompleteOptionsSelector = createSelector(boundsSelector, (bounds) => {
-  return {
-    bounds: bounds && {
-      east: bounds.ne.lng,
-      north: bounds.ne.lat,
-      west: bounds.sw.lng,
-      south: bounds.sw.lat,
-    },
+export const autocompleteOptionsSelector = createSelector(
+  boundsSelector,
+  (bounds) => {
+    return {
+      bounds: bounds && {
+        east: bounds.ne.lng,
+        north: bounds.ne.lat,
+        west: bounds.sw.lng,
+        south: bounds.sw.lat,
+      },
+    }
   }
-})
+)
 
 export const entitySearchValueSelector = (state: State) => state.publicly.entitySearchValue
 export const entitySearchOpenSelector = (state: State) => state.publicly.entitySearchOpen
@@ -335,8 +345,7 @@ export const connectionDetailSelector = (
 
 export const subgraphSelectedEidsSelector = (state: State) => state.connections.selectedEids
 
-export const subgraphSelector = (state: State, query: string) =>
-  state.connections.subgraph[query]
+export const subgraphSelector = (state: State, query: string) => state.connections.subgraph[query]
 
 export const addNeighboursLimitSelector = (state: State): number | null =>
   state.connections.addNeighboursLimit
@@ -345,15 +354,13 @@ export const isItCandidatesListSelector = (state: State, props: ContextRouter): 
   props.location.search.includes('kandidati_bratislava') ||
   props.location.search.includes('kandidati_prezident')
 
-export const autocompleteSuggestionEidsSelector = (state: State, query: string): Array<number> => (
-  state.entitySearch[query] && state.entitySearch[query].eids
-) || []
+export const autocompleteSuggestionEidsSelector = (state: State, query: string): Array<number> =>
+  (state.entitySearch[query] && state.entitySearch[query].eids) || []
 
-export const autocompleteSuggestionsSelector =
-  (state: State, value: string): Array<string> => {
-    const details = allEntityDetailsSelector(state)
-    const eids = autocompleteSuggestionEidsSelector(state, value)
-    return eids
-      .map((eid) => (details[eid.toString()] ? details[eid.toString()].name : ''))
-      .filter((name, index, array) => name && array.indexOf(name) === index)
-  }
+export const autocompleteSuggestionsSelector = (state: State, value: string): Array<string> => {
+  const details = allEntityDetailsSelector(state)
+  const eids = autocompleteSuggestionEidsSelector(state, value)
+  return eids
+    .map((eid) => (details[eid.toString()] ? details[eid.toString()].name : ''))
+    .filter((name, index, array) => name && array.indexOf(name) === index)
+}
