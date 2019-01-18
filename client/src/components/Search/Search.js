@@ -6,21 +6,33 @@ import {withRouter} from 'react-router-dom'
 import type {RouterHistory} from 'react-router'
 import {withHandlers, withState} from 'recompose'
 import {withDataProviders} from 'data-provider'
+import {chunk} from 'lodash'
 import SearchIcon from 'react-icons/lib/fa/search'
 import {Row, Col, Container, Button, InputGroup, InputGroupAddon} from 'reactstrap'
-import {autocompleteSuggestionEidsSelector, autocompleteSuggestionsSelector} from '../../selectors/'
+import {
+  autocompleteSuggestionEidsSelector,
+  autocompleteSuggestionsSelector,
+  locationSearchSelector,
+  entityDetailsSelector,
+} from '../../selectors/'
 import {updateValue} from '../../actions/sharedActions'
 import {entitySearchProvider, entityDetailProvider} from '../../dataProviders/sharedDataProviders'
 import AutoComplete from '../shared/AutoComplete/AutoComplete'
+import Info from '../shared/Info/Info'
 import Subgraph from '../Connections/components/Subgraph'
 import MapContainer from '../Profile/components/MapContainer'
-import InfoContainer from './InfoContainer'
-import {FACEBOOK_LIKE_SRC, DEFAULT_MAP_CENTER, COUNTRY_ZOOM} from '../../constants'
+import {
+  FACEBOOK_LIKE_SRC,
+  DEFAULT_MAP_CENTER,
+  COUNTRY_ZOOM,
+  MAX_ENTITY_REQUEST_COUNT,
+} from '../../constants'
 
-import type {State, GeolocationPoint} from '../../state'
+import type {State, GeolocationPoint, CompanyEntity} from '../../state'
+import type {ContextRouter} from 'react-router-dom'
+import type {HOC} from 'recompose'
 
 import './Search.css'
-import {locationSearchSelector} from '../../selectors'
 
 export type Props = {
   history: RouterHistory,
@@ -31,9 +43,11 @@ export type Props = {
   onChange: () => void,
   query: string,
   suggestionEids: Array<number>,
-}
+  setInputValue: Function,
+  entities: Array<CompanyEntity>,
+} & ContextRouter
 
-const _SearchInfo = ({inputValue, history}: Props) => {
+const _SearchInfo = (inputValue, history) => {
   if (inputValue.trim() !== '') {
     history.push(`/vyhladavanie?meno=${inputValue.trim()}`)
   }
@@ -48,6 +62,7 @@ const Search = ({
   onChange,
   query,
   suggestionEids,
+  entities,
 }: Props) => (
   <Container className="">
     <Col>
@@ -92,7 +107,8 @@ const Search = ({
       <>
         <Row id="map">
           <Col>
-            <MapContainer assets={[]} {...mapProps} />
+            {/* TODO fix flow */}
+            <MapContainer assets={suggestionEids.map((eid) => entities[eid])} {...mapProps} />
           </Col>
         </Row>
         <Row>
@@ -102,7 +118,12 @@ const Search = ({
         </Row>
         <Row className="mb-4">
           <Col>
-            <InfoContainer eids={suggestionEids} />
+            {suggestionEids.map((eid, index) => (
+              <>
+                {index} - TODO styling
+                <Info key={`${eid}`} data={entities[eid]} />
+              </>
+            ))}
           </Col>
         </Row>
       </>
@@ -110,7 +131,7 @@ const Search = ({
   </Container>
 )
 
-export default compose(
+const enhance: HOC<*, Props> = compose(
   withRouter,
   withState('inputValue', 'setInputValue', ''),
   withState('searchEids', 'setSearchEids', []),
@@ -129,8 +150,13 @@ export default compose(
   ),
   withDataProviders(({query, suggestionEids}) => [
     ...(query.trim() !== '' ? [entitySearchProvider(query, false, false)] : []),
-    ...(suggestionEids.length > 0 ? [entityDetailProvider(suggestionEids, false)] : []),
+    ...(suggestionEids.length > 0
+      ? [...chunk(suggestionEids, MAX_ENTITY_REQUEST_COUNT).map((ids) => entityDetailProvider(ids))]
+      : []),
   ]),
+  connect((state, {suggestionEids}) => ({
+    entities: entityDetailsSelector(state, suggestionEids),
+  })),
   withState('mapProps', 'setMapProps', {
     center: DEFAULT_MAP_CENTER,
     zoom: COUNTRY_ZOOM,
@@ -138,13 +164,15 @@ export default compose(
   withHandlers({
     searchOnEnter: (props: Props) => (e) => {
       if (e.key === 'Enter') {
-        _SearchInfo(props)
+        _SearchInfo(props.inputValue, props.history)
       }
     },
     handleSelect: (props: Props) => (value) => {
       props.setInputValue(value)
-      _SearchInfo({...props, inputValue: value})
+      _SearchInfo(value, props.history)
     },
     onChange: ({inputValue, setInputValue}) => (e) => setInputValue(e.target.value),
   })
-)(Search)
+)
+
+export default enhance(Search)
