@@ -44,6 +44,7 @@ const Politician = ({politician, useDefaultPicture, isItCandidatesList}: Politic
     <td className="number-column">{politician.num_houses_flats}</td>
     <td className="number-column">{politician.num_fields_gardens}</td>
     <td className="number-column">{politician.num_others}</td>
+    <td className="number-column">{politician.latest_income} €</td>
   </tr>
 )
 
