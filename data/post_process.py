@@ -45,19 +45,19 @@ class Notice:
 
     def get_price_range(self):
         values = []
-        for price in self.candidate_prices:
-            if not price is None:
-                values.append(price)
+        weights = []
+        # Compute mean log(price) weighted by f(similarity). We use similarity ** 2.0
+        # to give higher weights to very similar notices.
+        for price, similarity in zip(self.candidate_prices, self.similarities):
+            if price is not None and price > 0:
+                values.append(np.log(1.0 + price))
+                weight.append(similarity ** 2.0)
         if len(values) < 2:
             return None, None, None
-        # TODO: consider doing these computation in log world.
         std_dev = numpy.std(values)
         mean = numpy.mean(values)
-        # Here we compute 95% reliability interval
-        price_low = mean - 1.96 * std_dev / math.sqrt(len(values))
-        if price_low < 0:
-            price_low = 0
-        price_high = mean + 1.96 * std_dev / math.sqrt(len(values))
+        price_low = np.exp(mean - 2.0 * std_dev)
+        price_high = np.exp(mean + 2.0 * std_dev)
         return mean, price_low, price_high
 
 
@@ -152,6 +152,8 @@ def notices_find_candidates(notices, test_mode):
 
     return notices
 
+def _normalized_embedding(embedding):
+    return embedding / numpy.linalg.norm(embedding)
 
 def _post_process_notices(db, test_mode):
     notices_create_extra_table(db, test_mode)
@@ -163,6 +165,7 @@ def _post_process_notices(db, test_mode):
     columns = [
         "notice_id",
         "title as text",
+        "short_description",
         "supplier_eid",
         "total_final_value_amount as price"
     ]
@@ -179,13 +182,30 @@ def _post_process_notices(db, test_mode):
     print 'Number of notices: ', len(all_texts)
     text_embedder = embed.Word2VecEmbedder(all_texts)
     for row in rows:
-        # TODO: also embed short description, add with some weight < 1.0
-        embedding = text_embedder.embed_one_text([row["text"]])
+        embedding = text_embedder.embed_one_text(row["text"])
         # Skip if could not compute embedding, or the embedding was out of 0 words.
         if embedding is None or embedding[1] == 0: continue
+        description_embedding = None
+        if "short_description" in row and row["short_description"] is not None:
+            description_embedding = text_embedder.embed_one_text(row["short_description"])
+        if description_embedding is not None:
+            # The more words matched in description embedding the higher weight give to description
+            # The more words matched in title embedding the lower the weight give to description
+            description_weight = (
+                    (description_embedding[1] * 0.075) /
+                    (description_embedding[1] * 0.075 + embedding[1] + 3.0)
+            )
+            title_weight = 1.0 - description_weight
+            final_embedding = (
+                    title_weight * _normalized_embedding(embedding[0]) +
+                    description_weight * _normalized_embedding(description_embedding[0])
+            )
+        else:
+            final_embedding = _normalized_embedding(embedding[0])
+
         notices.append(
             Notice(row["notice_id"],
-                   embedding[0],
+                   final_embedding,
                    row["supplier_eid"],
                    row["price"],
                    row.get("title", None))

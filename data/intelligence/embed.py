@@ -102,7 +102,6 @@ class Word2VecEmbedder:
         embedding = np.zeros(self.dimension)
         words = tokenize(text)
         if words is None or len(words) == 0:
-            embeddings.append(embedding)
             return None
         matched_words = 0
         for word in words:
@@ -130,6 +129,8 @@ class FakeTextEmbedder:
     def __init__(self):
         np.random.seed(22)
 
+    def embed_one_text(self, text):
+        return (self.embed([text])[0], 7)
 
     def embed(self, texts):
         embeddings = []
