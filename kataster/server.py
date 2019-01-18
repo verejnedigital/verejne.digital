@@ -68,7 +68,7 @@ class KatasterInfoPolitician(MyServer):
       self.abort(400, detail='Could not parse parameter `id` as int')
 
     # Find Parcels owned by this politician in the database
-    db_profil = webapp2.get_app().registry['db_profil']
+    db_profil = webapp2.get_app().registry['db']
     Parcels = db_search.get_Parcels_owned_by_Person(
         db_profil, politician_id)
     self.returnJSON(Parcels)
@@ -83,7 +83,7 @@ class InfoPolitician(MyServer):
       self.abort(400, detail='Could not parse parameter `id` as int')
 
     # Get politician information from profil database.
-    db_profil = webapp2.get_app().registry['db_profil']
+    db_profil = webapp2.get_app().registry['db']
     politician = db_search.get_politician_by_PersonId(
         db_profil, politician_id)
     if politician is None:
@@ -124,7 +124,7 @@ class AssetDeclarations(MyServer):
       self.abort(400, detail='Could not parse parameter `id` as int')
 
     # Find asset declarations of this politician in the database
-    db_profil = webapp2.get_app().registry['db_profil']
+    db_profil = webapp2.get_app().registry['db']
     declarations = db_search.get_asset_declarations(
         db_profil, politician_id)
     self.returnJSON(declarations)
@@ -169,7 +169,7 @@ class ListPoliticians(MyServer):
       self.abort(404, detail='Requested `group` not recognised.')
 
     # Return politicians augmented with property counts as JSON
-    db_profil = webapp2.get_app().registry['db_profil']
+    db_profil = webapp2.get_app().registry['db']
     politicians = db_search.get_politicians_with_Folio_counts(
         db_profil, query_filter)
     self.returnJSON(politicians)
@@ -196,14 +196,11 @@ def initialise_app():
   # the source_internal_profil_* schema is made visible to user
   # `kataster` together with prod data generation.
 
-  db_profil = DatabaseConnection(path_config='db_config.yaml')
-  schema = db_profil.get_latest_schema('source_internal_profil_')
-  db_profil.execute('SET search_path to ' + schema + ';')
-  app.registry['db_profil'] = db_profil
-
   db = DatabaseConnection(path_config='db_config.yaml')
   schema = db.get_latest_schema('prod_')
-  db.execute('SET search_path to ' + schema + ',public;')
+  schema_profil = db.get_latest_schema('source_internal_profil_')
+  db.execute(
+    'SET search_path="' + schema + '", "' + schema_profil + '", public;')
   app.registry['db'] = db
 
 

@@ -250,14 +250,18 @@ def get_asset_declarations(db, PersonId):
       SELECT
         unmovable_assets,
         movable_assets,
-        income,
+        AssetDeclarations.income as income,
         compensations,
         other_income,
         offices_other,
         year,
-        source
+        source,
+        incomes.income as parsed_income,
+        incomes.currency
       FROM
         AssetDeclarations
+      JOIN
+        incomes ON incomes.asset_declaration_id = AssetDeclarations.id
       WHERE
         PersonId=%s
       ORDER BY
