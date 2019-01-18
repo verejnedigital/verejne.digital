@@ -15,10 +15,11 @@ const Landing = () => (
         <b>verejne</b>.digital
       </h1>
       <p className="lead landing-lead">
-        Aplikácie umelej inteligencie<br /> na dáta slovenských verejných inštitúcií
+        Aplikácie umelej inteligencie
+        <br /> na dáta slovenských verejných inštitúcií
       </p>
       <Row className="landing-cards">
-        <Col md="6" lg="3">
+        <Col md="6" lg="4">
           <Card
             to="/verejne"
             title="Verejné dáta"
@@ -26,7 +27,7 @@ const Landing = () => (
             imgSrc={publicDataIcon}
           />
         </Col>
-        <Col md="6" lg="3">
+        <Col md="6" lg="4">
           <Card
             to="/profil"
             title="Profil"
@@ -34,7 +35,7 @@ const Landing = () => (
             imgSrc={profilyIcon}
           />
         </Col>
-        <Col md="6" lg="3">
+        <Col md="6" lg="4">
           <Card
             to="/prepojenia"
             title="Prepojenia"
@@ -42,11 +43,19 @@ const Landing = () => (
             imgSrc={prepojeniaIcon}
           />
         </Col>
-        <Col md="6" lg="3">
+        <Col md="6" lg={{size: 4, offset: 2}}>
           <Card
             to="/obstaravania"
             title="Obstarávania"
             text="Do ktorých výziev sa prihlásiť a ktoré sú podozrivé?"
+            imgSrc={obstaravaniaIcon}
+          />
+        </Col>
+        <Col md="6" lg="4">
+          <Card
+            to="/ihrisko"
+            title="Ihrisko"
+            text="Hrajte sa s nasimi dátami!"
             imgSrc={obstaravaniaIcon}
           />
         </Col>

@@ -4,8 +4,9 @@
   box-shadow: 0 4px 12px 0 $shadow-color;
   text-align: center;
   border-radius: 8px;
-  transition: box-shadow .25s;
+  transition: box-shadow 0.25s;
   height: 100%;
+  padding: 15px 0;
 
   &:hover {
     text-decoration: none;

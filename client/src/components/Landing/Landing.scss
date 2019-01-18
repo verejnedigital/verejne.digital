@@ -26,7 +26,7 @@
   padding: 1rem 0; // Fix, without it the row will crop shadows on cards.
 
   > * {
-    margin-bottom: 1rem;
+    margin-bottom: 2rem;
   }
 }
 
@@ -42,7 +42,7 @@
 
   .list-inline-item-text ~ .list-inline-item-text {
     border-left: 2px solid $card-border;
-    padding-left: .5rem;
+    padding-left: 0.5rem;
   }
 }
 
@@ -50,7 +50,7 @@
   &.list-inline-item:not(:last-child) {
     margin-right: 1.5rem;
     @media screen and (max-width: 767px) {
-      margin-right: 0 !important; 
+      margin-right: 0 !important;
     }
   }
 }

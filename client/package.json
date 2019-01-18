@@ -29,6 +29,7 @@
     "react-places-autocomplete": "^7.1.2",
     "react-redux": "^5.0.7",
     "react-router-dom": "^4.2.2",
+    "react-router-hash-link": "^1.2.1",
     "react-scripts": "^2.0.3",
     "reactstrap": "^6.0.1",
     "recompose": "^0.27.0",
@@ -36,6 +37,7 @@
     "redux-thunk": "^2.2.0",
     "regenerator-runtime": "^0.11.1",
     "reselect": "^3.0.1",
+    "smoothscroll-polyfill": "^0.4.3",
     "vis": "https://github.com/mirecmrozek/vis/tarball/master",
     "whatwg-fetch": "^2.0.4"
   },
