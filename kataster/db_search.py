@@ -222,11 +222,14 @@ def get_politicians_with_Folio_counts(db, query_filter):
         PersonOffices.term_start AS term_start,
         PersonOffices.term_end AS term_finish,
         Offices.name_male AS office_name_male,
-        Offices.name_female AS office_name_female
+        Offices.name_female AS office_name_female,
+        incomes.income AS latest_income
       FROM
         Persons
       LEFT JOIN
         AssetDeclarations ON AssetDeclarations.PersonId=Persons.Id
+      LEFT JOIN
+        incomes ON incomes.asset_declaration_id=AssetDeclarations.Id
       INNER JOIN
         PersonCounts ON PersonCounts.PersonId=Persons.Id
       INNER JOIN
@@ -238,7 +241,7 @@ def get_politicians_with_Folio_counts(db, query_filter):
       WHERE
         """ + query_filter + """
       ORDER BY
-        Persons.Id, PersonOffices.term_end DESC
+        Persons.Id, PersonOffices.term_end DESC, AssetDeclarations.year DESC
       ;"""
   rows = db.query(q)
   return rows
