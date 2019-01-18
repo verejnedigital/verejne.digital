@@ -1,4 +1,11 @@
-"""Performs post processing on the latest prod schema."""
+"""Performs post processing on the latest prod schema.
+
+For testing, this script can be directly executed (in TEST mode):
+  python post_process.py
+
+To reapply post-processing on the current prod schema, execute:
+  python post_process.py --disable_test_mode
+"""
 
 import argparse
 import os
@@ -8,7 +15,7 @@ import math
 
 from intelligence import embed
 from db.db import DatabaseConnection
-from prod_generation import post_process_neighbours
+from prod_generation import post_process_neighbours, post_process_income
 
 
 class Notice:
@@ -192,6 +199,10 @@ def _post_process_neighbours(db, test_mode):
     post_process_neighbours.add_family_and_neighbour_edges(
         db, test_mode)
 
+def _post_process_incomes(db):
+    """Adds incomes to assets."""
+    post_process_income.add_incomes(db)
+
 
 def _post_process_flags(db, test_mode):
     """Precomputes entity flags and address flags."""
@@ -230,6 +241,7 @@ def do_post_processing(db, test_mode=False):
     #_post_process_neighbours(db, test_mode)
     #_post_process_flags(db, test_mode)
     _post_process_notices(db, test_mode)
+    _post_process_incomes(db)
 
 
 def main(args_dict):
@@ -238,7 +250,16 @@ def main(args_dict):
     if test_mode:
         print("[OK] Running in TEST mode...")
 
-    # Connect to the latest production data schema:
+    # Connect to the latest production data schema.
+    # TODO: Remove the temporary connection to the profil source
+    # once it is no longer needed.
+    db = DatabaseConnection(
+        path_config='db_config_update_source.yaml')
+    schema = db.get_latest_schema('prod_')
+    schema_profil = db.get_latest_schema('source_internal_profil_')
+    db.execute(
+        'SET search_path="' + schema + '", "' + schema_profil + '";')
+
     db = DatabaseConnection(path_config='db_config_update_source.yaml')
     schema = db.get_latest_schema('prod_')
     db.execute('SET search_path="' + schema + '";')
