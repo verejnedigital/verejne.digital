@@ -16,7 +16,7 @@ type PoliticianProps = {
   isItCandidatesList: boolean,
 }
 
-const Politician = ({politician, useDefaultPicture, isItCandidatesLists}: PoliticianProps) => (
+const Politician = ({politician, useDefaultPicture, isItCandidatesList}: PoliticianProps) => (
   <tr className="table-line">
     <td className="number-column">{politician.order}.</td>
     <td className="photo-column">
