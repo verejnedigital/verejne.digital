@@ -63,44 +63,52 @@ const Search = ({
   suggestionEids,
   entities,
 }: Props) => (
-  <Container className="">
+  <Container className="" style={{maxWidth: '1200px'}}>
     <SearchAutocomplete />
-    <Row key="fb" className="profile-fbframe mt-2">
-      <Col>
-        <iframe
-          title="fb_like"
-          src={FACEBOOK_LIKE_SRC}
-          width="201"
-          height="23"
-          className="fbIframe"
-          scrolling="no"
-          frameBorder="0"
-        />
-      </Col>
-    </Row>
     {query && (
       <>
+        {suggestionEids.map((eid, index) => {
+          const entity = entities[eid]
+          return (
+            <a
+              href={`#js-${eid}`}
+              key={eid}
+              className="search-box"
+              title={`${entity.name}, ${entity.address}`}
+            >
+              <span className="search-box-index">{index + 1}</span>
+              <strong className="search-box-name">{entity.name}</strong>
+              <span className="search-box-address">{entity.address}</span>
+            </a>
+          )
+        })}
         <Row id="map">
           <Col>
             {/* TODO fix flow */}
             <MapContainer assets={suggestionEids.map((eid) => entities[eid])} {...mapProps} />
           </Col>
         </Row>
+        <Row key="fb" className="profile-fbframe mt-2">
+          <Col>
+            <iframe
+              title="fb_like"
+              src={FACEBOOK_LIKE_SRC}
+              width="201"
+              height="23"
+              className="fbIframe"
+              scrolling="no"
+              frameBorder="0"
+            />
+          </Col>
+        </Row>
         <Row>
-          <Col>
-            <Subgraph notable eids1={suggestionEids} preloadNodes />
-          </Col>
+          {suggestionEids.map((eid, index) => (
+            <Col md={6} lg={4} style={{marginBottom: '24px'}} key={index}>
+              <Info key={`${eid}`} data={entities[eid]} index={index + 1} />
+            </Col>
+          ))}
         </Row>
-        <Row className="mb-4">
-          <Col>
-            {suggestionEids.map((eid, index) => (
-              <>
-                {/* {index} */}
-                <Info key={`${eid}`} data={entities[eid]} />
-              </>
-            ))}
-          </Col>
-        </Row>
+        <Subgraph notable eids1={suggestionEids} preloadNodes />
       </>
     )}
   </Container>
