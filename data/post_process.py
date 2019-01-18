@@ -238,8 +238,8 @@ def do_post_processing(db, test_mode=False):
 
     # Order matters: post processing neighbours creates edges that
     # can be exploited when post processing flags, for example.
-    #_post_process_neighbours(db, test_mode)
-    #_post_process_flags(db, test_mode)
+    _post_process_neighbours(db, test_mode)
+    _post_process_flags(db, test_mode)
     _post_process_notices(db, test_mode)
     _post_process_incomes(db)
 
@@ -259,10 +259,6 @@ def main(args_dict):
     schema_profil = db.get_latest_schema('source_internal_profil_')
     db.execute(
         'SET search_path="' + schema + '", "' + schema_profil + '";')
-
-    db = DatabaseConnection(path_config='db_config_update_source.yaml')
-    schema = db.get_latest_schema('prod_')
-    db.execute('SET search_path="' + schema + '";')
     print('[OK] Postprocessing schema "%s"...' % (schema))
     do_post_processing(db, test_mode)
 
