@@ -7,8 +7,7 @@ import type {RouterHistory} from 'react-router'
 import {withHandlers, withState} from 'recompose'
 import {withDataProviders} from 'data-provider'
 import {chunk} from 'lodash'
-import SearchIcon from 'react-icons/lib/fa/search'
-import {Row, Col, Container, Button, InputGroup, InputGroupAddon} from 'reactstrap'
+import {Row, Col, Container} from 'reactstrap'
 import {
   autocompleteSuggestionEidsSelector,
   autocompleteSuggestionsSelector,
@@ -17,7 +16,6 @@ import {
 } from '../../selectors/'
 import {updateValue} from '../../actions/sharedActions'
 import {entitySearchProvider, entityDetailProvider} from '../../dataProviders/sharedDataProviders'
-import AutoComplete from '../shared/AutoComplete/AutoComplete'
 import Info from '../shared/Info/Info'
 import Subgraph from '../Connections/components/Subgraph'
 import MapContainer from '../Profile/components/MapContainer'
@@ -27,6 +25,7 @@ import {
   COUNTRY_ZOOM,
   MAX_ENTITY_REQUEST_COUNT,
 } from '../../constants'
+import SearchAutocomplete from './SearchAutocomplete'
 
 import type {State, GeolocationPoint, CompanyEntity} from '../../state'
 import type {ContextRouter} from 'react-router-dom'
@@ -65,31 +64,7 @@ const Search = ({
   entities,
 }: Props) => (
   <Container className="">
-    <Col>
-      <h1 className="notice-list-title">Vyhľadávanie</h1>
-    </Col>
-    <Row key="search" className="profile-search">
-      <Col className="search-form">
-        <InputGroup>
-          <AutoComplete
-            value={inputValue}
-            onChangeHandler={onChange}
-            onSelectHandler={handleSelect}
-            inputProps={{
-              onKeyPress: searchOnEnter,
-            }}
-            wrapperProps={{
-              className: 'search-autocomplete-wrapper',
-            }}
-          />
-          <InputGroupAddon addonType="append">
-            <Button color="primary" className="search-page-btn">
-              <SearchIcon />
-            </Button>
-          </InputGroupAddon>
-        </InputGroup>
-      </Col>
-    </Row>
+    <SearchAutocomplete />
     <Row key="fb" className="profile-fbframe mt-2">
       <Col>
         <iframe
@@ -120,7 +95,7 @@ const Search = ({
           <Col>
             {suggestionEids.map((eid, index) => (
               <>
-                {index} - TODO styling
+                {/* {index} */}
                 <Info key={`${eid}`} data={entities[eid]} />
               </>
             ))}

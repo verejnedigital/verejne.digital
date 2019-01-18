@@ -1,7 +1,8 @@
 // @flow
 import React from 'react'
 import Card from './Card'
-import {Row, Col, Container} from 'reactstrap'
+import {Container} from 'reactstrap'
+import SearchAutocomplete from '../Search/SearchAutocomplete'
 import publicDataIcon from './icons/public_data.png'
 import prepojeniaIcon from './icons/prepojenia.png'
 import obstaravaniaIcon from './icons/obstaravania.png'
@@ -11,55 +12,50 @@ import './Landing.css'
 const Landing = () => (
   <div className="landing">
     <Container tag="main" role="main" className="landing-container">
-      <h1 className="title landing-title">
-        <b>verejne</b>.digital
-      </h1>
-      <p className="lead landing-lead">
-        Aplikácie umelej inteligencie
-        <br /> na dáta slovenských verejných inštitúcií
-      </p>
-      <Row className="landing-cards">
-        <Col md="6" lg="4">
-          <Card
-            to="/verejne"
-            title="Verejné dáta"
-            text="Obchodujú moji susedia alebo obchodní partneri so štátom?"
-            imgSrc={publicDataIcon}
-          />
-        </Col>
-        <Col md="6" lg="4">
-          <Card
-            to="/profil"
-            title="Profil"
-            text="Majetok verejných funkcionárov podľa priznaní a katastra."
-            imgSrc={profilyIcon}
-          />
-        </Col>
-        <Col md="6" lg="4">
-          <Card
-            to="/prepojenia"
-            title="Prepojenia"
-            text="Aké sú vzťahy medzi firmami a osobami?"
-            imgSrc={prepojeniaIcon}
-          />
-        </Col>
-        <Col md="6" lg={{size: 4, offset: 2}}>
-          <Card
-            to="/obstaravania"
-            title="Obstarávania"
-            text="Do ktorých výziev sa prihlásiť a ktoré sú podozrivé?"
-            imgSrc={obstaravaniaIcon}
-          />
-        </Col>
-        <Col md="6" lg="4">
-          <Card
-            to="/ihrisko"
-            title="Ihrisko"
-            text="Hrajte sa s nasimi dátami!"
-            imgSrc={obstaravaniaIcon}
-          />
-        </Col>
-      </Row>
+      <div className="landing-head">
+        <div>
+          <h1 className="title landing-title">
+            <b>verejne</b>.digital
+          </h1>
+          <p className="lead landing-lead">
+            Aplikácie umelej inteligencie
+            <br /> na dáta slovenských verejných inštitúcií
+          </p>
+        </div>
+      </div>
+      <SearchAutocomplete />
+      <div className="landing-cards">
+        <Card
+          to="/verejne"
+          title="Verejné dáta"
+          text="Obchodujú moji susedia alebo obchodní partneri so štátom?"
+          imgSrc={publicDataIcon}
+        />
+        <Card
+          to="/profil"
+          title="Profil"
+          text="Majetok verejných funkcionárov podľa priznaní a katastra."
+          imgSrc={profilyIcon}
+        />
+        <Card
+          to="/prepojenia"
+          title="Prepojenia"
+          text="Aké sú vzťahy medzi firmami a osobami?"
+          imgSrc={prepojeniaIcon}
+        />
+        <Card
+          to="/obstaravania"
+          title="Obstarávania"
+          text="Do ktorých výziev sa prihlásiť a ktoré sú podozrivé?"
+          imgSrc={obstaravaniaIcon}
+        />
+        <Card
+          to="/ihrisko"
+          title="Ihrisko"
+          text="Hrajte sa s nasimi dátami!"
+          imgSrc={obstaravaniaIcon}
+        />
+      </div>
     </Container>
     <footer className="landing-footer">
       <div className="container">

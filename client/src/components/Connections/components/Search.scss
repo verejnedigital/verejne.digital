@@ -2,12 +2,26 @@
 
 .form-control {
   // TODO: Refactor
+  font-size: 16px;
+  padding: 8px 16px;
+  height: auto;
   border-radius: 2px;
   border-width: 2px;
   border-color: $border-color;
   border-style: solid;
   background-color: $component-background;
   box-shadow: 0 4px 12px 0 $shadow-color;
+}
+
+.search-autocomplete {
+  max-width: 500px;
+  width: 100%;
+  margin: 100px auto;
+
+  @media screen and (max-width: 767px) {
+    margin: 24px 0;
+    max-width: 100%;
+  }
 }
 
 .connections-autocomplete-input {
