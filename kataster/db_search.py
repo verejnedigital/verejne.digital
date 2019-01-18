@@ -257,7 +257,7 @@ def get_asset_declarations(db, PersonId):
         year,
         source,
         incomes.income as parsed_income,
-        incomes.currency
+        incomes.currency as parsed_income_currency
       FROM
         AssetDeclarations
       JOIN

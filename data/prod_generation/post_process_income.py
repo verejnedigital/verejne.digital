@@ -1,5 +1,7 @@
 """Adds total income to all public figures."""
 
+import six
+
 # String to prefix log messages with:
 LOG_PREFIX = '[post_process_income] '
 
@@ -21,7 +23,7 @@ def parse_money_part(money_part):
 
 
 def parse_income_col(val, col):
-  if not isinstance(val, str):
+  if not isinstance(val, six.string_types):
     return None
   parts = val.split(",")
   if col == OTHER_INCOME:  # the other parts do not contain incomes in this case
