@@ -8,7 +8,7 @@ import math
 
 from intelligence import embed
 from db.db import DatabaseConnection
-from prod_generation import post_process_neighbours
+from prod_generation import post_process_neighbours, post_process_income
 
 
 class Notice:
@@ -168,6 +168,10 @@ def _post_process_neighbours(db, test_mode):
     post_process_neighbours.add_family_and_neighbour_edges(
         db, test_mode)
 
+def _post_process_incomes(db):
+    """Adds incomes to assets."""
+    post_process_income.add_incomes(db)
+
 
 def _post_process_flags(db, test_mode):
     """Precomputes entity flags and address flags."""
@@ -206,6 +210,7 @@ def do_post_processing(db, test_mode=False):
     _post_process_neighbours(db, test_mode)
     _post_process_flags(db, test_mode)
     _post_process_notices(db, test_mode)
+    _post_process_incomes(db)
 
 
 def main(args_dict):
