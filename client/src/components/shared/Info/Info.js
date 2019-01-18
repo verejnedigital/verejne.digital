@@ -46,8 +46,12 @@ type HandlerProps = {
 
 type InfoProps = OwnProps & DispatchProps & HandlerProps
 
-const Info = ({data, onClose, showOnMap, className}: InfoProps) => (
-  <Container className={classnames(className, {closable: Boolean(onClose)}, 'info')}>
+const Info = ({data, onClose, showOnMap, index, active, className}: InfoProps) => (
+  <Container
+    id={`js-${data.eid}`}
+    className={classnames(className, {closable: Boolean(onClose), active}, 'info')}
+  >
+    {index && <span className="search-box-index">{index + 1}</span>}
     <div className="info-header">
       <Row>
         <Col xs="auto" className="mt-1 pr-0">
