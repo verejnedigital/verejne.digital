@@ -148,6 +148,26 @@ class SearchEntityByName(MyServer):
     )
     self.returnJSON(response)
 
+class SearchEntityByIco(MyServer):
+  def get(self):
+    """Returns eID of entity with given ICO."""
+
+    # Parse parameters from the URL:
+    try:
+      ico = int(self.request.GET["ico"].encode("utf8"))
+    except:
+      self.abort(400, detail="Unable to parse input text")
+
+    # Query the database:
+    response = webapp2.get_app().registry['db'].query(
+        """
+        SELECT DISTINCT eid FROM companyinfo
+        WHERE ico=%s
+        """,
+        [ico]
+    )
+    self.returnJSON(response)
+
 
 # Setup of the webapp2 WSGI application
 app = webapp2.WSGIApplication([
@@ -155,6 +175,7 @@ app = webapp2.WSGIApplication([
     ('/getEntitiesAtAddressId', GetEntitiesAtAddressId),
     ('/getInfos', GetInfos),
     ('/searchEntityByName', SearchEntityByName),
+    ('/searchEntityByIco', SearchEntityByIco),
 ], debug=False)
 
 

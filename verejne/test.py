@@ -53,6 +53,14 @@ class TestHandlers(unittest.TestCase):
     print('===== searchEntityByName response =====')
     print(content)
 
+  def test_searchEntityByIco(self):
+    url = '/searchEntityByIco?ico=42258910'
+    content = _request_json(url, self)
+    self.assertTrue(content)
+    print('===== searchEntityByIco response =====')
+    print(content)
+
+
   def test_many_getInfos(self):
     """Tests getInfos for many entity ids."""
 
