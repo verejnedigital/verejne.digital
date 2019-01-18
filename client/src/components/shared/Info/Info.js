@@ -62,12 +62,7 @@ const Info = ({data, onClose, showOnMap, className}: InfoProps) => (
             title="Zobraz na mape"
             onClick={showOnMap}
           >
-            <img
-              src={mapIcon}
-              alt=""
-              style={{width: '16px', height: '25px'}}
-              className="mb-2"
-            />
+            <img src={mapIcon} alt="" style={{width: '16px', height: '25px'}} className="mb-2" />
           </Link>
           {data.profil_id && (
             <NavLink to={`/profil/${data.profil_id}`} title="Zobraz profil">
@@ -90,8 +85,7 @@ const Info = ({data, onClose, showOnMap, className}: InfoProps) => (
       <ul className="info-list">
         <Item>{data.address}</Item>
         {data.companyinfo && <Findata data={getNewFinancialData(data)} />}
-        {data.contracts &&
-          data.contracts.price_amount_sum > 0 && (
+        {data.contracts && data.contracts.price_amount_sum > 0 && (
           <Item
             label="Verejné zákazky"
             url={`http://www.otvorenezmluvy.sk/documents/search?utf8=%E2%9C%93&q=${data.name}`}
@@ -108,7 +102,10 @@ const Info = ({data, onClose, showOnMap, className}: InfoProps) => (
 )
 
 export default compose(
-  connect(null, {makeLocationsSelected, zoomToLocation, setModalOpen, setDrawer}),
+  connect(
+    null,
+    {makeLocationsSelected, zoomToLocation, setModalOpen, setDrawer}
+  ),
   withHandlers({
     showOnMap: ({
       data,

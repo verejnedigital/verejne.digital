@@ -27,6 +27,7 @@ type AutoCompleteProps = {
   inputProps?: Object,
   wrapperProps?: Object,
   suggestions?: Array<string>,
+  placeholder?: string,
   renderItem?: (suggestion: string, isHighlighted: boolean) => Node,
 }
 
@@ -39,6 +40,7 @@ const AutoComplete = ({
   wrapperProps,
   suggestions,
   renderItem,
+  placeholder,
 }: AutoCompleteProps) => (
   <Autocomplete
     getItemValue={(suggestion) => suggestion}
@@ -48,32 +50,35 @@ const AutoComplete = ({
     onChange={onChangeHandler}
     onSelect={onSelectHandler}
     autoHighlight={false}
-    inputProps={{...{
-      className: 'form-control',
-      type: 'text',
-      placeholder: FIND_ENTITY_TITLE,
-    }, ...inputProps}}
+    inputProps={{
+      ...{
+        className: 'form-control',
+        type: 'text',
+        placeholder: placeholder || FIND_ENTITY_TITLE,
+      },
+      ...inputProps,
+    }}
     wrapperProps={wrapperProps}
     renderMenu={(items, value) =>
-      suggestions && suggestions.length > 0
-        ? (<div
+      items && items.length > 0 ? (
+        <div
           className={classnames('autocomplete-suggestions-menu', menuClassName)}
           children={items}
-        />)
-        : <div />
+        />
+      ) : (
+        <div />
+      )
     }
   />
 )
 
 export default compose(
-  connect(
-    (state: State, {value}: AutoCompleteProps) => ({
-      suggestionEids: autocompleteSuggestionEidsSelector(state, value),
-      suggestions: autocompleteSuggestionsSelector(state, value),
-    }),
-  ),
+  connect((state: State, {value}: AutoCompleteProps) => ({
+    suggestionEids: autocompleteSuggestionEidsSelector(state, value),
+    suggestions: autocompleteSuggestionsSelector(state, value),
+  })),
   withDataProviders(({value, suggestionEids}) => [
-    ...(value.trim() !== ''
+    ...(value.trim() !== '' && value.trim().length > 2
       ? [entitySearchProvider(value, false, false)]
       : []),
     ...(suggestionEids.length > 0 ? [entityDetailProvider(suggestionEids, false)] : []),

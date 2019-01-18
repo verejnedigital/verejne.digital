@@ -3,6 +3,7 @@ import 'regenerator-runtime/runtime'
 import 'whatwg-fetch'
 import 'react-app-polyfill/ie9' // For IE 9-11 support
 import Promise from 'bluebird'
+import smoothscroll from 'smoothscroll-polyfill'
 
 import React from 'react'
 import ReactDOM from 'react-dom'
@@ -17,6 +18,7 @@ import getConfiguredStore from './configureStore'
 import {Provider} from 'react-redux'
 
 window.Promise = Promise
+smoothscroll.polyfill()
 
 dataProvidersConfig({loadingComponent: <Loading />})
 
