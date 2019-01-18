@@ -56,8 +56,9 @@ def add_incomes(db):
     
   incomes = []
   with db.get_server_side_cursor(query) as cur:
-    for eid, *row in cur:
-      income, currency = parse_income_row(row)
+    for row in cur:
+      eid = row[0]
+      income, currency = parse_income_row(row[1:])
       incomes.append((eid, income, currency))
     
   print('%sAccumulated %d incomes' % (LOG_PREFIX, len(incomes)))

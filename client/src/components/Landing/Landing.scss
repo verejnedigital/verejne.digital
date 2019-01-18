@@ -9,6 +9,27 @@
 .landing-container {
   margin-top: auto;
   margin-bottom: auto;
+  max-width: 1300px;
+}
+
+.landing-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.landing-search {
+  max-width: 400px;
+  min-width: 300px;
+}
+
+.landing-search-input {
+  min-width: 250px;
+
+  &:focus {
+    box-shadow: none;
+    box-shadow: 0 4px 12px 0 $shadow-color;
+  }
 }
 
 .landing-title {
@@ -24,9 +45,28 @@
 
 .landing-cards {
   padding: 1rem 0; // Fix, without it the row will crop shadows on cards.
+  display: flex;
+  align-items: stretch;
+  flex-wrap: wrap;
+  justify-content: space-between;
 
   > * {
-    margin-bottom: 1rem;
+    margin-bottom: 2rem;
+    justify-content: space-between;
+    height: auto;
+    width: 19%;
+  }
+
+  @media screen and (max-width: 941px) {
+    > * {
+      flex-basis: 48%;
+    }
+  }
+
+  @media screen and (max-width: 767px) {
+    > * {
+      flex-basis: 100%;
+    }
   }
 }
 
@@ -42,7 +82,7 @@
 
   .list-inline-item-text ~ .list-inline-item-text {
     border-left: 2px solid $card-border;
-    padding-left: .5rem;
+    padding-left: 0.5rem;
   }
 }
 
@@ -50,7 +90,7 @@
   &.list-inline-item:not(:last-child) {
     margin-right: 1.5rem;
     @media screen and (max-width: 767px) {
-      margin-right: 0 !important; 
+      margin-right: 0 !important;
     }
   }
 }

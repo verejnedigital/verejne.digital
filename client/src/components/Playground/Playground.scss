@@ -1,0 +1,43 @@
+@import "../variables.scss";
+
+.playground-sidebar {
+  position: fixed;
+  top: $navbar-height;
+  left: 0;
+  bottom: 0;
+  background-color: $component-background;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 2rem;
+  padding-top: 2rem;
+  padding-left: 2rem;
+  width: 200px;
+
+  @media screen and (max-width: 767px) {
+    position: static;
+    width: 100%;
+    align-items: center;
+  }
+}
+
+.playground-intro-container {
+  padding: 20px;
+}
+
+.one {
+  background-color: rgb(224, 224, 224);
+  padding: 2.5vw 3.5vw 12vh;
+  box-sizing: border-box;
+  height: 100vh;
+}
+
+.two {
+  background-color: rgb(124, 124, 124);
+  padding: 2.5vw 3.5vw 12vh;
+  box-sizing: border-box;
+  height: 100vh;
+}
+
+.hero-button {
+  margin-right: 10px;
+}

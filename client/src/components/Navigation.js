@@ -50,6 +50,11 @@ const Navigation = ({navigationOpen, toggleNavigation, closeNavigation, handleNa
             Vyhľadávanie
           </NavLink>
         </NavItem>
+        <NavItem>
+          <NavLink to="/ihrisko" className="nav-link" onClick={handleNavClick}>
+            Ihrisko
+          </NavLink>
+        </NavItem>
       </Nav>
       <Nav className="ml-auto" navbar>
         <NavItem>
