@@ -39,7 +39,10 @@ def parse_income_row(row):
   total_income = 0
   currencies = []
   for i, col in enumerate(ALL_INCOMES):
-    for result in parse_income_col(row[i], col):
+    parsed_incomes = parse_income_col(row[i], col)
+    if parsed_incomes is None:
+      continue
+    for result in parsed_incomes:
       total_income += result[0]
       currencies.append(result[1])
   assert len(set(currencies)) <= 1, "Too many currencies appearing in the row."
