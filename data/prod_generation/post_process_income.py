@@ -10,6 +10,8 @@ INCOME = 'income'
 COMPENSATIONS = 'compensations'
 OTHER_INCOME = 'other_income'
 ALL_INCOMES = (INCOME, COMPENSATIONS, OTHER_INCOME)
+SK_TO_EUR = 30.126
+CURRENCY_SK = "Sk"
 
 
 def parse_money_part(money_part):
@@ -48,7 +50,10 @@ def parse_income_row(row):
       total_income += result[0]
       currencies.append(result[1])
   assert len(set(currencies)) <= 1, "Too many currencies appearing in the row."
-  return total_income, currencies[0] if currencies else None  # do not error on missing currency
+  currency = currencies[0] if currencies else None
+  if currency == CURRENCY_SK:
+    total_income = int(total_income / SK_TO_EUR)
+  return total_income
     
 
 def add_incomes(db):
@@ -63,24 +68,26 @@ def add_incomes(db):
   with db.get_server_side_cursor(query) as cur:
     for row in cur:
       eid = row[0]
-      income, currency = parse_income_row(row[1:])
-      incomes.append((eid, income, currency))
-    
+      income = parse_income_row(row[1:])
+      incomes.append((eid, income))
+
   print('%sAccumulated %d incomes' % (LOG_PREFIX, len(incomes)))
+
+  query = "DROP TABLE IF EXISTS incomes"
+  db.execute(query)
 
   query = """
   CREATE TABLE incomes(
   id                    serial   PRIMARY KEY,
   asset_declaration_id  int      REFERENCES assetdeclarations(Id) NOT NULL,
-  income                int      NOT NULL,
-  currency              text     
+  income                int      NOT NULL
   );"""
 
   db.execute(query)
 
   with db.cursor() as cur:
     q = """
-      INSERT INTO incomes(asset_declaration_id, income, currency)
-      VALUES (%s, %s, %s);
+      INSERT INTO incomes(asset_declaration_id, income)
+      VALUES (%s, %s);
       """
     cur.executemany(q, incomes)
