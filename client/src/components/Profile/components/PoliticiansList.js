@@ -31,11 +31,12 @@ const PoliticiansList = ({politicians, isItCandidatesList}: PoliticianListProps)
         </th>
         <th className="number-column column-title">Orná pôda &amp; záhrady</th>
         <th className="number-column column-title">Ostatné</th>
+        <th className="number-column column-title">Príjmy</th>
       </tr>
     </thead>
     <tbody>
       {politicians.map((politician) => (
-        <Politician key={politician.id} politician={politician} />
+        <Politician key={politician.id} politician={{...politician, income: 23123.15}} income={100}/>
       ))}
     </tbody>
   </Table>

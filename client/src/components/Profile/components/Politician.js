@@ -16,7 +16,7 @@ type PoliticianProps = {
   isItCandidatesList: boolean,
 }
 
-const Politician = ({politician, useDefaultPicture, isItCandidatesList}: PoliticianProps) => (
+const Politician = ({politician, useDefaultPicture, isItCandidatesList, income}: PoliticianProps) => (
   <tr className="table-line">
     <td className="number-column">{politician.order}.</td>
     <td className="photo-column">
@@ -44,6 +44,7 @@ const Politician = ({politician, useDefaultPicture, isItCandidatesList}: Politic
     <td className="number-column">{politician.num_houses_flats}</td>
     <td className="number-column">{politician.num_fields_gardens}</td>
     <td className="number-column">{politician.num_others}</td>
+    <td className="number-column">{politician.income} €</td>
   </tr>
 )
 

@@ -361,6 +361,7 @@ export type Politician = {|
   term_start: number,
   office_name_female: string,
   id: number,
+  income: number,
 |}
 
 export const refreshedUIState = {
