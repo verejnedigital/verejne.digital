@@ -37,6 +37,9 @@ def tokenize(text):
 class Word2VecEmbedder:
     sk_model = None
     word_frequency = {}
+    # We try to cluster similar words together. This map provides mapping for word to the
+    # corresponding similar word.
+    word_to_similar_word = {}
     count_words = 0
     dimension = None
 
@@ -46,32 +49,68 @@ class Word2VecEmbedder:
         self.sk_model = KeyedVectors.load_word2vec_format(
                 '/data/verejne/datautils/embedding_data/slovak.vec', encoding='utf-8', unicode_errors='ignore')
         print "Model contains", len(self.sk_model.vocab), "tokens"
+        print self.sk_model.similarity("mesto", "mesta")
         self.dimension = len(self.sk_model["auto"])
         print ("sídlisk" in self.sk_model)
         print ("sídlisk".decode('utf-8') in self.sk_model)
 
         print "Dimension of embedding of 'auto' is", self.dimension
+        used_words = set()
         # Create frequecny table for words
-        if all_texts is None:
-            return
+        if all_texts is None: return
+
+        reused_words = 0
         for text in all_texts:
             words = tokenize(text)
-            if len(words) == 0 or words is None:
-                return
+            if len(words) == 0 or words is None: continue
             for word in words:
-                self.count_words +=1
+                self.count_words += 1
+                if len(word) <= 2: continue
+                if not word in self.sk_model: continue
+                if word in self.word_to_similar_word:
+                    similar_word = self.word_to_similar_word[word]
+                else:
+                    similar_word = self.get_most_similar_word(word, used_words)
+                    used_words.add(similar_word)
+                    self.word_to_similar_word[word] = similar_word
+                    reused_words += 1
+
                 if word in self.word_frequency:
                     self.word_frequency[word] += 1
                 else:
                     self.word_frequency[word] = 1
         print "Frequency table ready. Number of words:", self.count_words
         print "Number of distinct words:", len(self.word_frequency)
+        print "Number of reused words:", reused_words
+
+    # get the most similar word in the already processed words provide it's at least 0.95 similar
+    def get_most_similar_word(self, word, used_words):
+        if len(used_words) == 0: return word
+        most_similar = self.sk_model.most_similar_to_given(word, list(used_words))
+        if self.sk_model.similarity(word, most_similar) > 0.75:
+            return most_similar
+        return word
 
     def multiplier(self, word):
-        if word in self.word_frequency:
-            return 1.0 / self.word_frequency[word]
+        if word in self.word_to_similar_word:
+            return 1.0 / self.word_frequency[self.word_to_similar_word[word]]
         else:
             return 1.0
+
+    # returns(embedding, num of words that matched)
+    def embed_one_text(self, text):
+        embedding = np.zeros(self.dimension)
+        words = tokenize(text)
+        if words is None or len(words) == 0:
+            embeddings.append(embedding)
+            return None
+        matched_words = 0
+        for word in words:
+            if word in self.sk_model and len(word)>2:
+                embedding = np.add(embedding, np.multiply(self.multiplier(word), self.sk_model[word]))
+                matched_words += 1
+        return (embedding, matched_words)
+
 
     def embed(self, texts):
         assert self.sk_model is not None
@@ -80,15 +119,9 @@ class Word2VecEmbedder:
         if texts is None or len(texts) == 0:
             return
         for text in texts:
-            embedding = np.zeros(self.dimension)
-            words = tokenize(text)
-            if words is None or len(words) == 0:
-                embeddings.append(embedding)
-                continue
-            for word in words:
-                if word in self.sk_model and len(word)>2:
-                    embedding = np.add(embedding, np.multiply(self.multiplier(word), self.sk_model[word]))
-            embeddings.append(embedding)
+            embedding_data = self.embed_one_text(text)
+            if embedding_data is None: continue
+            embeddings.append(embedding_data[0])
         return embeddings
 
 
