@@ -37,7 +37,8 @@
     "regenerator-runtime": "^0.11.1",
     "reselect": "^3.0.1",
     "vis": "https://github.com/mirecmrozek/vis/tarball/master",
-    "whatwg-fetch": "^2.0.4"
+    "whatwg-fetch": "^2.0.4",
+    "webfont-loader": "1.1.0"
   },
   "scripts": {
     "start-js": "BROWSER=none react-scripts start",
