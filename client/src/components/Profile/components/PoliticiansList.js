@@ -36,7 +36,7 @@ const PoliticiansList = ({politicians, isItCandidatesList}: PoliticianListProps)
     </thead>
     <tbody>
       {politicians.map((politician) => (
-        <Politician key={politician.id} politician={{...politician, income: 23123.15}} income={100}/>
+        <Politician key={politician.id} politician={politician}/>
       ))}
     </tbody>
   </Table>

@@ -7,7 +7,7 @@ export const politiciansProvider = (group: string) => ({
   ref: `politicians-${group}`,
   getData: [
     fetch,
-    `${process.env.REACT_APP_API_URL || ''}/api/k/list_politicians?group=${group}`,
+    `${process.env.REACT_APP_API_URL || ''}/api/k/list_politicians?group=${group}&`,
     {
       accept: 'application/json',
     },
