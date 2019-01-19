@@ -42,6 +42,7 @@ class Word2VecEmbedder:
     word_to_similar_word = {}
     count_words = 0
     dimension = None
+    used_words = set()
 
     def __init__(self, all_texts):
         # Creating the model
@@ -55,60 +56,66 @@ class Word2VecEmbedder:
         print ("sídlisk".decode('utf-8') in self.sk_model)
 
         print "Dimension of embedding of 'auto' is", self.dimension
-        used_words = set()
         # Create frequecny table for words
         if all_texts is None: return
 
-        reused_words = 0
         for text in all_texts:
-            words = tokenize(text)
-            if len(words) == 0 or words is None: continue
-            for word in words:
-                self.count_words += 1
-                if len(word) <= 2: continue
-                if not word in self.sk_model: continue
-                if word in self.word_to_similar_word:
-                    similar_word = self.word_to_similar_word[word]
-                else:
-                    similar_word = self.get_most_similar_word(word, used_words)
-                    used_words.add(similar_word)
-                    self.word_to_similar_word[word] = similar_word
-                    reused_words += 1
+            self.add_text_to_corpus(text)
+        self.print_corpus_stats()
 
-                if word in self.word_frequency:
-                    self.word_frequency[word] += 1
-                else:
-                    self.word_frequency[word] = 1
+    def print_corpus_stats(self):
         print "Frequency table ready. Number of words:", self.count_words
         print "Number of distinct words:", len(self.word_frequency)
-        print "Number of reused words:", reused_words
+        print "Number of reused words:", len(self.used_words)
+
+    def add_text_to_corpus(self, text):
+        words = set(tokenize(text))
+        if len(words) == 0 or words is None: return
+        for word in words:
+            self.count_words += 1
+            if len(word) <= 2: continue
+            if not word in self.sk_model: continue
+            if word in self.word_to_similar_word:
+                similar_word = self.word_to_similar_word[word]
+            else:
+                similar_word = self.get_most_similar_word(word)
+                self.used_words.add(similar_word)
+                self.word_to_similar_word[word] = similar_word
+
+            if word in self.word_frequency:
+                self.word_frequency[word] += 1
+            else:
+                self.word_frequency[word] = 1
 
     # get the most similar word in the already processed words provide it's at least 0.95 similar
-    def get_most_similar_word(self, word, used_words):
-        if len(used_words) == 0: return word
-        most_similar = self.sk_model.most_similar_to_given(word, list(used_words))
-        if self.sk_model.similarity(word, most_similar) > 0.75:
+    def get_most_similar_word(self, word):
+        return word
+        if len(self.used_words) == 0: return word
+        most_similar = self.sk_model.most_similar_to_given(word, list(self.used_words))
+        if self.sk_model.similarity(word, most_similar) >= 0.8:
             return most_similar
         return word
 
-    def multiplier(self, word):
-        if word in self.word_to_similar_word:
-            return 1.0 / self.word_frequency[self.word_to_similar_word[word]]
-        else:
-            return 1.0
-
     # returns(embedding, num of words that matched)
     def embed_one_text(self, text):
-        embedding = np.zeros(self.dimension)
+        assert self.sk_model is not None
+        assert self.dimension is not None
         words = tokenize(text)
         if words is None or len(words) == 0:
             return None
+        embedding = np.zeros(self.dimension)
         matched_words = 0
         for word in words:
-            if word in self.sk_model and len(word)>2:
-                embedding = np.add(embedding, np.multiply(self.multiplier(word), self.sk_model[word]))
+            if word in self.sk_model and len(word)>2 and word in self.word_to_similar_word:
+                lookup_word = self.word_to_similar_word[word]
+                count = self.word_frequency[lookup_word]
+                # ignore words appearing in only 1 document
+                if count <= 1: continue
+                # the less common the word, the higher its weight
+                weight = 1.0 / count
+                embedding = np.add(embedding, np.multiply(weight, self.sk_model[lookup_word]))
                 matched_words += 1
-        return (embedding, matched_words)
+        return (embedding, matched_words, len(words))
 
 
     def embed(self, texts):

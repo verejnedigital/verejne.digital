@@ -23,12 +23,25 @@ def ExtractDescriptionFromBody(body):
     if body is None: return None
     root = ET.fromstring(body)
     if root is None: return None
-    components = ["opisPredmetuObstaravania", "opisZakazky"]
+    # TODO: port to XPath
+    mapping = {
+        "description": ["opisPredmetuObstaravania", "opisZakazky"],
+        "deadline": ["lehotaPredkladanie"]
+    }
+    result = {}
+    email = root.find(".//InternetAddresses/Address")
+    if email is not None: result["email"] = email.text
     for e in root.iter():
-        if (e.attrib.get("FormComponentId", None) in components) and \
-            ("Value" in e.attrib):
-            return e.attrib["Value"].replace("\n", " ")
-    return None
+        component = e.attrib.get("FormComponentId", None)
+        if component is None: continue
+        value = e.attrib.get("Value", None)
+        if value is None: continue
+        for key in mapping:
+            if component in mapping[key]:
+                result[key] = value.replace("\n", " ")
+    if len(result) == 0: return None
+    return result
+
 
 def StripHtml(text):
     """ Input is html fragment. Output is text without html tags. """
@@ -89,6 +102,8 @@ def ProcessSource(db_source, db_prod, geocoder, entities, config, test_mode):
 
     # Connect to the most recent schema from the current source
     source_schema_name = db_source.get_latest_schema('source_' + config["source_schema"])
+    if "VVO" in source_schema_name:
+        source_schema_name = "source_ekosystem_VVO_20181212220436"
     print "Processing source_schema_name", source_schema_name
     db_source.execute('SET search_path="' + source_schema_name + '";')
 
@@ -221,7 +236,13 @@ def ProcessSource(db_source, db_prod, geocoder, entities, config, test_mode):
                 row["eid_relation"] = eid2
 
             if config.get("extract_description_from_body"):
-                row["body"] = ExtractDescriptionFromBody(row["body"])
+                extract = ExtractDescriptionFromBody(row["body"])
+                if extract is not None:
+                    row["body"] = extract.get("description", None)
+                    if "deadline" in extract:
+                        row["deadline"] = datetime.strptime(res["deadline"], "%Y-%m-%dT%H:%M:%S").date()
+                    if "email" in extract:
+                        row["contact_email"] = extract["email"]
             supplier_eid = None
             if config.get("supplier_eid"):
                 supplier_address_id = None

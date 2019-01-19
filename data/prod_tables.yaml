@@ -182,15 +182,17 @@
                                 supplier_eid INTEGER REFERENCES Entities(id),
                                 notice_id INT4,
                                 contract_id INT4,
-                                title text,
+                                title TEXT,
                                 estimated_value_amount INT8,
-                                estimated_value_currency text,
+                                estimated_value_currency TEXT,
                                 bulletin_issue_id INT4,
                                 notice_type_id INT4,
-                                short_description text,
+                                short_description TEXT,
                                 total_final_value_amount INT8,
-                                total_final_value_currency text,
-                                body text
+                                total_final_value_currency TEXT,
+                                body TEXT,
+                                deadline DATE,
+                                contact_email TEXT
                        );
                        CREATE INDEX ON Notices(eid);
                        CREATE INDEX ON Notices(notice_id);
