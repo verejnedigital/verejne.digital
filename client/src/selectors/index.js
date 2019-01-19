@@ -72,7 +72,7 @@ export const activeNoticesSelector = createSelector(
   (notices: Array<Notice>) => filter(notices, (notice) => !notice.supplier_eid)
 )
 
-export const locationSearchSelector = (_: State, props: ContextRouter) =>
+export const locationSearchSelector = (_: any, props: ContextRouter) =>
   qs.parse(props.location.search.slice(1))
 
 export const noticesOrderingSelector = createSelector(
