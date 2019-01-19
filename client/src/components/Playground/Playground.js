@@ -44,14 +44,17 @@ const Playground = ({history, typingDone, setTypingDone}) => (
     <div className="playground-background" />
     <div className="playgorund-container">
       <section id="intro" className="playground-intro-container">
-        <Typing speed={1} onFinishedTyping={() => setTypingDone(true)}>
+        <Typing speed={20} onFinishedTyping={() => setTypingDone(true)}>
           <h1 className="display-1 playground-title-text text">
             Ihrisko
             <br />
             verejne.digital
           </h1>
-          <p className="lead playground-subtitle text">Verejné dáta vo vašich rukách.</p>
         </Typing>
+
+        <p className={`lead playground-subtitle text ${typingDone ? '' : 'hide'}`}>
+          Verejné dáta vo vašich rukách.
+        </p>
         <div className={`button-row ${typingDone ? '' : 'hide'}`}>
           <HashLink to="/ihrisko#list">
             <Button outline color="primary">
@@ -142,7 +145,7 @@ const Playground = ({history, typingDone, setTypingDone}) => (
       </section>
       <section id="video" className="playground-video-container">
         <p className="display-4 video-title">Jednoduchý report vytvoríte za pár minút</p>
-        <iframe width="420" height="315" src="https://www.youtube.com/embed/ky3Ordfqn88" />
+        <iframe width="420" height="315" src="https://www.youtube.com/embed/N0dbGGvsjf8" />
         <p className="lead video-subtitle">
           <a href="#">Vyskúšajte si to tu.</a>
         </p>

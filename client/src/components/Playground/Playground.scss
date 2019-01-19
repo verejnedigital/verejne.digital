@@ -19,6 +19,12 @@
 .playground-subtitle {
   font-size: 2rem;
   margin: 0 30px;
+  transition: opacity 0.5s;
+  opacity: 1;
+}
+
+.playground-subtitle.hide {
+  opacity: 0;
 }
 
 .playground-intro-container {
