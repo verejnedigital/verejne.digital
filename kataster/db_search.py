@@ -120,56 +120,71 @@ def get_eids_with_matching_name(db, person, verbose=False):
         row['name'], person['firstname'], person['surname']))
 
 
-def get_Parcels_owned_by_Person(db, PersonId):
-  """Returns all Parcels owned by person with `PersonId`."""
+def get_folios_uses_of_person(db, person_id):
+  """Returns unique (Folio, LandUse) pairs owned by `person_id`."""
+
   q = """
-    SELECT DISTINCT ON (CadastralUnitCode, FolioNo, ParcelNo)
-      Parcels.No AS ParcelNo,
-      0.5 * (Parcels.minX + Parcels.maxX) AS MercatorX,
-      0.5 * (Parcels.minY + Parcels.maxY) AS MercatorY,
-      Folios.No AS FolioNo,
-      LandUses.Name AS LandUseName,
-      CadastralUnits.Code AS CadastralUnitCode,
-      CadastralUnits.Name AS CadastralUnitName
-    FROM
-      Parcels
-    INNER JOIN
-      LandUses ON LandUses.Id=Parcels.LandUseId
-    INNER JOIN
-      CadastralUnits ON CadastralUnits.Id=Parcels.CadastralUnitId
-    INNER JOIN
-      Folios ON Folios.Id=Parcels.FolioId
-    INNER JOIN
-      PersonFolios ON PersonFolios.FolioId=Folios.Id
-    INNER JOIN
-      Persons ON Persons.Id=PersonFolios.PersonId
-    INNER JOIN
-      PersonOffices ON PersonOffices.PersonId=Persons.Id
-    INNER JOIN
-      Offices ON Offices.Id=PersonOffices.OfficeId
-    LEFT JOIN
-      AssetDeclarations ON AssetDeclarations.PersonId=Persons.Id
-    WHERE
-      PersonFolios.PersonId=%s
-      -- Ensure a recent asset declaration exists, or the person is
-      -- currently running for office:
-      AND (
-        AssetDeclarations.Year>=2016
-        OR (
-          PersonOffices.term_end>=2018
-          AND Offices.name_male IN (
-            'kandidát na primátora Bratislavy',
-            'kandidát na prezidenta SR'
+    WITH ParcelsOwned AS (
+      SELECT DISTINCT ON (CadastralUnitCode, FolioNo, ParcelNo)
+        Parcels.No AS ParcelNo,
+        0.5 * (Parcels.minX + Parcels.maxX) AS MercatorX,
+        0.5 * (Parcels.minY + Parcels.maxY) AS MercatorY,
+        Folios.No AS FolioNo,
+        LandUses.Name AS LandUseName,
+        CadastralUnits.Code AS CadastralUnitCode,
+        CadastralUnits.Name AS CadastralUnitName
+      FROM
+        Parcels
+      INNER JOIN
+        LandUses ON LandUses.Id=Parcels.LandUseId
+      INNER JOIN
+        CadastralUnits ON CadastralUnits.Id=Parcels.CadastralUnitId
+      INNER JOIN
+        Folios ON Folios.Id=Parcels.FolioId
+      INNER JOIN
+        PersonFolios ON PersonFolios.FolioId=Folios.Id
+      INNER JOIN
+        Persons ON Persons.Id=PersonFolios.PersonId
+      INNER JOIN
+        PersonOffices ON PersonOffices.PersonId=Persons.Id
+      INNER JOIN
+        Offices ON Offices.Id=PersonOffices.OfficeId
+      LEFT JOIN
+        AssetDeclarations ON AssetDeclarations.PersonId=Persons.Id
+      WHERE
+        PersonFolios.PersonId=%s
+        -- Ensure a recent asset declaration exists, or the person is
+        -- currently running for office:
+        AND (
+          AssetDeclarations.Year>=2016
+          OR (
+            PersonOffices.term_end>=2018
+            AND Offices.name_male IN (
+              'kandidát na primátora Bratislavy',
+              'kandidát na prezidenta SR'
+            )
           )
         )
-      )
-    ORDER BY
-      CadastralUnitCode, FolioNo, ParcelNo, Parcels.ValidTo DESC
+      ORDER BY
+        CadastralUnitCode, FolioNo, ParcelNo, Parcels.ValidTo DESC
+    )
+    SELECT
+      CadastralUnitCode,
+      MIN(CadastralUnitName) AS CadastralUnitName,
+      FolioNo,
+      LandUseName,
+      string_agg(ParcelNo, ', ') AS ParcelNo,
+      AVG(MercatorX) AS MercatorX,
+      AVG(MercatorY) AS MercatorY
+    FROM
+      ParcelsOwned
+    GROUP BY
+      CadastralUnitCode, FolioNo, LandUseName
     ;"""
-  q_data = (PersonId,)
+  q_data = [person_id]
   rows = db.query(q, q_data)
 
-  # Convert the coordinates to WGS84
+  # Convert the coordinates to WGS84.
   for row in rows:
     row['lat'], row['lon'] = Mercator_to_WGS84(
         row['mercatorx'], row['mercatory'])
