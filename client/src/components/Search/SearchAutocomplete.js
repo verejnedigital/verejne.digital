@@ -21,6 +21,7 @@ export type Props = {
   history: RouterHistory,
   searchOnEnter: (e: Event) => void,
   handleSelect: (value: string) => void,
+  searchInfo: (value: string) => void,
   inputValue: string,
   onChange: () => void,
   suggestionEids: Array<number>,
@@ -28,15 +29,10 @@ export type Props = {
   entities: Array<CompanyEntity>,
 } & ContextRouter
 
-const _SearchInfo = (inputValue, history) => {
-  if (inputValue.trim() !== '') {
-    history.push(`/vyhladavanie?meno=${inputValue.trim()}`)
-  }
-}
-
 const SearchAutocomplete = ({
   history,
   searchOnEnter,
+  searchInfo,
   handleSelect,
   inputValue,
   onChange,
@@ -57,7 +53,7 @@ const SearchAutocomplete = ({
       }}
     />
     <InputGroupAddon addonType="append">
-      <Button color="primary" className="search-page-btn">
+      <Button onClick={() => searchInfo(inputValue)} color="primary" className="search-page-btn">
         <SearchIcon />
       </Button>
     </InputGroupAddon>
@@ -78,14 +74,21 @@ const enhance: HOC<*, Props> = compose(
     entities: entityDetailsSelector(state, suggestionEids),
   })),
   withHandlers({
+    searchInfo: ({history}: Props) => (inputValue) => {
+      if (inputValue.trim() !== '') {
+        history.push(`/vyhladavanie?meno=${inputValue.trim()}`)
+      }
+    },
+  }),
+  withHandlers({
     searchOnEnter: (props: Props) => (e) => {
       if (e.key === 'Enter') {
-        _SearchInfo(props.inputValue, props.history)
+        props.searchInfo(props.inputValue, props.history)
       }
     },
     handleSelect: (props: Props) => (value) => {
       props.setInputValue(value)
-      _SearchInfo(value, props.history)
+      props.searchInfo(value, props.history)
     },
     onChange: ({inputValue, setInputValue}) => (e) => setInputValue(e.target.value),
   })
