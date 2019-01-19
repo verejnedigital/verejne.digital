@@ -1,7 +1,8 @@
 // @flow
 import React, {type Node} from 'react'
 import {connect} from 'react-redux'
-import {compose, withHandlers} from 'recompose'
+import {compose, withStateHandlers, withState, withProps, lifecycle} from 'recompose'
+import {debounce} from 'lodash'
 import {withDataProviders} from 'data-provider'
 import {
   entitySearchProvider,
@@ -16,36 +17,66 @@ import Autocomplete from 'react-autocomplete'
 import classnames from 'classnames'
 
 import type {State} from '../../../state'
+import Loading from '../../Loading/Loading'
 
 import './AutoComplete.css'
 
+// value
 type AutoCompleteProps = {
-  value: string,
+  value: string, // what is currently typed in input component
+  autocompleteValue: string, // autocomplete data displayed for this value
+  requestValue: string, // last request fired for this value
   onChangeHandler: (e: Event) => void,
   onSelectHandler: (value: string) => void,
   menuClassName?: string,
   inputProps?: Object,
   wrapperProps?: Object,
-  suggestions?: Array<string>,
+  suggestions: Array<string>,
   placeholder?: string,
   renderItem?: (suggestion: string, isHighlighted: boolean) => Node,
 }
 
+const AutocompleteItem = () => (suggestion, isHighlighted) => {
+  if (suggestion.displayLoading) {
+    return (
+      <div
+        key={'__loading-key__'}
+        className={classnames('autocomplete-item', {
+          'autocomplete-item--active': isHighlighted,
+        })}
+      >
+        Loading
+      </div>
+    )
+  }
+  return (
+    <div
+      key={suggestion}
+      className={classnames('autocomplete-item', {
+        'autocomplete-item--active': isHighlighted,
+      })}
+    >
+      <strong>{suggestion}</strong>
+    </div>
+  )
+}
+
 const AutoComplete = ({
   value,
+  autocompleteValue,
+  requestValue,
   onChangeHandler,
   onSelectHandler,
   menuClassName,
   inputProps,
   wrapperProps,
   suggestions,
-  renderItem,
   placeholder,
 }: AutoCompleteProps) => (
   <Autocomplete
     getItemValue={(suggestion) => suggestion}
     items={suggestions}
-    renderItem={renderItem}
+    renderItem={AutocompleteItem}
     value={value}
     onChange={onChangeHandler}
     onSelect={onSelectHandler}
@@ -73,26 +104,50 @@ const AutoComplete = ({
 )
 
 export default compose(
-  connect((state: State, {value}: AutoCompleteProps) => ({
-    suggestionEids: autocompleteSuggestionEidsSelector(state, value),
-    suggestions: autocompleteSuggestionsSelector(state, value),
+  withState('autocompleteValue', 'setAutocompleteValue', ''),
+  withStateHandlers(
+    {requestValue: null},
+    {
+      updateRequestValue: (state, props) => debounce((requestValue) => ({requestValue}), 1000),
+    }
+  ),
+  withDataProviders(({requestValue}) => {
+    if (!requestValue || requestValue.trim().length < 3) return []
+    return [entitySearchProvider(requestValue, false, false)]
+  }),
+  connect((state: State, {requestValue}: AutoCompleteProps) => ({
+    suggestionEids: autocompleteSuggestionEidsSelector(state, requestValue),
   })),
-  withDataProviders(({value, suggestionEids}) => [
-    ...(value.trim() !== '' && value.trim().length > 2
-      ? [entitySearchProvider(value, false, false)]
-      : []),
-    ...(suggestionEids.length > 0 ? [entityDetailProvider(suggestionEids, false)] : []),
-  ]),
-  withHandlers({
-    renderItem: () => (suggestion, isHighlighted) => (
-      <div
-        key={suggestion}
-        className={classnames('autocomplete-item', {
-          'autocomplete-item--active': isHighlighted,
-        })}
-      >
-        <strong>{suggestion}</strong>
-      </div>
-    ),
+  withDataProviders(({suggestionEids}) => [entityDetailProvider(suggestionEids, false)]),
+  connect((state: State, {value, autocompleteValue}: AutoCompleteProps) => {
+    const currentValueSuggestions = autocompleteSuggestionsSelector(state, value)
+    const previousValueSuggestions = autocompleteSuggestionsSelector(state, autocompleteValue)
+    let suggestionsSource = null
+    if (currentValueSuggestions.length) {
+      suggestionsSource = value
+    } else if (previousValueSuggestions.length) {
+      suggestionsSource = autocompleteValue
+    }
+    return {
+      suggestions: currentValueSuggestions || previousValueSuggestions || [],
+      suggestionsSource,
+    }
+  }),
+  lifecycle({
+    componentDidUpdate: (prev, next) => {
+      if (next.suggestionsSource !== prev.suggestionsSource) {
+        next.setAutocompleteValue(next.suggestionsSource)
+      }
+    },
+  }),
+  // insert 'loading object' into suggestions if we're requesting new results
+  withProps(({requestValue, autocompleteValue, suggestions}: AutoCompleteProps) => {
+    if (requestValue !== autocompleteValue) {
+      return {
+        suggestions: [{displayLoading: true}, ...suggestions],
+      }
+    } else {
+      return {}
+    }
   })
 )(AutoComplete)
