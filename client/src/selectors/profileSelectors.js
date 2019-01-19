@@ -20,7 +20,11 @@ export const politicianDetailSelector: Selector<
   State,
   ContextRouter,
   PoliticianDetail
-> = createSelector(paramsIdSelector, statePoliticianDetailSelector, (id, data) => data[id])
+> = createSelector(
+  paramsIdSelector,
+  statePoliticianDetailSelector,
+  (id, data) => data[id]
+)
 
 export const politicianCadastralSelector: Selector<
   State,
@@ -47,21 +51,23 @@ export const parsedAssetDeclarations: Selector<
   State,
   *,
   ObjectMap<ParsedAssetDeclarationsType>
-> = createSelector(politicianAssetDeclarationsSelector, (reports) =>
-  mapValues(reports, (r) => ({
-    unmovable_assets: r.unmovable_assets ? r.unmovable_assets.split('\n') : [],
-    movable_assets: r.movable_assets ? r.movable_assets.split('\n') : [],
-    income_assets: [
-      r.income && `príjmy: ${r.income}`,
-      r.compensations && `paušálne náhrady: ${r.compensations}`,
-      r.other_income && `ostatné príjmy: ${r.other_income}`,
-      r.offices_other &&
-        `počas výkonu verejnej funkcie má tieto funkcie (čl. 7 ods. 1 písm. c) u. z. 357/2004): ${
-          r.offices_other
-        }`,
-    ].filter((asset) => asset !== null),
-    source: r.source || 'http://www.nrsr.sk',
-  }))
+> = createSelector(
+  politicianAssetDeclarationsSelector,
+  (reports) =>
+    mapValues(reports, (r) => ({
+      unmovable_assets: r.unmovable_assets ? r.unmovable_assets.split('\n') : [],
+      movable_assets: r.movable_assets ? r.movable_assets.split('\n') : [],
+      income_assets: [
+        r.income && `príjmy: ${r.income}`,
+        r.compensations && `paušálne náhrady: ${r.compensations}`,
+        r.other_income && `ostatné príjmy: ${r.other_income}`,
+        r.offices_other &&
+          `počas výkonu verejnej funkcie má tieto funkcie (čl. 7 ods. 1 písm. c) u. z. 357/2004): ${
+            r.offices_other
+          }`,
+      ].filter((asset) => asset !== null),
+      source: r.source || 'http://www.nrsr.sk',
+    }))
 )
 
 // assume 1 record per year
@@ -69,7 +75,10 @@ export const assetDeclarationsSortedYearsSelector: Selector<
   State,
   *,
   Array<string>
-> = createSelector(politicianAssetDeclarationsSelector, (reports) => sortBy(Object.keys(reports)))
+> = createSelector(
+  politicianAssetDeclarationsSelector,
+  (reports) => sortBy(Object.keys(reports))
+)
 
 export const assetDeclarationsLatestYearSelector: Selector<State, *, string> = createSelector(
   assetDeclarationsSortedYearsSelector,
@@ -94,6 +103,7 @@ export const cadastralSearchSelector: Selector<State, ContextRouter, string> = c
 )
 
 const cadastralInfoComparator = (a: CadastralData, b: CadastralData) => {
+  if (!a.landusename) return 0
   if (a.landusename === 'Orná pôda') return -1
   if (b.landusename === 'Orná pôda') return 1
   return a.landusename.localeCompare(b.landusename)
@@ -103,10 +113,12 @@ export const sortedCadastralInfoSelector: Selector<
   State,
   ContextRouter,
   Array<CadastralData>
-> = createSelector(politicianCadastralSelector, (cadastral) =>
-  values(cadastral)
-    .sort(cadastralInfoComparator)
-    .reverse()
+> = createSelector(
+  politicianCadastralSelector,
+  (cadastral) =>
+    values(cadastral)
+      .sort(cadastralInfoComparator)
+      .reverse()
 )
 
 export const filteredCadastralInfoSelector: Selector<State, ContextRouter, string> = createSelector(
@@ -137,7 +149,11 @@ export const parsedAssetDeclarationsForYearSelector: Selector<
   State,
   *,
   ParsedAssetDeclarationsType
-> = createSelector(paramsYearSelector, parsedAssetDeclarations, (year, records) => records[year])
+> = createSelector(
+  paramsYearSelector,
+  parsedAssetDeclarations,
+  (year, records) => records[year]
+)
 
 export const profileQuerySelector = (state: State): string => normalizeName(state.profile.query)
 
@@ -149,8 +165,13 @@ export const politicianListSelector = (state: State, props: ContextRouter): Obje
 
 export const orderedPoliticiansSelector: Selector<State, *, Array<Politician>> = createSelector(
   politicianListSelector,
-  politicians => 
-    sortBy(Object.values(politicians).map(p => ({...p, latest_income: p.latest_income || -1})),['latest_income', 'num_houses_flats', 'num_fields_gardens', 'num_others'])
+  (politicians) =>
+    sortBy(Object.values(politicians).map((p) => ({...p, latest_income: p.latest_income || -1})), [
+      'latest_income',
+      'num_houses_flats',
+      'num_fields_gardens',
+      'num_others',
+    ])
       .reverse()
       .map((p, i) => ({order: i + 1, ...p}))
 )
