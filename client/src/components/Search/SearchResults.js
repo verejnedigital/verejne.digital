@@ -41,12 +41,6 @@ export type Props = {
   entities: Array<CompanyEntity>,
 } & ContextRouter
 
-const _SearchInfo = (inputValue, history) => {
-  if (inputValue.trim() !== '') {
-    history.push(`/vyhladavanie?meno=${inputValue.trim()}`)
-  }
-}
-
 class ScrollIntoView extends React.Component {
   constructor(props) {
     super(props)
