@@ -70,12 +70,12 @@ export type NoticeDetail = {
 }
 
 export type CadastralData = {|
-  lon: number,
+  lon: ?number,
   cadastralunitcode: number,
   landusename: ?string,
   cadastralunitname: string,
   parcelno: ?string,
-  lat: number,
+  lat: ?number,
   foliono: number,
 |}
 
