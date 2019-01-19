@@ -364,3 +364,18 @@ export const autocompleteSuggestionsSelector = (state: State, value: string): Ar
     .map((eid) => (details[eid.toString()] ? details[eid.toString()].name : ''))
     .filter((name, index, array) => name && array.indexOf(name) === index)
 }
+
+export const autocompleteIsLoading = (state: State, value: string): boolean =>
+  !!(
+    value &&
+    value.length > 2 &&
+    (!state.entitySearch[value] ||
+      (state.entitySearch[value].eids.length &&
+        !autocompleteSuggestionsSelector(state, value).length))
+  )
+
+export const noResultsForCurrentSearch = createSelector(
+  autocompleteIsLoading,
+  autocompleteSuggestionEidsSelector,
+  (isLoading, eids) => !isLoading && !eids.length
+)
