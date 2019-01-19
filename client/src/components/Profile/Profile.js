@@ -26,7 +26,7 @@ export type ProfileProps = {
 }
 
 const groupFilter = {
-  all: 'Poslanci a verejní funkcionári',
+  active: 'Poslanci a verejní funkcionári',
   // candidates_2018_bratislava_mayor: 'Kandidáti na primátora Bratislavy',
   candidates_2019_president: 'Prezidentskí kandidáti',
 }

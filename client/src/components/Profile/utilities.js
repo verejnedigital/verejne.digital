@@ -49,7 +49,7 @@ export const splitOfficesByYear = (
 }
 
 export const getQueryFromGroup = (group: string): string =>
-  group === 'all'
+  group === 'active'
     ? 'poslanci'
     : group === 'candidates_2018_bratislava_mayor'
       ? 'kandidati_bratislava'
@@ -59,7 +59,7 @@ export const getQueryFromGroup = (group: string): string =>
 
 export const getGroupFromQuery = (group: string): string =>
   group === 'poslanci'
-    ? 'all'
+    ? 'active'
     : group === 'kandidati_bratislava'
       ? 'candidates_2018_bratislava_mayor'
       : group === 'kandidati_prezident'

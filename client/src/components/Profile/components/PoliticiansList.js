@@ -31,7 +31,7 @@ const PoliticiansList = ({politicians, isItCandidatesList}: PoliticianListProps)
         </th>
         <th className="number-column column-title">Orná pôda &amp; záhrady</th>
         <th className="number-column column-title">Ostatné</th>
-        <th className="number-column column-title ">Príjmy</th>
+        <th className="number-column column-title">Príjmy</th>
       </tr>
     </thead>
     <tbody>
