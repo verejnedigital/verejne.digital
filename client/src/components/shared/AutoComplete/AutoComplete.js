@@ -1,8 +1,9 @@
 // @flow
 import React, {type Node} from 'react'
+import LoadingComponent from 'react-loading-components'
 import {connect} from 'react-redux'
-import {compose, withStateHandlers, withState, withProps, lifecycle} from 'recompose'
-import {debounce} from 'lodash'
+import {compose, withHandlers, withState, withProps, lifecycle} from 'recompose'
+import {debounce, get} from 'lodash'
 import {withDataProviders} from 'data-provider'
 import {
   entitySearchProvider,
@@ -11,15 +12,20 @@ import {
 import {
   autocompleteSuggestionEidsSelector,
   autocompleteSuggestionsSelector,
+  autocompleteIsLoading,
+  noResultsForCurrentSearch,
 } from '../../../selectors/'
-import {FIND_ENTITY_TITLE} from '../../../constants'
+import {FIND_ENTITY_TITLE, LOADING_CIRCLE_COLOR} from '../../../constants'
 import Autocomplete from 'react-autocomplete'
 import classnames from 'classnames'
 
 import type {State} from '../../../state'
-import Loading from '../../Loading/Loading'
 
 import './AutoComplete.css'
+
+// TODO this is just laziness, do better and solve flow types
+const LOADING_SUGGESTION = '__isLoading__'
+const NO_RESULTS = '__noResults__'
 
 // value
 type AutoCompleteProps = {
@@ -36,29 +42,33 @@ type AutoCompleteProps = {
   renderItem?: (suggestion: string, isHighlighted: boolean) => Node,
 }
 
-const AutocompleteItem = () => (suggestion, isHighlighted) => {
-  if (suggestion.displayLoading) {
-    return (
-      <div
-        key={'__loading-key__'}
-        className={classnames('autocomplete-item', {
-          'autocomplete-item--active': isHighlighted,
-        })}
-      >
-        Loading
-      </div>
-    )
+const AutocompleteItem = (suggestion, isHighlighted) => {
+  switch (suggestion) {
+    case LOADING_SUGGESTION:
+      return (
+        <div key={'__loading-key__'} className="autocomplete-item--placeholder">
+          <LoadingComponent type="tail_spin" width={10} height={10} fill={LOADING_CIRCLE_COLOR} />{' '}
+          Vyhľadávam
+        </div>
+      )
+    case NO_RESULTS:
+      return (
+        <div key={'__no-results-key__'} className="autocomplete-item--placeholder">
+          Žiadne výsledky
+        </div>
+      )
+    default:
+      return (
+        <div
+          key={suggestion}
+          className={classnames('autocomplete-item', {
+            'autocomplete-item--active': isHighlighted,
+          })}
+        >
+          <strong>{suggestion}</strong>
+        </div>
+      )
   }
-  return (
-    <div
-      key={suggestion}
-      className={classnames('autocomplete-item', {
-        'autocomplete-item--active': isHighlighted,
-      })}
-    >
-      <strong>{suggestion}</strong>
-    </div>
-  )
 }
 
 const AutoComplete = ({
@@ -104,50 +114,68 @@ const AutoComplete = ({
 )
 
 export default compose(
+  // autocompleteValue used to preserve last valid result while typing
   withState('autocompleteValue', 'setAutocompleteValue', ''),
-  withStateHandlers(
-    {requestValue: null},
-    {
-      updateRequestValue: (state, props) => debounce((requestValue) => ({requestValue}), 1000),
+  // requestValue used only to debounce dataProviders, never displayed
+  withState('requestValue', 'setRequestValue', ''),
+  withHandlers(() => {
+    const debouncedFn = debounce((requestValue, setRequestValue) => {
+      if (requestValue && requestValue.trim().length > 2) setRequestValue(requestValue)
+    }, 1000)
+    return {
+      updateRequestDebounced: ({setRequestValue}) => (requestValue) =>
+        debouncedFn(requestValue, setRequestValue),
     }
-  ),
+  }),
+  // get search entity -> filter it's ids -> get details for those ids
   withDataProviders(({requestValue}) => {
-    if (!requestValue || requestValue.trim().length < 3) return []
+    if (!requestValue) return []
     return [entitySearchProvider(requestValue, false, false)]
   }),
   connect((state: State, {requestValue}: AutoCompleteProps) => ({
     suggestionEids: autocompleteSuggestionEidsSelector(state, requestValue),
   })),
-  withDataProviders(({suggestionEids}) => [entityDetailProvider(suggestionEids, false)]),
-  connect((state: State, {value, autocompleteValue}: AutoCompleteProps) => {
+  withDataProviders(({suggestionEids}) =>
+    get(suggestionEids, 'length') ? [entityDetailProvider(suggestionEids, false)] : []
+  ),
+  // if we have details for ids of current search, display them - otherwise display
+  // the last search we've had details for
+  connect((state: State, {value, requestValue, autocompleteValue}: AutoCompleteProps) => {
     const currentValueSuggestions = autocompleteSuggestionsSelector(state, value)
     const previousValueSuggestions = autocompleteSuggestionsSelector(state, autocompleteValue)
+    const noResults = noResultsForCurrentSearch(state, value)
+    const isLoading = autocompleteIsLoading(state, value)
     let suggestionsSource = null
-    if (currentValueSuggestions.length) {
+    let suggestions = []
+
+    if (noResults && get(value, 'length') > 2) {
+      suggestions = [NO_RESULTS]
       suggestionsSource = value
+    } else if (currentValueSuggestions.length) {
+      suggestionsSource = value
+      suggestions = currentValueSuggestions
     } else if (previousValueSuggestions.length) {
       suggestionsSource = autocompleteValue
+      suggestions = previousValueSuggestions
     }
     return {
-      suggestions: currentValueSuggestions || previousValueSuggestions || [],
+      suggestions: [...(isLoading ? [LOADING_SUGGESTION] : []), ...suggestions],
       suggestionsSource,
     }
   }),
+  // update the last source we've succesfully shown autocomplete for when the list changes +
+  // debounced update of request when input changes
   lifecycle({
-    componentDidUpdate: (prev, next) => {
-      if (next.suggestionsSource !== prev.suggestionsSource) {
-        next.setAutocompleteValue(next.suggestionsSource)
+    componentDidUpdate(prev) {
+      if (
+        get(this.props, 'suggestionsSource') &&
+        get(this.props, 'suggestionsSource') !== get(prev, 'suggestionsSource')
+      ) {
+        this.props.setAutocompleteValue(this.props.suggestionsSource)
+      }
+      if (get(this.props, 'value') && get(this.props, 'value') !== get(prev, 'value')) {
+        this.props.updateRequestDebounced(this.props.value)
       }
     },
-  }),
-  // insert 'loading object' into suggestions if we're requesting new results
-  withProps(({requestValue, autocompleteValue, suggestions}: AutoCompleteProps) => {
-    if (requestValue !== autocompleteValue) {
-      return {
-        suggestions: [{displayLoading: true}, ...suggestions],
-      }
-    } else {
-      return {}
-    }
   })
 )(AutoComplete)
