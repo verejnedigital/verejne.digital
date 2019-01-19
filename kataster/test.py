@@ -64,7 +64,9 @@ class TestHandlers(unittest.TestCase):
       if group == 'candidates_2019_president':
         for row in content:
           print(row["id"], row["surname"], row["firstname"],
-              row["office_name_male"], row["term_finish"])
+                row["office_name_male"], row["term_finish"],
+                row["num_houses_flats"], row["num_fields_gardens"],
+                row["num_others"])
 
   def test_info_politician(self):
     politician_id = 971

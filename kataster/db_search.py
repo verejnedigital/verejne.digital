@@ -199,13 +199,17 @@ def get_politicians_with_Folio_counts(db, query_filter):
         SELECT
           Persons.Id AS PersonId,
           COUNT(DISTINCT (Folios.CadastralUnitId, Folios.No)) FILTER
-              (WHERE LandUses.Name = 'Zastavaná plocha a nádvorie')
+              (WHERE LandUses.Name = 'Zastavaná plocha a nádvorie'
+                      OR LandUses.Id IS NULL)
               AS num_houses_flats,
           COUNT(DISTINCT (Folios.CadastralUnitId, Folios.No)) FILTER
               (WHERE LandUses.Name = 'Orná pôda' OR LandUses.Name = 'Záhrada')
               AS num_fields_gardens,
           COUNT(DISTINCT (Folios.CadastralUnitId, Folios.No)) FILTER
-              (WHERE LandUses.Name != 'Zastavaná plocha a nádvorie' AND LandUses.Name != 'Orná pôda' AND LandUses.Name != 'Záhrada')
+              (WHERE LandUses.Id IS NOT NULL
+                      AND LandUses.Name != 'Zastavaná plocha a nádvorie'
+                      AND LandUses.Name != 'Orná pôda'
+                      AND LandUses.Name != 'Záhrada')
               AS num_others
         FROM
           Persons
