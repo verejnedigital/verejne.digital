@@ -64,6 +64,11 @@
   border: 2px solid $border-color;
   cursor: pointer;
 
+  @media screen and (max-width: 767px) {
+    width: 100%;
+    margin: 0 0 24px;
+  }
+
   &:hover::before {
     opacity: 1;
   }
@@ -101,8 +106,7 @@
 .search-box-name {
   max-width: 100%;
   overflow: hidden;
-  display: inline-block;
-  // align-items: center;
+  display: block;
   line-height: 18px;
   word-break: unset;
   white-space: nowrap;
