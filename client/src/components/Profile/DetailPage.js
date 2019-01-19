@@ -32,6 +32,7 @@ import DetailAsset from './components/DetailAssets'
 import MapContainer from './components/MapContainer'
 import Info from '../shared/Info/Info'
 import {Row, Col, Container} from 'reactstrap'
+import Plot from 'react-plotly.js'
 
 import './DetailPage.css'
 
@@ -82,6 +83,45 @@ const DetailPage = ({
       </Col>
     </Row>
     <Cardboard key="cardboard" politician={politician} />
+    <Plot
+      data={[
+        {
+          x: [1, 2, 3],
+          y: [2, 6, 3],
+          type: 'scatter',
+          mode: 'lines+points',
+          marker: {color: 'red'},
+        },
+        {
+          type: 'scatter',
+          mode: 'lines+points',
+          marker: {color: 'blue'},
+          x: [1, 2, 3],
+          y: [2, 5, 3],
+        },
+      ]}
+      config={{displayModeBar: false}}
+      layout={{
+        autosize: true,
+        height: 300,
+        margin: {
+          l: 60,
+          r: 40,
+          b: 80,
+          t: 40,
+          pad: 0,
+        },
+        legend: {
+          orientation: 'h',
+        },
+      }}
+      style={{
+        width: '50%',
+        border: '2px solid #cddae3',
+        boxSizing: 'content-box',
+        boxShadow: '0 4px 12px 0 rgba(187, 198, 206, 0.5)',
+      }}
+    />
     <Row tag="article" key="politician" className="profile">
       <Col tag="section">
         <div className="profile-tabs">
