@@ -160,7 +160,6 @@ const Search = ({
 
 const enhance: HOC<*, Props> = compose(
   withRouter,
-  withState('inputValue', 'setInputValue', ''),
   withState('searchEids', 'setSearchEids', []),
   withState('activeEid', 'setActiveEid', ''),
   connect(
