@@ -105,7 +105,13 @@ const Search = ({
               <strong className="search-box-name">
                 <CircleIcon data={entity} /> {entity.name}
               </strong>
-              <span className="search-box-address">{entity.address}</span>
+              <span className="search-box-address">
+                {/* NOTE: We want to show short format of the address.
+                At the moment we get whole address as one string.
+                This is hotfix that can be removed when the backend
+                will send object for address. */}
+                {entity.address.replace(/ \d\d\d \d\d/, '').replace(/, Slovakia/, '')}
+              </span>
             </div>
           )
         })}
