@@ -31,6 +31,7 @@
     "react-router-dom": "^4.2.2",
     "react-router-hash-link": "^1.2.1",
     "react-scripts": "^2.0.3",
+    "react-typing-animation": "^1.6.2",
     "reactstrap": "^6.0.1",
     "recompose": "^0.27.0",
     "redux": "^4.0.0",
