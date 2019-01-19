@@ -53,7 +53,7 @@ const AutocompleteItem = (suggestion, isHighlighted) => {
       )
     case NO_RESULTS:
       return (
-        <div key={'__no-results-key__'} className="autocomplete-item--placeholder">
+        <div key={'__no-results-key__'} className="autocomplete-item autocomplete-item--placeholder">
           Žiadne výsledky
         </div>
       )
