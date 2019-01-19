@@ -123,71 +123,68 @@ def get_eids_with_matching_name(db, person, verbose=False):
 def get_folios_uses_of_person(db, person_id):
   """Returns unique (Folio, LandUse) pairs owned by `person_id`."""
 
-  q = """
-    WITH ParcelsOwned AS (
-      SELECT DISTINCT ON (CadastralUnitCode, FolioNo, ParcelNo)
-        Parcels.No AS ParcelNo,
-        0.5 * (Parcels.minX + Parcels.maxX) AS MercatorX,
-        0.5 * (Parcels.minY + Parcels.maxY) AS MercatorY,
-        Folios.No AS FolioNo,
-        LandUses.Name AS LandUseName,
-        CadastralUnits.Code AS CadastralUnitCode,
-        CadastralUnits.Name AS CadastralUnitName
-      FROM
-        Parcels
-      INNER JOIN
-        LandUses ON LandUses.Id=Parcels.LandUseId
-      INNER JOIN
-        CadastralUnits ON CadastralUnits.Id=Parcels.CadastralUnitId
-      INNER JOIN
-        Folios ON Folios.Id=Parcels.FolioId
-      INNER JOIN
-        PersonFolios ON PersonFolios.FolioId=Folios.Id
-      INNER JOIN
-        Persons ON Persons.Id=PersonFolios.PersonId
-      INNER JOIN
-        PersonOffices ON PersonOffices.PersonId=Persons.Id
-      INNER JOIN
-        Offices ON Offices.Id=PersonOffices.OfficeId
-      LEFT JOIN
-        AssetDeclarations ON AssetDeclarations.PersonId=Persons.Id
-      WHERE
-        PersonFolios.PersonId=%s
-        -- Ensure a recent asset declaration exists, or the person is
-        -- currently running for office:
-        AND (
-          AssetDeclarations.Year>=2016
-          OR (
-            PersonOffices.term_end>=2018
-            AND Offices.name_male IN (
-              'kandidát na primátora Bratislavy',
-              'kandidát na prezidenta SR'
-            )
+  # Check that person_id has a recent asset declaration, or is
+  # currently running for office.
+  rows = db.query( """
+    SELECT
+      1
+    FROM
+      Persons
+    INNER JOIN
+      PersonOffices ON PersonOffices.PersonId=Persons.Id
+    INNER JOIN
+      Offices ON Offices.Id=PersonOffices.OfficeId
+    LEFT JOIN
+      AssetDeclarations ON AssetDeclarations.PersonId=Persons.Id
+    WHERE
+      Persons.Id=%s
+      AND (
+        AssetDeclarations.Year>=2016
+        OR (
+          PersonOffices.term_end>=2018
+          AND Offices.name_male IN (
+            'kandidát na primátora Bratislavy',
+            'kandidát na prezidenta SR'
           )
         )
-      ORDER BY
-        CadastralUnitCode, FolioNo, ParcelNo, Parcels.ValidTo DESC
-    )
-    SELECT
-      CadastralUnitCode,
-      MIN(CadastralUnitName) AS CadastralUnitName,
-      FolioNo,
-      LandUseName,
-      string_agg(ParcelNo, ', ') AS ParcelNo,
-      AVG(MercatorX) AS MercatorX,
-      AVG(MercatorY) AS MercatorY
-    FROM
-      ParcelsOwned
-    GROUP BY
-      CadastralUnitCode, FolioNo, LandUseName
-    ;"""
-  q_data = [person_id]
-  rows = db.query(q, q_data)
+      )
+  """, [person_id])
+  if len(rows) == 0:
+    print("WARNING: Person id %d is not allowed." % (person_id))
+    return []
 
-  # Convert the coordinates to WGS84.
+  rows = db.query("""
+      SELECT
+        CadastralUnits.Code AS CadastralUnitCode,
+        MIN(CadastralUnits.Name) AS CadastralUnitName,
+        Folios.No AS FolioNo,
+        LandUses.Name AS LandUseName,
+        string_agg(Parcels.No, ', ') AS ParcelNo,
+        AVG(0.5 * (Parcels.minX + Parcels.maxX)) AS MercatorX,
+        AVG(0.5 * (Parcels.minY + Parcels.maxY)) AS MercatorY
+      FROM
+        Folios
+      INNER JOIN
+        CadastralUnits ON CadastralUnits.Id=Folios.CadastralUnitId
+      INNER JOIN
+        PersonFolios ON PersonFolios.FolioId=Folios.Id
+      LEFT JOIN
+        Parcels ON Parcels.FolioId=Folios.Id
+      LEFT JOIN
+        LandUses ON LandUses.Id=Parcels.LandUseId
+      WHERE
+        PersonFolios.PersonId=%s
+      GROUP BY
+        CadastralUnitCode, FolioNo, LandUses.Name
+  """, [person_id])
+
+  # Convert Mercator coordinates (if present) to WGS84.
   for row in rows:
-    row['lat'], row['lon'] = Mercator_to_WGS84(
-        row['mercatorx'], row['mercatory'])
+    if row['mercatorx'] and row['mercatory']:
+      row['lat'], row['lon'] = Mercator_to_WGS84(
+          row['mercatorx'], row['mercatory'])
+    else:
+      row['lat'], row['lon'] = None, None
     del row['mercatorx']
     del row['mercatory']
 
