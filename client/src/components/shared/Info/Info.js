@@ -31,6 +31,7 @@ type OwnProps = {
   className?: string,
   inModal?: boolean,
   onClose?: () => void,
+  active?: boolean,
 }
 
 type DispatchProps = {
@@ -48,10 +49,13 @@ type InfoProps = OwnProps & DispatchProps & HandlerProps
 
 const Info = ({data, onClose, showOnMap, index, active, className}: InfoProps) => (
   <Container
-    id={`js-${data.eid}`}
-    className={classnames(className, {closable: Boolean(onClose), active}, 'info')}
+    className={classnames(
+      className,
+      {closable: Boolean(onClose), active, index: Boolean(index)},
+      'info'
+    )}
   >
-    {index && <span className="search-box-index">{index + 1}</span>}
+    {index && <span className="search-box-index">{index}</span>}
     <div className="info-header">
       <Row>
         <Col xs="auto" className="mt-1 pr-0">

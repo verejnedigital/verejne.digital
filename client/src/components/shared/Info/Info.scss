@@ -10,7 +10,12 @@
   position: relative;
 
   &.active {
-    box-shadow: 0 8px 16px 0 red;
+    box-shadow: 0 4px 12px 0 rgba(117, 127, 134, .75);
+    border-color: $blue-color;
+  }
+
+  &.index {
+    top: 15px;
   }
 
   .info-header {

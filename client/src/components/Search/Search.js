@@ -17,6 +17,7 @@ import {
 import {updateValue} from '../../actions/sharedActions'
 import {entitySearchProvider, entityDetailProvider} from '../../dataProviders/sharedDataProviders'
 import Info from '../shared/Info/Info'
+import CircleIcon from '../shared/CircleIcon'
 import Subgraph from '../Connections/components/Subgraph'
 import MapContainer from '../Profile/components/MapContainer'
 import {
@@ -52,6 +53,26 @@ const _SearchInfo = (inputValue, history) => {
   }
 }
 
+class ScrollIntoView extends React.Component {
+  constructor(props) {
+    super(props)
+    this.scrollInto = React.createRef()
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.scrollTo) {
+      this.scrollInto.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+        inline: 'center',
+      })
+    }
+  }
+  render() {
+    return <div ref={this.scrollInto}>{this.props.children}</div>
+  }
+}
+
 const Search = ({
   history,
   searchOnEnter,
@@ -62,6 +83,8 @@ const Search = ({
   query,
   suggestionEids,
   entities,
+  activeEid,
+  handleActiveEid,
 }: Props) => (
   <Container className="" style={{maxWidth: '1200px'}}>
     <SearchAutocomplete />
@@ -70,22 +93,30 @@ const Search = ({
         {suggestionEids.map((eid, index) => {
           const entity = entities[eid]
           return (
-            <a
-              href={`#js-${eid}`}
+            <div
               key={eid}
+              onClick={() => {
+                handleActiveEid(eid)
+              }}
               className="search-box"
               title={`${entity.name}, ${entity.address}`}
             >
               <span className="search-box-index">{index + 1}</span>
-              <strong className="search-box-name">{entity.name}</strong>
+              <strong className="search-box-name">
+                <CircleIcon data={entity} /> {entity.name}
+              </strong>
               <span className="search-box-address">{entity.address}</span>
-            </a>
+            </div>
           )
         })}
         <Row id="map">
           <Col>
             {/* TODO fix flow */}
-            <MapContainer assets={suggestionEids.map((eid) => entities[eid])} {...mapProps} />
+            <MapContainer
+              assets={suggestionEids.map((eid) => entities[eid])}
+              markerAction={handleActiveEid}
+              {...mapProps}
+            />
           </Col>
         </Row>
         <Row key="fb" className="profile-fbframe mt-2">
@@ -104,7 +135,14 @@ const Search = ({
         <Row>
           {suggestionEids.map((eid, index) => (
             <Col md={6} lg={4} style={{marginBottom: '24px'}} key={index}>
-              <Info key={`${eid}`} data={entities[eid]} index={index + 1} />
+              <ScrollIntoView scrollTo={activeEid === eid}>
+                <Info
+                  key={`${eid}`}
+                  data={entities[eid]}
+                  index={index + 1}
+                  active={activeEid === eid}
+                />
+              </ScrollIntoView>
             </Col>
           ))}
         </Row>
@@ -118,6 +156,7 @@ const enhance: HOC<*, Props> = compose(
   withRouter,
   withState('inputValue', 'setInputValue', ''),
   withState('searchEids', 'setSearchEids', []),
+  withState('activeEid', 'setActiveEid', ''),
   connect(
     (state: State, props: Props) => ({
       query: locationSearchSelector(state, props).meno || '',
@@ -149,6 +188,9 @@ const enhance: HOC<*, Props> = compose(
       if (e.key === 'Enter') {
         _SearchInfo(props.inputValue, props.history)
       }
+    },
+    handleActiveEid: (props: Props) => (value) => {
+      props.setActiveEid(value)
     },
     handleSelect: (props: Props) => (value) => {
       props.setInputValue(value)
