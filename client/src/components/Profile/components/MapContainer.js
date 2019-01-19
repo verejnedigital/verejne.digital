@@ -38,7 +38,7 @@ class MapContainer extends Component<MapContainerProps> {
           zoom={this.props.zoom}
         >
           {this.props.assets.map((asset, key) => {
-            return (
+            return asset.lat ? (
               <Marker
                 key={key}
                 label={key + 1}
@@ -49,7 +49,7 @@ class MapContainer extends Component<MapContainerProps> {
                 lat={asset.lat}
                 lng={asset.lon || asset.lng}
               />
-            )
+            ) : null
           })}
         </GoogleMapReact>
       </div>
