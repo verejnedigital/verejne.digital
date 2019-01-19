@@ -5,7 +5,7 @@ import {connect} from 'react-redux'
 import {withRouter} from 'react-router-dom'
 import type {RouterHistory} from 'react-router'
 import {withHandlers, withState} from 'recompose'
-import SearchIcon from 'react-icons/lib/fa/search'
+import {FaSearch} from 'react-icons/fa'
 import {Button, InputGroup, InputGroupAddon} from 'reactstrap'
 import {updateValue} from '../../actions/sharedActions'
 import {entityDetailsSelector, locationSearchSelector} from '../../selectors/'
@@ -54,7 +54,7 @@ const SearchAutocomplete = ({
     />
     <InputGroupAddon addonType="append">
       <Button onClick={() => searchInfo(inputValue)} color="primary" className="search-page-btn">
-        <SearchIcon />
+        <FaSearch />
       </Button>
     </InputGroupAddon>
   </InputGroup>

@@ -4,8 +4,7 @@ import {compose, withHandlers} from 'recompose'
 import {FormGroup} from 'reactstrap'
 import {connect} from 'react-redux'
 import {geocodeByAddress, getLatLng} from 'react-places-autocomplete'
-import ArrowRightIcon from 'react-icons/lib/fa/angle-double-right'
-import ArrowLeftIcon from 'react-icons/lib/fa/angle-double-left'
+import {FaAngleDoubleRight, FaAngleDoubleLeft} from 'react-icons/fa'
 import Drawer from 'rc-drawer'
 import 'rc-drawer/assets/index.css'
 import './Sidebar.css'
@@ -58,9 +57,9 @@ type SidebarProps = {|
 
 const _DrawerIcon = ({drawerOpen, toggleDrawer}: DrawerIconProps) =>
   drawerOpen ? (
-    <ArrowLeftIcon onClick={toggleDrawer} className="drawer-handle p-1" />
+    <FaAngleDoubleLeft onClick={toggleDrawer} className="drawer-handle p-1" />
   ) : (
-    <ArrowRightIcon onClick={toggleDrawer} className="drawer-handle p-1" />
+    <FaAngleDoubleRight onClick={toggleDrawer} className="drawer-handle p-1" />
   )
 
 const DrawerIcon = connect(
@@ -93,8 +92,9 @@ const _Content = ({
       />
     </FormGroup>
     {entitySearchOpen && <EntitySearch />}
-    {openedAddressIds != null &&
-      openedAddressIds.length !== 0 && <AddressDetail addressIds={openedAddressIds} />}
+    {openedAddressIds != null && openedAddressIds.length !== 0 && (
+      <AddressDetail addressIds={openedAddressIds} />
+    )}
   </React.Fragment>
 )
 

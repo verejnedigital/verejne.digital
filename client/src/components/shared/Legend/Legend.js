@@ -1,8 +1,7 @@
 // @flow
 import React from 'react'
 import classnames from 'classnames'
-import CircleIcon from 'react-icons/lib/fa/circle-o'
-import FilledCircleIcon from 'react-icons/lib/fa/circle'
+import {FaDotCircle, FaCircle} from 'react-icons/fa'
 import {compose, withState, withHandlers} from 'recompose'
 import {Row, Col} from 'reactstrap'
 import SubgraphInstructions from '../../Connections/components/SubgraphInstructions'
@@ -46,23 +45,23 @@ const Legend = ({legendOpen, toggleLegend, positionAbsolute, closable, graphCont
         <Col sm="12" lg={graphControls ? 5 : 12}>
           <p>Legenda</p>
           <p>
-            <CircleIcon className="svg" />
+            <FaDotCircle className="svg" />
             Firma / Osoba
           </p>
           <p>
-            <FilledCircleIcon className="svg" />
+            <FaCircle className="svg" />
             Obchod so štátom
           </p>
           <p>
-            <CircleIcon className="svg orange" />
+            <FaDotCircle className="svg orange" />
             Kontakt s politikou
           </p>
           <p>
-            <FilledCircleIcon className="svg purple" />
+            <FaCircle className="svg purple" />
             Politik
           </p>
           <p>
-            <FilledCircleIcon className="svg orange" />
+            <FaCircle className="svg orange" />
             Kontakt s politikou a obchod so štátom
           </p>
           <p>

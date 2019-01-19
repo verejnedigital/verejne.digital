@@ -6,7 +6,7 @@ import {refreshState} from '../actions/sharedActions'
 import {NavLink} from 'react-router-dom'
 import {Collapse, Navbar, NavbarToggler, NavItem, Nav} from 'reactstrap'
 
-import FbIcon from 'react-icons/lib/fa/facebook-square'
+import {FaFacebookSquare} from 'react-icons/fa'
 
 import './Navigation.css'
 
@@ -76,7 +76,7 @@ const Navigation = ({navigationOpen, toggleNavigation, closeNavigation, handleNa
             className="nav-link"
             onClick={closeNavigation}
           >
-            Kontakt <FbIcon />
+            Kontakt <FaFacebookSquare />
           </a>
         </NavItem>
       </Nav>
