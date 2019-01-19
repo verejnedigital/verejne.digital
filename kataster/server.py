@@ -69,9 +69,9 @@ class KatasterInfoPolitician(MyServer):
 
     # Find Parcels owned by this politician in the database
     db_profil = webapp2.get_app().registry['db']
-    Parcels = db_search.get_Parcels_owned_by_Person(
+    folios_uses = db_search.get_folios_uses_of_person(
         db_profil, politician_id)
-    self.returnJSON(Parcels)
+    self.returnJSON(folios_uses)
 
 
 class InfoPolitician(MyServer):
@@ -190,8 +190,8 @@ app = webapp2.WSGIApplication([
 def initialise_app():
   """Precomputes values to be shared across requests."""
 
-  # Maintain two database connections: one into profil source schema,
-  # and another into the latest production schema. Note these two must
+  # Maintain database connection into two schemas: the profil source
+  # schema, and the latest production schema. Note these two must
   # be kept consistent for `profilmapping` to make sense; to this end,
   # the source_internal_profil_* schema is made visible to user
   # `kataster` together with prod data generation.
@@ -200,7 +200,7 @@ def initialise_app():
   schema = db.get_latest_schema('prod_')
   schema_profil = db.get_latest_schema('source_internal_profil_')
   db.execute(
-    'SET search_path="' + schema + '", "' + schema_profil + '", public;')
+      'SET search_path="' + schema + '", "' + schema_profil + '", public;')
   app.registry['db'] = db
 
 

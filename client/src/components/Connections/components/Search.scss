@@ -53,8 +53,8 @@
 
 .search-box {
   display: inline-block;
-  padding: 8px 16px;
-  width: 18%;
+  padding: 8px;
+  width: 23%;
   background-color: #fff;
   margin: 0 1% 24px;
   border-radius: 2px;
@@ -62,6 +62,12 @@
   color: #333;
   position: relative;
   border: 2px solid $border-color;
+  cursor: pointer;
+
+  @media screen and (max-width: 767px) {
+    width: 100%;
+    margin: 0 0 24px;
+  }
 
   &:hover::before {
     opacity: 1;
@@ -101,6 +107,7 @@
   max-width: 100%;
   overflow: hidden;
   display: block;
+  line-height: 18px;
   word-break: unset;
   white-space: nowrap;
   text-overflow: ellipsis;

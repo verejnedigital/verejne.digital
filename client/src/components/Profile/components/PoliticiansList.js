@@ -24,14 +24,14 @@ const PoliticiansList = ({politicians, isItCandidatesList}: PoliticianListProps)
         <th />
         <th />
         <th className="text-left column-title">Meno a priezvisko</th>
-        {!isItCandidatesList && <th className="text-left column-title">Obdobie</th>}
         {!isItCandidatesList && <th className="party-column column-title">Strana</th>}
+        <th className="number-column column-title">Ročný príjem</th>
         <th className="number-column column-title" title="Domy, byty a iné stavby">
           Stavby
         </th>
         <th className="number-column column-title">Orná pôda &amp; záhrady</th>
         <th className="number-column column-title">Ostatné</th>
-        <th className="number-column column-title ">Príjmy</th>
+        
       </tr>
     </thead>
     <tbody>

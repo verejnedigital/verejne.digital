@@ -187,4 +187,4 @@ export const NAVBAR_HEIGHT = 45
 
 export const ADD_NEIGHBOURS_LIMIT = 20
 
-export const DEFAULT_POLITICIAN_GROUP = 'all'
+export const DEFAULT_POLITICIAN_GROUP = 'active'

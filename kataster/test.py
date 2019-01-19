@@ -37,12 +37,16 @@ class TestHandlers(unittest.TestCase):
     content = _request_json('/kataster_info_person', self)
 
   def test_kataster_info_politician(self):
-    politician_id = 295
+    politician_id = 653
     content = _request_json(
       '/kataster_info_politician?id=%d' % (politician_id), self)
     self.assertIsInstance(content, list)
-    print('KatasterInfoPolitician returned %d results.' % (
+    print('KatasterInfoPolitician returned %d results:' % (
         len(content)))
+    for entry in content:
+      print('%s in %s, LV %d, parcel(s) %s' % (
+          entry['landusename'], entry['cadastralunitname'],
+          entry['foliono'], entry['parcelno']))
 
   def test_list_politicians(self):
     groups = [
@@ -57,9 +61,10 @@ class TestHandlers(unittest.TestCase):
       self.assertTrue(content)
       print('ListPoliticians(%s) returned %d results.' % (
           group, len(content)))
-      # for row in content:
-      #   print(row["id"], row["surname"], row["firstname"],
-      #         row["office_name_male"], row["term_finish"])
+      if group == 'candidates_2019_president':
+        for row in content:
+          print(row["id"], row["surname"], row["firstname"],
+              row["office_name_male"], row["term_finish"])
 
   def test_info_politician(self):
     politician_id = 971

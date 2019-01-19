@@ -12,16 +12,11 @@ import type {CadastralData, GeolocationPoint} from '../../../state'
 
 import './MapContainer.css'
 
-const Marker = ({title, label, href}) =>
-  href ? (
-    <a href={href} title={title} className="marker">
-      {label}
-    </a>
-  ) : (
-    <div title={title} className="marker">
-      {label}
-    </div>
-  )
+const Marker = ({title, label, onClick}) => (
+  <div onClick={onClick} title={title} className="marker">
+    {label}
+  </div>
+)
 
 type MapContainerProps = {
   assets: Array<CadastralData>,
@@ -45,11 +40,12 @@ class MapContainer extends Component<MapContainerProps> {
           {this.props.assets.map((asset, key) => {
             return (
               <Marker
-                // TODO: This should be template prop instead.
-                href={asset.eid && `#js-${asset.eid}`}
                 key={key}
                 label={key + 1}
                 title={asset.name && asset.address && `${asset.name}, ${asset.address}`}
+                onClick={
+                  this.props.markerAction ? () => this.props.markerAction(asset.eid) : undefined
+                }
                 lat={asset.lat}
                 lng={asset.lon || asset.lng}
               />

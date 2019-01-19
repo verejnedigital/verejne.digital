@@ -27,7 +27,7 @@ const Landing = () => (
       <div className="landing-cards">
         <Card
           to="/verejne"
-          title="Verejné dáta"
+          title="Mapa"
           text="Obchodujú moji susedia alebo obchodní partneri so štátom?"
           imgSrc={publicDataIcon}
         />
@@ -58,9 +58,9 @@ const Landing = () => (
       </div>
     </Container>
     <footer className="landing-footer">
-      <div className="container">
-        <div className="float-md-left">
-          <ul className="list-inline landing-footer-text">
+      <Container>
+        <div style={{float: 'left'}}>
+          <ul className="list-inline" style={{marginBottom: 0}}>
             <li className="list-inline-item list-inline-item-text">
               <a
                 href="https://medium.com/@verejne.digital/o-%C4%8Do-ide-verejne-digital-14a1c6dcbe09"
@@ -80,56 +80,42 @@ const Landing = () => (
               </a>
             </li>
           </ul>
+          <span className="gray">Prevádzkovateľ</span>
+          <a href="http://chcemvediet.sk" target="_blank" rel="noopener noreferrer">
+            <img src="/chv.png" alt="chcemvediet.sk" />
+          </a>
         </div>
-        <div className="float-lg-right">
+        <div style={{float: 'right'}}>
+          <span className="gray">Partneri</span>
           <ul className="list-inline">
-            <li className="list-inline-item partners">
-              <span className="gray">Partneri</span>
-              <ul className="list-inline">
-                <li className="list-inline-item">
-                  <a href="https://slovensko.digital/" target="_blank" rel="noopener noreferrer">
-                    <img src="/slovenko.png" alt="slovenko.digital" />
-                  </a>
-                </li>
-                <li className="list-inline-item">
-                  <a
-                    href="https://www.zastavmekorupciu.sk/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <img src="/nzk.png" alt="Nadácia Zastavme Korupciu" />
-                  </a>
-                </li>
-                <li className="list-inline-item">
-                  <a href="https://www.finstat.sk/" target="_blank" rel="noopener noreferrer">
-                    <img src="/finstat.png" alt="FinStat" />
-                  </a>
-                </li>
-                <li className="list-inline-item">
-                  <a href="https://vacuumlabs.com/" target="_blank" rel="noopener noreferrer">
-                    <img src="/vl.png" alt="VacuumLabs" />
-                  </a>
-                </li>
-                <li className="list-inline-item">
-                  <a href="https://www.uvostat.sk" target="_blank" rel="noopener noreferrer">
-                    <img src="/uvo.png" alt="UVOstat" />
-                  </a>
-                </li>
-              </ul>
+            <li className="list-inline-item">
+              <a href="https://slovensko.digital/" target="_blank" rel="noopener noreferrer">
+                <img src="/slovenko.png" alt="slovenko.digital" />
+              </a>
             </li>
             <li className="list-inline-item">
-              <span className="gray">Prevádzkovateľ</span>
-              <ul className="list-inline">
-                <li className="list-inline-item">
-                  <a href="http://chcemvediet.sk" target="_blank" rel="noopener noreferrer">
-                    <img src="/chv.png" alt="chcemvediet.sk" />
-                  </a>
-                </li>
-              </ul>
+              <a href="https://www.zastavmekorupciu.sk/" target="_blank" rel="noopener noreferrer">
+                <img src="/nzk.png" alt="Nadácia Zastavme Korupciu" />
+              </a>
+            </li>
+            <li className="list-inline-item">
+              <a href="https://www.finstat.sk/" target="_blank" rel="noopener noreferrer">
+                <img src="/finstat.png" alt="FinStat" />
+              </a>
+            </li>
+            <li className="list-inline-item">
+              <a href="https://vacuumlabs.com/" target="_blank" rel="noopener noreferrer">
+                <img src="/vl.png" alt="VacuumLabs" />
+              </a>
+            </li>
+            <li className="list-inline-item">
+              <a href="https://www.uvostat.sk" target="_blank" rel="noopener noreferrer">
+                <img src="/uvo.png" alt="UVOstat" />
+              </a>
             </li>
           </ul>
         </div>
-      </div>
+      </Container>
     </footer>
   </div>
 )
