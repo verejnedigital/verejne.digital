@@ -6,27 +6,19 @@ import {withRouter} from 'react-router-dom'
 import type {RouterHistory} from 'react-router'
 import {withHandlers, withState, withProps, branch, renderNothing} from 'recompose'
 import {withDataProviders} from 'data-provider'
-import {chunk, get} from 'lodash'
-import {Row, Col, Container} from 'reactstrap'
+import {get} from 'lodash'
+import {Row, Col} from 'reactstrap'
 import {
   autocompleteSuggestionEidsSelector,
-  autocompleteSuggestionsSelector,
   locationSearchSelector,
   entityDetailsSelector,
 } from '../../selectors/'
-import {updateValue} from '../../actions/sharedActions'
 import {entitySearchProvider, entityDetailProvider} from '../../dataProviders/sharedDataProviders'
 import Info from '../shared/Info/Info'
 import CircleIcon from '../shared/CircleIcon'
 import Subgraph from '../Connections/components/Subgraph'
 import MapContainer from '../Profile/components/MapContainer'
-import {
-  FACEBOOK_LIKE_SRC,
-  DEFAULT_MAP_CENTER,
-  COUNTRY_ZOOM,
-  MAX_ENTITY_REQUEST_COUNT,
-} from '../../constants'
-import SearchAutocomplete from './SearchAutocomplete'
+import {FACEBOOK_LIKE_SRC, DEFAULT_MAP_CENTER, COUNTRY_ZOOM} from '../../constants'
 
 import type {State, GeolocationPoint, CompanyEntity} from '../../state'
 import type {ContextRouter} from 'react-router-dom'
@@ -62,7 +54,7 @@ class ScrollIntoView extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props.scrollTo) {
+    if (this.props.scrollTo !== prevProps.scrollTo) {
       this.scrollInto.current.scrollIntoView({
         behavior: 'smooth',
         block: 'start',
