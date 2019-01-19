@@ -117,6 +117,7 @@ export type FinancialData = {
   ico: string,
   established_on?: string,
   terminated_on?: string,
+  legal_form_id: number,
   finances: Array<EnhancedCompanyFinancial>,
 }
 
