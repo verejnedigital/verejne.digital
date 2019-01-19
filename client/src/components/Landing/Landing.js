@@ -27,7 +27,7 @@ const Landing = () => (
       <div className="landing-cards">
         <Card
           to="/verejne"
-          title="Verejné dáta"
+          title="Mapa"
           text="Obchodujú moji susedia alebo obchodní partneri so štátom?"
           imgSrc={publicDataIcon}
         />

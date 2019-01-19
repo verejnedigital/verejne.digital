@@ -27,7 +27,7 @@ const Navigation = ({navigationOpen, toggleNavigation, closeNavigation, handleNa
       <Nav navbar className="mr-auto">
         <NavItem>
           <NavLink to="/verejne" className="nav-link" onClick={handleNavClick}>
-            Verejné dáta
+            Mapa
           </NavLink>
         </NavItem>
         <NavItem>
