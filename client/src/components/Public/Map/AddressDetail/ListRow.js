@@ -3,7 +3,7 @@ import React from 'react'
 import {connect} from 'react-redux'
 import {compose} from 'redux'
 import {withHandlers} from 'recompose'
-import SearchIcon from 'react-icons/lib/fa/search'
+import {FaSearch} from 'react-icons/fa'
 import {ListGroupItem, Row, Col} from 'reactstrap'
 import {
   toggleEntityInfo,
@@ -30,7 +30,10 @@ const _DetailedInfo = ({toggleEntityInfo, data}: DetailedInfoProps) => (
 )
 
 const DetailedInfo = compose(
-  connect(null, {toggleEntityInfo}),
+  connect(
+    null,
+    {toggleEntityInfo}
+  ),
   withHandlers({
     toggleEntityInfo: ({toggleEntityInfo, eid}) => () => {
       toggleEntityInfo(eid)
@@ -50,7 +53,7 @@ const ListRow = ({entityDetail, toggleEntityInfo, showInfo, openModalSearch}: Li
     <DetailedInfo eid={entityDetail.eid} data={entityDetail} />
   ) : (
     <ListGroupItem action className="list-row">
-      <Row >
+      <Row>
         <Col xs="auto" className="px-1">
           <CircleIcon data={entityDetail} className="list-row-icon" size="10" />
         </Col>
@@ -58,7 +61,7 @@ const ListRow = ({entityDetail, toggleEntityInfo, showInfo, openModalSearch}: Li
           <span>{entityDetail.name}</span>
         </Col>
         <Col xs="auto" className="px-1">
-          <SearchIcon size="16" className="search-icon float-right" onClick={openModalSearch} />
+          <FaSearch size="16" className="search-icon float-right" onClick={openModalSearch} />
         </Col>
       </Row>
     </ListGroupItem>
@@ -75,12 +78,7 @@ export default compose(
     toggleEntityInfo: ({toggleEntityInfo, entityDetail}) => () => {
       toggleEntityInfo(entityDetail.eid)
     },
-    openModalSearch: ({
-      entityDetail,
-      toggleModalOpen,
-      setEntitySearchFor,
-      updateValue,
-    }) => () => {
+    openModalSearch: ({entityDetail, toggleModalOpen, setEntitySearchFor, updateValue}) => () => {
       setEntitySearchFor(entityDetail.name)
       updateValue(
         ['publicly', 'entitySearchValue'],

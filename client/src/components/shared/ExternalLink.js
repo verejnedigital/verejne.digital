@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react'
-import External from 'react-icons/lib/fa/external-link'
+import {FaExternalLinkAlt} from 'react-icons/fa'
 
 type Props = {
   url: string,
@@ -9,7 +9,7 @@ type Props = {
 
 const ExternalLink = ({url, children}: Props) => (
   <a href={url} target="_blank" rel="noopener noreferrer">
-    {children} <External />
+    {children} <FaExternalLinkAlt />
   </a>
 )
 

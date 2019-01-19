@@ -16,9 +16,8 @@ import {
   ListGroupItem,
   Table,
 } from 'reactstrap'
-import CapIcon from 'react-icons/lib/fa/graduation-cap'
-import NewIcon from 'react-icons/lib/fa/copy'
-import GraphIcon from 'react-icons/lib/go/graph'
+import {FaGraduationCap, FaCopy} from 'react-icons/fa'
+import {GoGraph} from 'react-icons/go'
 
 import type {State, GeolocationPoint, CompanyEntity} from '../../state'
 import type {ContextRouter} from 'react-router-dom'
@@ -58,22 +57,22 @@ const Playground = ({history, typingDone, setTypingDone}) => (
         <div className={`button-row ${typingDone ? '' : 'hide'}`}>
           <HashLink to="/ihrisko#list">
             <Button outline color="primary">
-              <GraphIcon /> Zoznam reportov
+              <GoGraph /> Zoznam reportov
             </Button>
           </HashLink>
           <HashLink to="/ihrisko#">
             <Button outline color="primary">
-              <CapIcon /> Tutoriál
+              <FaGraduationCap /> Tutoriál
             </Button>
           </HashLink>
           <HashLink to="/ihrisko#">
             <Button outline color="primary">
-              <NewIcon /> Vytvoriť nový Report
+              <FaCopy /> Vytvoriť nový Report
             </Button>
           </HashLink>
           <HashLink to="/ihrisko#reference">
             <Button outline color="primary">
-              <NewIcon /> API Reference
+              <FaCopy /> API Reference
             </Button>
           </HashLink>
         </div>
