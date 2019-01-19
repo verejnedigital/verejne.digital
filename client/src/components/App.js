@@ -20,9 +20,10 @@ import './App.css'
 const App = () => (
   <div className="application-container">
     <Route path="/:something" component={Navigation} />
-    <div className="screen-container">
-      <Switch>
-        <Route exact path="/" component={withTracker(Landing)} />
+
+    <Switch>
+      <Route exact path="/" component={withTracker(Landing)} />
+      <div className="screen-container">
         <Route path="/verejne" exact component={Public} />
         {/* has tracking inside Map because of componentDidUpdate infinite loop */}
         <Route path="/prepojenia" exact component={withTracker(Connections)} />
@@ -32,8 +33,8 @@ const App = () => (
         <Route path="/profil/:id" component={withTracker(DetailPage)} />
         <Route path="/vyhladavanie" exact component={withTracker(Search)} />
         <Route path="/ihrisko" exact component={withTracker(Playground)} />
-      </Switch>
-    </div>
+      </div>
+    </Switch>
   </div>
 )
 
