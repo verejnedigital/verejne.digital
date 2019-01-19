@@ -264,6 +264,9 @@ def get_asset_declarations(db, PersonId):
   q = """
       SELECT
         unmovable_assets,
+        num_houses,
+        num_fields,
+        num_others,
         movable_assets,
         AssetDeclarations.income as income,
         compensations,
