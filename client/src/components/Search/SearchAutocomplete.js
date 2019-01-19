@@ -40,12 +40,14 @@ const SearchAutocomplete = ({
   handleSelect,
   inputValue,
   onChange,
+  query,
   suggestionEids,
   entities,
 }) => (
   <InputGroup className="search-autocomplete">
     <AutoComplete
       value={inputValue}
+      placeholder={query}
       onChangeHandler={onChange}
       onSelectHandler={handleSelect}
       inputProps={{
@@ -65,12 +67,14 @@ const SearchAutocomplete = ({
 
 const enhance: HOC<*, Props> = compose(
   withRouter,
-  withState(
-    'inputValue',
-    'setInputValue',
-    (props) => locationSearchSelector(undefined, props).meno || ''
-  ),
+  withState('inputValue', 'setInputValue', ''),
   withState('searchEids', 'setSearchEids', []),
+  connect(
+    (state: State, props: Props) => ({
+      query: locationSearchSelector(state, props).meno || '',
+    }),
+    {updateValue}
+  ),
   connect((state, {suggestionEids}) => ({
     entities: entityDetailsSelector(state, suggestionEids),
   })),
