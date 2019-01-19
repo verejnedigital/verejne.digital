@@ -257,7 +257,11 @@ def get_politicians_with_Folio_counts(db, query_filter):
       WHERE
         """ + query_filter + """
       ORDER BY
-        Persons.Id, PersonOffices.term_end DESC, AssetDeclarations.year DESC
+        Persons.Id,
+        -- Mild hack to prefer country-level offices over others.
+        Offices.level ASC,
+        PersonOffices.term_end DESC,
+        AssetDeclarations.year DESC
       ;"""
   rows = db.query(q)
   return rows
