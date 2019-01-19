@@ -23,14 +23,22 @@ const normalizeObjBeforeMap = (data: Array<Object> | Object): Array<Object> =>
   Array.isArray(data) ? data : [data]
 
 // obj handled as a single element of an array
-export const mappingFn = (data: Array<Object> | Object, mapByProp?: number | string = 'id') =>
+export const mappingFn = (
+  data: Array<Object> | Object,
+  mapBy?: number | string | Function = 'id'
+) =>
   normalizeObjBeforeMap(data).reduce((obj, current: {[string | number]: string | number}) => {
-    obj[current[mapByProp]] = current
+    const key = typeof mapBy === 'function' ? mapBy(current) : current[mapBy]
+    obj[key] = current
     return obj
   }, {})
 
-export const mapArrayToId = (data: Array<Object>, id: number | string, mapByProp?: string) => ({
-  [id]: mappingFn(data, mapByProp),
+export const mapArrayToId = (
+  data: Array<Object>,
+  id: number | string,
+  mapBy?: number | string | Function
+) => ({
+  [id]: mappingFn(data, mapBy),
 })
 
 export const mapObjToId = (data: Object, id: number | string) => ({

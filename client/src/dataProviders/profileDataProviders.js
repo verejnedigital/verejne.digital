@@ -3,6 +3,8 @@ import {dispatchReceivedData} from './dataProvidersUtils'
 import {DEFAULT_PROVIDER_KEEP_ALIVE} from '../constants'
 import {loadImageAsync, mapArrayToId, mapObjToId} from '../utils'
 
+import type {CadastralData} from '../state'
+
 export const politiciansProvider = (group: string) => ({
   ref: `politicians-${group}`,
   getData: [
@@ -20,12 +22,19 @@ export const cadastralInfoProvider = (id: string, needed: boolean = true) => ({
   ref: `politician-cadastral-info-${id}`,
   getData: [
     fetch,
-    `${process.env.REACT_APP_API_URL || ''}/api/k/kataster_info_politician?id=${id}`,
+    `${process.env.REACT_APP_API_URL || ''}/api/k/kataster_info_politician?id=${id}&cachebreak1`,
     {
       accept: 'application/json',
     },
   ],
-  onData: [dispatchReceivedData, ['profile', 'cadastral'], mapArrayToId, id, 'parcelno'],
+  onData: [
+    dispatchReceivedData,
+    ['profile', 'cadastral'],
+    mapArrayToId,
+    id,
+    (cd: CadastralData) =>
+      `${cd.cadastralunitcode}-${cd.foliono}-${cd.landusename || 'nedefinovane'}`,
+  ],
   keepAliveFor: DEFAULT_PROVIDER_KEEP_ALIVE,
   needed,
 })

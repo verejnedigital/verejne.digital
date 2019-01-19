@@ -103,7 +103,8 @@ export const cadastralSearchSelector: Selector<State, ContextRouter, string> = c
 )
 
 const cadastralInfoComparator = (a: CadastralData, b: CadastralData) => {
-  if (!a.landusename) return 0
+  if (!a.landusename) return -1
+  if (!b.landusename) return 1
   if (a.landusename === 'Orná pôda') return -1
   if (b.landusename === 'Orná pôda') return 1
   return a.landusename.localeCompare(b.landusename)

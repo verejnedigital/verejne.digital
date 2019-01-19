@@ -19,7 +19,10 @@ class DetailCadastralLV extends Component<DetailCadastralLVProps> {
 
   render() {
     return (
-      <tr onClick={this.props.onParcelShow} className="parcel">
+      <tr
+        onClick={this.props.lv.lon && this.props.lv.lat ? this.props.onParcelShow : null}
+        className="parcel"
+      >
         <td className="key">{this.props.num < 10 ? `0${this.props.num}` : this.props.num}</td>
         <td>
           <ExternalLink
@@ -28,11 +31,11 @@ class DetailCadastralLV extends Component<DetailCadastralLVProps> {
             }&cadastralUnitCode=${this.props.lv.cadastralunitcode}&outputType=html`}
             onClick={this.disablePropagation}
           >
-            {this.props.lv.landusename}
+            {this.props.lv.landusename || 'List Vlastníctva'}
           </ExternalLink>
           <br />
-          {`${this.props.lv.cadastralunitname}, LV č. ${this.props.lv.foliono}; parcely: ${
-            this.props.lv.parcelno
+          {`${this.props.lv.cadastralunitname}, LV č. ${this.props.lv.foliono}${
+            this.props.lv.parcelno ? `; parcely: ${this.props.lv.parcelno}` : ''
           }`}
         </td>
       </tr>
