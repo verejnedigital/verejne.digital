@@ -149,8 +149,8 @@ export const politicianListSelector = (state: State, props: ContextRouter): Obje
 
 export const orderedPoliticiansSelector: Selector<State, *, Array<Politician>> = createSelector(
   politicianListSelector,
-  politicians =>
-    sortBy(Object.values(politicians),['latest_income', 'num_houses_flats', 'num_fields_gardens', 'num_others'])
+  politicians => 
+    sortBy(Object.values(politicians).map(p => ({...p, latest_income: p.latest_income || -1})),['latest_income', 'num_houses_flats', 'num_fields_gardens', 'num_others'])
       .reverse()
       .map((p, i) => ({order: i + 1, ...p}))
 )

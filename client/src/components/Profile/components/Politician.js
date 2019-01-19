@@ -3,7 +3,6 @@ import React from 'react'
 import {withHandlers} from 'recompose'
 import {NavLink, type ContextRouter} from 'react-router-dom'
 
-import {getTerm} from '../utilities'
 import {withRouter} from 'react-router'
 import {connect} from 'react-redux'
 import {compose} from 'redux'
@@ -34,17 +33,11 @@ const Politician = ({politician, useDefaultPicture, isItCandidatesList}: Politic
         {politician.firstname} {politician.surname}
       </NavLink>
     </td>
-    {!isItCandidatesList && (
-      <td className="text-left party-column">
-        {!politician.term_start && '\t'}
-        {getTerm(politician)}
-      </td>
-    )}
     {!isItCandidatesList && <td className="party-column">{politician.party_abbreviation}</td>}
+    <td className="number-column">{politician.latest_income && politician.latest_income !== -1 ? `${politician.latest_income.toLocaleString('sk')}  €`: "-"}</td>
     <td className="number-column">{politician.num_houses_flats}</td>
     <td className="number-column">{politician.num_fields_gardens}</td>
     <td className="number-column">{politician.num_others}</td>
-    <td className="number-column">{politician.latest_income ? `${politician.latest_income.toLocaleString('sk')}  €`: "-"}</td>
   </tr>
 )
 
