@@ -15,7 +15,7 @@ import math
 
 from intelligence import embed
 from db.db import DatabaseConnection
-from prod_generation import post_process_neighbours, post_process_income
+from prod_generation import post_process_neighbours, post_process_income, post_process_income_graph
 
 
 class Notice:
@@ -219,9 +219,14 @@ def _post_process_neighbours(db, test_mode):
     post_process_neighbours.add_family_and_neighbour_edges(
         db, test_mode)
 
+
 def _post_process_incomes(db):
     """Adds incomes to assets."""
     post_process_income.add_incomes(db)
+
+
+def _post_process_income_graphs(db):
+    post_process_income_graph.add_income_graphs(db)
 
 
 def _post_process_flags(db, test_mode):
@@ -262,6 +267,7 @@ def do_post_processing(db, test_mode=False):
     _post_process_flags(db, test_mode)
     _post_process_notices(db, test_mode)
     _post_process_incomes(db)
+    _post_process_income_graphs(db)
 
 
 def main(args_dict):
