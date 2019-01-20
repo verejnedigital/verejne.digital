@@ -364,6 +364,19 @@ export type Politician = {|
   latest_income: number,
 |}
 
+export type PoliticiansSortKey =
+  | 'surname'
+  | 'party_abbreviation'
+  | 'latest_income'
+  | 'num_fields_gardens'
+  | 'num_houses_flats'
+  | 'num_others'
+
+export type PoliticiansSortState = {
+  +sortKey: PoliticiansSortKey,
+  reverse: boolean,
+}
+
 export const refreshedUIState = {
   notices: {searchQuery: ''},
   profile: {query: ''},
@@ -406,6 +419,7 @@ export type State = {|
     +cadastral: ObjectMap<CadastralData>,
     +assetDeclarations: ObjectMap<ObjectMap<AssetDeclaration>>,
     +query: string,
+    +sorting: ObjectMap<PoliticiansSortState>,
   |},
   +publicly: {|
     +autocompleteValue: string,
@@ -441,6 +455,7 @@ const getInitialState = (): State => ({
     cadastral: {},
     assetDeclarations: {},
     query: '',
+    sorting: {},
   },
   publicly: {
     autocompleteValue: '',

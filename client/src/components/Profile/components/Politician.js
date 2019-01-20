@@ -13,11 +13,17 @@ type PoliticianProps = {
   politician: PoliticianType,
   useDefaultPicture: Function,
   isItCandidatesList: boolean,
+  index: number,
 }
 
-const Politician = ({politician, useDefaultPicture, isItCandidatesList}: PoliticianProps) => (
+const Politician = ({
+  politician,
+  useDefaultPicture,
+  isItCandidatesList,
+  index,
+}: PoliticianProps) => (
   <tr className="table-line">
-    <td className="number-column">{politician.order}.</td>
+    <td className="number-column">{index + 1}.</td>
     <td className="photo-column">
       <img
         alt="foto"
@@ -34,7 +40,11 @@ const Politician = ({politician, useDefaultPicture, isItCandidatesList}: Politic
       </NavLink>
     </td>
     {!isItCandidatesList && <td className="party-column">{politician.party_abbreviation}</td>}
-    <td className="number-column">{politician.latest_income && politician.latest_income !== -1 ? `${politician.latest_income.toLocaleString('sk')}  €`: "-"}</td>
+    <td className="number-column">
+      {politician.latest_income && politician.latest_income !== -1
+        ? `${politician.latest_income.toLocaleString('sk')}  €`
+        : '-'}
+    </td>
     <td className="number-column">{politician.num_houses_flats}</td>
     <td className="number-column">{politician.num_fields_gardens}</td>
     <td className="number-column">{politician.num_others}</td>
