@@ -22,7 +22,8 @@ def get_politician_by_PersonId(db, PersonId):
         PersonOffices.term_start AS term_start,
         PersonOffices.term_end AS term_finish,
         Offices.name_male AS office_name_male,
-        Offices.name_female AS office_name_female
+        Offices.name_female AS office_name_female,
+        income_graphs_jsons.json_plot AS json_plots
       FROM
         Persons
       INNER JOIN
@@ -31,6 +32,8 @@ def get_politician_by_PersonId(db, PersonId):
         Offices ON Offices.id=PersonOffices.officeid
       LEFT JOIN
         Parties ON Parties.id=PersonOffices.party_nomid
+      LEFT JOIN
+        income_graphs_jsons ON income_graphs_jsons.person_id=Persons.id
       WHERE
         Persons.Id=%s
       ORDER BY
