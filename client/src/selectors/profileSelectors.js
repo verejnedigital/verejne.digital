@@ -7,7 +7,15 @@ import {getGroupFromQuery} from '../components/Profile/utilities'
 import {paramsIdSelector} from './index'
 import {CADASTRAL_PAGINATION_CHUNK_SIZE, DEFAULT_POLITICIAN_GROUP} from '../constants'
 
-import type {State, Politician, PoliticianDetail, CadastralData, AssetDeclaration} from '../state'
+import type {
+  State,
+  Politician,
+  PoliticianDetail,
+  CadastralData,
+  AssetDeclaration,
+  PoliticiansSortKey,
+  PoliticiansSortState,
+} from '../state'
 import type {Selector} from 'reselect'
 import type {ContextRouter} from 'react-router-dom'
 import type {ObjectMap} from '../types/commonTypes'
@@ -164,17 +172,31 @@ export const politicianGroupSelector = (state: State, props: ContextRouter): str
 export const politicianListSelector = (state: State, props: ContextRouter): ObjectMap<Politician> =>
   state.profile.list[politicianGroupSelector(state, props)] || {}
 
+export const politicianSortingOptionSelector = (
+  state: State,
+  props: ContextRouter
+): PoliticiansSortState =>
+  state.profile.sorting[politicianGroupSelector(state, props)] || {
+    sortKey: 'latest_income',
+    reverse: true,
+  }
+
 export const orderedPoliticiansSelector: Selector<State, *, Array<Politician>> = createSelector(
   politicianListSelector,
-  (politicians) =>
-    sortBy(Object.values(politicians).map((p) => ({...p, latest_income: p.latest_income || -1})), [
-      'latest_income',
-      'num_houses_flats',
-      'num_fields_gardens',
-      'num_others',
-    ])
-      .reverse()
-      .map((p, i) => ({order: i + 1, ...p}))
+  politicianSortingOptionSelector,
+  (politicians, sortState) => {
+    // primary sort by sortKey, secondary in order provided
+    const sortPriority = [sortState.sortKey].concat(
+      ['latest_income', 'num_houses_flats', 'num_fields_gardens', 'num_others'].filter(
+        (key) => key !== sortState.sortKey
+      )
+    )
+    const sorted = sortBy(
+      Object.values(politicians).map((p) => ({...p, latest_income: p.latest_income || -1})),
+      sortPriority
+    ).map((p, i) => ({order: i + 1, ...p}))
+    return sortState.reverse ? sorted.reverse() : sorted
+  }
 )
 
 export const filteredPoliticiansSelector: Selector<State, *, Array<Politician>> = createSelector(

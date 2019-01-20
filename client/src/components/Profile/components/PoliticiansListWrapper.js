@@ -9,6 +9,7 @@ import {politiciansProvider} from '../../../dataProviders/profileDataProviders'
 import {
   filteredPoliticiansSelector,
   politicianGroupSelector,
+  politicianSortingOptionSelector,
 } from '../../../selectors/profileSelectors'
 
 import type {ContextRouter} from 'react-router'
@@ -27,6 +28,7 @@ const PoliticiansListWrapper = (WrappedComponent: ComponentType<PoliticiansListP
     connect((state: State, props: ContextRouter) => ({
       politicianGroup: politicianGroupSelector(state, props),
       politicians: filteredPoliticiansSelector(state, props),
+      sortState: politicianSortingOptionSelector(state, props),
     })),
     withDataProviders(({politicianGroup}: PoliticiansListProps) => [
       politiciansProvider(politicianGroup),
