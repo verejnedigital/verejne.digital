@@ -51,7 +51,8 @@ def _add_companyinfo(db, eIDs, result):
             entities.id AS eid,
             companyinfo.ico,
             companyinfo.established_on,
-            companyinfo.terminated_on
+            companyinfo.terminated_on,
+            companyinfo.legal_form_id
         FROM
             entities
         INNER JOIN

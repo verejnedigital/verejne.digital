@@ -172,26 +172,15 @@ def get_public_dumps_info():
 
   # Read public dumps YAML configuration file:
   config = utils.yaml_load('prod_generation/public_dumps.yaml')
-  dir_save = config['save_directory']
   dumps = config['dumps']
 
   # Iterate through the dumps:
   result = []
   for dump_name in dumps:
-    # Find dump file with latest timestamp (inherited from prod data):
-    filenames = [n for n in os.listdir(dir_save)
-                 if n.startswith(dump_name + '_')
-                 and n.endswith('.csv')]
-    if len(filenames) == 0:
-      print('[WARNING] Dump file for `%s` not found.' % (dump_name))
-      continue
-    filename = sorted(filenames, reverse=True)[0]
-
-    # Append dump info to results:
     result.append({
         'name': dump_name,
         'query': dumps[dump_name]['query'].strip(),
-        'url': 'https://verejne.digital/resources/csv/%s' % (filename)
+        'url': 'https://verejne.digital/resources/csv/%s.csv' % (dump_name)
     })
   return result
 

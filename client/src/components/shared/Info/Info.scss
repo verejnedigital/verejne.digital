@@ -7,6 +7,16 @@
   border-radius: 4px;
   border: 2px solid $border-color;
   box-shadow: 0 4px 12px 0 $shadow-color;
+  position: relative;
+
+  &.active {
+    box-shadow: 0 4px 12px 0 rgba(117, 127, 134, .75);
+    border-color: $blue-color;
+  }
+
+  &.index {
+    top: 15px;
+  }
 
   .info-header {
     padding: .5rem .75rem .4rem .75rem;
@@ -34,6 +44,22 @@
   &.closable .info-header > h3 {
     cursor: pointer;
   }
+}
+
+.info-index {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background-color: #fff;
+  color: #0062db;
+  border: 2px solid #0062db;
+  padding: 4px;
+  width: 30px;
+  height: 30px;
+  border-radius: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .info-main {

@@ -29,8 +29,9 @@ class Notice:
     norm = None
     price = None
     title = None
+    matched_title_fraction = None
 
-    def __init__(self, idx, embedding, supplier, price, title):
+    def __init__(self, idx, embedding, supplier, price, title, matched_title_fraction):
         self.idx = idx
         self.supplier = supplier
         self.embedding = embedding
@@ -42,6 +43,7 @@ class Notice:
         self.candidate_prices = []
         self.price = price
         self.title = title
+        self.matched_title_fraction = matched_title_fraction
 
     def get_price_range(self):
         values = []
@@ -50,21 +52,23 @@ class Notice:
         # to give higher weights to very similar notices.
         for price, similarity in zip(self.candidate_prices, self.similarities):
             if price is not None and price > 0:
-                values.append(np.log(1.0 + price))
-                weight.append(similarity ** 2.0)
+                values.append(numpy.log(1.0 + price))
+                weights.append(similarity ** 2.0)
         if len(values) < 2:
             return None, None, None
-        std_dev = numpy.std(values)
-        mean = numpy.mean(values)
-        price_low = np.exp(mean - 2.0 * std_dev)
-        price_high = np.exp(mean + 2.0 * std_dev)
-        return mean, price_low, price_high
+        mean = numpy.average(values, weights=weights)
+        std_dev = math.sqrt(numpy.average((values - mean) ** 2.0, weights=weights))
+        price_low = numpy.exp(mean - 2.0 * std_dev)
+        price_high = numpy.exp(mean + 2.0 * std_dev)
+        return numpy.exp(mean), price_low, price_high
 
 
 def notices_create_extra_table(db, test_mode):
     """Creates table NoticesExtras that will contain extra data."""
     table_name_suffix = "_test" if test_mode else ""
+    print "Creating table", table_name_suffix
     command = """
+        DROP TABLE IF EXISTS NoticesExtras""" + table_name_suffix + """;
         CREATE TABLE NoticesExtras""" + table_name_suffix + """ (
           id SERIAL PRIMARY KEY,
           notice_id INTEGER,
@@ -82,6 +86,7 @@ def notices_create_extra_table(db, test_mode):
     if test_mode:
         print(command)
     db.execute(command)
+    print "Finished creating table"
 
 
 def arrayize(a, type_str="float"):
@@ -116,10 +121,13 @@ def notices_find_candidates(notices, test_mode):
     for notice in notices:
         # If we know the winner already
         if notice.supplier is not None: continue
+        # If the embedding is from a small fraction of title words
+        if notice.matched_title_fraction < 0.4: continue
         # try all other candidates, but keep only similar
         for notice2 in notices:
             # candidates are only the notices with known winners / suppliers
             if notice2.supplier is None: continue
+            if notice2.matched_title_fraction < 0.4: continue
             similarity = numpy.inner(notice.embedding, notice2.embedding) / (notice.norm * notice2.norm)
             if test_mode and similarity > 0.8:
                 similarity_source_target.append((similarity, notice.idx, notice2.idx))
@@ -169,47 +177,61 @@ def _post_process_notices(db, test_mode):
         "supplier_eid",
         "total_final_value_amount as price"
     ]
-    if test_mode:
-        columns.append("title")
     # TODO: once we use universal sentence encoder, use also description, not only title as text to be embedded.
     query = (
-        "SELECT " + (",".join(columns)) + " FROM notices" +
+        "SELECT " + (",".join(columns)) + " FROM notices " +
         (" ORDER BY notice_id DESC LIMIT 1000" if test_mode else "")
     )
-    rows = db.query(query)
+    text_embedder = embed.Word2VecEmbedder([])
+    num_notices = 0
+    print "creating corpus"
+    with db.get_server_side_cursor(
+        query, buffer_size=100000, return_dicts=True) as cur: 
+        for row in cur:
+            text_embedder.add_text_to_corpus(row["text"])
+            num_notices += 1
+    text_embedder.print_corpus_stats()
 
-    all_texts = [row["text"] for row in rows]
-    print 'Number of notices: ', len(all_texts)
-    text_embedder = embed.Word2VecEmbedder(all_texts)
-    for row in rows:
-        embedding = text_embedder.embed_one_text(row["text"])
-        # Skip if could not compute embedding, or the embedding was out of 0 words.
-        if embedding is None or embedding[1] == 0: continue
-        description_embedding = None
-        if "short_description" in row and row["short_description"] is not None:
-            description_embedding = text_embedder.embed_one_text(row["short_description"])
-        if description_embedding is not None:
-            # The more words matched in description embedding the higher weight give to description
-            # The more words matched in title embedding the lower the weight give to description
-            description_weight = (
-                    (description_embedding[1] * 0.075) /
-                    (description_embedding[1] * 0.075 + embedding[1] + 3.0)
-            )
-            title_weight = 1.0 - description_weight
-            final_embedding = (
-                    title_weight * _normalized_embedding(embedding[0]) +
-                    description_weight * _normalized_embedding(description_embedding[0])
-            )
-        else:
-            final_embedding = _normalized_embedding(embedding[0])
+    print 'Number of notices: ', num_notices
+    processed = 0
+    # TODO: split this into multiple functions.
+    with db.get_server_side_cursor(
+        query, buffer_size=100000, return_dicts=True) as cur: 
+        for row in cur:
+            if (processed % 1000 == 0):
+                print processed, "/", num_notices
+                sys.stdout.flush()
+            processed += 1
 
-        notices.append(
-            Notice(row["notice_id"],
-                   final_embedding,
-                   row["supplier_eid"],
-                   row["price"],
-                   row.get("title", None))
-        )
+            embedding = text_embedder.embed_one_text(row["text"])
+            # Skip if could not compute embedding, or the embedding was out of 0 words.
+            if embedding is None or embedding[1] == 0: continue
+            description_embedding = None
+            if "short_description" in row and row["short_description"] is not None:
+                description_embedding = text_embedder.embed_one_text(row["short_description"])
+            if description_embedding is not None:
+                # The more words matched in description embedding the higher weight give to description
+                # The more words matched in title embedding the lower the weight give to description
+                description_weight = min(0.333333, (
+                        (description_embedding[1] * 0.075) /
+                        (description_embedding[1] * 0.075 + embedding[1] + 3.0)
+                ))
+                title_weight = 1.0 - description_weight
+                final_embedding = _normalized_embedding(
+                        title_weight * _normalized_embedding(embedding[0]) +
+                        description_weight * _normalized_embedding(description_embedding[0])
+                )
+            else:
+                final_embedding = _normalized_embedding(embedding[0])
+
+            notices.append(
+                Notice(row["notice_id"],
+                       final_embedding,
+                       row["supplier_eid"],
+                       row["price"],
+                       row.get("text", None),
+                       embedding[1] / float(embedding[2]))
+            )
     notices = notices_find_candidates(notices, test_mode)
     notices_insert_into_extra_table(db, notices, test_mode)
 

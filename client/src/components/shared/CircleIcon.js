@@ -1,6 +1,6 @@
 // @flow
 import React from 'react'
-import Circle from 'react-icons/lib/fa/circle-o'
+import {FaDotCircle} from 'react-icons/fa'
 import classnames from 'classnames'
 import {getCircleIconTitle} from './utilities'
 
@@ -26,7 +26,7 @@ const CircleIcon = ({data, className, size = '16'}: OwnProps) => (
     })}
     title={getCircleIconTitle(data)}
   >
-    <Circle size={size} />
+    <FaDotCircle size={size} />
   </span>
 )
 

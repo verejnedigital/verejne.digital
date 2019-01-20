@@ -144,7 +144,29 @@
 
 3_notices:
     source_schema: "ekosystem_VVO"
-    command:   "select notices.id as notice_id,notices.contract_id,notices.title,notices.contracting_authority_name as name,notices.contracting_authority_cin as ico,notices.estimated_value_amount,notices.estimated_value_currency,notices.bulletin_issue_id,notices.notice_type_id,result_notices.short_description,result_notices.total_final_value_amount,result_notices.total_final_value_currency,raw_notices.body,notice_suppliers.cin as supplier_ico,notice_suppliers.name as supplier_name from notices FULL OUTER JOIN result_notices ON result_notices.raw_notice_id = notices.raw_notice_id FULL OUTER JOIN raw_notices ON raw_notices.id=notices.raw_notice_id FULL OUTER JOIN notice_suppliers ON notice_suppliers.notice_id = notices.id ORDER BY notices.bulletin_issue_id DESC"
+    command: "
+        SELECT
+            notices.id as notice_id,
+            notices.contract_id,
+            notices.title,
+            notices.contracting_authority_name as name,
+            notices.contracting_authority_cin as ico,
+            notices.estimated_value_amount,
+            notices.estimated_value_currency,
+            notices.bulletin_issue_id,
+            notices.notice_type_id,
+            result_notices.short_description,
+            result_notices.total_final_value_amount,
+            result_notices.total_final_value_currency,
+            raw_notices.body,
+            notice_suppliers.cin as supplier_ico,
+            notice_suppliers.name as supplier_name
+        FROM
+            notices
+            FULL OUTER JOIN result_notices ON result_notices.raw_notice_id = notices.raw_notice_id
+            FULL OUTER JOIN raw_notices ON raw_notices.id=notices.raw_notice_id
+            FULL OUTER JOIN notice_suppliers ON notice_suppliers.notice_id = notices.id
+        ORDER BY notices.bulletin_issue_id DESC"
     extract_description_from_body: true
     supplier_eid: true
     tables:
@@ -160,15 +182,17 @@
                                 supplier_eid INTEGER REFERENCES Entities(id),
                                 notice_id INT4,
                                 contract_id INT4,
-                                title text,
+                                title TEXT,
                                 estimated_value_amount INT8,
-                                estimated_value_currency text,
+                                estimated_value_currency TEXT,
                                 bulletin_issue_id INT4,
                                 notice_type_id INT4,
-                                short_description text,
+                                short_description TEXT,
                                 total_final_value_amount INT8,
-                                total_final_value_currency text,
-                                body text
+                                total_final_value_currency TEXT,
+                                body TEXT,
+                                deadline DATE,
+                                contact_email TEXT
                        );
                        CREATE INDEX ON Notices(eid);
                        CREATE INDEX ON Notices(notice_id);

@@ -16,7 +16,7 @@
 .search-autocomplete {
   max-width: 500px;
   width: 100%;
-  margin: 100px auto;
+  margin: 40px auto;
 
   @media screen and (max-width: 767px) {
     margin: 24px 0;
@@ -49,4 +49,75 @@
   @media screen and (min-width: 768px) {
     max-height: 20rem;
   }
+}
+
+.search-box {
+  display: inline-block;
+  padding: 8px;
+  width: 23%;
+  background-color: #fff;
+  margin: 0 1% 24px;
+  border-radius: 2px;
+  position: relative;
+  color: #333;
+  position: relative;
+  border: 2px solid $border-color;
+  cursor: pointer;
+
+  @media screen and (max-width: 767px) {
+    width: 100%;
+    margin: 0 0 24px;
+  }
+
+  &:hover::before {
+    opacity: 1;
+  }
+
+  &::before {
+    content: " ";
+    position: absolute;
+    box-shadow: 0 4px 12px $shadow-color;
+    z-index: -1;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    opacity: 0;
+    transition: opacity .25s;
+  }
+}
+
+.search-box-index {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background-color: #fff;
+  color: #0062db;
+  border: 2px solid #0062db;
+  padding: 4px;
+  width: 30px;
+  height: 30px;
+  border-radius: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.search-box-name {
+  max-width: 100%;
+  overflow: hidden;
+  display: block;
+  line-height: 18px;
+  word-break: unset;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.search-box-address {
+  max-width: 100%;
+  overflow: hidden;
+  display: inline-block;
+  word-break: unset;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }

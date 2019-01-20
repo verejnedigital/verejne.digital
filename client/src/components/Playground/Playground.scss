@@ -1,43 +1,180 @@
 @import "../variables.scss";
 
-.playground-sidebar {
-  position: fixed;
-  top: $navbar-height;
-  left: 0;
-  bottom: 0;
-  background-color: $component-background;
+.playgorund-container {
   display: flex;
   flex-direction: column;
-  padding-bottom: 2rem;
-  padding-top: 2rem;
-  padding-left: 2rem;
-  width: 200px;
+}
+
+.playground-title-text {
+  font-size: 8em;
+  margin: 0 30px;
 
   @media screen and (max-width: 767px) {
-    position: static;
     width: 100%;
-    align-items: center;
+    font-size: 3em;
+    word-break: break-all;
   }
 }
 
+.playground-subtitle {
+  font-size: 2rem;
+  margin: 0 30px;
+  transition: opacity 0.5s;
+  opacity: 1;
+}
+
+.playground-subtitle.hide {
+  opacity: 0;
+}
+
 .playground-intro-container {
-  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  width: calc(100% - 220px);
+  align-self: center;
+  padding-top: 15vh;
+  padding-bottom: 10vh;
+  min-height: 70vh;
+
+  .button-row {
+    display: flex;
+    flex-direction: row;
+    margin-top: 80px;
+    margin: 20px 30px;
+    flex-wrap: wrap;
+    transition: opacity 0.5s;
+    opacity: 1;
+
+    .hype-button {
+      font-size: 2rem;
+    }
+
+    button {
+      margin-right: 20px;
+      margin-bottom: 20px;
+    }
+  }
+
+  .button-row.hide {
+    opacity: 0;
+  }
+
+  @media screen and (max-width: 767px) {
+    width: 100%;
+    margin: 0 20px;
+  }
 }
 
-.one {
-  background-color: rgb(224, 224, 224);
-  padding: 2.5vw 3.5vw 12vh;
-  box-sizing: border-box;
-  height: 100vh;
+.playground-hype-container {
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  padding: 40px;
+  align-items: center;
+
+  .hype-text {
+    font-size: 2.5rem;
+    text-align: center;
+    width: 80%;
+    display: flex;
+    padding-bottom: 1rem;
+  }
+
+  .subhype-text {
+    font-size: 1.2rem;
+    text-align: center;
+    width: 80%;
+    display: flex;
+    padding-bottom: 2.5rem;
+  }
+
+  .bottom-hype-text {
+    font-size: 1.5rem;
+    text-align: center;
+    margin-top: 40px;
+  }
+
+  .report-list-title {
+    margin-bottom: 40px;
+  }
+
+  @media screen and (max-width: 767px) {
+    width: 100%;
+    padding: 40px 20px;
+  }
 }
 
-.two {
-  background-color: rgb(124, 124, 124);
-  padding: 2.5vw 3.5vw 12vh;
-  box-sizing: border-box;
-  height: 100vh;
+.playground-card-container {
+  width: 75%;
 }
 
-.hero-button {
-  margin-right: 10px;
+.playground-card {
+  display: flex;
+
+  .card-text-container {
+    margin: 5px 30px;
+  }
+
+  h3 {
+    font-size: 1.5rem;
+  }
+
+  img {
+    border-radius: 50%;
+  }
+}
+
+.card-right {
+  flex-direction: row-reverse;
+
+  & > * {
+    text-align: right;
+  }
+}
+
+.playground-video-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .video-title {
+    font-size: 1.5rem;
+    margin: 20px;
+    font-weight: 400;
+  }
+
+  .video-subtitle {
+    font-weight: bold;
+    margin: 20px;
+  }
+}
+
+.playground-reference-container {
+  background-color: rgb(40, 40, 40);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  padding: 40px 80px 10px 80px;
+
+  .footer-text {
+    margin-top: 20px;
+    font-size: 0.6rem;
+    align-self: center;
+    text-align: center;
+    display: flex;
+  }
+}
+
+.playground-background::after {
+  content: "";
+  background-image: url("../../assets/playground.svg"), linear-gradient($secondary, $marker-color);
+  background-repeat: no-repeat;
+  background-position: center;
+  opacity: 0.1;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  position: absolute;
+  z-index: -1;
 }

@@ -70,12 +70,12 @@ export type NoticeDetail = {
 }
 
 export type CadastralData = {|
-  lon: number,
+  lon: ?number,
   cadastralunitcode: number,
-  landusename: string,
+  landusename: ?string,
   cadastralunitname: string,
-  parcelno: string,
-  lat: number,
+  parcelno: ?string,
+  lat: ?number,
   foliono: number,
 |}
 
@@ -361,6 +361,7 @@ export type Politician = {|
   term_start: number,
   office_name_female: string,
   id: number,
+  latest_income: number,
 |}
 
 export const refreshedUIState = {

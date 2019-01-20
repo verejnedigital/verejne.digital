@@ -22,7 +22,7 @@ import Item from './Item'
 import Relations from './Relations'
 import CircleIcon from '.././CircleIcon'
 import mapIcon from '../../../assets/mapIcon.svg'
-import ProfileIcon from 'react-icons/lib/fa/user'
+import {FaUser} from 'react-icons/fa'
 import type {NewEntityDetail, Center} from '../../../state'
 import './Info.css'
 
@@ -31,6 +31,7 @@ type OwnProps = {
   className?: string,
   inModal?: boolean,
   onClose?: () => void,
+  active?: boolean,
 }
 
 type DispatchProps = {
@@ -46,8 +47,15 @@ type HandlerProps = {
 
 type InfoProps = OwnProps & DispatchProps & HandlerProps
 
-const Info = ({data, onClose, showOnMap, className}: InfoProps) => (
-  <Container className={classnames(className, {closable: Boolean(onClose)}, 'info')}>
+const Info = ({data, onClose, showOnMap, index, active, className}: InfoProps) => (
+  <Container
+    className={classnames(
+      className,
+      {closable: Boolean(onClose), active, index: Boolean(index)},
+      'info'
+    )}
+  >
+    {index && <span className="search-box-index">{index}</span>}
     <div className="info-header">
       <Row>
         <Col xs="auto" className="mt-1 pr-0">
@@ -66,7 +74,7 @@ const Info = ({data, onClose, showOnMap, className}: InfoProps) => (
           </Link>
           {data.profil_id && (
             <NavLink to={`/profil/${data.profil_id}`} title="Zobraz profil">
-              <ProfileIcon
+              <FaUser
                 alt="ProfileIcon"
                 style={{width: '18px', height: '25px'}}
                 className="mb-2 blue"

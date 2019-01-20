@@ -2,8 +2,7 @@
 import React, {type Node} from 'react'
 import {compose, withState, withHandlers} from 'recompose'
 import {Badge, Button} from 'reactstrap'
-import ChevronUp from 'react-icons/lib/fa/chevron-up'
-import ChevronDown from 'react-icons/lib/fa/chevron-down'
+import {FaChevronUp, FaChevronDown} from 'react-icons/fa'
 
 import type {StateUpdater} from '../../types/commonTypes'
 import './ToggleBox.css'
@@ -25,18 +24,16 @@ const ToggleBox = ({buttonText, expanded, children, buttonInfo, toggle}: ToggleB
   <div className="info-button">
     <Button outline color="primary" onClick={toggle}>
       {expanded ? (
-        <ChevronUp aria-hidden="true" className="mb-1" />
+        <FaChevronUp aria-hidden="true" className="mb-1" />
       ) : (
-        <ChevronDown aria-hidden="true" className="mb-1" />
+        <FaChevronDown aria-hidden="true" className="mb-1" />
       )}{' '}
       {`${buttonText} `}
       <Badge color="primary" className="info-badge info-badge-number">
         {buttonInfo}
       </Badge>
     </Button>
-    <div className="content">
-      {expanded && children}
-    </div>
+    <div className="content">{expanded && children}</div>
   </div>
 )
 

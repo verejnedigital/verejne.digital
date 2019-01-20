@@ -12,7 +12,11 @@ import type {CadastralData, GeolocationPoint} from '../../../state'
 
 import './MapContainer.css'
 
-const Marker = ({title}) => <div className="marker">{title}</div>
+const Marker = ({title, label, onClick}) => (
+  <div onClick={onClick} title={title} className="marker">
+    {label}
+  </div>
+)
 
 type MapContainerProps = {
   assets: Array<CadastralData>,
@@ -34,7 +38,18 @@ class MapContainer extends Component<MapContainerProps> {
           zoom={this.props.zoom}
         >
           {this.props.assets.map((asset, key) => {
-            return <Marker key={key} title={key + 1} lat={asset.lat} lng={asset.lon || asset.lng} />
+            return asset.lat ? (
+              <Marker
+                key={key}
+                label={key + 1}
+                title={asset.name && asset.address && `${asset.name}, ${asset.address}`}
+                onClick={
+                  this.props.markerAction ? () => this.props.markerAction(asset.eid) : undefined
+                }
+                lat={asset.lat}
+                lng={asset.lon || asset.lng}
+              />
+            ) : null
           })}
         </GoogleMapReact>
       </div>

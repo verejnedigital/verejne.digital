@@ -19,8 +19,7 @@ import {
   entitySearchForSelector,
 } from '../../../selectors'
 import AutoComplete from '../../shared/AutoComplete/AutoComplete'
-import SearchIcon from 'react-icons/lib/fa/search'
-import ModalIcon from 'react-icons/lib/fa/clone'
+import {FaSearch, FaClone} from 'react-icons/fa'
 
 import {FIND_ENTITY_TITLE, OPEN_MODAL_TOOLTIP} from '../../../constants'
 
@@ -70,12 +69,12 @@ const EntitySearchAutocomplete = ({
       />
       <InputGroupAddon title={FIND_ENTITY_TITLE} addonType="append">
         <Button className="addon-button" color="primary" onClick={findEntities}>
-          <SearchIcon />
+          <FaSearch />
         </Button>
       </InputGroupAddon>
       <InputGroupAddon title={OPEN_MODAL_TOOLTIP} addonType="append">
         <Button className="addon-button" color="primary" onClick={toggleModalOpen}>
-          <ModalIcon />
+          <FaClone />
         </Button>
       </InputGroupAddon>
     </InputGroup>
@@ -140,5 +139,5 @@ export default compose(
       setEntitySearchOpen(true)
       setDrawer(true)
     },
-  }),
+  })
 )(EntitySearchAutocomplete)

@@ -27,7 +27,7 @@ import {
   setEntitySearchFor,
   setEntitySearchLoaded,
 } from '../../../actions/publicActions'
-import SearchIcon from 'react-icons/lib/fa/search'
+import {FaSearch} from 'react-icons/fa'
 import {updateValue} from '../../../actions/sharedActions'
 import {FIND_ENTITY_TITLE} from '../../../constants'
 import {resultPlurality} from '../../../services/utilities'
@@ -90,7 +90,7 @@ const EntitySearchModal = ({
             />
             <InputGroupAddon addonType="append">
               <Button color="primary" onClick={findEntities}>
-                <SearchIcon />
+                <FaSearch />
               </Button>
             </InputGroupAddon>
           </InputGroup>
@@ -147,11 +147,7 @@ export default compose(
       }
       entitySearchFor !== entitySearchValue && setEntitySearchLoaded(false)
       setEntitySearchFor(value)
-      updateValue(
-        ['publicly', 'entitySearchValue'],
-        value,
-        'Set entity search field value'
-      )
+      updateValue(['publicly', 'entitySearchValue'], value, 'Set entity search field value')
     },
     setEntitySearchValue: ({updateValue}) => (e) =>
       updateValue(

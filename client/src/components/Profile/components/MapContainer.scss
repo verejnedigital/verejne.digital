@@ -14,12 +14,19 @@ div#map {
       height: 36px;
       border-radius: 50%;
       background: $marker-background;
+      background-color: #fff;
       border: 2px solid $marker-border;
       font-size: 12px;
       font-weight: bold;
       color: $marker-text-color;
       text-align: center;
       padding-top: 8px;
+
+      &:hover {
+        z-index: 10;
+        transform: none;
+        text-decoration: none;
+      }
     }
   }
 }

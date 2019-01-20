@@ -6,7 +6,7 @@ import {refreshState} from '../actions/sharedActions'
 import {NavLink} from 'react-router-dom'
 import {Collapse, Navbar, NavbarToggler, NavItem, Nav} from 'reactstrap'
 
-import FbIcon from 'react-icons/lib/fa/facebook-square'
+import {FaFacebookSquare} from 'react-icons/fa'
 
 import './Navigation.css'
 
@@ -27,7 +27,7 @@ const Navigation = ({navigationOpen, toggleNavigation, closeNavigation, handleNa
       <Nav navbar className="mr-auto">
         <NavItem>
           <NavLink to="/verejne" className="nav-link" onClick={handleNavClick}>
-            Verejné dáta
+            Mapa
           </NavLink>
         </NavItem>
         <NavItem>
@@ -50,11 +50,11 @@ const Navigation = ({navigationOpen, toggleNavigation, closeNavigation, handleNa
             Vyhľadávanie
           </NavLink>
         </NavItem>
-        <NavItem>
+        {/* <NavItem>
           <NavLink to="/ihrisko" className="nav-link" onClick={handleNavClick}>
             Ihrisko
           </NavLink>
-        </NavItem>
+        </NavItem> */}
       </Nav>
       <Nav className="ml-auto" navbar>
         <NavItem>
@@ -76,7 +76,7 @@ const Navigation = ({navigationOpen, toggleNavigation, closeNavigation, handleNa
             className="nav-link"
             onClick={closeNavigation}
           >
-            Kontakt <FbIcon />
+            Kontakt <FaFacebookSquare />
           </a>
         </NavItem>
       </Nav>

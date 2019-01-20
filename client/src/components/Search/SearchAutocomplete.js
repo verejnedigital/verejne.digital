@@ -5,7 +5,7 @@ import {connect} from 'react-redux'
 import {withRouter} from 'react-router-dom'
 import type {RouterHistory} from 'react-router'
 import {withHandlers, withState} from 'recompose'
-import SearchIcon from 'react-icons/lib/fa/search'
+import {FaSearch} from 'react-icons/fa'
 import {Button, InputGroup, InputGroupAddon} from 'reactstrap'
 import {updateValue} from '../../actions/sharedActions'
 import {entityDetailsSelector, locationSearchSelector} from '../../selectors/'
@@ -21,6 +21,7 @@ export type Props = {
   history: RouterHistory,
   searchOnEnter: (e: Event) => void,
   handleSelect: (value: string) => void,
+  searchInfo: (value: string) => void,
   inputValue: string,
   onChange: () => void,
   suggestionEids: Array<number>,
@@ -28,15 +29,10 @@ export type Props = {
   entities: Array<CompanyEntity>,
 } & ContextRouter
 
-const _SearchInfo = (inputValue, history) => {
-  if (inputValue.trim() !== '') {
-    history.push(`/vyhladavanie?meno=${inputValue.trim()}`)
-  }
-}
-
 const SearchAutocomplete = ({
   history,
   searchOnEnter,
+  searchInfo,
   handleSelect,
   inputValue,
   onChange,
@@ -47,7 +43,6 @@ const SearchAutocomplete = ({
   <InputGroup className="search-autocomplete">
     <AutoComplete
       value={inputValue}
-      placeholder={query}
       onChangeHandler={onChange}
       onSelectHandler={handleSelect}
       inputProps={{
@@ -58,8 +53,8 @@ const SearchAutocomplete = ({
       }}
     />
     <InputGroupAddon addonType="append">
-      <Button color="primary" className="search-page-btn">
-        <SearchIcon />
+      <Button onClick={() => searchInfo(inputValue)} color="primary" className="search-page-btn">
+        <FaSearch />
       </Button>
     </InputGroupAddon>
   </InputGroup>
@@ -67,7 +62,6 @@ const SearchAutocomplete = ({
 
 const enhance: HOC<*, Props> = compose(
   withRouter,
-  withState('inputValue', 'setInputValue', ''),
   withState('searchEids', 'setSearchEids', []),
   connect(
     (state: State, props: Props) => ({
@@ -75,18 +69,26 @@ const enhance: HOC<*, Props> = compose(
     }),
     {updateValue}
   ),
+  withState('inputValue', 'setInputValue', (props: Props) => props.query),
   connect((state, {suggestionEids}) => ({
     entities: entityDetailsSelector(state, suggestionEids),
   })),
   withHandlers({
+    searchInfo: ({history}: Props) => (inputValue) => {
+      if (inputValue.trim() !== '') {
+        history.push(`/vyhladavanie?meno=${inputValue.trim()}`)
+      }
+    },
+  }),
+  withHandlers({
     searchOnEnter: (props: Props) => (e) => {
       if (e.key === 'Enter') {
-        _SearchInfo(props.inputValue, props.history)
+        props.searchInfo(props.inputValue, props.history)
       }
     },
     handleSelect: (props: Props) => (value) => {
       props.setInputValue(value)
-      _SearchInfo(value, props.history)
+      props.searchInfo(value, props.history)
     },
     onChange: ({inputValue, setInputValue}) => (e) => setInputValue(e.target.value),
   })

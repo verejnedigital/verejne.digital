@@ -1,6 +1,5 @@
 // @flow
-import QuestionCircle from 'react-icons/lib/fa/question-circle'
-import ExclamationTriangle from 'react-icons/lib/fa/exclamation-triangle'
+import {FaQuestionCircle, FaExclamationTriangle} from 'react-icons/fa'
 import classnames from 'classnames'
 import React from 'react'
 
@@ -8,13 +7,13 @@ export const getWarningSymbol = (level: number, title: string | null = null) => 
   if (level < 0) {
     return (
       <div className="warning-symbol" title={title}>
-        <QuestionCircle className={classnames('warning', `warning${level}`)} />
+        <FaQuestionCircle className={classnames('warning', `warning${level}`)} />
       </div>
     )
   } else if (level > 0) {
     return (
       <div className="warning-symbol" title={title}>
-        <ExclamationTriangle className={classnames('warning', `warning-${level}`)} />
+        <FaExclamationTriangle className={classnames('warning', `warning-${level}`)} />
       </div>
     )
   } else {
