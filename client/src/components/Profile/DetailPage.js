@@ -71,6 +71,7 @@ const DetailPage = ({
   history,
   mapProps,
   goMap,
+  getPlotData,
 }: ProfileDetailPageProps) => (
   <Container>
     <Row tag="header" key="title" className="header profile-header">
@@ -83,45 +84,20 @@ const DetailPage = ({
       </Col>
     </Row>
     <Cardboard key="cardboard" politician={politician} />
-    <Plot
-      data={[
-        {
-          x: [1, 2, 3],
-          y: [2, 6, 3],
-          type: 'scatter',
-          mode: 'lines+points',
-          marker: {color: 'red'},
-        },
-        {
-          type: 'scatter',
-          mode: 'lines+points',
-          marker: {color: 'blue'},
-          x: [1, 2, 3],
-          y: [2, 5, 3],
-        },
-      ]}
-      config={{displayModeBar: false}}
-      layout={{
-        autosize: true,
-        height: 300,
-        margin: {
-          l: 60,
-          r: 40,
-          b: 80,
-          t: 40,
-          pad: 0,
-        },
-        legend: {
-          orientation: 'h',
-        },
-      }}
-      style={{
-        width: '50%',
-        border: '2px solid #cddae3',
-        boxSizing: 'content-box',
-        boxShadow: '0 4px 12px 0 rgba(187, 198, 206, 0.5)',
-      }}
-    />
+    {politician.json_plots && (
+      <Plot
+        {...getPlotData()}
+        config={{displayModeBar: false, responsive: true}}
+        style={{
+          // NOTE: We need to have this as style because Plot is missing className support.
+          width: 'calc(100% - 6px)',
+          border: '3px solid #cddae3',
+          boxSizing: 'content-box',
+          boxShadow: '0 4px 12px 0 rgba(187, 198, 206, 0.5)',
+          marginBottom: '24px',
+        }}
+      />
+    )}
     <Row tag="article" key="politician" className="profile">
       <Col tag="section">
         <div className="profile-tabs">
@@ -226,6 +202,27 @@ export default compose(
       props.setMapProps({center: {lat: parcel.lat, lng: parcel.lon}, zoom: 15})
       const mapElement = document.getElementById('map')
       if (mapElement) mapElement.scrollIntoView({behavior: 'smooth'})
+    },
+    getPlotData: (props) => () => {
+      try {
+        const parsedJSON = JSON.parse(props.politician.json_plots)
+        return {
+          ...parsedJSON,
+          layout: {
+            ...parsedJSON.layout,
+            autosize: true,
+            margin: {
+              l: 60,
+              r: 40,
+              b: 80,
+              t: 40,
+              pad: 0,
+            },
+          },
+        }
+      } catch {
+        return {}
+      }
     },
   })
 )(DetailPage)
