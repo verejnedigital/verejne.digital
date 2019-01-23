@@ -40,6 +40,16 @@ type HeaderCellProps = {
   politicianGroup: string,
 }
 
+// if true, default sort will be from highest to lowest (usefull for numeric columns)
+const defaultSortReverse = {
+  surname: false,
+  party_abbreviation: false,
+  latest_income: true,
+  num_fields_gardens: true,
+  num_houses_flats: true,
+  num_others: true,
+}
+
 const HeaderCell = ({
   text,
   title,
@@ -51,7 +61,7 @@ const HeaderCell = ({
 }: HeaderCellProps) => (
   <th
     className="clickable text-left column-title"
-    onClick={() => setProfileSort(politicianGroup, sortKey, active && !reverse)}
+    onClick={() => setProfileSort(politicianGroup, sortKey, active ? !reverse : defaultSortReverse[sortKey])}
     title={title}
   >
     {text} {active ? reverse ? <FaSortUp /> : <FaSortDown /> : ''}
