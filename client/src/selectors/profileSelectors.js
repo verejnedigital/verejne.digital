@@ -1,6 +1,6 @@
 // @flow
 import {createSelector} from 'reselect'
-import {sortBy, last, mapValues, chunk, filter, values} from 'lodash'
+import {sortBy, orderBy, last, mapValues, chunk, filter, values} from 'lodash'
 import {normalizeName, parseQueryFromLocation} from '../utils'
 import {getGroupFromQuery} from '../components/Profile/utilities'
 
@@ -185,17 +185,30 @@ export const orderedPoliticiansSelector: Selector<State, *, Array<Politician>> =
   politicianListSelector,
   politicianSortingOptionSelector,
   (politicians, sortState) => {
-    // primary sort by sortKey, secondary in order provided
-    const sortPriority = [sortState.sortKey].concat(
-      ['latest_income', 'num_houses_flats', 'num_fields_gardens', 'num_others'].filter(
-        (key) => key !== sortState.sortKey
-      )
+    // if sorting by any of 'building' columns, sort by the other two cols. as secondary
+    // otherwise, sort by income as well (and buildings afterwards)
+    const buildingColumns = ['num_houses_flats', 'num_fields_gardens', 'num_others']
+    // if one of the building column sort is reversed, reverse them all
+    const buildingColumnsOrdering =
+      buildingColumns.indexOf(sortState.sortKey) === -1 || sortState.reverse ? 'desc' : 'asc'
+    const buildingDefaultSort = [
+      ['num_houses_flats', buildingColumnsOrdering],
+      ['num_fields_gardens', buildingColumnsOrdering],
+      ['num_others', buildingColumnsOrdering],
+    ]
+    const defaultSortOrder =
+      buildingColumns.indexOf(sortState.sortKey) === -1
+        ? [['latest_income', 'desc']].concat(buildingDefaultSort)
+        : buildingDefaultSort
+    // primary sort by sortKey, secondary in order provided above
+    const sortPriority = [[sortState.sortKey, sortState.reverse ? 'desc' : 'asc']].concat(
+      defaultSortOrder.filter((key) => key !== sortState.sortKey)
     )
-    const sorted = sortBy(
+    return orderBy(
       Object.values(politicians).map((p) => ({...p, latest_income: p.latest_income || -1})),
-      sortPriority
+      sortPriority.map((p) => p[0]),
+      sortPriority.map((p) => p[1])
     ).map((p, i) => ({order: i + 1, ...p}))
-    return sortState.reverse ? sorted.reverse() : sorted
   }
 )
 
