@@ -43,7 +43,7 @@ const Politician = ({
     <td className="number-column">
       {politician.latest_income && politician.latest_income !== -1
         ? `${politician.latest_income.toLocaleString('sk')}  €`
-        : '-'}
+        : '?'}
     </td>
     <td className="number-column">{politician.num_houses_flats}</td>
     <td className="number-column">{politician.num_fields_gardens}</td>
