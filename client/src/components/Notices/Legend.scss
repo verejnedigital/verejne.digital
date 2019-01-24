@@ -1,13 +1,65 @@
 @import '../variables.scss';
 
+.notice-legend {
+  width: 85%;
+  margin: 2em auto 0 auto;
+  display: flex;
+  justify-content: center;
+
+  @media screen and (max-width: 767px) {
+    width: 90%;
+  }
+
+  @media screen and (max-width: 649px) {
+    width: 95%;
+  }
+
+  @media screen and (max-width: 575px) {
+    width: 100%;
+  }
+
+  @media screen and (max-width: 480px) {
+    flex-direction: column;
+  }
+}
+
 .notice-legend-label {
   color: $secondary;
   font-weight: normal;
   font-size: 1rem;
+  margin-bottom: 0;
+
+  @media screen and (max-width: 480px) {
+    margin-bottom: 0.5em;
+  }
 }
 
-.notice-legend {
-  margin-left: auto;
-  margin-right: auto;
-  max-width: 400px;
+.notice-legend-items {
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(4, auto);
+
+  @media screen and (max-width: 767px) {
+    grid-template-columns: repeat(2, auto);
+  }
+
+  @media screen and (max-width: 480px) {
+    grid-template-columns: 3em auto;
+  }
+
+  dt, dd {
+    margin: 0;
+  }
+
+  dt {
+    padding-left: .75em;
+
+    @media screen and (max-width: 480px) {
+      padding-left: 0;
+    }
+  }
+
+  dd {
+    padding-left: .25em;
+  }
 }
