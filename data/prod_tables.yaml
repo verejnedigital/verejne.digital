@@ -67,7 +67,7 @@
                        CREATE TABLE CompanyInfo (
                                 id SERIAL PRIMARY KEY,
                                 eid INTEGER REFERENCES Entities(id),
-                                ico INT8,
+                                ico INT8 NOT NULL,
                                 established_on DATE,
                                 terminated_on DATE,
                                 legal_form_id INTEGER,
