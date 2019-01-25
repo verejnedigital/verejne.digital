@@ -5,6 +5,9 @@ import {loadImageAsync, mapArrayToId, mapObjToId} from '../utils'
 
 import type {CadastralData} from '../state'
 
+const getIdFromCadastralData = (cd: CadastralData) =>
+  `${cd.cadastralunitcode}-${cd.foliono}-${cd.landusename || 'nedefinovane'}`
+
 export const politiciansProvider = (group: string) => ({
   ref: `politicians-${group}`,
   getData: [
@@ -32,8 +35,7 @@ export const cadastralInfoProvider = (id: string, needed: boolean = true) => ({
     ['profile', 'cadastral'],
     mapArrayToId,
     id,
-    (cd: CadastralData) =>
-      `${cd.cadastralunitcode}-${cd.foliono}-${cd.landusename || 'nedefinovane'}`,
+    getIdFromCadastralData,
   ],
   keepAliveFor: DEFAULT_PROVIDER_KEEP_ALIVE,
   needed,
@@ -70,8 +72,14 @@ const imageSrcOnData = (receiveImageSrc: (string) => void) => (ref: string, img:
   receiveImageSrc(img.src)
 
 // attempts to load image, provides src if it exists, otherwise nothing is received
-export const imageSrcProvider = (src: string, receiveImageSrc: (string) => void) => ({
-  ref: `image:${src}`,
+// cachebreak is a hotfix, without it the same src can't be used with different receiveImageSrc
+// TODO think of a better way to do it, without 'cachebreak'
+export const imageSrcProvider = (
+  src: string,
+  receiveImageSrc: (string) => void,
+  cachebreak: string
+) => ({
+  ref: `image:${src}${cachebreak}`,
   getData: [loadImageAsync, src],
   responseHandler: (img: Image) => img,
   onData: [imageSrcOnData, receiveImageSrc],
