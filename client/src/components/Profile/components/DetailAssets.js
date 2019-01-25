@@ -29,9 +29,7 @@ const DetailAssetDeclaration = ({
         <th>
           {title} ({assets.length}) <br />
           <span className="source">zdroj </span>
-          <ExternalLink url={source}>
-            NRSR
-          </ExternalLink>
+          <ExternalLink url={source}>NRSR</ExternalLink>
           <span className="source">{year !== 0 ? `rok ${year}` : ''}</span>
         </th>
       </tr>
@@ -60,8 +58,8 @@ export default compose(
   withState('preloadedImageSrc', 'setPreloadedImageSrc', undefined),
   branch(
     ({image}) => !!image,
-    withDataProviders(({image, setPreloadedImageSrc}) => [
-      imageSrcProvider(image, setPreloadedImageSrc),
+    withDataProviders(({image, setPreloadedImageSrc, cachebreak}) => [
+      imageSrcProvider(image, setPreloadedImageSrc, cachebreak),
     ])
   )
 )(DetailAssetDeclaration)

@@ -102,10 +102,13 @@ const DetailPage = ({
                 assets={assets.unmovable_assets}
                 year={selectedYear}
                 title="Majetkové priznanie: Nehnuteľnosti"
-                image={`https://verejne.digital/resources/profil_asset_plots/${politician.surname}_${
-                  politician.firstname
-                }.png`}
+                image={`https://verejne.digital/resources/profil_asset_plots/${
+                  politician.surname
+                }_${politician.firstname}.png`}
                 source={assets.source}
+                cachebreak={Math.random()
+                  .toString(36)
+                  .substr(2, 5)}
               />
             </section>
             <section>
@@ -126,12 +129,9 @@ const DetailPage = ({
             </section>
           </Fragment>
         )}
-        {politician.entities &&
-          size(politician.entities) > 0 && (
+        {politician.entities && size(politician.entities) > 0 && (
           <section className="mb-4">
-            <h5 className="ml-2">
-              Informácie z obchodného registra môžu obsahovať menovcov.
-            </h5>
+            <h5 className="ml-2">Informácie z obchodného registra môžu obsahovať menovcov.</h5>
             {map(politician.entities, (e, i) => (
               <Info key={i} data={e} />
             ))}
@@ -139,7 +139,7 @@ const DetailPage = ({
         )}
       </Col>
       <Col tag="section">
-        {cadastral.length > 0 &&
+        {cadastral.length > 0 && (
           <DetailCadastralTable
             cadastral={paginatedCadastral}
             cadastralLength={cadastralLength}
@@ -149,16 +149,16 @@ const DetailPage = ({
             history={history}
             onParcelShow={goMap}
           />
-        }
+        )}
       </Col>
     </Row>
-    {cadastral.length > 0 &&
+    {cadastral.length > 0 && (
       <Row key="map" id="map">
         <Col>
           <MapContainer assets={cadastral} {...mapProps} />
         </Col>
       </Row>
-    }
+    )}
   </Container>
 )
 
