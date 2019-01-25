@@ -82,7 +82,7 @@ const Subgraph = ({
         style={graphStyle}
       />
     </div>
-    <Legend defaultOpen={false} closable graphControls />
+    <Legend defaultOpen closable graphControls />
     {selectedEids.map((eid) => (
       <div className="info-loader" key={eid}>
         <CompanyDetails eid={eid} />
