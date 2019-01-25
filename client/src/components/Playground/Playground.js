@@ -1,8 +1,6 @@
 // @flow
 import React from 'react'
 import {compose} from 'redux'
-import {connect} from 'react-redux'
-import {Link} from 'react-router-dom'
 import {HashLink} from 'react-router-hash-link'
 import {withState} from 'recompose'
 import Typing from 'react-typing-animation'
@@ -19,8 +17,8 @@ import {
 import {FaGraduationCap, FaCopy} from 'react-icons/fa'
 import {GoGraph} from 'react-icons/go'
 
-import type {State, GeolocationPoint, CompanyEntity} from '../../state'
-import type {ContextRouter} from 'react-router-dom'
+import type {GeolocationPoint, CompanyEntity} from '../../state'
+import type {RouterHistory, ContextRouter} from 'react-router-dom'
 import type {HOC} from 'recompose'
 
 import './Playground.css'

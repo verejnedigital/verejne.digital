@@ -8,7 +8,9 @@ import './Search.css'
 
 const Search = () => (
   <Container className="" style={{maxWidth: '1200px'}}>
+    {/* $FlowFixMe Connected components are hard to type */}
     <SearchAutocomplete />
+    {/* $FlowFixMe Connected components are hard to type */}
     <SearchResults />
   </Container>
 )

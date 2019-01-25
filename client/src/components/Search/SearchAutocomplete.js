@@ -27,6 +27,7 @@ export type Props = {
   suggestionEids: Array<number>,
   setInputValue: Function,
   entities: Array<CompanyEntity>,
+  query: string,
 } & ContextRouter
 
 const SearchAutocomplete = ({
@@ -83,12 +84,12 @@ const enhance: HOC<*, Props> = compose(
   withHandlers({
     searchOnEnter: (props: Props) => (e) => {
       if (e.key === 'Enter') {
-        props.searchInfo(props.inputValue, props.history)
+        props.searchInfo(props.inputValue)
       }
     },
     handleSelect: (props: Props) => (value) => {
       props.setInputValue(value)
-      props.searchInfo(value, props.history)
+      props.searchInfo(value)
     },
     onChange: ({inputValue, setInputValue}) => (e) => setInputValue(e.target.value),
   })
