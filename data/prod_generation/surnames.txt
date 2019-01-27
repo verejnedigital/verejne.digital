@@ -22411,7 +22411,6 @@ Abraham
 Ďurdina
 Ďungel
 Čura
-Čs
 Čorosová
 Čopjanová
 Čičatková
@@ -46920,7 +46919,6 @@ Alter
 Alexi
 Alchus
 Alakszová
-Al
 Agárdyová
 Agárdi
 Agricolová
@@ -99005,7 +99003,6 @@ Eliašova
 Eliaško
 Elexhauserová
 Elcner
-El
 Ekkertová
 Ekerová
 Eiwangerová
@@ -101970,7 +101967,6 @@ Agnetiová
 Agha
 Agardy
 Agafonová
-Ag
 Aftanas
 Adámus
 Adámaťová
@@ -128077,7 +128073,6 @@ Csabina
 Csabajkóová
 Csabajková
 Csabai
-Cs
 Crvenkovičová
 Crmomanová
 Crková
@@ -149965,7 +149960,6 @@ Szabaditsová
 Szabadi
 Szabadfyová
 Szabacseková
-Sz
 Syčáková
 Syčová-tereková
 Syzonová
@@ -158217,7 +158211,6 @@ Rubavič
 Rubančiková
 Rubal
 Ruaux
-Ru
 Rrustemi
 Rridzoň
 Rraci
@@ -165815,7 +165808,6 @@ Peagram
 Peace
 Pdhradský
 Pdhradská
-Pd
 Pcsolinszká
 Pcsolinszky
 Pcsolinszki
@@ -168710,7 +168702,6 @@ Oheim
 Ohareková
 Ohalek
 Ohajský
-Oh
 Ogári
 Ogyay
 Ogurcsáková
@@ -193482,7 +193473,6 @@ Ipolyová
 Ipolyova
 Ipoly
 Ipoli
-Ip
 Iozefic
 Iová
 Iordan
@@ -193700,7 +193690,6 @@ Ikhardtová
 Ikerr
 Ikerová
 Ikas
-Ik
 Iivan
 Ihňaciková
 Ihrová
@@ -206339,7 +206328,6 @@ Faberova
 Fabel
 Fabbri
 Fabacsovicsová
-Fa
 Eššová
 Eštókova
 Eštvánčík
@@ -208636,7 +208624,6 @@ Drabič
 Drabek
 Drabcsáková
 Drabcsaková
-Dr
 Dožíková
 Dožicky
 Doškovičová
@@ -222275,7 +222262,6 @@ Akajíková
 Akajík
 Akajiková
 Akai
-Ak
 Ajžo
 Ajváziová
 Ajvaszová
@@ -224204,7 +224190,6 @@ Aala
 Šmahelova
 Šmahaĺová
 Šmahanská
-Šm
 Šlímová
 Šléška
 Šlumpa
@@ -225408,7 +225393,6 @@ Aala
 Ďadík
 Ďadovská
 Ďabolkova
-Čš
 Čĺžková
 Čúzi
 Čúroš
@@ -225638,7 +225622,6 @@ Aala
 Čmehilová
 Člžová
 Čluneková
-Čl
 Čkurdová
 Čižínsky
 Čižínska
@@ -226474,7 +226457,6 @@ Zvadulová
 Zvadova
 Zvachova
 Zvac
-Zv
 Zužitkovanie
 Zužik
 Zušťaková
@@ -226985,8 +226967,6 @@ Zobáč
 Zobrakova
 Zobotová
 Zobekova
-Zo-ssz
-Zo
 Znojová
 Znojova
 Znašik
@@ -229126,7 +229106,6 @@ Váchalová
 Váboh
 Vábilová
 Vábil
-Vá
 Vzentekova
 Vyžrálek
 Vyžral
@@ -234662,8 +234641,6 @@ Tkats
 Tkalecová
 Tkacivsky
 Tjesova
-Tj-družstevník
-Tj
 Tižináková
 Tižinák
 Tižaková
@@ -235868,7 +235845,6 @@ Tabacarova
 Tabacar
 Tabacakova
 Tabacak
-Ta
 Sźýkora
 Sůleová
 Sůkup
@@ -240062,17 +240038,6 @@ Srajnova
 Srajerova
 Sragova
 Sraga
-Sr-varhaníková
-Sr-spf,
-Sr-spf
-Sr-papin
-Sr-onv
-Sr-msnv
-Sr-mo
-Sr-mnv
-Sr-lsr
-Sr--msnv
-Sr
 Spšiaková
 Spöttleová
 Spöttle
@@ -241269,7 +241234,6 @@ Smahajova
 Smahaj
 Smagalova
 Smadova
-Sm
 Slýšová
 Slížova
 Slíź
@@ -247294,7 +247258,6 @@ Rebecová
 Reatová
 Reapkova
 Readley
-Rd
 Ražina
 Raždiková
 Raždik
@@ -254185,7 +254148,6 @@ Oúulanyá
 Oúss
 Oúpial
 Oúnz
-Oú
 O´sullivan
 O´shaughnessy
 O´reilly
@@ -254314,8 +254276,6 @@ Ovariova
 Ovakova
 Ovadkova
 Ovadekova
-Ova
-Ov
 Ouředníková
 Ouzky
 Outratova
@@ -254329,7 +254289,6 @@ Oudranová
 Oudová
 Oudova
 Oudocvá
-Ou
 Otčenášová-greenslade
 Otčenášková
 Otčenašová
@@ -256041,7 +256000,6 @@ Nyakas
 Nyagyferenczová
 Nyadady
 Nvotova
-Nv
 Nušš
 Nušová
 Nuzova
@@ -257273,7 +257231,6 @@ Nabilko
 Nabelkova
 Nabelek
 Műler
-Mš
 Mŕtviková
 Mĺkvá
 Měšťáková
@@ -260871,7 +260828,6 @@ Mccauley
 Mccarry
 Mccann
 Mccall
-Mc
 Mažješiková
 Mažješik
 Mažik
@@ -263654,7 +263610,6 @@ Lyasova
 Lvoncikova
 Lvoncik
 Lvomska
-Lv
 Lužny
 Lužna
 Lušťák
@@ -276187,7 +276142,6 @@ Jrd-herlany
 Jrd-družba-strelníky
 Jrd-bunetice
 Jrd-bidovce
-Jp
 Jožovičová
 Jožovič
 Jožovitová
@@ -278179,7 +278133,6 @@ Inančíková
 Inančo
 Inanič
 Inancova
-In
 Imulovičová
 Imsuráková
 Imsurák
@@ -278401,7 +278354,6 @@ Igenesova
 Igbal-szapuová
 Igač
 Iganth
-Ig
 Ifner
 Ifkova
 Ifko
@@ -278428,7 +278380,6 @@ Ichnová
 Ichniovsky
 Ichniovska
 Ichlinekova
-Ic
 Ibraimová
 Ibrahimovičová
 Ibrahem
@@ -281216,7 +281167,6 @@ Hladicek
 Hladejova
 Hlacinova
 Hlacikova
-Hl
 Hižnayova
 Hišovská
 Hiškárová
@@ -283753,7 +283703,6 @@ Gábler
 Gábelská
 Gábayová
 Gábani
-Gá
 Gzébuczová
 Gzrbaly
 Gzivnova
@@ -287248,7 +287197,6 @@ Fábjánová
 Fábiš
 Fábiánffyová
 Fyndrik
-Fy
 Fuňanič
 Fuĺajtár
 Fučíkova
@@ -290420,7 +290368,6 @@ Dydek
 Dybova
 Dybalova
 Dyacovsky
-Dy
 Dwyerová
 Dvybala
 Dvuročenská
@@ -292167,7 +292114,6 @@ Dlabacovákrsanovásutriková
 Dlabacovákrsanová
 Dlabacovakrsanova
 Dlabackrsan
-Dk
 Djurník
 Djubašíková
 Djubasák
@@ -296191,7 +296137,6 @@ Cebenak
 Cebeková
 Cebakova
 Cchochulová
-Cb
 Cańová
 Cačka
 Cazerova
@@ -303573,7 +303518,6 @@ Ancak
 Anastasio
 Analaiova
 Analai
-An
 Amzlerova
 Amzelova
 Amzalagová
@@ -304034,7 +303978,6 @@ Acelova
 Accipiterová
 Acay
 Acai
-Ac
 Abšnajderová
 Abyfyová
 Abuová

@@ -9,7 +9,6 @@ and neighbours).
 import codecs
 import collections
 import re
-import six
 
 
 def get_surnames():
