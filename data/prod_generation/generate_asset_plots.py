@@ -22,22 +22,20 @@ def plot_unmovable_asset_counts(declarations, years, dir_save):
   """Plots asset counts from `declarations` across `years`."""
 
   # Extract quantities to plot.
-  xs = [d['year'] for d in declarations]
-  ys_houses = [d['num_houses'] for d in declarations]
-  ys_fields = [d['num_fields'] for d in declarations]
-  ys_others = [d['num_others'] for d in declarations]
+  years_declared, ys_houses, ys_fields, ys_others = zip(*[
+      (d['year'], d['num_houses'], d['num_fields'], d['num_others'])
+      for d in sorted(declarations, key=lambda d: d['year'])])
 
   # Set up plot.
   fig, ax = plt.subplots(1, 1, figsize=(4.6, 2.7))
   ax.set_frame_on(False)
-  ax.tick_params(axis="both", which="both", bottom="off", top="off")
+  ax.tick_params(axis='both', which='both', bottom='off', top='off')
   ax.grid(b=True, axis='y', which='major', lw=0.2, color='black', alpha=0.3)
 
   # Set up x-axis.
   ax.set_xlim((years[0] - 1, years[-1] + 1))
   ax.set_xticks(years)
   ax.set_xticklabels(years, rotation=90)
-  years_declared = [d['year'] for d in declarations]
   for xtick, year in zip(ax.get_xticklabels(), years):
     xtick.set_color('black' if year in years_declared else 'gray')
 
@@ -54,16 +52,16 @@ def plot_unmovable_asset_counts(declarations, years, dir_save):
   ]
   for ys, marker, color, zorder, label in plots:
     if max(ys) > 0:
-      ax.plot(xs, ys, marker=marker, ms=12, markeredgewidth=0.0,
-              linestyle='dotted', color=color, zorder=zorder,
-              clip_on=False, alpha=1, label=label)
+      ax.plot(years_declared, ys, marker=marker, ms=12,
+              markeredgewidth=0.0, linestyle='dotted', color=color,
+              zorder=zorder, clip_on=False, alpha=1, label=label)
 
   # Add legend.
   ax.legend(bbox_to_anchor=(1.0, -0.25), handletextpad=0.2,
             fontsize='small', ncol=3, frameon=False)
 
   # Save plot.
-  path = os.path.join(dir_save, "%s_%s.png" % (
+  path = os.path.join(dir_save, '%s_%s.png' % (
       declarations[0]['surname'].title(),
       declarations[0]['firstname'].title()
   ))
@@ -115,7 +113,7 @@ def generate_unmovable_asset_count_plots():
 
   # Iterate through all persons, and plot.
   for ui, person_id in enumerate(user_declarations):
-    # if person_id != 653:
+    # if person_id != 913:
     #   continue
     declarations = user_declarations[person_id]
     plot_unmovable_asset_counts(declarations, years, DIR_SAVE)
