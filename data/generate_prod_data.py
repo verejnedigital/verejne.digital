@@ -403,7 +403,12 @@ def main(args_dict):
     process_source_rpvs(db_source, db_prod, geocoder, entities_lookup, test_mode)
     db_source.close()
 
-    # Run post processing
+    # Run post processing.
+    # TODO: For now post processing requires access to the profil
+    # source schema. Remove this when fixed.
+    schema_profil = db_prod.get_latest_schema('source_internal_profil_')
+    db_prod.execute(
+        'SET search_path="' + prod_schema_name + '", "' + schema_profil + '", public;')
     post_process.do_post_processing(db_prod, test_mode)
 
     # Create materialized view for entity search after all entities
