@@ -27,7 +27,7 @@ ASSET_FIELDS = (ID, PARSED_INCOME, YEAR)
 #   SELECT {}, {}, {}
 #   FROM assetdeclarations
 #   """.format(*ASSET_FIELDS)
-    
+
 #   incomes = defaultdict(list)
 #   with db.get_server_side_cursor(query) as cur:
 #     for row in cur:
@@ -50,7 +50,7 @@ def get_year_income(assets):
         return None
     else:
         return {
-            YEAR: [asset[YEAR] for asset in assets if asset[YEAR] not in YEARS_TO_IGNORE], 
+            YEAR: [asset[YEAR] for asset in assets if asset[YEAR] not in YEARS_TO_IGNORE],
             PARSED_INCOME: [asset[PARSED_INCOME] for asset in assets if asset[YEAR] not in YEARS_TO_IGNORE]}
 
 
@@ -68,14 +68,14 @@ def get_merged_groups(politicians):
         if key.lower() == POSLANEC_NRSR.lower():
             key = person[PARTY]
         positions[key].append(person)
-  
+
     groups = defaultdict(lambda: defaultdict(list))
     for key, val in positions.items():
         tokens = key.lower().split(" ")
         if len(tokens) == 1:
             tokens.append("")
         groups[tokens[0]][tokens[1]].extend([person[ID] for person in val])
-  
+
     merged_groups = defaultdict(list)
     for k1, v1 in groups.items():
         for k2, v2 in v1.items():
@@ -169,11 +169,14 @@ def add_income_graphs(db):
   print(LOG_PREFIX + "Generating finished. Starting to store results.")
 
   query = """
-  CREATE TABLE income_graphs_jsons(
-  id                    serial   PRIMARY KEY,
-  person_id             int      NOT NULL,
-  json_plot             text     NOT NULL
-  );"""
+    DROP TABLE IF EXISTS income_graphs_jsons;
+
+    CREATE TABLE income_graphs_jsons(
+      id                    serial   PRIMARY KEY,
+      person_id             int      NOT NULL,
+      json_plot             text     NOT NULL
+    );
+  """
 
   db.execute(query)
 
