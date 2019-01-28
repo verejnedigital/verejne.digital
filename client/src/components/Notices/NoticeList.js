@@ -56,6 +56,7 @@ const NoticeList = ({
       <NoticeSidebar />
       <Row>
         <Col>
+          <Legend />
           <Input
             type="text"
             className="notice-input mt-2"
@@ -66,8 +67,6 @@ const NoticeList = ({
           <FormText className="notice-search-result-text">
             {searchValue && `${resultPlurality(noticesLength)} pre "${searchValue}".`}
           </FormText>
-          <hr />
-          <Legend />
           <hr />
           <div className="notice-list-table">
             {noticesLength >= 1 &&
