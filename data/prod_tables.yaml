@@ -50,6 +50,8 @@
         LEFT JOIN
           economic_activities ON
           organizations.id=economic_activities.organization_id
+        WHERE
+          organization_identifier_entries.ipo IS NOT NULL
         ORDER BY
           organizations.id,
           organization_identifier_entries.effective_to DESC,
@@ -67,7 +69,7 @@
                        CREATE TABLE CompanyInfo (
                                 id SERIAL PRIMARY KEY,
                                 eid INTEGER REFERENCES Entities(id),
-                                ico INT8 NOT NULL,
+                                ico INT8,
                                 established_on DATE,
                                 terminated_on DATE,
                                 legal_form_id INTEGER,
