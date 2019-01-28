@@ -13,7 +13,6 @@ import type {
   PoliticianDetail,
   CadastralData,
   AssetDeclaration,
-  PoliticiansSortKey,
   PoliticiansSortState,
 } from '../state'
 import type {Selector} from 'reselect'
