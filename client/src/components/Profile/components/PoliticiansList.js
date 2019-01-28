@@ -33,7 +33,7 @@ type HeaderCellProps = {
   title?: string,
   sortKey: PoliticiansSortKey,
   active: boolean,
-  reverse: boolean,
+  reversedAlphanumSort: boolean,
   setProfileSort: typeof setProfileSort,
   politicianGroup: string,
 }
@@ -53,16 +53,22 @@ const HeaderCell = ({
   title,
   sortKey,
   active,
-  reverse,
+  reversedAlphanumSort,
   setProfileSort,
   politicianGroup,
 }: HeaderCellProps) => (
   <th
     className="clickable text-left column-title"
-    onClick={() => setProfileSort(politicianGroup, sortKey, active ? !reverse : defaultSortReverse[sortKey])}
+    onClick={() =>
+      setProfileSort(
+        politicianGroup,
+        sortKey,
+        active ? !reversedAlphanumSort : defaultSortReverse[sortKey]
+      )
+    }
     title={title}
   >
-    {text} {active ? reverse ? <FaSortUp /> : <FaSortDown /> : ''}
+    {text} {active ? reversedAlphanumSort ? <FaSortUp /> : <FaSortDown /> : ''}
   </th>
 )
 
@@ -82,7 +88,7 @@ const PoliticiansList = ({
           text="Meno a priezvisko"
           sortKey="surname"
           active={sortState.sortKey === 'surname'}
-          reverse={sortState.reverse}
+          reversedAlphanumSort={sortState.reverse}
           setProfileSort={setProfileSort}
           politicianGroup={politicianGroup}
         />
@@ -91,7 +97,7 @@ const PoliticiansList = ({
             text="Strana"
             sortKey="party_abbreviation"
             active={sortState.sortKey === 'party_abbreviation'}
-            reverse={sortState.reverse}
+            reversedAlphanumSort={sortState.reverse}
             setProfileSort={setProfileSort}
             politicianGroup={politicianGroup}
           />
@@ -100,7 +106,7 @@ const PoliticiansList = ({
           text="Ročný príjem"
           sortKey="latest_income"
           active={sortState.sortKey === 'latest_income'}
-          reverse={sortState.reverse}
+          reversedAlphanumSort={sortState.reverse}
           setProfileSort={setProfileSort}
           politicianGroup={politicianGroup}
         />
@@ -109,7 +115,7 @@ const PoliticiansList = ({
           title="Domy, byty a iné stavby"
           sortKey="num_houses_flats"
           active={sortState.sortKey === 'num_houses_flats'}
-          reverse={sortState.reverse}
+          reversedAlphanumSort={sortState.reverse}
           setProfileSort={setProfileSort}
           politicianGroup={politicianGroup}
         />
@@ -117,7 +123,7 @@ const PoliticiansList = ({
           text="Orná pôda &amp; záhrady"
           sortKey="num_fields_gardens"
           active={sortState.sortKey === 'num_fields_gardens'}
-          reverse={sortState.reverse}
+          reversedAlphanumSort={sortState.reverse}
           setProfileSort={setProfileSort}
           politicianGroup={politicianGroup}
         />
@@ -125,7 +131,7 @@ const PoliticiansList = ({
           text="Ostatné"
           sortKey="num_others"
           active={sortState.sortKey === 'num_others'}
-          reverse={sortState.reverse}
+          reversedAlphanumSort={sortState.reverse}
           setProfileSort={setProfileSort}
           politicianGroup={politicianGroup}
         />
