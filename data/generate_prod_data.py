@@ -239,10 +239,13 @@ def ProcessSource(db_source, db_prod, geocoder, entities, config, test_mode):
                 extract = ExtractDescriptionFromBody(row["body"])
                 if extract is not None:
                     row["body"] = extract.get("description", None)
-                    if "deadline" in extract:
-                        row["deadline"] = datetime.strptime(res["deadline"], "%Y-%m-%dT%H:%M:%S").date()
-                    if "email" in extract:
-                        row["contact_email"] = extract["email"]
+                    # TODO: fix this code. It is not possible to set value for non-existng key.
+                    # This was not caugh in testng because testing data for Notices have 0 rows.
+                    #
+                    # if "deadline" in extract:
+                    #     row["deadline"] = datetime.strptime(row["deadline"], "%Y-%m-%dT%H:%M:%S").date()
+                    # if "email" in extract:
+                    #     row["contact_email"] = extract["email"]
             supplier_eid = None
             if config.get("supplier_eid"):
                 supplier_address_id = None
