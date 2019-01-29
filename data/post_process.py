@@ -100,8 +100,9 @@ def nullize(x):
 def arrayize(a, type_str="float"):
     length = len(a)
     for i in range(length):
-        if isNaN(a[i]) :
-            a[i] = "NULL"
+        if isNaN(a[i]):
+            if type_str == "float":
+                a[i] = 0.0
     a = ','.join(map(str, a))
     a = "ARRAY[" + a + "]"
     if length == 0:
