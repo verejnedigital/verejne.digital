@@ -1,12 +1,10 @@
 """Create JSONs for income graphs for each politician."""
 
 from collections import defaultdict
-import urllib, json
+import json
 
 LOG_PREFIX = '[post_process_income_graph] '
 
-URL_ASSET = "https://verejne.digital/api/k/asset_declarations?id={}&aba"
-URL_LIST_POLITICIANS = "https://verejne.digital/api/k/list_politicians?group=active"
 PARSED_INCOME = 'parsed_income'
 YEAR = 'year'
 FIRSTNAME = 'firstname'
@@ -22,27 +20,48 @@ DEFAULT_BACKGROUND_IDS = (40, 169, 448, 760, 828, 252)
 ASSET_FIELDS = (ID, PARSED_INCOME, YEAR)
 
 
-# def get_incomes(db):
-#   query = """
-#   SELECT {}, {}, {}
-#   FROM assetdeclarations
-#   """.format(*ASSET_FIELDS)
+def get_politicians(db):
+  """Returns a list of persons, each a dictionary."""
 
-#   incomes = defaultdict(list)
-#   with db.get_server_side_cursor(query) as cur:
-#     for row in cur:
-#       incomes[row[0]].append(dict(zip(ASSET_FIELDS[1:], row[1:])))
-#   return incomes
+  # The set of politicians returned here are those with an asset
+  # declaration from 2016 or newer.
+  return db.query("""
+      SELECT
+        persons.id AS id,
+        persons.firstname AS firstname,
+        persons.surname AS surname,
+        parties.name AS party_nom,
+        offices.name_male AS office_name_male
+      FROM
+        Persons
+      INNER JOIN
+        PersonOffices ON PersonOffices.PersonId=Persons.Id
+      INNER JOIN
+        Offices ON Offices.id=PersonOffices.OfficeId
+      LEFT JOIN
+        Parties ON Parties.id=PersonOffices.party_nomid
+      WHERE
+        EXISTS (SELECT 1 FROM AssetDeclarations
+                WHERE personid=persons.id AND year>=2016)
+      ;""")
 
-def get_incomes(jsons_politicians):
-  return {politician[ID]: get_json(URL_ASSET.format(politician[ID])) for politician in jsons_politicians}
 
-def get_json(url):
-    content = urllib.urlopen(url).read()
-    try:
-        return json.loads(content)
-    except:
-        return None
+def get_incomes(db):
+  """Returns a dict mapping from person_id to list of incomes."""
+
+  incomes = defaultdict(list)
+  rows = db.query("""
+      SELECT
+        assetdeclarations.personid AS id,
+        incomes.income AS parsed_income,
+        year
+      FROM assetdeclarations
+      INNER JOIN incomes
+        ON incomes.asset_declaration_id=assetdeclarations.id;
+  """)
+  for row in rows:
+    incomes[row['id']].append(row)
+  return incomes
 
 
 def get_year_income(assets):
@@ -158,14 +177,14 @@ def generate_figure_json(selected, incomes, politicians, merged_groups):
 
 def add_income_graphs(db):
   print(LOG_PREFIX + "Started fetching data.")
-  jsons_politicians = get_json(URL_LIST_POLITICIANS)
+  jsons_politicians = get_politicians(db)
   politicians = {politician[ID]: politician for politician in jsons_politicians}
-  incomes_politicians = get_incomes(jsons_politicians)
+  incomes_politicians = get_incomes(db)
   print(LOG_PREFIX + "Data fetching finished. Starting to generate jsons for plots.")
   merged_groups = get_merged_groups(jsons_politicians)
   json_plots = [
-    (key, generate_figure_json(key, incomes_politicians, politicians, merged_groups))
-    for key in incomes_politicians]
+    (person_id, generate_figure_json(person_id, incomes_politicians, politicians, merged_groups))
+    for person_id in politicians]
   print(LOG_PREFIX + "Generating finished. Starting to store results.")
 
   query = """

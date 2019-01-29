@@ -3,18 +3,21 @@
 """Unit tests for prod data generation.
 
 Run all unit tests from command line as:
-  python test.py
+  cd verejne.digital/data
+  python -m prod_generation.test
 To run an individual unit test only, run (for example):
-  python test.py TestHandlers.test_surname_similarity
+  python -m prod_generation.test TestHandlers.test_surname_similarity
 """
 
 import unittest
 
-import entity_tools
-import post_process_neighbours
+import db.db as db_lib
+import prod_generation.entity_tools as entity_tools
+import prod_generation.post_process_neighbours as post_process_neighbours
+import prod_generation.post_process_income_graph as post_process_income_graph
 
 
-class TestHandlers(unittest.TestCase):
+class EntityResolutionTestHandlers(unittest.TestCase):
 
 
   def setUp(self):
@@ -53,6 +56,28 @@ class TestHandlers(unittest.TestCase):
         response = post_process_neighbours._are_surnames_similar(
             parse1.surname, parse2.surname)
       self.assertTrue(response == desired_response)
+
+
+class PostProcessingTestHandlers(unittest.TestCase):
+
+
+  def setUp(self):
+    db = db_lib.DatabaseConnection(
+        path_config='db_config_update_source.yaml')
+    schema = db.get_latest_schema('prod_')
+    schema_profil = db.get_latest_schema('source_internal_profil_')
+    db.execute(
+        'SET search_path="' + schema + '", "' + schema_profil + '";')
+    self.db = db
+
+
+  def tearDown(self):
+    self.db.conn.rollback()
+    self.db.close()
+
+
+  def test_post_processing_income_graphs(self):
+    post_process_income_graph.add_income_graphs(self.db)
 
 
 def main():
