@@ -89,17 +89,24 @@ def notices_create_extra_table(db, test_mode):
     print "Finished creating table"
 
 
+def isNaN(num):
+    return (num is None) or (num != num)
+
+
+def nullize(x):
+    return "NULL" if isNaN(x) else str(x)
+
+
 def arrayize(a, type_str="float"):
     length = len(a)
+    for i in range(length):
+        if isNaN(a[i]) :
+            a[i] = "NULL"
     a = ','.join(map(str, a))
     a = "ARRAY[" + a + "]"
     if length == 0:
         a = a + "::" + type_str + "[]"
     return a
-
-
-def nullize(x):
-    return "NULL" if x is None else str(x)
 
 
 def notices_insert_into_extra_table(db, notices, test_mode):
