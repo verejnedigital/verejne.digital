@@ -362,6 +362,7 @@ export type Politician = {|
   office_name_female: string,
   id: number,
   latest_income: number,
+  json_plots: ?string,
 |}
 
 export type PoliticiansSortKey =
