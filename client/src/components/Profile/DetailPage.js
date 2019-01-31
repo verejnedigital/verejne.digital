@@ -145,14 +145,6 @@ const DetailPage = ({
             </section>
           </Fragment>
         )}
-        {politician.entities && size(politician.entities) > 0 && (
-          <section className="mb-4">
-            <h5 className="ml-2">Informácie z obchodného registra môžu obsahovať menovcov.</h5>
-            {map(politician.entities, (e, i) => (
-              <Info key={i} data={e} />
-            ))}
-          </section>
-        )}
       </Col>
       <Col tag="section">
         {cadastral.length > 0 && (
@@ -168,6 +160,20 @@ const DetailPage = ({
         )}
       </Col>
     </Row>
+    {politician.entities && size(politician.entities) > 0 && (
+      <section>
+        <h5 className="ml-2">Informácie z obchodného registra môžu obsahovať menovcov.</h5>
+        <Row>
+          {map(politician.entities, (e, i) => (
+            <Col md={6}>
+              <div style={{marginBottom: '1rem'}}>
+                <Info key={i} data={e} />
+              </div>
+            </Col>
+          ))}
+        </Row>
+      </section>
+    )}
     {cadastral.length > 0 && (
       <Row key="map" id="map">
         <Col>
