@@ -1,3 +1,4 @@
+# coding=utf-8
 """Create JSONs for income graphs for each politician."""
 
 from collections import defaultdict
@@ -18,7 +19,7 @@ N_CANDIDATES = 5
 YEARS_TO_IGNORE = [2011]
 DEFAULT_BACKGROUND_IDS = (40, 169, 448, 760, 828, 252)
 ASSET_FIELDS = (ID, PARSED_INCOME, YEAR)
-
+TITLE='Ročný príjem podľa www.nrsr.sk'
 
 def get_politicians(db):
   """Returns a list of persons, each a dictionary."""
@@ -139,6 +140,7 @@ def get_line_dict(x, y, name, width, size):
 
 def get_layout_dict():
     return dict(
+        title=TITLE,
         legend=dict(orientation="h"),
         yaxis=dict(
             exponentformat="none",
