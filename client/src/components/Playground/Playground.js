@@ -4,22 +4,15 @@ import {compose} from 'redux'
 import {HashLink} from 'react-router-hash-link'
 import {withState} from 'recompose'
 import Typing from 'react-typing-animation'
-import {
-  Col,
-  Row,
-  ListGroupItemHeading,
-  ListGroupItemText,
-  Button,
-  ListGroup,
-  ListGroupItem,
-  Table,
-} from 'reactstrap'
+import {Col, Row, Button, Table} from 'reactstrap'
 import {FaGraduationCap, FaCopy} from 'react-icons/fa'
 import {GoGraph} from 'react-icons/go'
 
 import type {GeolocationPoint, CompanyEntity} from '../../state'
 import type {RouterHistory, ContextRouter} from 'react-router-dom'
 import type {HOC} from 'recompose'
+
+import ColabList from './components/ColabList'
 
 import './Playground.css'
 
@@ -148,75 +141,7 @@ const Playground = ({history, typingDone, setTypingDone}) => (
         </p>
       </section>
       <section id="list" className="playground-hype-container">
-        <h2 className="report-list-title">Zoznam reportov</h2>
-        <Row>
-          <Col sm="12" lg="6">
-            <h4>Najpopulárnejšie</h4>
-            <ListGroup>
-              <ListGroupItem tag="a" href="#" action>
-                <ListGroupItemHeading>List group item heading</ListGroupItemHeading>
-                <ListGroupItemText>
-                  Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus
-                  varius blandit.
-                </ListGroupItemText>
-              </ListGroupItem>
-              <ListGroupItem tag="a" href="#" action>
-                <ListGroupItemHeading>List group item heading</ListGroupItemHeading>
-                <ListGroupItemText>
-                  Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus
-                  varius blandit.
-                </ListGroupItemText>
-              </ListGroupItem>
-              <ListGroupItem tag="a" href="#" action>
-                <ListGroupItemHeading>List group item heading</ListGroupItemHeading>
-                <ListGroupItemText>
-                  Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus
-                  varius blandit.
-                </ListGroupItemText>
-              </ListGroupItem>
-              <ListGroupItem tag="a" href="#" action>
-                <ListGroupItemHeading>List group item heading</ListGroupItemHeading>
-                <ListGroupItemText>
-                  Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus
-                  varius blandit.
-                </ListGroupItemText>
-              </ListGroupItem>
-            </ListGroup>
-          </Col>
-          <Col sm="12" lg="6">
-            <h4>Najnovšie</h4>
-            <ListGroup>
-              <ListGroupItem tag="a" href="#" action>
-                <ListGroupItemHeading>List group item heading</ListGroupItemHeading>
-                <ListGroupItemText>
-                  Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus
-                  varius blandit.
-                </ListGroupItemText>
-              </ListGroupItem>
-              <ListGroupItem tag="a" href="#" action>
-                <ListGroupItemHeading>List group item heading</ListGroupItemHeading>
-                <ListGroupItemText>
-                  Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus
-                  varius blandit.
-                </ListGroupItemText>
-              </ListGroupItem>
-              <ListGroupItem tag="a" href="#" action>
-                <ListGroupItemHeading>List group item heading</ListGroupItemHeading>
-                <ListGroupItemText>
-                  Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus
-                  varius blandit.
-                </ListGroupItemText>
-              </ListGroupItem>
-              <ListGroupItem tag="a" href="#" action>
-                <ListGroupItemHeading>List group item heading</ListGroupItemHeading>
-                <ListGroupItemText>
-                  Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus
-                  varius blandit.
-                </ListGroupItemText>
-              </ListGroupItem>
-            </ListGroup>
-          </Col>
-        </Row>
+        <ColabList />
       </section>
       <section id="reference" className="playground-reference-container">
         <h2>Data</h2>
