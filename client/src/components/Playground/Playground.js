@@ -58,7 +58,7 @@ const Playground = ({history, typingDone, setTypingDone}) => (
           </HashLink>
           <HashLink to="/ihrisko#">
             <Button outline color="primary">
-              <FaCopy /> Vytvoriť nový Report
+              <FaCopy /> Vytvoriť nový report
             </Button>
           </HashLink>
           <HashLink to="/ihrisko#reference">
@@ -98,7 +98,7 @@ const Playground = ({history, typingDone, setTypingDone}) => (
               <div className="card-text-container card-right">
                 <h3>2. Využívaj silu platformy verejne.digital</h3>
                 <p>
-                  Všetky agregované a predspracované dáta sú prístupné buď ako .csv súbory, alebo na
+                  Všetky agregované a predspracované dáta sú prístupné buď ako .csv súbory alebo na
                   API verejne.digital.
                 </p>
               </div>
@@ -110,7 +110,7 @@ const Playground = ({history, typingDone, setTypingDone}) => (
               <div className="card-text-container">
                 <h3>3. On the shoulders of giants</h3>
                 <p>
-                  Nauč sa pracovať s dátami v niektorom z interaktívnych tutoriálov, alebo pokračuj
+                  Nauč sa pracovať s dátami v niektorom z interaktívnych tutoriálov alebo pokračuj
                   v niektorom z existujúcich reportov.
                 </p>
               </div>
@@ -120,17 +120,17 @@ const Playground = ({history, typingDone, setTypingDone}) => (
             <Col sm={{size: 8, offset: 4}} className="playground-card card-right">
               <img src="https://placeimg.com/200/200/any" alt="" />
               <div className="card-text-container card-right">
-                <h3>4. vytváraj analýzi a hľadaj prepojenia</h3>
+                <h3>4. Vytváraj analýzy a hľadaj prepojenia</h3>
                 <p>
                   Pomôž odhaliť problémy, ktoré si doteraz nikto nevšímal. Zdieľaj výsledky na
-                  verejne.digital, blah blah daco..
+                  verejne.digital, blah blah dačo..
                 </p>
               </div>
             </Col>
           </Row>
         </div>
         <p className="bottom-hype-text">
-          TODO Call to Action -> tutorial, prazdny collab alebo zoznam existujucich
+          TODO Call to Action -> tutorial
         </p>
       </section>
       <section id="video" className="playground-video-container">
