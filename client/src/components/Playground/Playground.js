@@ -80,7 +80,7 @@ const Playground = ({history, typingDone, setTypingDone}) => (
         <div className="playground-card-container">
           <Row>
             <Col sm={{size: 8}} className="playground-card">
-              <img src="https://placeimg.com/200/200/any" />
+              <img src="https://placeimg.com/200/200/any" alt="" />
               <div className="card-text-container">
                 <h3>
                   1. Vytvor si projekt v{' '}
@@ -94,7 +94,7 @@ const Playground = ({history, typingDone, setTypingDone}) => (
           </Row>
           <Row>
             <Col sm={{size: 8, offset: 4}} className="playground-card card-right">
-              <img src="https://placeimg.com/200/200/any" />
+              <img src="https://placeimg.com/200/200/any" alt="" />
               <div className="card-text-container card-right">
                 <h3>2. Využívaj silu platformy verejne.digital</h3>
                 <p>
@@ -106,7 +106,7 @@ const Playground = ({history, typingDone, setTypingDone}) => (
           </Row>
           <Row>
             <Col sm={{size: 8}} className="playground-card">
-              <img src="https://placeimg.com/200/200/any" />
+              <img src="https://placeimg.com/200/200/any" alt="" />
               <div className="card-text-container">
                 <h3>3. On the shoulders of giants</h3>
                 <p>
@@ -118,7 +118,7 @@ const Playground = ({history, typingDone, setTypingDone}) => (
           </Row>
           <Row>
             <Col sm={{size: 8, offset: 4}} className="playground-card card-right">
-              <img src="https://placeimg.com/200/200/any" />
+              <img src="https://placeimg.com/200/200/any" alt="" />
               <div className="card-text-container card-right">
                 <h3>4. vytváraj analýzi a hľadaj prepojenia</h3>
                 <p>
@@ -135,9 +135,9 @@ const Playground = ({history, typingDone, setTypingDone}) => (
       </section>
       <section id="video" className="playground-video-container">
         <p className="display-4 video-title">Jednoduchý report vytvoríte za pár minút</p>
-        <iframe width="420" height="315" src="https://www.youtube.com/embed/N0dbGGvsjf8" />
+        <iframe width="420" height="315" src="https://www.youtube.com/embed/N0dbGGvsjf8" title="Tutorial - How to create a simple report" />
         <p className="lead video-subtitle">
-          <a href="#">Vyskúšajte si to tu.</a>
+          <a href="#video">Vyskúšajte si to tu.</a>
         </p>
       </section>
       <section id="list" className="playground-hype-container">
@@ -188,7 +188,7 @@ const Playground = ({history, typingDone, setTypingDone}) => (
             <tr>
               <td>
                 <code>
-                  <a href="#" className="link">
+                  <a href="#reference" className="link">
                     /api/daco$ids
                   </a>
                 </code>
@@ -203,7 +203,7 @@ const Playground = ({history, typingDone, setTypingDone}) => (
             </tr>
             <tr>
               <td>
-                <a href="#">
+                <a href="#reference">
                   <code>/api/daco$ids</code>
                 </a>
               </td>
