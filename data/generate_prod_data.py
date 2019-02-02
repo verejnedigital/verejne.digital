@@ -102,8 +102,6 @@ def ProcessSource(db_source, db_prod, geocoder, entities, config, test_mode):
 
     # Connect to the most recent schema from the current source
     source_schema_name = db_source.get_latest_schema('source_' + config["source_schema"])
-    if "VVO" in source_schema_name:
-        source_schema_name = "source_ekosystem_VVO_20181212220436"
     print "Processing source_schema_name", source_schema_name
     db_source.execute('SET search_path="' + source_schema_name + '";')
 
