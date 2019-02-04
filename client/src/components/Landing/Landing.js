@@ -106,7 +106,7 @@ const Landing = () => (
             </li>
             <li className="list-inline-item">
               <a href="https://vacuumlabs.com/" target="_blank" rel="noopener noreferrer">
-                <img src="/vl.png" alt="VacuumLabs" />
+                <img src="/vl.png" alt="VacuumLabs" style={{height: '18px'}} />
               </a>
             </li>
             <li className="list-inline-item">
