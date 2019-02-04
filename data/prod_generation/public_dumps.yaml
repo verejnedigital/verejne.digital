@@ -26,6 +26,12 @@ dumps:
         COALESCE(to_char(related.effective_from, 'YYYY-MM-DD'), '')
           AS effective_from
       FROM related
+  stakeholdertypes:
+    query: |
+      SELECT
+        stakeholder_type_id,
+        stakeholder_type_text
+      FROM stakeholdertypes
   companies:
     query: |
       SELECT
