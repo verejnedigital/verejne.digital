@@ -6,13 +6,11 @@ export type ColabDetailProps = {
   colab: Colab,
 }
 
-const ColabDetail = ({colab}: ColabDetailProps) => {
-  return (
-    <ListGroupItem tag="a" href={colab.url} target="_blank" rel="noopener" action>
-      <ListGroupItemHeading>{colab.name}</ListGroupItemHeading>
-      <ListGroupItemText>{colab.description}</ListGroupItemText>
-    </ListGroupItem>
-  )
-}
+const ColabDetail = ({colab}: ColabDetailProps) => (
+  <ListGroupItem tag="a" href={colab.url} target="_blank" rel="noopener" action>
+    <ListGroupItemHeading>{colab.name}</ListGroupItemHeading>
+    <ListGroupItemText>{colab.description}</ListGroupItemText>
+  </ListGroupItem>
+)
 
 export default ColabDetail

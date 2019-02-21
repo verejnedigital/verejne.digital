@@ -5,7 +5,7 @@ import {withDataProviders} from 'data-provider'
 import {ListGroup} from 'reactstrap'
 import type {Colab, State} from '../../../state'
 import {colabsSelector} from '../../../selectors'
-import {colabsProvider} from '../../../dataProviders/dataDataProviders'
+import {colabsProvider} from '../../../dataProviders/colabDataProviders'
 import ColabDetail from './ColabDetail'
 
 export type ColabListProps = {
