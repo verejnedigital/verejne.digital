@@ -379,3 +379,5 @@ export const noResultsForCurrentSearch = createSelector(
   autocompleteSuggestionEidsSelector,
   (isLoading, eids) => !isLoading && !eids.length
 )
+
+export const colabsSelector = (state: State) => state.colabs

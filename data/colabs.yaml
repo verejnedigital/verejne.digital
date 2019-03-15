@@ -6,7 +6,7 @@
     verejne.digital
   description:
     Ukážka načítania a zobrazenia dát o verejných obstarávaniach,
-    ukážka embeddingu s použitím TensorFlow, a ukážka použitia nášho
+    ukážka embeddingu s použitím TensorFlow a ukážka použitia nášho
     REST API.
 - name:
     Predsedovia a poslanci VÚC

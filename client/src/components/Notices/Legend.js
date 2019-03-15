@@ -1,6 +1,5 @@
 // @flow
 import React from 'react'
-import {Row, Col} from 'reactstrap'
 
 import {formatSimilarPercent, getWarningSymbol} from './LegendSymbols'
 import './Legend.css'

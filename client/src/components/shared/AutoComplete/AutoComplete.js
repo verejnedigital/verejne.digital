@@ -2,7 +2,7 @@
 import React, {type Node} from 'react'
 import LoadingComponent from 'react-loading-components'
 import {connect} from 'react-redux'
-import {compose, withHandlers, withState, withProps, lifecycle} from 'recompose'
+import {compose, withHandlers, withState, lifecycle} from 'recompose'
 import {debounce, get} from 'lodash'
 import {withDataProviders} from 'data-provider'
 import {

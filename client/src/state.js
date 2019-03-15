@@ -378,6 +378,13 @@ export type PoliticiansSortState = {
   reverse: boolean,
 }
 
+export type Colab = {
+  author: string,
+  description: string,
+  name: string,
+  url: string,
+}
+
 export const refreshedUIState = {
   notices: {searchQuery: ''},
   profile: {query: ''},
@@ -434,6 +441,9 @@ export type State = {|
     +drawerOpen: boolean,
     +selectedLocations: Center[],
   |},
+  +data: {|
+    +colabs: Colab[],
+  |},
   +mapOptions: MapOptions,
   +connections: Connections,
   +addresses: ObjectMap<Address>,
@@ -469,6 +479,9 @@ const getInitialState = (): State => ({
     openedAddressDetail: [],
     drawerOpen: false,
     selectedLocations: [],
+  },
+  data: {
+    colabs: [],
   },
   mapOptions: {
     center: SLOVAKIA_COORDINATES,
