@@ -73,9 +73,8 @@ const Playground = ({history, typingDone, setTypingDone}) => (
           Nauč sa data-science na reálnych dátach a pomáhaj odhaliť podozrivý štátny biznis.
         </p>
         <p className="subhype-text">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. In congue sed sem at maximus. Sed
-          vel eros in neque ultrices pulvinar non id ipsum. Etiam mattis metus id tincidunt commodo.
-          Suspendisse potenti.
+          V komunite je sila. Píšme kód nad rovnakými dátami. Učme sa tipy a triky od seba navzájom a umožnime
+          ostatným zreporodukovať naše výsledky alebo vizualizácie.
         </p>
         <div className="playground-card-container">
           <Row>
@@ -122,16 +121,13 @@ const Playground = ({history, typingDone, setTypingDone}) => (
               <div className="card-text-container card-right">
                 <h3>4. Vytváraj analýzy a hľadaj prepojenia</h3>
                 <p>
-                  Pomôž odhaliť problémy, ktoré si doteraz nikto nevšímal. Zdieľaj výsledky na
-                  verejne.digital, blah blah dačo..
+                  Pomôž odhaliť problémy, ktoré si doteraz nikto nevšímal. Zdieľaj výsledky, kód alebo vizualizáciu na
+                  verejne.digital, nech môžu ostatní pokračovať tam kde si prestal.
                 </p>
               </div>
             </Col>
           </Row>
         </div>
-        <p className="bottom-hype-text">
-          TODO Call to Action -> tutorial
-        </p>
       </section>
       <section id="video" className="playground-video-container">
         <p className="display-4 video-title">Jednoduchý report vytvoríte za pár minút</p>
@@ -155,22 +151,20 @@ const Playground = ({history, typingDone, setTypingDone}) => (
           <tbody>
             <tr>
               <td>
-                <code>Table</code>
+                <code>https://verejne.digital/resources/csv/obstaravania.csv</code>
               </td>
               <td />
               <td>
-                Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus
-                varius blandit.
+                Základné informácie o verejných obstarávaniach
               </td>
             </tr>
             <tr>
               <td>
-                <code>Table</code>
+                <code>https://verejne.digital/resources/csv/entities.csv</code>
               </td>
               <td />
               <td>
-                Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus
-                varius blandit.
+                Mená firiem a osôb pre nami používané eid (identifikátory entít).
               </td>
             </tr>
           </tbody>
@@ -179,40 +173,40 @@ const Playground = ({history, typingDone, setTypingDone}) => (
         <Table dark striped>
           <thead>
             <tr>
-              <th>Url</th>
-              <th>Payload</th>
-              <th>Popis</th>
+              <th>Názov funkcie</th>
+              <th>Čo vracia?</th>
+              <th>Príklad ako zavolať naše API</th>
             </tr>
           </thead>
           <tbody>
             <tr>
               <td>
+                <code>getInfos</code>
+              </td>
+              <td>
+                Základné informácie o entite.
+              </td>
+              <td>
                 <code>
                   <a href="#reference" className="link">
-                    /api/daco$ids
+                    https://verejne.digital/api/v/getInfos?eids=103,82680,293097,389093,389094
                   </a>
                 </code>
-              </td>
-              <td>
-                <code>ids: number[]</code>
-              </td>
-              <td>
-                Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus
-                varius blandit.
               </td>
             </tr>
             <tr>
               <td>
-                <a href="#reference">
-                  <code>/api/daco$ids</code>
-                </a>
+                <code>a_shortest_path</code>
               </td>
               <td>
-                <code>ids: number[]</code>
+                Najkratšie spojenie medzi 2 entitami.
               </td>
               <td>
-                Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus
-                varius blandit.
+                <code>
+                  <a href="#reference" className="link">
+                    https://verejne.digital/prepojenia/api/p/a_shortest_path?eid1=1392540,1608323&eid2=1387739
+                  </a>
+                </code>
               </td>
             </tr>
           </tbody>
