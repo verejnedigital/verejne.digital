@@ -121,15 +121,21 @@
 
   img {
     border-radius: 50%;
+
+    @media screen and (max-width: 767px) {
+      display: none;
+    }
   }
 }
 
-.card-right {
-  flex-direction: row-reverse;
+.card-right {  
+  @media screen and (min-width: 768px) {    
+    flex-direction: row-reverse;
 
-  & > * {
-    text-align: right;
-  }
+    & > * {
+      text-align: right;
+    }
+  }  
 }
 
 .playground-video-container {
@@ -177,4 +183,8 @@
   right: 0;
   position: absolute;
   z-index: -1;
+}
+
+.playground-new-report-button {
+  padding-top: 15px;
 }
