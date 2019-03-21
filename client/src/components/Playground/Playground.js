@@ -13,6 +13,7 @@ import type {RouterHistory, ContextRouter} from 'react-router-dom'
 import type {HOC} from 'recompose'
 
 import ColabList from './components/ColabList'
+import reportImage from '../../assets/reports.jpg'
 
 import './Playground.css'
 
@@ -79,7 +80,7 @@ const Playground = ({history, typingDone, setTypingDone}) => (
         <div className="playground-card-container">
           <Row>
             <Col sm={{size: 8}} className="playground-card">
-              <img src="https://placeimg.com/200/200/any" alt="" />
+              <img src={reportImage} alt="" />
               <div className="card-text-container">
                 <h3>
                   1. Vytvor si projekt v{' '}
@@ -93,7 +94,7 @@ const Playground = ({history, typingDone, setTypingDone}) => (
           </Row>
           <Row>
             <Col sm={{size: 8, offset: 4}} className="playground-card card-right">
-              <img src="https://placeimg.com/200/200/any" alt="" />
+              <img src={reportImage} alt="" />
               <div className="card-text-container card-right">
                 <h3>2. Využívaj silu platformy verejne.digital</h3>
                 <p>
@@ -105,7 +106,7 @@ const Playground = ({history, typingDone, setTypingDone}) => (
           </Row>
           <Row>
             <Col sm={{size: 8}} className="playground-card">
-              <img src="https://placeimg.com/200/200/any" alt="" />
+              <img src={reportImage} alt="" />
               <div className="card-text-container">
                 <h3>3. On the shoulders of giants</h3>
                 <p>
@@ -117,7 +118,7 @@ const Playground = ({history, typingDone, setTypingDone}) => (
           </Row>
           <Row>
             <Col sm={{size: 8, offset: 4}} className="playground-card card-right">
-              <img src="https://placeimg.com/200/200/any" alt="" />
+              <img src={reportImage} alt="" />
               <div className="card-text-container card-right">
                 <h3>4. Vytváraj analýzy a hľadaj prepojenia</h3>
                 <p>
@@ -138,6 +139,13 @@ const Playground = ({history, typingDone, setTypingDone}) => (
       </section>
       <section id="list" className="playground-hype-container">
         <ColabList />
+        <HashLink to="/ihrisko#">
+          <div className="playground-new-report-button">
+            <Button outline color="primary">
+              <FaCopy /> Vytvoriť nový report
+            </Button>
+          </div>
+        </HashLink>
       </section>
       <section id="reference" className="playground-reference-container">
         <h2>Data</h2>

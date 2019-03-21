@@ -48,14 +48,14 @@ const Landing = () => (
           title="Obstarávania"
           text="Do ktorých výziev sa prihlásiť a ktoré sú podozrivé?"
           imgSrc={obstaravaniaIcon}
-        />
-        {/* TODO: Change CSS for card after uncommenting Ihrisko card. */}
-        {/* <Card
+        />        
+        <Card
           to="/ihrisko"
           title="Ihrisko"
-          text="Hrajte sa s nasimi dátami!"
+          text="Hrajte sa s našimi dátami!"
           imgSrc={obstaravaniaIcon}
-        /> */}
+          beta
+        />
       </div>
     </Container>
     <footer className="landing-footer">

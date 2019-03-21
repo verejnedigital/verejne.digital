@@ -4,7 +4,7 @@ import {compose, withHandlers, withState} from 'recompose'
 import {connect} from 'react-redux'
 import {refreshState} from '../actions/sharedActions'
 import {NavLink} from 'react-router-dom'
-import {Collapse, Navbar, NavbarToggler, NavItem, Nav} from 'reactstrap'
+import {Collapse, Navbar, NavbarToggler, NavItem, Nav, Badge} from 'reactstrap'
 
 import {FaFacebookSquare} from 'react-icons/fa'
 
@@ -50,11 +50,11 @@ const Navigation = ({navigationOpen, toggleNavigation, closeNavigation, handleNa
             Vyhľadávanie
           </NavLink>
         </NavItem>
-        {/* <NavItem>
+        <NavItem>
           <NavLink to="/ihrisko" className="nav-link" onClick={handleNavClick}>
-            Ihrisko
+            Ihrisko <Badge>Beta</Badge>
           </NavLink>
-        </NavItem> */}
+        </NavItem>
       </Nav>
       <Nav className="ml-auto" navbar>
         <NavItem>
