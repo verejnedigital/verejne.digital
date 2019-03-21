@@ -69,7 +69,7 @@ const Playground = ({history, typingDone, setTypingDone}) => (
           </HashLink>
           <HashLink to="/ihrisko#reference">
             <Button outline color="primary">
-              <FaForumbee /> Diskusné fórum
+              <FaCopy /> Diskusné fórum
             </Button>
           </HashLink>
         </div>
