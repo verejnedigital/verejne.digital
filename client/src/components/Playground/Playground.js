@@ -115,7 +115,7 @@ const Playground = ({history, typingDone, setTypingDone}) => (
               <div className="card-text-container">
                 <h3>3. On the shoulders of giants</h3>
                 <p>
-                  Nauč sa pracovať s dátami, pomôž odhaliť problémy, ktoré si doteraz nikto nevšímal, alebo pokračuj
+                  Nauč sa pracovať s dátami, pomôž odhaliť problémy, alebo pokračuj
                   v niektorom z existujúcich reportov.
                 </p>
               </div>
@@ -125,9 +125,12 @@ const Playground = ({history, typingDone, setTypingDone}) => (
             <Col sm={{size: 8, offset: 4}} className="playground-card card-right">
               <img src={reportImage} alt="" />
               <div className="card-text-container card-right">
-                <h3>4. Vytváraj analýzy a hľadaj prepojenia</h3>
+                <h3>4. Zdieľaj svoje výsledky s ostatnými</h3>
                 <p>
-                  Zdieľaj svoje výsledky, kód alebo vizualizáciu na
+                  <a href="https://docs.google.com/forms/d/e/1FAIpQLSet5WM8uWGvhT7WQ3Tyr8tV7LDaBdPsFEvMRU5ILUXBjVhopw/viewform" target="_blank">
+                    Zdieľaj
+                  </a>
+                  svoje výsledky, kód alebo vizualizáciu na
                   verejne.digital, nech môžu ostatní pokračovať tam kde si prestal(a). Podeľ sa s nápadmi na diskusnom fóre.
                 </p>
               </div>
