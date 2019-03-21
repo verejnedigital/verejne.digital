@@ -69,7 +69,7 @@ const Playground = ({history, typingDone, setTypingDone}) => (
           </HashLink>
           <HashLink to="/ihrisko#reference">
             <Button outline color="primary">
-              <FaCopy /> Diskusné fórum
+              <FaUserTie /> Diskusné fórum
             </Button>
           </HashLink>
         </div>
@@ -125,12 +125,11 @@ const Playground = ({history, typingDone, setTypingDone}) => (
             <Col sm={{size: 8, offset: 4}} className="playground-card card-right">
               <img src={reportImage} alt="" />
               <div className="card-text-container card-right">
-                <h3>4. Zdieľaj svoje výsledky s ostatnými</h3>
-                <p>
-                  <a href="https://docs.google.com/forms/d/e/1FAIpQLSet5WM8uWGvhT7WQ3Tyr8tV7LDaBdPsFEvMRU5ILUXBjVhopw/viewform" target="_blank">
+                <h3>4. <a href="https://docs.google.com/forms/d/e/1FAIpQLSet5WM8uWGvhT7WQ3Tyr8tV7LDaBdPsFEvMRU5ILUXBjVhopw/viewform" target="_blank">
                     Zdieľaj
-                  </a>
-                  svoje výsledky, kód alebo vizualizáciu na
+                  </a>{' '}  svoje výsledky s ostatnými</h3>
+                <p>
+                  Zdieľaj svoje výsledky, kód alebo vizualizáciu na
                   verejne.digital, nech môžu ostatní pokračovať tam kde si prestal(a). Podeľ sa s nápadmi na diskusnom fóre.
                 </p>
               </div>
@@ -140,7 +139,7 @@ const Playground = ({history, typingDone, setTypingDone}) => (
       </section>
       <section id="video" className="playground-video-container">
         <p className="display-4 video-title">
-          Jednoduchý report vytvoríte za pár minút. 
+          Jednoduchý report vytvoríte za pár minút. {' '}
           <a href="#video">Vyskúšajte si to tu.</a>
         </p>
         <iframe width="420" height="315" src="https://www.youtube.com/embed/N0dbGGvsjf8" title="Tutorial - How to create a simple report" />
@@ -156,14 +155,7 @@ const Playground = ({history, typingDone, setTypingDone}) => (
               <FaCopy /> Vytvoriť nový report
             </Button>
           </div>
-        </HashLink>
-        <HashLink to="https://docs.google.com/forms/d/e/1FAIpQLSet5WM8uWGvhT7WQ3Tyr8tV7LDaBdPsFEvMRU5ILUXBjVhopw/viewform" target="_blank">
-          <div className="playground-new-report-button">
-            <Button outline color="primary">
-              <FaCopy /> Zdieľaj svoj report s ostatnými
-            </Button>
-          </div>
-        </HashLink>
+        </HashLink>        
       </section>
       <section id="reference" className="playground-reference-container">
         <h2>Data</h2>
