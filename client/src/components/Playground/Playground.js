@@ -152,7 +152,8 @@ const Playground = ({history, typingDone, setTypingDone}) => (
         <Table dark striped>
           <thead>
             <tr>
-              <th>Meno</th>
+              <th>Dáta na používanie</th>
+              <th></th>
               <th>Popis</th>
             </tr>
           </thead>
@@ -168,11 +169,56 @@ const Playground = ({history, typingDone, setTypingDone}) => (
             </tr>
             <tr>
               <td>
+                <code>https://verejne.digital/resources/csv/contracts.csv</code>
+              </td>
+              <td />
+              <td>
+                Základné informácie o zverejnených zmluvách.
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>https://verejne.digital/resources/csv/eurofondy.csv</code>
+              </td>
+              <td />
+              <td>
+                Základné informácie o eurofondových výzvach.
+              </td>
+            </tr>
+            <tr>
+              <td>
                 <code>https://verejne.digital/resources/csv/entities.csv</code>
               </td>
               <td />
               <td>
-                Mená firiem a osôb pre nami používané eid (identifikátory entít).
+                Mená firiem a osôb pre nami používané identifikátory entít (eid).
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>https://verejne.digital/resources/csv/related.csv</code>
+              </td>
+              <td />
+              <td>
+                Vzťahy medzi entitami, ich typ a časová platnosť.
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>https://verejne.digital/resources/csv/companies.csv</code>
+              </td>
+              <td />
+              <td>
+                IČO, vznik a zánik firiem pre dané identifikátory entít (eid).
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>https://verejne.digital/resources/csv/offices.csv</code>
+              </td>
+              <td />
+              <td>
+                Pôsobenie politikov v politických stranách a funkciách.
               </td>
             </tr>
           </tbody>
@@ -187,6 +233,37 @@ const Playground = ({history, typingDone, setTypingDone}) => (
             </tr>
           </thead>
           <tbody>
+            
+            <tr>
+              <td>
+                <code>searchEntityByName</code>
+              </td>
+              <td>
+                Nájde osoby a firmy s týmto menom.
+              </td>
+              <td>
+                <code>
+                  <a href="https://verejne.digital/api/v/searchEntityByName?name=stefan%20skrucany" className="link" target="_blank">
+                    https://verejne.digital/api/v/searchEntityByName?name=stefan%20skrucany
+                  </a>
+                </code>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>searchEntityByIco</code>
+              </td>
+              <td>
+                Nájde firmy a podnikateľov podľa ich IČO.
+              </td>
+              <td>
+                <code>
+                  <a href="https://verejne.digital/api/v/searchEntityByIco?ico=42258910" className="link" target="_blank">
+                    https://verejne.digital/api/v/searchEntityByIco?ico=42258910
+                  </a>
+                </code>
+              </td>
+            </tr>
             <tr>
               <td>
                 <code>getInfos</code>
@@ -196,7 +273,7 @@ const Playground = ({history, typingDone, setTypingDone}) => (
               </td>
               <td>
                 <code>
-                  <a href="#reference" className="link">
+                  <a href="https://verejne.digital/api/v/getInfos?eids=103,82680,293097,389093,389094" className="link" target="_blank">
                     https://verejne.digital/api/v/getInfos?eids=103,82680,293097,389093,389094
                   </a>
                 </code>
@@ -207,12 +284,42 @@ const Playground = ({history, typingDone, setTypingDone}) => (
                 <code>a_shortest_path</code>
               </td>
               <td>
-                Najkratšie spojenie medzi 2 entitami.
+                Najkratšie spojenie medzi entitami.
               </td>
               <td>
                 <code>
-                  <a href="#reference" className="link">
-                    https://verejne.digital/prepojenia/api/p/a_shortest_path?eid1=1392540,1608323&eid2=1387739
+                  <a href="https://verejne.digital/api/p/a_shortest_path?eid1=1392540,1608323&eid2=1387739" className="link" target="_blank">
+                    https://verejne.digital/api/p/a_shortest_path?eid1=1392540,1608323&eid2=1387739
+                  </a>
+                </code>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>list_politicians</code>
+              </td>
+              <td>
+                Zoznam aktívnych politikov.
+              </td>
+              <td>
+                <code>
+                  <a href="https://verejne.digital/api/k/list_politicians?group=active" className="link" target="_blank">
+                    	https://verejne.digital/api/k/list_politicians?group=active
+                  </a>
+                </code>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>info_politician</code>
+              </td>
+              <td>
+                Info o vybranom politikovi.
+              </td>
+              <td>
+                <code>
+                  <a href="https://verejne.digital/api/k/info_politician?id=40" className="link" target="_blank">
+                    	https://verejne.digital/api/k/info_politician?id=40
                   </a>
                 </code>
               </td>
