@@ -52,19 +52,24 @@ const Playground = ({history, typingDone, setTypingDone}) => (
               <GoGraph /> Zoznam reportov
             </Button>
           </HashLink>
-          <HashLink to="/ihrisko#">
+          <HashLink to="/ihrisko#video">
             <Button outline color="primary">
               <FaGraduationCap /> Tutoriál
             </Button>
           </HashLink>
-          <HashLink to="/ihrisko#">
+          <HashLink to="/ihrisko#video">
             <Button outline color="primary">
               <FaCopy /> Vytvoriť nový report
             </Button>
           </HashLink>
           <HashLink to="/ihrisko#reference">
             <Button outline color="primary">
-              <FaCopy /> API Reference
+              <FaCopy /> Data a API Reference
+            </Button>
+          </HashLink>
+          <HashLink to="/ihrisko#reference">
+            <Button outline color="primary">
+              <FaCopy /> Diskusné fórum
             </Button>
           </HashLink>
         </div>
@@ -83,7 +88,7 @@ const Playground = ({history, typingDone, setTypingDone}) => (
               <img src={reportImage} alt="" />
               <div className="card-text-container">
                 <h3>
-                  1. Vytvor si projekt v{' '}
+                  1. Vytvor si report v{' '}
                   <a href="https://colab.research.google.com">Google Colab</a>
                 </h3>
                 <p>
@@ -110,7 +115,7 @@ const Playground = ({history, typingDone, setTypingDone}) => (
               <div className="card-text-container">
                 <h3>3. On the shoulders of giants</h3>
                 <p>
-                  Nauč sa pracovať s dátami v niektorom z interaktívnych tutoriálov alebo pokračuj
+                  Nauč sa pracovať s dátami, pomôž odhaliť problémy, ktoré si doteraz nikto nevšímal, alebo pokračuj
                   v niektorom z existujúcich reportov.
                 </p>
               </div>
@@ -122,8 +127,8 @@ const Playground = ({history, typingDone, setTypingDone}) => (
               <div className="card-text-container card-right">
                 <h3>4. Vytváraj analýzy a hľadaj prepojenia</h3>
                 <p>
-                  Pomôž odhaliť problémy, ktoré si doteraz nikto nevšímal. Zdieľaj výsledky, kód alebo vizualizáciu na
-                  verejne.digital, nech môžu ostatní pokračovať tam kde si prestal.
+                  Zdieľaj svoje výsledky, kód alebo vizualizáciu na
+                  verejne.digital, nech môžu ostatní pokračovať tam kde si prestal(a). Podeľ sa s nápadmi na diskusnom fóre.
                 </p>
               </div>
             </Col>
@@ -131,10 +136,13 @@ const Playground = ({history, typingDone, setTypingDone}) => (
         </div>
       </section>
       <section id="video" className="playground-video-container">
-        <p className="display-4 video-title">Jednoduchý report vytvoríte za pár minút</p>
+        <p className="display-4 video-title">
+          Jednoduchý report vytvoríte za pár minút. 
+          <a href="#video">Vyskúšajte si to tu.</a>
+        </p>
         <iframe width="420" height="315" src="https://www.youtube.com/embed/N0dbGGvsjf8" title="Tutorial - How to create a simple report" />
         <p className="lead video-subtitle">
-          <a href="#video">Vyskúšajte si to tu.</a>
+          Video tutoriál ešte len plánujeme. Zatiaľ si môžte vychutnať koncert kapely Queen.
         </p>
       </section>
       <section id="list" className="playground-hype-container">
@@ -143,6 +151,13 @@ const Playground = ({history, typingDone, setTypingDone}) => (
           <div className="playground-new-report-button">
             <Button outline color="primary">
               <FaCopy /> Vytvoriť nový report
+            </Button>
+          </div>
+        </HashLink>
+        <HashLink to="https://docs.google.com/forms/d/e/1FAIpQLSet5WM8uWGvhT7WQ3Tyr8tV7LDaBdPsFEvMRU5ILUXBjVhopw/viewform" target="_blank">
+          <div className="playground-new-report-button">
+            <Button outline color="primary">
+              <FaCopy /> Zdieľaj svoj report s ostatnými
             </Button>
           </div>
         </HashLink>
