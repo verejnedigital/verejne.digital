@@ -165,7 +165,7 @@ const Playground = ({history, typingDone, setTypingDone}) => (
         <Table dark striped>
           <thead>
             <tr>
-              <th>Dáta na používanie</th>
+              <th>Prepojené dáta na používanie</th>
               <th></th>
               <th>Popis</th>
             </tr>
@@ -236,7 +236,7 @@ const Playground = ({history, typingDone, setTypingDone}) => (
             </tr>
           </tbody>
         </Table>
-        <h2>Reference</h2>
+        <h2>API Reference</h2>
         <Table dark striped>
           <thead>
             <tr>
@@ -337,6 +337,52 @@ const Playground = ({history, typingDone, setTypingDone}) => (
                 </code>
               </td>
             </tr>
+          </tbody>
+        </Table>
+        <h2>Externé zdroje dát (z viacerých čerpáme aj my)</h2>
+        <Table dark striped>
+          <thead>
+            <tr>
+              <th>Zdroj dát</th>              
+            </tr>
+          </thead>
+          <tbody>            
+            <tr>
+              <td>
+                <code>
+                  <a href="https://ekosystem.slovensko.digital/" className="link" target="_blank" rel="noopener noreferrer">
+                    https://ekosystem.slovensko.digital/
+                  </a>
+                </code>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>
+                  <a href="https://www.uvostat.sk/download" className="link" target="_blank" rel="noopener noreferrer">
+                    https://www.uvostat.sk/download
+                  </a>
+                </code>
+              </td>
+            </tr>  
+            <tr>
+              <td>
+                <code>
+                  <a href="https://data.gov.sk/" className="link" target="_blank" rel="noopener noreferrer">
+                    https://data.gov.sk/
+                  </a>
+                </code>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>
+                  <a href="https://api.otvorenesudy.sk/" className="link" target="_blank" rel="noopener noreferrer">
+                    https://api.otvorenesudy.sk/
+                  </a>
+                </code>
+              </td>
+            </tr>  
           </tbody>
         </Table>
         <div className="footer-text">
