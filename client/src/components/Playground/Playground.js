@@ -143,22 +143,24 @@ const Playground = ({history, typingDone, setTypingDone}) => (
       <section id="video" className="playground-video-container">
         <p className="display-4 video-title">
           Jednoduchý report vytvoríte za pár minút. {' '}
-          <a href="#video">Vyskúšajte si to tu.</a>
+          <a href="https://colab.research.google.com/drive/1EliPM69jvvtwoVJU-efP5K2bOX28XIlt" target="_blank" rel="noopener noreferrer">
+            Vyskúšajte si to tu.
+          </a>
         </p>
-        <iframe width="420" height="315" src="https://www.youtube.com/watch?v=inN8seMm7UI" title="Tutorial - How to create a simple report" />
+        <iframe width="420" height="315" src="https://www.youtube.com/embed/inN8seMm7UI" title="Tutorial - How to create a simple report" />
         <p className="lead video-subtitle">
           Vlastný video tutoriál ešte len plánujeme, tak zatiaľ si môžete pozrieť viac o prostredí Google Colab.
         </p>
       </section>
       <section id="list" className="playground-hype-container">
         <ColabList />
-        <HashLink to="https://colab.research.google.com/drive/1EliPM69jvvtwoVJU-efP5K2bOX28XIlt">
+        <a href="https://colab.research.google.com/drive/1EliPM69jvvtwoVJU-efP5K2bOX28XIlt" target="_blank" rel="noopener noreferrer">
           <div className="playground-new-report-button">
             <Button outline color="primary">
               <FaCopy /> Vytvoriť nový report
             </Button>
           </div>
-        </HashLink>        
+        </a>        
       </section>
       <section id="reference" className="playground-reference-container">
         <h2>Data</h2>
