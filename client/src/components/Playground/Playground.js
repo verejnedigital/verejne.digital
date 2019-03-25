@@ -13,7 +13,10 @@ import type {RouterHistory, ContextRouter} from 'react-router-dom'
 import type {HOC} from 'recompose'
 
 import ColabList from './components/ColabList'
-import reportImage from '../../assets/reports.jpg'
+import report1 from '../../assets/reports1.svg'
+import report2 from '../../assets/reports2.svg'
+import report3 from '../../assets/reports3.svg'
+import report4 from '../../assets/reports4.svg'
 
 import './Playground.css'
 
@@ -85,7 +88,7 @@ const Playground = ({history, typingDone, setTypingDone}) => (
         <div className="playground-card-container">
           <Row>
             <Col sm={{size: 8}} className="playground-card">
-              <img src={reportImage} alt="" />
+              <img src={report1} alt="" />
               <div className="card-text-container">
                 <h3>
                   1. Vytvor si report v{' '}
@@ -99,7 +102,7 @@ const Playground = ({history, typingDone, setTypingDone}) => (
           </Row>
           <Row>
             <Col sm={{size: 8, offset: 4}} className="playground-card card-right">
-              <img src={reportImage} alt="" />
+              <img src={report2} alt="" />
               <div className="card-text-container card-right">
                 <h3>2. Využívaj silu platformy verejne.digital</h3>
                 <p>
@@ -111,7 +114,7 @@ const Playground = ({history, typingDone, setTypingDone}) => (
           </Row>
           <Row>
             <Col sm={{size: 8}} className="playground-card">
-              <img src={reportImage} alt="" />
+              <img src={report3} alt="" />
               <div className="card-text-container">
                 <h3>3. On the shoulders of giants</h3>
                 <p>
@@ -123,9 +126,9 @@ const Playground = ({history, typingDone, setTypingDone}) => (
           </Row>
           <Row>
             <Col sm={{size: 8, offset: 4}} className="playground-card card-right">
-              <img src={reportImage} alt="" />
+              <img src={report4} alt="" />
               <div className="card-text-container card-right">
-                <h3>4. <a href="https://docs.google.com/forms/d/e/1FAIpQLSet5WM8uWGvhT7WQ3Tyr8tV7LDaBdPsFEvMRU5ILUXBjVhopw/viewform" target="_blank">
+                <h3>4. <a href="https://docs.google.com/forms/d/e/1FAIpQLSet5WM8uWGvhT7WQ3Tyr8tV7LDaBdPsFEvMRU5ILUXBjVhopw/viewform" target="_blank" rel="noopener noreferrer">
                     Zdieľaj
                   </a>{' '}  svoje výsledky s ostatnými</h3>
                 <p>
@@ -253,7 +256,7 @@ const Playground = ({history, typingDone, setTypingDone}) => (
               </td>
               <td>
                 <code>
-                  <a href="https://verejne.digital/api/v/searchEntityByName?name=stefan%20skrucany" className="link" target="_blank">
+                  <a href="https://verejne.digital/api/v/searchEntityByName?name=stefan%20skrucany" className="link" target="_blank" rel="noopener noreferrer">
                     https://verejne.digital/api/v/searchEntityByName?name=stefan%20skrucany
                   </a>
                 </code>
@@ -268,7 +271,7 @@ const Playground = ({history, typingDone, setTypingDone}) => (
               </td>
               <td>
                 <code>
-                  <a href="https://verejne.digital/api/v/searchEntityByIco?ico=42258910" className="link" target="_blank">
+                  <a href="https://verejne.digital/api/v/searchEntityByIco?ico=42258910" className="link" target="_blank" rel="noopener noreferrer">
                     https://verejne.digital/api/v/searchEntityByIco?ico=42258910
                   </a>
                 </code>
@@ -283,7 +286,7 @@ const Playground = ({history, typingDone, setTypingDone}) => (
               </td>
               <td>
                 <code>
-                  <a href="https://verejne.digital/api/v/getInfos?eids=103,82680,293097,389093,389094" className="link" target="_blank">
+                  <a href="https://verejne.digital/api/v/getInfos?eids=103,82680,293097,389093,389094" className="link" target="_blank" rel="noopener noreferrer">
                     https://verejne.digital/api/v/getInfos?eids=103,82680,293097,389093,389094
                   </a>
                 </code>
@@ -298,7 +301,7 @@ const Playground = ({history, typingDone, setTypingDone}) => (
               </td>
               <td>
                 <code>
-                  <a href="https://verejne.digital/api/p/a_shortest_path?eid1=1392540,1608323&eid2=1387739" className="link" target="_blank">
+                  <a href="https://verejne.digital/api/p/a_shortest_path?eid1=1392540,1608323&eid2=1387739" className="link" target="_blank" rel="noopener noreferrer">
                     https://verejne.digital/api/p/a_shortest_path?eid1=1392540,1608323&eid2=1387739
                   </a>
                 </code>
@@ -313,7 +316,7 @@ const Playground = ({history, typingDone, setTypingDone}) => (
               </td>
               <td>
                 <code>
-                  <a href="https://verejne.digital/api/k/list_politicians?group=active" className="link" target="_blank">
+                  <a href="https://verejne.digital/api/k/list_politicians?group=active" className="link" target="_blank" rel="noopener noreferrer">
                     	https://verejne.digital/api/k/list_politicians?group=active
                   </a>
                 </code>
@@ -328,7 +331,7 @@ const Playground = ({history, typingDone, setTypingDone}) => (
               </td>
               <td>
                 <code>
-                  <a href="https://verejne.digital/api/k/info_politician?id=40" className="link" target="_blank">
+                  <a href="https://verejne.digital/api/k/info_politician?id=40" className="link" target="_blank" rel="noopener noreferrer">
                     	https://verejne.digital/api/k/info_politician?id=40
                   </a>
                 </code>
@@ -337,7 +340,13 @@ const Playground = ({history, typingDone, setTypingDone}) => (
           </tbody>
         </Table>
         <div className="footer-text">
-          Backround svg - Free Vector Graphics by <a href="https://www.vecteezy.com">Vecteezy!</a>
+          Backround svg - Free Vector Graphics by&nbsp;<a href="https://www.vecteezy.com">Vecteezy!</a>
+        </div>
+        <div className="footer-text">
+          Icons made by&nbsp;<a href="https://www.freepik.com/" title="Freepik">Freepik</a>&nbsp;from
+          &nbsp;<a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a>&nbsp;
+          is licensed by
+          &nbsp;<a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank" rel="noopener noreferrer">CC 3.0 BY</a>
         </div>
       </section>
     </div>
