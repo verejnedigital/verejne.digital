@@ -7,6 +7,7 @@ import publicDataIcon from './icons/public_data.png'
 import prepojeniaIcon from './icons/prepojenia.png'
 import obstaravaniaIcon from './icons/obstaravania.png'
 import profilyIcon from './icons/profily.png'
+import ihriskoIcon from './icons/ihrisko.png'
 import './Landing.css'
 
 const Landing = () => (
@@ -53,7 +54,7 @@ const Landing = () => (
           to="/ihrisko"
           title="Ihrisko"
           text="Hrajte sa s našimi dátami!"
-          imgSrc={obstaravaniaIcon}
+          imgSrc={ihriskoIcon}
           beta
         />
       </div>
