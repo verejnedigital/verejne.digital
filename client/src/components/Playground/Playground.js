@@ -13,10 +13,10 @@ import type {RouterHistory, ContextRouter} from 'react-router-dom'
 import type {HOC} from 'recompose'
 
 import ColabList from './components/ColabList'
-import report1 from '../../assets/reports1.svg'
-import report2 from '../../assets/reports2.svg'
-import report3 from '../../assets/reports3.svg'
-import report4 from '../../assets/reports4.svg'
+import giant_2 from '../../assets/giant_2.svg'
+import pencils_2 from '../../assets/pencils_2.svg'
+import megaphone_2 from '../../assets/megaphone_2.svg'
+import graph_2 from '../../assets/graph_2.svg'
 
 import './Playground.css'
 
