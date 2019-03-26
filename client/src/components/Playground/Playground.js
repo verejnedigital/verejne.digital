@@ -88,7 +88,7 @@ const Playground = ({history, typingDone, setTypingDone}) => (
         <div className="playground-card-container">
           <Row>
             <Col sm={{size: 8}} className="playground-card">
-              <img src={report1} alt="" />
+              <img src={pencils_2} alt="" />
               <div className="card-text-container">
                 <h3>
                   1. Vytvor si report v{' '}
@@ -102,7 +102,7 @@ const Playground = ({history, typingDone, setTypingDone}) => (
           </Row>
           <Row>
             <Col sm={{size: 8, offset: 4}} className="playground-card card-right">
-              <img src={report2} alt="" />
+              <img src={graph_2} alt="" />
               <div className="card-text-container card-right">
                 <h3>2. Využívaj silu platformy verejne.digital</h3>
                 <p>
@@ -114,7 +114,7 @@ const Playground = ({history, typingDone, setTypingDone}) => (
           </Row>
           <Row>
             <Col sm={{size: 8}} className="playground-card">
-              <img src={report3} alt="" />
+              <img src={giant_2} alt="" />
               <div className="card-text-container">
                 <h3>3. On the shoulders of giants</h3>
                 <p>
@@ -126,7 +126,7 @@ const Playground = ({history, typingDone, setTypingDone}) => (
           </Row>
           <Row>
             <Col sm={{size: 8, offset: 4}} className="playground-card card-right">
-              <img src={report4} alt="" />
+              <img src={megaphone_2} alt="" />
               <div className="card-text-container card-right">
                 <h3>4. <a href="https://docs.google.com/forms/d/e/1FAIpQLSet5WM8uWGvhT7WQ3Tyr8tV7LDaBdPsFEvMRU5ILUXBjVhopw/viewform" target="_blank" rel="noopener noreferrer">
                     Zdieľaj
@@ -160,7 +160,14 @@ const Playground = ({history, typingDone, setTypingDone}) => (
               <FaCopy /> Vytvoriť nový report
             </Button>
           </div>
-        </a>        
+        </a>     
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLSet5WM8uWGvhT7WQ3Tyr8tV7LDaBdPsFEvMRU5ILUXBjVhopw/viewform" target="_blank" rel="noopener noreferrer">
+          <div className="playground-new-report-button">
+            <Button outline color="primary">
+              <FaCopy /> Zdieľať report
+            </Button>
+          </div>
+        </a>   
       </section>
       <section id="reference" className="playground-reference-container">
         <h2>Data</h2>
