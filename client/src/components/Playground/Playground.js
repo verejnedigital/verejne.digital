@@ -70,11 +70,11 @@ const Playground = ({history, typingDone, setTypingDone}) => (
               <FaCopy /> Data a API Reference
             </Button>
           </HashLink>
-          <HashLink to="/ihrisko#reference">
+          <a href="https://platforma.slovensko.digital/t/verejne-digital-ihrisko-nauc-sa-data-science-na-realnych-datach/6183" target="_blank" rel="noopener noreferrer">
             <Button outline color="primary">
               <FaCopy /> Diskusné fórum
             </Button>
-          </HashLink>
+          </a>
         </div>
       </section>
       <section id="hype" className="playground-hype-container">
@@ -133,7 +133,7 @@ const Playground = ({history, typingDone, setTypingDone}) => (
                   </a>{' '}  svoje výsledky s ostatnými</h3>
                 <p>
                   Zdieľaj svoje výsledky, kód alebo vizualizáciu na
-                  verejne.digital, nech môžu ostatní pokračovať tam kde si prestal(a). Podeľ sa s nápadmi na diskusnom fóre.
+                  verejne.digital, nech môžu ostatní pokračovať tam kde si prestal(a). Podeľ sa s nápadmi na{' '}<a href="https://platforma.slovensko.digital/t/verejne-digital-ihrisko-nauc-sa-data-science-na-realnych-datach/6183" target="_blank" rel="noopener noreferrer">diskusnom fóre</a>.
                 </p>
               </div>
             </Col>
