@@ -1,0 +1,6 @@
+paste
+psycopg2
+PyYaml
+requests
+webapp2
+webob
