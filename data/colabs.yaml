@@ -33,3 +33,11 @@
     Tamás Szőke
   description:
     (Tamás Szőke) Nariadenia Európskej únie umožňujú, aby malá časť celkového rozpočtu jednotlivých operačných programov prispievala na náklady riadiacich orgánov súvisiacich s riadením programov. Umožňujú tiež, za určitých okolností, financovanie socio-ekonomických partnerov, ktorí sa podieľajú na monitorovaní operačných programov. Toto financovanie je známe ako "technická pomoc". Položme si niekoľko výskumných otázok o tom ako a ako efektívne je využívaná.
+- name:
+    Doplňovačka na základe sociálneho grafu
+  url:
+    https://colab.research.google.com/drive/19wxW9dOyjIG33IG2fpiivndmEd-RA0g1
+  author:
+    verejne.digital
+  description:
+    Začneme s takmer 30 osobami, ktoré sú v novinových článkoch zmienené ako prepojené s Mariánom Kočnerom. Aké ďalšie osoby a firmy sú prepojené s viacerými z týchto 30 osôb? Pozrite si rebríček.
