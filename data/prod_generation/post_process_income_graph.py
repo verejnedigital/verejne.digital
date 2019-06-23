@@ -58,7 +58,9 @@ def get_incomes(db):
         year
       FROM assetdeclarations
       INNER JOIN incomes
-        ON incomes.asset_declaration_id=assetdeclarations.id;
+        ON incomes.asset_declaration_id=assetdeclarations.id
+      ORDER BY
+        id, year;
   """)
   for row in rows:
     incomes[row['id']].append(row)
