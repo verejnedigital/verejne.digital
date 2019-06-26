@@ -11,7 +11,7 @@ echo "tail ${LOG_PATH};";
 
 # Regenerate prod data:
 started=$(date);
-su - datautils -c "cd ${DIR}; cd ..; python generate_prod_data.py --disable_test_mode;" >${LOG_PATH} 2>&1;
+su - datautils -c "cd ${DIR}; cd ..; python2 generate_prod_data.py --disable_test_mode;" >${LOG_PATH} 2>&1;
 finished=$(date);
 echo "Generation started: ${started}";
 echo "Generation finished: ${finished}";

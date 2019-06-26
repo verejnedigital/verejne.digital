@@ -194,7 +194,7 @@ def _post_process_notices(db, test_mode):
     num_notices = 0
     print "creating corpus"
     with db.get_server_side_cursor(
-        query, buffer_size=100000, return_dicts=True) as cur: 
+        query, buffer_size=100000, return_dicts=True) as cur:
         for row in cur:
             text_embedder.add_text_to_corpus(row["text"])
             num_notices += 1
@@ -204,7 +204,7 @@ def _post_process_notices(db, test_mode):
     processed = 0
     # TODO: split this into multiple functions.
     with db.get_server_side_cursor(
-        query, buffer_size=100000, return_dicts=True) as cur: 
+        query, buffer_size=100000, return_dicts=True) as cur:
         for row in cur:
             if (processed % 1000 == 0):
                 print processed, "/", num_notices
