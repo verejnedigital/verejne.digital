@@ -287,7 +287,7 @@
 
 7_eufunds:
     source_schema: "KamIduEurofondy"
-    command: "select subject_title as name, CAST(nullif(subject_company_no,'') as bigint) as ico, title, description, link, CAST(nullif(price,'') as numeric) as price, state, call_state, call_title from kamidueurofondy"
+    command: "select subject_title as name, CAST(nullif(REGEXP_REPLACE(subject_company_no, '[[:alpha:]]','','g'),'') as bigint) as ico, title, description, link, CAST(nullif(price,'') as numeric) as price, state, call_state, call_title from kamidueurofondy"
     tables:
         EUFunds:
             columns: ["title", "description", "link", "price", "state", "call_state", "call_title"]
