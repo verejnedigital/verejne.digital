@@ -36,9 +36,7 @@ pip install -r requirements.txt
 # ...
 
 # Otestovanie zmien pod správnym používateľom
-sudo su
-su prepojenia
-python test.py
+sudo -u prepojenia python test.py
 
 # Ak všetky testy zbehli v poriadku, commit a push zmien
 git add --all
