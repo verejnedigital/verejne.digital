@@ -1,6 +1,10 @@
 """Unit tests for backend application data.
 
-Run all unit tests from command line using:
+Run all unit tests from the command line by executing:
+    ./test.sh
+
+Alternatively, under user `data` and with the appropriate Python
+virtual environment installed and activated, run all unit tests using:
     python test.py
 To only run an individual unit test, run (for example):
     python test.py TestHandlers.test_source_data_info
