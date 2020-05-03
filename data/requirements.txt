@@ -4,3 +4,7 @@ PyYaml
 requests
 webapp2
 webob
+numpy
+scipy
+smart-open==1.10.0  # solves bug in printing an warning message https://github.com/RaRe-Technologies/smart_open/issues/475
+gensim

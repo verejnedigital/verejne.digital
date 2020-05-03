@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import argparse
 from datetime import datetime
-import HTMLParser
+import html.parser
 import os
 from psycopg2.extensions import AsIs
 import re
@@ -30,25 +30,29 @@ def ExtractDescriptionFromBody(body):
     }
     result = {}
     email = root.find(".//InternetAddresses/Address")
-    if email is not None: result["email"] = email.text
+    if email is not None:
+        result["email"] = email.text
     for e in root.iter():
         component = e.attrib.get("FormComponentId", None)
         if component is None: continue
         value = e.attrib.get("Value", None)
-        if value is None: continue
+        if value is None:
+            continue
         for key in mapping:
             if component in mapping[key]:
                 result[key] = value.replace("\n", " ")
-    if len(result) == 0: return None
+    if len(result) == 0:
+        return None
     return result
 
 
 def StripHtml(text):
     """ Input is html fragment. Output is text without html tags. """
-    if (text is None):
+    if text is None:
         return ""
     p = re.compile(r'<.*?>')
-    return HTMLParser.HTMLParser().unescape(p.sub('', text)).replace(u'\xa0', u' ')
+    return html.parser.HTMLParser().unescape(p.sub('', text)).replace('\xa0', ' ')
+
 
 def CreateAndSetProdSchema(db, prod_schema_name):
     """ Initialized schema with core prod tables: Entities and Address.
@@ -102,7 +106,7 @@ def ProcessSource(db_source, db_prod, geocoder, entities, config, test_mode):
 
     # Connect to the most recent schema from the current source
     source_schema_name = db_source.get_latest_schema('source_' + config["source_schema"])
-    print "Processing source_schema_name", source_schema_name
+    print("Processing source_schema_name", source_schema_name)
     db_source.execute('SET search_path="' + source_schema_name + '";')
 
     columns_for_table = {}
@@ -174,8 +178,7 @@ def ProcessSource(db_source, db_prod, geocoder, entities, config, test_mode):
     suffix_for_testing = " LIMIT 1000" if test_mode else ""
     print("Executing SQL command...")
     query = config["command"] + suffix_for_testing
-    with db_source.get_server_side_cursor(
-        query, buffer_size=100000, return_dicts=True) as cur:
+    with db_source.get_server_side_cursor(query, buffer_size=100000, return_dicts=True) as cur:
         for row in cur:
             # Read entries one by one and try to geocode them. If the address
             # lookup succeeds, try to normalize the entities. If it succeeds,
@@ -183,26 +186,28 @@ def ProcessSource(db_source, db_prod, geocoder, entities, config, test_mode):
             address = ""
             if "address" in row:
                 address = row["address"]
-                if address is None: continue
+                if address is None:
+                    continue
             name = ""
             if "name" in row:
                 name = row["name"]
-                if name is None: continue
+                if name is None:
+                    continue
             # Sometimes FirstName and Surname are joined. Lets try the simplest splitting on Capital
             # letters.
-            if (len(name.split()) == 1):
-              name = ' '.join(re.findall('[A-Z][^A-Z]*', name))
+            if len(name.split()) == 1:
+                name = ' '.join(re.findall('[A-Z][^A-Z]*', name))
             addressId = geocoder.GetAddressId(address.encode("utf8"))
             if addressId is None:
                 if address == "":
                     empty += 1
                 else:
                     if test_mode and missed < 10:
-                        print "MISSING ADDRESS", address.encode("utf8")
+                        print("MISSING ADDRESS", address.encode("utf8"))
                     missed_addresses.add(address)
                     missed += 1
                     continue
-            found += 1;
+            found += 1
 
             eid = None
             if config.get("no_entity_id"):
@@ -214,7 +219,7 @@ def ProcessSource(db_source, db_prod, geocoder, entities, config, test_mode):
                                          no_new_entity=no_new_entity)
 
             if found % 20000 == 0:
-                print "Progress:", found
+                print("Progress:", found)
                 sys.stdout.flush()
 
             # Save the mapping from RPO `organization_id` identifiers
@@ -230,7 +235,7 @@ def ProcessSource(db_source, db_prod, geocoder, entities, config, test_mode):
             if config.get("use_org_id_as_eid_relation"):
                 eid2 = entities.GetEidForOrgId(row["eid_relation"])
                 if eid2 is None:
-                  continue
+                    continue
                 row["eid_relation"] = eid2
 
             if config.get("extract_description_from_body"):
@@ -265,112 +270,107 @@ def ProcessSource(db_source, db_prod, geocoder, entities, config, test_mode):
                 for strip_html_column in table_config["strip_html"]:
                     if row.get(strip_html_column):
                         row[strip_html_column] = StripHtml(row[strip_html_column])
-            if eid is None: missed_eid += 1
+            if eid is None:
+                missed_eid += 1
             found_eid += 1
             AddToTable(row, table, eid, table_config.get("years"), supplier_eid)
 
     # Print statistics.
-    print "FOUND", found
-    print "MISSED", missed
-    print "EMPTY", empty
-    print "MISSED UNIQUE", len(missed_addresses)
-    print "FOUND EID", found_eid
-    print "MISSED EID", missed_eid
+    print("FOUND", found)
+    print("MISSED", missed)
+    print("EMPTY", empty)
+    print("MISSED UNIQUE", len(missed_addresses))
+    print("FOUND EID", found_eid)
+    print("MISSED EID", missed_eid)
 
     # Special case: As source_internal_profil and prod tables need to
     # be kept consistent for table `profilmapping` to be meaningful,
     # only make the source schema visible to user `kataster` here.
     if config["source_schema"] == "internal_profil":
-      db_prod.grant_usage_and_select_on_schema(
-          source_schema_name, 'kataster')
+        db_prod.grant_usage_and_select_on_schema(source_schema_name, 'kataster')
 
 
 def process_source_rpvs(db_source, db_prod, geocoder, entities, test_mode):
-  log_prefix = "[source_rpvs] "
+    log_prefix = "[source_rpvs] "
 
-  # Set search path to latest source_rpvs schema:
-  source_schema_name = db_source.get_latest_schema('source_rpvs')
-  db_source.execute('SET search_path="' + source_schema_name + '";')
-  print("%ssource_schema_name=%s" % (log_prefix, source_schema_name))
+    # Set search path to latest source_rpvs schema:
+    source_schema_name = db_source.get_latest_schema('source_rpvs')
+    db_source.execute('SET search_path="' + source_schema_name + '";')
+    print("%ssource_schema_name=%s" % (log_prefix, source_schema_name))
 
-  # Read relevant data from the source database:
-  rows = db_source.query(r"""
-      SELECT
-        concat_ws(' ',
-          kuv_title_front,
-          kuv_first_name,
-          kuv_last_name,
-          kuv_title_back
-        ) AS kuv_name,
-        concat_ws(' ',
-          --Fix missing space between street name and number.
-          regexp_replace(
-            kuv_address, '([^/ -\.0-9])([0-9])', '\1 \2', 'gi'),
-          kuv_city,
-          kuv_psc,
-          kuv_country
-        ) AS kuv_address,
-        partner_ico
-      FROM
-        rpvs
-      """ + (" LIMIT 1000;" if test_mode else ";")
-  )
-  print("%sFound %d rows in table `rpvs`." % (log_prefix, len(rows)))
+    # Read relevant data from the source database:
+    rows = db_source.query(r"""
+        SELECT
+            concat_ws(' ',
+                kuv_title_front,
+                kuv_first_name,
+                kuv_last_name,
+                kuv_title_back
+            ) AS kuv_name,
+            concat_ws(' ',
+                --Fix missing space between street name and number.
+                regexp_replace(
+                kuv_address, '([^/ -\.0-9])([0-9])', '\1 \2', 'gi'),
+                kuv_city,
+                kuv_psc,
+                kuv_country
+            ) AS kuv_address,
+            partner_ico
+        FROM rpvs""" + (" LIMIT 1000;" if test_mode else ";")
+                           )
+    print("%sFound %d rows in table `rpvs`." % (log_prefix, len(rows)))
 
-  # Construct set of edges between partners and beneficiaries. This
-  # needs to be a set to satisfy a UNIQUE constraint on `related`.
-  edges = set()
-  for row in rows:
+    # Construct set of edges between partners and beneficiaries. This
+    # needs to be a set to satisfy a UNIQUE constraint on `related`.
+    edges = set()
+    for row in rows:
 
-    # Geocode beneficiary's address:
-    kuv_address = row["kuv_address"]
-    kuv_address_id = geocoder.GetAddressId(kuv_address.encode("utf8"))
-    if kuv_address_id is None:
-      continue
+        # Geocode beneficiary's address:
+        kuv_address = row["kuv_address"]
+        kuv_address_id = geocoder.GetAddressId(kuv_address.encode("utf8"))
+        if kuv_address_id is None:
+            continue
 
-    # Match or create an entity for the beneficiary:
-    kuv_name = row["kuv_name"]
-    eid_kuv = entities.GetEntity(None, kuv_name, kuv_address_id)
-    if eid_kuv is None:
-      continue
+        # Match or create an entity for the beneficiary:
+        kuv_name = row["kuv_name"]
+        eid_kuv = entities.GetEntity(None, kuv_name, kuv_address_id)
+        if eid_kuv is None:
+            continue
 
-    # Match entity for the partner:
-    try:
-      partner_ico = int(row["partner_ico"])
-    except ValueError:
-      continue
-    eid_partner = entities.ExistsICO(partner_ico)
-    if eid_partner < 0:
-      continue
+        # Match entity for the partner:
+        try:
+            partner_ico = int(row["partner_ico"])
+        except ValueError:
+            continue
+        eid_partner = entities.ExistsICO(partner_ico)
+        if eid_partner < 0:
+            continue
 
-    # Save the edge:
-    edges.add((eid_kuv, eid_partner))
-  print("%sCollected %d edges" % (log_prefix, len(edges)))
+        # Save the edge:
+        edges.add((eid_kuv, eid_partner))
+    print("%sCollected %d edges" % (log_prefix, len(edges)))
 
-  # Create an edge type for `konecny uzivatel vyhod`:
-  edge_type_id = graph_tools.add_or_get_edge_type(
-      db_prod, u"Konečný užívateľ výhod", log_prefix)
+    # Create an edge type for `konecny uzivatel vyhod`:
+    edge_type_id = graph_tools.add_or_get_edge_type(db_prod, "Konečný užívateľ výhod", log_prefix)
 
-  # Insert edges into table `related`:
-  with db_prod.cursor() as cur:
-    cur.executemany("""
-      INSERT INTO related(eid, eid_relation, stakeholder_type_id)
-      VALUES (%s, %s, %s);
-      """, [(source, target, edge_type_id) for source, target in edges]
-    )
+    # Insert edges into table `related`:
+    with db_prod.cursor() as cur:
+        cur.executemany("""
+            INSERT INTO related(eid, eid_relation, stakeholder_type_id)
+            VALUES (%s, %s, %s);""", [(source, target, edge_type_id) for source, target in edges])
 
 
 def main(args_dict):
     test_mode = not args_dict['disable_test_mode']
     if test_mode:
-        print "======================="
-        print "=======TEST MODE======="
-        print "======================="
+        print("=======================")
+        print("=======TEST MODE=======")
+        print("=======================")
 
     timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
     # Write output into prod_schema_name
     prod_schema_name = "prod_" + timestamp
-    print "prod_schema_name", prod_schema_name
+    print("prod_schema_name", prod_schema_name)
 
     # Create database connections:
     db_source = DatabaseConnection(
@@ -395,7 +395,7 @@ def main(args_dict):
     # as needed. We process them in lexicographic order!
     for key in sorted(config.keys()):
         config_per_source = config[key]
-        print "Working on source:", key
+        print("Working on source:", key)
         ProcessSource(db_source, db_prod, geocoder, entities_lookup, config_per_source, test_mode)
         geocoder.PrintStats()
         entities_lookup.print_statistics()
@@ -408,8 +408,7 @@ def main(args_dict):
     # TODO: For now post processing requires access to the profil
     # source schema. Remove this when fixed.
     schema_profil = db_prod.get_latest_schema('source_internal_profil_')
-    db_prod.execute(
-        'SET search_path="' + prod_schema_name + '", "' + schema_profil + '", public;')
+    db_prod.execute('SET search_path="' + prod_schema_name + '", "' + schema_profil + '", public;')
     post_process.do_post_processing(db_prod, test_mode)
 
     # Create materialized view for entity search after all entities

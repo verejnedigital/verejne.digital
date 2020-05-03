@@ -1,11 +1,11 @@
 import psycopg2
 import psycopg2.extras
 from psycopg2.extensions import AsIs
+
 psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
 psycopg2.extensions.register_type(psycopg2.extensions.UNICODEARRAY)
 
 import utils
-
 
 # Register a customised adapter that returns Postgres decimal values
 # as Python floats rather than Decimal objects (which are not JSON
@@ -65,7 +65,6 @@ class DatabaseConnection():
     def close(self):
         self.conn.close()
 
-
     def add_values(self, table, values):
         with self.conn.cursor() as cur:
             command = (
@@ -115,7 +114,7 @@ class DatabaseConnection():
 
     def dump_to_CSV(self, query, path_output):
         with self.conn.cursor() as cur:
-            q = query.rstrip().rstrip(';') # possibly remove ; from the end of the query
+            q = query.rstrip().rstrip(';')  # possibly remove ; from the end of the query
             q = 'COPY ({0}) TO STDOUT WITH CSV HEADER'.format(q)
             with open(path_output, 'w') as f:
                 cur.copy_expert(q, f)

@@ -27,9 +27,12 @@ cd verejne.digital/
 cd prepojenia/
 
 # Konfigurácia virtuálneho prostredia pre Python
-virtualenv venv
+virtualenv venv    # alternatívne 'python -m venv myenv' pre python>=3.3  
 . venv/bin/activate
 pip install -r requirements.txt
+
+# ak nepôjde nainštalovať scipy kvôli "error: library mach has Fortran sources but no Fortran compiler found", treba spravit link na fortran:
+"sudo ln -s /usr/local/bin/gfortran8 /usr/local/bin/gfortran"
 
 # ...
 # Vývoj backendu implementovaného v Python skriptoch *.py

@@ -19,14 +19,15 @@ N_CANDIDATES = 5
 YEARS_TO_IGNORE = [2011]
 DEFAULT_BACKGROUND_IDS = (40, 169, 448, 760, 828, 252)
 ASSET_FIELDS = (ID, PARSED_INCOME, YEAR)
-TITLE='Ročný príjem podľa www.nrsr.sk'
+TITLE = 'Ročný príjem podľa www.nrsr.sk'
+
 
 def get_politicians(db):
-  """Returns a list of persons, each a dictionary."""
+    """Returns a list of persons, each a dictionary."""
 
-  # The set of politicians returned here are those with an asset
-  # declaration from 2016 or newer.
-  return db.query("""
+    # The set of politicians returned here are those with an asset
+    # declaration from 2016 or newer.
+    return db.query("""
       SELECT
         persons.id AS id,
         persons.firstname AS firstname,
@@ -48,10 +49,10 @@ def get_politicians(db):
 
 
 def get_incomes(db):
-  """Returns a dict mapping from person_id to list of incomes."""
+    """Returns a dict mapping from person_id to list of incomes."""
 
-  incomes = defaultdict(list)
-  rows = db.query("""
+    incomes = defaultdict(list)
+    rows = db.query("""
       SELECT
         assetdeclarations.personid AS id,
         incomes.income AS parsed_income,
@@ -62,9 +63,9 @@ def get_incomes(db):
       ORDER BY
         id, year;
   """)
-  for row in rows:
-    incomes[row['id']].append(row)
-  return incomes
+    for row in rows:
+        incomes[row['id']].append(row)
+    return incomes
 
 
 def get_year_income(assets):
@@ -146,7 +147,7 @@ def get_layout_dict():
         legend=dict(orientation="h"),
         yaxis=dict(
             exponentformat="none",
-            ticksuffix=u"\u20AC",
+            ticksuffix="\u20AC",
             tickangle=-45
         )
     )
@@ -180,18 +181,18 @@ def generate_figure_json(selected, incomes, politicians, merged_groups):
 
 
 def add_income_graphs(db):
-  print(LOG_PREFIX + "Started fetching data.")
-  jsons_politicians = get_politicians(db)
-  politicians = {politician[ID]: politician for politician in jsons_politicians}
-  incomes_politicians = get_incomes(db)
-  print(LOG_PREFIX + "Data fetching finished. Starting to generate jsons for plots.")
-  merged_groups = get_merged_groups(jsons_politicians)
-  json_plots = [
-    (person_id, generate_figure_json(person_id, incomes_politicians, politicians, merged_groups))
-    for person_id in politicians]
-  print(LOG_PREFIX + "Generating finished. Starting to store results.")
+    print(LOG_PREFIX + "Started fetching data.")
+    jsons_politicians = get_politicians(db)
+    politicians = {politician[ID]: politician for politician in jsons_politicians}
+    incomes_politicians = get_incomes(db)
+    print(LOG_PREFIX + "Data fetching finished. Starting to generate jsons for plots.")
+    merged_groups = get_merged_groups(jsons_politicians)
+    json_plots = [
+        (person_id, generate_figure_json(person_id, incomes_politicians, politicians, merged_groups))
+        for person_id in politicians]
+    print(LOG_PREFIX + "Generating finished. Starting to store results.")
 
-  query = """
+    query = """
     DROP TABLE IF EXISTS income_graphs_jsons;
 
     CREATE TABLE income_graphs_jsons(
@@ -201,13 +202,13 @@ def add_income_graphs(db):
     );
   """
 
-  db.execute(query)
+    db.execute(query)
 
-  print(LOG_PREFIX + "Table created.")
+    print(LOG_PREFIX + "Table created.")
 
-  with db.cursor() as cur:
-    q = """
+    with db.cursor() as cur:
+        q = """
       INSERT INTO income_graphs_jsons(person_id, json_plot)
       VALUES (%s, %s);
       """
-    cur.executemany(q, json_plots)
+        cur.executemany(q, json_plots)

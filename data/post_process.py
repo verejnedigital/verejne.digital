@@ -66,7 +66,7 @@ class Notice:
 def notices_create_extra_table(db, test_mode):
     """Creates table NoticesExtras that will contain extra data."""
     table_name_suffix = "_test" if test_mode else ""
-    print "Creating table", table_name_suffix
+    print("Creating table", table_name_suffix)
     command = """
         DROP TABLE IF EXISTS NoticesExtras""" + table_name_suffix + """;
         CREATE TABLE NoticesExtras""" + table_name_suffix + """ (
@@ -86,7 +86,7 @@ def notices_create_extra_table(db, test_mode):
     if test_mode:
         print(command)
     db.execute(command)
-    print "Finished creating table"
+    print("Finished creating table")
 
 
 def isNaN(num):
@@ -124,7 +124,7 @@ def notices_insert_into_extra_table(db, notices, test_mode):
 
 
 def notices_find_candidates(notices, test_mode):
-    print 'finding candidates'
+    print('finding candidates')
     similarity_source_target = []
     for notice in notices:
         # If we know the winner already
@@ -153,23 +153,24 @@ def notices_find_candidates(notices, test_mode):
                 zip(notice.similarities, notice.candidates, notice.candidate_prices),
                 reverse=True,
                 key=lambda x: x[0])
-            notice.similarities, notice.candidates, notice.candidate_prices = (
-              zip(*sorted_lists[:20]))
+            notice.similarities, notice.candidates, notice.candidate_prices = list(zip(*sorted_lists[:20]))
 
     if test_mode:
         similarity_id_to_title = {
-                notice.idx : notice.title for notice in notices
+            notice.idx: notice.title for notice in notices
         }
         similarity_source_target = sorted(similarity_source_target)
         for s_s_t in list(reversed(similarity_source_target))[:1000]:
-            print "S:", s_s_t[0]
-            print "SOURCE:", s_s_t[1], similarity_id_to_title[s_s_t[1]].encode("utf8")
-            print "TARGET:", s_s_t[2], similarity_id_to_title[s_s_t[2]].encode("utf8")
+            print("S:", s_s_t[0])
+            print("SOURCE:", s_s_t[1], similarity_id_to_title[s_s_t[1]].encode("utf8"))
+            print("TARGET:", s_s_t[2], similarity_id_to_title[s_s_t[2]].encode("utf8"))
 
     return notices
 
+
 def _normalized_embedding(embedding):
     return embedding / numpy.linalg.norm(embedding)
+
 
 def _post_process_notices(db, test_mode):
     notices_create_extra_table(db, test_mode)
@@ -187,27 +188,27 @@ def _post_process_notices(db, test_mode):
     ]
     # TODO: once we use universal sentence encoder, use also description, not only title as text to be embedded.
     query = (
-        "SELECT " + (",".join(columns)) + " FROM notices " +
-        (" ORDER BY notice_id DESC LIMIT 1000" if test_mode else "")
+            "SELECT " + (",".join(columns)) + " FROM notices " +
+            (" ORDER BY notice_id DESC LIMIT 1000" if test_mode else "")
     )
     text_embedder = embed.Word2VecEmbedder([])
     num_notices = 0
-    print "creating corpus"
+    print("creating corpus")
     with db.get_server_side_cursor(
-        query, buffer_size=100000, return_dicts=True) as cur:
+            query, buffer_size=100000, return_dicts=True) as cur:
         for row in cur:
             text_embedder.add_text_to_corpus(row["text"])
             num_notices += 1
     text_embedder.print_corpus_stats()
 
-    print 'Number of notices: ', num_notices
+    print('Number of notices: ', num_notices)
     processed = 0
     # TODO: split this into multiple functions.
     with db.get_server_side_cursor(
-        query, buffer_size=100000, return_dicts=True) as cur:
+            query, buffer_size=100000, return_dicts=True) as cur:
         for row in cur:
             if (processed % 1000 == 0):
-                print processed, "/", num_notices
+                print(processed, "/", num_notices)
                 sys.stdout.flush()
             processed += 1
 
@@ -226,8 +227,8 @@ def _post_process_notices(db, test_mode):
                 ))
                 title_weight = 1.0 - description_weight
                 final_embedding = _normalized_embedding(
-                        title_weight * _normalized_embedding(embedding[0]) +
-                        description_weight * _normalized_embedding(description_embedding[0])
+                    title_weight * _normalized_embedding(embedding[0]) +
+                    description_weight * _normalized_embedding(description_embedding[0])
                 )
             else:
                 final_embedding = _normalized_embedding(embedding[0])
@@ -332,6 +333,7 @@ def main(args_dict):
         db.commit()
     db.close()
 
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--disable_test_mode',
@@ -343,6 +345,7 @@ if __name__ == '__main__':
         main(args_dict)
     except:
         import pdb, sys, traceback
+
         type, value, tb = sys.exc_info()
         traceback.print_exc()
         pdb.post_mortem(tb)
