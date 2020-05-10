@@ -7,19 +7,22 @@ import psycopg2.extras
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../data/db')))
 from db import DatabaseConnection
 
+
 def google_translate(sk_text):
     """ CAUTION! This is a paid service! """
     from google.cloud import translate
     translate_client = translate.Client()
     result = translate_client.translate(sk_text, source_language='sk', target_language='en')
     result = result['translatedText']
-    print "Google Translate: {} -> {}".format(sk_text, result)
+    print("Google Translate: {} -> {}".format(sk_text, result))
     return result
+
 
 def getConfig():
     import yaml
     with open("../db_config_update_source.yaml", "r") as stream:
         return yaml.load(stream)
+
 
 def translate(sk_texts, verbose=False, enable_google_translate=False):
     """ Returns English translation of sk_texts """
@@ -37,7 +40,7 @@ def translate(sk_texts, verbose=False, enable_google_translate=False):
         result = None
         for row in cur:
             result = row["en"]
-        if result is None and enable_google_translate:            
+        if result is None and enable_google_translate:
             # If the result is not in cache, use Google translate and remember the result.
             result = google_translate(sk_text)
             insert_sql = "insert into translations values(%s,%s)"
@@ -46,7 +49,7 @@ def translate(sk_texts, verbose=False, enable_google_translate=False):
 
     if verbose:
         for sk_text, result in zip(sk_texts, results):
-            print "Translation: {}->{}".format(sk_text, result)
+            print("Translation: {}->{}".format(sk_text, result))
 
     # Close database connection
     db.commit()
@@ -57,6 +60,7 @@ def translate(sk_texts, verbose=False, enable_google_translate=False):
 def main(args_dict):
     verbose = args_dict['verbose']
     translate(["Ako sa mas?", "pes"], verbose=verbose, enable_google_translate=True)
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()

@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Get the script's directory:
-DIR=$(dirname $(readlink -f $0));
+DIR=$(dirname $(readlink -f "$0"));
 
 # Set up log file path:
 DATE=$(date +%Y_%m_%d_%H_%M_%S);
@@ -11,7 +11,7 @@ echo "tail ${LOG_PATH};";
 
 # Regenerate prod data:
 started=$(date);
-su - datautils -c "cd ${DIR}; cd ..; python2 generate_prod_data.py --disable_test_mode;" >${LOG_PATH} 2>&1;
+su - datautils -c "cd ${DIR}; cd ..; python3 generate_prod_data.py --disable_test_mode;" >${LOG_PATH} 2>&1;
 finished=$(date);
 echo "Generation started: ${started}";
 echo "Generation finished: ${finished}";
@@ -25,4 +25,4 @@ svc -t /service/data;
 echo "Issued commands to restart all apps.";
 
 # Regenerate public dumps:
-su - datautils -c "cd ${DIR}; python generate_public_dumps.py;";
+su - datautils -c "cd ${DIR}; python3 generate_public_dumps.py;";

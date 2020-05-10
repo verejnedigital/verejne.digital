@@ -1,10 +1,8 @@
 import argparse
 import csv
-import os
 import re
 import subprocess
-import sys
-import urllib
+import urllib.request
 
 from datetime import datetime
 from itertools import chain
@@ -12,12 +10,12 @@ from itertools import chain
 from db.db import DatabaseConnection
 from utils import json_load, remove_accents
 
-
 """ Script for updating data sources. Specify the data sources to be updated
     as command line parameters, using the data source names from sources.json.
     Example: under user datautils, execute
         python source_update.py ekosystem_ITMS --verbose
 """
+
 
 def update_SQL_source(source, timestamp, dry_run, verbose):
     # Check that the (temporary) schema names created by this data source
@@ -34,8 +32,8 @@ def update_SQL_source(source, timestamp, dry_run, verbose):
 
     # Download online resource if a URL is specified, storing it at the
     # location specified in source['path']
-    if ('url' in source):
-        urllib.urlretrieve(source['url'], source['path'])
+    if 'url' in source:
+        urllib.request.urlretrieve(source['url'], source['path'])
         if verbose:
             print('[OK] Downloaded from %s to %s' % (source['url'], source['path']))
 
@@ -86,18 +84,23 @@ def normalise_CSV_column_name(column_name):
     column_name = remove_accents(column_name).lower()
     return column_name
 
+
 def update_CSV_source(source, timestamp, dry_run, verbose):
     # Load the CSV file
     with open(source['path'], 'r') as f:
-        delimiter = str(source['delimiter']) # requires string, not unicode
+        delimiter = str(source['delimiter'])  # requires string, not unicode
         reader = csv.reader(f, delimiter=delimiter)
 
         # Extract column names from header line and then the actual data
         header = next(reader)
-        column_names = [column_name.decode('utf-8') for column_name in header]
+        column_names = [column_name for column_name in header]
+        if not isinstance(column_names[0], str):
+            print("WARNING: this should not happen")  # TODO remove when it does not happen
+            column_names = [column_name.decode('utf-8') for column_name in column_names]
         data = [tuple(row) for row in reader]
     if verbose:
         print('Loaded CSV file with %d columns and %d data rows' % (len(column_names), len(data)))
+        print('Columns:', column_names)
 
     # Create postgres schema
     db = DatabaseConnection(path_config='db_config_update_source.yaml')
@@ -106,7 +109,7 @@ def update_CSV_source(source, timestamp, dry_run, verbose):
     db.execute(q)
 
     # Compute normalised column names, saving original names in a separate table
-    column_names_normalised = map(normalise_CSV_column_name, column_names)
+    column_names_normalised = list(map(normalise_CSV_column_name, column_names))
     q = 'CREATE TABLE column_names (name_original text, name_normalised text);'
     db.execute(q)
     q = """INSERT INTO column_names VALUES %s;"""
@@ -115,7 +118,7 @@ def update_CSV_source(source, timestamp, dry_run, verbose):
 
     # Create table containing the actual data from the CSV file
     table = source['table_name']
-    table_columns = ', '.join(['%s text' % (name) for name in column_names_normalised])
+    table_columns = ', '.join(['%s text' % name for name in column_names_normalised])
     q = 'CREATE TABLE %s (%s);' % (table, table_columns)
     db.execute(q)
 
@@ -133,14 +136,16 @@ def update_CSV_source(source, timestamp, dry_run, verbose):
         db.commit()
     db.close()
 
+
 def update_JSON_source(source, timestamp, dry_run, verbose):
     # Load the JSON file
     data = json_load(source['path'])
 
     # Obtain column names appearing anywhere in the JSON
-    columns = sorted(list(set(chain.from_iterable([datum.keys() for datum in data]))))
+    columns = sorted(list(set(chain.from_iterable([list(datum.keys()) for datum in data]))))
     if verbose:
         print('Loaded JSON files with %d columns and %d data rows' % (len(columns), len(data)))
+        print('Columns:', columns)
 
     # Reorganise data into a list of tuples
     data = [tuple(datum[column] if column in datum else "" for column in columns) for datum in data]
@@ -153,7 +158,7 @@ def update_JSON_source(source, timestamp, dry_run, verbose):
 
     # Create table containing the actual data from the CSV file
     table = source['table_name']
-    table_columns = ', '.join(['%s text' % (name) for name in columns])
+    table_columns = ', '.join(['%s text' % name for name in columns])
     q = 'CREATE TABLE %s (%s);' % (table, table_columns)
     db.execute(q)
 
@@ -183,7 +188,7 @@ def main(args_dict):
     sources_by_name = {source['name']: source for source in sources}
     for source_todo in sources_todo:
         if source_todo not in sources_by_name:
-            raise Exception('Source "%s" not known' % (source_todo))
+            raise Exception('Source "%s" not known' % source_todo)
         source = sources_by_name[source_todo]
         if source['type'] == 'SQL':
             update_SQL_source(source, timestamp, dry_run, verbose)
@@ -203,6 +208,7 @@ if __name__ == '__main__':
         main(args_dict)
     except:
         import pdb, sys, traceback
+
         type, value, tb = sys.exc_info()
         traceback.print_exc()
         pdb.post_mortem(tb)

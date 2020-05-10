@@ -228,21 +228,24 @@
         SELECT
           CAST(ico AS bigint),
           nazov AS name,
+          CAST(CAST(nullif(trzby_2020,'') AS float) AS bigint) AS revenue_2020,
+          CAST(CAST(nullif(trzby_2019,'') AS float) AS bigint) AS revenue_2019,
           CAST(CAST(nullif(trzby_2018,'') AS float) AS bigint) AS revenue_2018,
           CAST(CAST(nullif(trzby_2017,'') AS float) AS bigint) AS revenue_2017,
           CAST(CAST(nullif(trzby_2016,'') AS float) AS bigint) AS revenue_2016,
-          CAST(CAST(nullif(trzby_2015,'') AS float) AS bigint) AS revenue_2015,
+          CAST(CAST(nullif(zisk_2020,'') AS float) AS bigint) AS profit_2020,
+          CAST(CAST(nullif(zisk_2019,'') AS float) AS bigint) AS profit_2019,
           CAST(CAST(nullif(zisk_2018,'') AS float) AS bigint) AS profit_2018,
           CAST(CAST(nullif(zisk_2017,'') AS float) AS bigint) AS profit_2017,
           CAST(CAST(nullif(zisk_2016,'') AS float) AS bigint) AS profit_2016,
-          CAST(CAST(nullif(zisk_2015,'') AS float) AS bigint) AS profit_2015,
-          kategoria_poctu_zamestnancov_2016 AS employees_2016,
-          kategoria_poctu_zamestnancov_2015 AS employees_2015
+          kategoria_poctu_zamestnancov_2018 AS employees_2018,
+          kategoria_poctu_zamestnancov_2017 AS employees_2017,
+          kategoria_poctu_zamestnancov_2016 AS employees_2016
         FROM company_stats"
     tables:
             CompanyFinancials:
                     columns: ["revenue", "profit", "employees"]
-                    years: [2015, 2016, 2017, 2018]
+                    years: [2016, 2017, 2018, 2019, 2020]
                     create_command: "
                        CREATE TABLE CompanyFinancials (
                                 id SERIAL PRIMARY KEY,

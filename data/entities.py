@@ -45,7 +45,7 @@ class Entities:
 
         if (parsed_name1 is None) or (parsed_name2 is None):
             return False
-        if (parsed_name1.surname != parsed_name2.surname):
+        if parsed_name1.surname != parsed_name2.surname:
             return False
 
         fns1 = parsed_name1.firstnames
@@ -58,7 +58,7 @@ class Entities:
         return -1
 
     def ExistsPerson(self, name, parsed_name, address_id):
-        if not address_id in self.address2eid:
+        if address_id not in self.address2eid:
             return -1
         for candidate in self.address2eid[address_id]:
             if self.is_merge_desired(
@@ -77,7 +77,7 @@ class Entities:
         self.entities += 1
         if address_id is None:
             return None
-        if not self.db is None:
+        if self.db is not None:
             eid = self.db.add_values("Entities", [name, address_id])
         else:
             eid = self.entities
@@ -87,13 +87,13 @@ class Entities:
             self.address2eid[address_id].append(eid)
         else:
             self.address2eid[address_id] = [eid]
-        if not ico is None:
+        if ico is not None:
             self.AddICO(eid, ico)
         return eid
 
     def GetEntity(self, ico, name, address_id, no_new_entity=False):
         eid = None
-        if not ico is None:
+        if ico is not None:
             # Skontrolujme ci je ICO int!
             if not isinstance(ico, int):
                 raise ValueError('ICO must be an integer')
@@ -103,14 +103,13 @@ class Entities:
             if eid >= 0:
                 return eid
         # self.Ak je to osoba
-        parsed_name = entity_tools.parse_entity_name(
-            name, self.titles_parser, self.surnames)
+        parsed_name = entity_tools.parse_entity_name(name, self.titles_parser, self.surnames)
         eid = self.ExistsPerson(name, parsed_name, address_id)
         # Ak sme osobu nasli tak ju vratime
         if eid >= 0:
             # v pripade ze sme nasli match na osobu o ktorej sme predtym nevedeli
             # ale uz vieme ico, tak si ho zapamatame
-            if not ico is None:
+            if ico is not None:
                 self.AddICO(eid, ico)
             return eid
         elif no_new_entity:
