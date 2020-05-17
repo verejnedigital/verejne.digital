@@ -1,5 +1,3 @@
-import datetime
-import io
 import json
 import math
 import requests
@@ -67,7 +65,7 @@ def is_contained_ci(pattern, text):
 
 
 # --- MATH ---
-EARTH_EQUATORIAL_RADIUS = 6378137;
+EARTH_EQUATORIAL_RADIUS = 6378137
 
 def WGS84_to_Mercator(lat, lon):
     x = math.radians(lon) * EARTH_EQUATORIAL_RADIUS
@@ -82,18 +80,18 @@ def Mercator_to_WGS84(x, y):
 
 # --- IO ---
 def json_load(path):
-    with open(path, 'r') as f:
+    with open(path, 'rt', encoding='utf-8') as f:
         data_json = json.load(f)
     return data_json
 
 def json_dump_utf8(var, path, indent=4, flatten_level=None):
-    with io.open(path, 'w', encoding='utf-8') as f:
-        data = json.dumps(var, f, indent=indent, sort_keys=True, separators=(',', ': '), ensure_ascii=False)
+    with open(path, 'w', encoding='utf-8') as f:
+        data = json.dumps(var, indent=indent, sort_keys=True, separators=(',', ': '), ensure_ascii=False)
         if (indent is not None) and (flatten_level is not None):
-            flatten_string = '\n' + ' '*(indent*flatten_level)
+            flatten_string = '\n' + ' ' * (indent * flatten_level)
             data = data.replace(flatten_string, ' ')
-            data = data.replace('\n' + ' '*(indent*(flatten_level-1)) + ']', ']')
-        f.write(unicode(data))
+            data = data.replace('\n' + ' ' * (indent * (flatten_level - 1)) + ']', ']')
+        f.write(str(data))
 
 def yaml_load(path):
     with open(path, 'r') as f:
