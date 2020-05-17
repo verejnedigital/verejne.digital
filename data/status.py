@@ -13,42 +13,42 @@ import utils
 
 
 def _get_tables_and_columns_in_schema(db, schema):
-  """Returns a dict describing all tables and columns in `schema`."""
+    """Returns a dict describing all tables and columns in `schema`."""
 
-  # Obtain names of tables in `schema`:
-  q = """
+    # Obtain names of tables in `schema`:
+    q = """
       SELECT table_name FROM information_schema.tables
       WHERE table_schema = '""" + schema + """'
       ORDER BY table_name;
       """
-  rows_tables = db.query(q)
+    rows_tables = db.query(q)
 
-  # Obtain row counts (warning: could be inaccurate under heavy load):
-  q = """
+    # Obtain row counts (warning: could be inaccurate under heavy load):
+    q = """
       SELECT relname, n_live_tup
       FROM pg_stat_user_tables
       WHERE schemaname = '""" + schema + """';
       """
-  num_rows = {row['relname']: row['n_live_tup']
-              for row in db.query(q)}
+    num_rows = {row['relname']: row['n_live_tup']
+                for row in db.query(q)}
 
-  # The above method occasionally returns zero counts for all or most
-  # tables. In that case, this alternative row counting method can
-  # provide more accurate information:
-  q = """
+    # The above method occasionally returns zero counts for all or most
+    # tables. In that case, this alternative row counting method can
+    # provide more accurate information:
+    q = """
       SELECT relname, reltuples
       FROM pg_class
       LEFT JOIN pg_namespace
       ON (pg_namespace.oid = pg_class.relnamespace)
       WHERE relkind='r' AND pg_namespace.nspname='""" + schema + """';
       """
-  for row in db.query(q):
-    relname = row['relname']
-    if (relname not in num_rows) or (num_rows[relname] == 0):
-      num_rows[relname] = row['reltuples']
+    for row in db.query(q):
+        relname = row['relname']
+        if (relname not in num_rows) or (num_rows[relname] == 0):
+            num_rows[relname] = row['reltuples']
 
-  # Obtain foreign keys:
-  q = """
+    # Obtain foreign keys:
+    q = """
       SELECT
         source_table.relname AS source_t,
         source_column.attname AS source_c,
@@ -78,116 +78,116 @@ def _get_tables_and_columns_in_schema(db, schema):
         AND pg_namespace.nspname=%s
       ;
       """
-  q_data = [schema]
-  foreign_keys = collections.defaultdict(
-      lambda: collections.defaultdict(list))
-  foreign_keys_rows = db.query(q, q_data, return_dicts=False)
-  for source_t, source_c, target_t, target_c in foreign_keys_rows:
-    foreign_keys[source_t][source_c].append((target_t, target_c))
+    q_data = [schema]
+    foreign_keys = collections.defaultdict(
+        lambda: collections.defaultdict(list))
+    foreign_keys_rows = db.query(q, q_data, return_dicts=False)
+    for source_t, source_c, target_t, target_c in foreign_keys_rows:
+        foreign_keys[source_t][source_c].append((target_t, target_c))
 
-  # Obtain column names of each obtained table
-  tables = []
-  for row_table in rows_tables:
-    table_name = row_table['table_name']
-    q = """
+    # Obtain column names of each obtained table
+    tables = []
+    for row_table in rows_tables:
+        table_name = row_table['table_name']
+        q = """
         SELECT column_name, data_type FROM information_schema.columns
         WHERE table_schema = '""" + schema + """'
             AND table_name = '""" + table_name + """';
         """
-    columns = db.query(q)
+        columns = db.query(q)
 
-    # Save foreign key references for each column
-    for column in columns:
-      column_name = column['column_name']
-      column['foreign_keys'] = foreign_keys[table_name][column_name]
+        # Save foreign key references for each column
+        for column in columns:
+            column_name = column['column_name']
+            column['foreign_keys'] = foreign_keys[table_name][column_name]
 
-    tables.append({
-        'name': table_name,
-        'num_rows': num_rows[table_name],
-        'columns': columns,
-    })
-  return tables
+        tables.append({
+            'name': table_name,
+            'num_rows': num_rows[table_name],
+            'columns': columns,
+        })
+    return tables
 
 
 def _datetimestr_from_schema(schema):
-  """Returns a pretty-printed datetime from a schema name.
+    """Returns a pretty-printed datetime from a schema name.
 
-  Args:
-    schema: A schema name of the form <schema_name>_YYmmddHHMMSS.
-  Returns:
-    Datetime from the end of the schema name, formatted for printing.
-  """
-  datetime_parsed = datetime.datetime.strptime(
-      schema[schema.rfind('_')+1:], '%Y%m%d%H%M%S')
-  return datetime_parsed.strftime('%Y-%m-%d %H:%M:%S')
+    Args:
+      schema: A schema name of the form <schema_name>_YYmmddHHMMSS.
+    Returns:
+      Datetime from the end of the schema name, formatted for printing.
+    """
+    datetime_parsed = datetime.datetime.strptime(
+        schema[schema.rfind('_') + 1:], '%Y%m%d%H%M%S')
+    return datetime_parsed.strftime('%Y-%m-%d %H:%M:%S')
 
 
 def get_source_data_info():
-  """Returns list of dicts describing our data sources."""
+    """Returns list of dicts describing our data sources."""
 
-  # Establish connection to the database:
-  db = DatabaseConnection(path_config='db_config_data.yaml')
+    # Establish connection to the database:
+    db = DatabaseConnection(path_config='db_config_data.yaml')
 
-  # Iterate through sources listed in sources.json:
-  sources = utils.json_load('../data/sources.json')
-  result = []
-  for source in sources:
-    # Obtain schema with the last update:
-    try:
-      schema = db.get_latest_schema('source_' + source['name'])
-    except Exception as exception:
-      print('[WARNING] %s' % (exception))
-      continue
+    # Iterate through sources listed in sources.json:
+    sources = utils.json_load(os.path.abspath(os.path.join(os.path.dirname(__file__), '../data/sources.json')))
+    result = []
+    for source in sources:
+        # Obtain schema with the last update:
+        try:
+            schema = db.get_latest_schema('source_' + source['name'])
+        except Exception as exception:
+            print('[WARNING] %s' % exception)
+            continue
 
-    # Store information to be returned:
-    result.append({
-        'description': source['description'],
-        'name': source['name'],
-        'schema': schema,
-        'tables': _get_tables_and_columns_in_schema(db, schema),
-        'update': _datetimestr_from_schema(schema),
-    })
+        # Store information to be returned:
+        result.append({
+            'description': source['description'],
+            'name': source['name'],
+            'schema': schema,
+            'tables': _get_tables_and_columns_in_schema(db, schema),
+            'update': _datetimestr_from_schema(schema),
+        })
 
-  # Close database connection and return the result:
-  db.close()
-  return result
+    # Close database connection and return the result:
+    db.close()
+    return result
 
 
 def get_prod_data_info():
-  """Returns dict describing our latest production schema."""
+    """Returns dict describing our latest production schema."""
 
-  db = DatabaseConnection(path_config='db_config_data.yaml')
-  schema = db.get_latest_schema('prod_')
-  response = {
-      'schema': schema,
-      'tables': _get_tables_and_columns_in_schema(db, schema),
-      'update': _datetimestr_from_schema(schema),
-  }
-  db.close()
-  return response
+    db = DatabaseConnection(path_config=os.path.abspath(os.path.join(os.path.dirname(__file__), 'db_config_data.yaml')))
+    schema = db.get_latest_schema('prod_')
+    response = {
+        'schema': schema,
+        'tables': _get_tables_and_columns_in_schema(db, schema),
+        'update': _datetimestr_from_schema(schema),
+    }
+    db.close()
+    return response
 
 
 def get_public_dumps_info():
-  """Returns list of dicts describing our public CSV dumps."""
+    """Returns list of dicts describing our public CSV dumps."""
 
-  # Read public dumps YAML configuration file:
-  config = utils.yaml_load('prod_generation/public_dumps.yaml')
-  dumps = config['dumps']
+    # Read public dumps YAML configuration file:
+    config = utils.yaml_load(os.path.abspath(os.path.join(os.path.dirname(__file__), 'prod_generation/public_dumps.yaml')))
+    dumps = config['dumps']
 
-  # Iterate through the dumps:
-  result = []
-  for dump_name in dumps:
-    result.append({
-        'name': dump_name,
-        'query': dumps[dump_name]['query'].strip(),
-        'url': 'https://verejne.digital/resources/csv/%s.csv' % (dump_name)
-    })
-  return result
+    # Iterate through the dumps:
+    result = []
+    for dump_name in dumps:
+        result.append({
+            'name': dump_name,
+            'query': dumps[dump_name]['query'].strip(),
+            'url': 'https://verejne.digital/resources/csv/%s.csv' % dump_name
+        })
+    return result
 
 
 def get_colabs_info():
-  """Returns a list of all registered Colab notebooks."""
+    """Returns a list of all registered Colab notebooks."""
 
-  # Read YAML file describing all registered Colab notebooks.
-  colabs = utils.yaml_load('colabs.yaml')
-  return colabs
+    # Read YAML file describing all registered Colab notebooks.
+    colabs = utils.yaml_load(os.path.abspath(os.path.join(os.path.dirname(__file__), 'colabs.yaml')))
+    return colabs

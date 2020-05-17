@@ -5,8 +5,8 @@
 import argparse
 import json
 import os
-from paste import httpserver
 import sys
+from paste import httpserver
 import webapp2
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../data/db')))
@@ -16,57 +16,60 @@ from relations import Relations
 
 
 class MyServer(webapp2.RequestHandler):
-  """Abstract request handler, to be subclasses by server hooks."""
+    """Abstract request handler, to be subclasses by server hooks."""
 
-  def get(self):
-    """Implements actual hook logic and responds to requests."""
-    raise NotImplementedError('Must implement method `get`.')
+    def get(self):
+        """Implements actual hook logic and responds to requests."""
+        raise NotImplementedError('Must implement method `get`.')
 
-  def _parse_int(self, parameter, default=None, max_value=None):
-    """Attempts to parse an integer GET `parameter`."""
-    if default and (parameter not in self.request.GET):
-      return default
-    try:
-      value = int(self.request.GET[parameter])
-    except:
-      self.abort(400, detail='Parameter "%s" must be integer' % (
-          parameter))
-    if max_value and (value > max_value):
-      self.abort(400, detail='Parameter "%s" must be <= %d' % (
-          parameter, max_value))
-    return value
+    def _parse_int(self, parameter, default=None, max_value=None):
+        """Attempts to parse an integer GET `parameter`."""
+        if default and (parameter not in self.request.GET):
+            return default
+        try:
+            value = int(self.request.GET[parameter])
+            if max_value and (value > max_value):
+                self.abort(400, detail='Parameter "%s" must be <= %d' % (
+                    parameter, max_value))
+            return value
+        except:
+            self.abort(400, detail='Parameter "%s" must be integer' % (
+                parameter))
+            return 0
 
-  def _parse_eid_list(self, parameter, limit=50):
-    """Parses eids from comma-separated GET string `parameter`."""
-    try:
-      eids = [
-          int(x)
-          for x in (self.request.GET[parameter].split(','))[:limit]
-      ]
-    except:
-      self.abort(400, detail='Could not parse %s' % (parameter))
-    return eids
+    def _parse_eid_list(self, parameter, limit=50):
+        """Parses eids from comma-separated GET string `parameter`."""
+        try:
+            eids = [
+                int(x)
+                for x in (self.request.GET[parameter].split(','))[:limit]
+            ]
+            return eids
+        except:
+            self.abort(400, detail='Could not parse %s' % parameter)
+            return []
 
-  def parse_start_end(self):
-    """Parses parameters from comma-separated integer list format."""
-    try:
-      start = [int(x) for x in (self.request.GET["eid1"].split(","))[:50]]
-      end = [int(x) for x in (self.request.GET["eid2"].split(","))[:50]]
-      return start, end
-    except:
-      self.abort(400, detail='Could not parse start and/or end eIDs')
+    def parse_start_end(self):
+        """Parses parameters from comma-separated integer list format."""
+        try:
+            start = [int(x) for x in (self.request.GET["eid1"].split(","))[:50]]
+            end = [int(x) for x in (self.request.GET["eid2"].split(","))[:50]]
+            return start, end
+        except:
+            self.abort(400, detail='Could not parse start and/or end eIDs')
+            return 0, 0
 
-  def _add_entity_info_to_vertices(self, vertices):
-    """Endows vertices with information about their entities."""
+    def _add_entity_info_to_vertices(self, vertices):
+        """Endows vertices with information about their entities."""
 
-    # No work to be done if the subgraph is empty. This is necessary
-    # as PostgreSQL does not handle an empty WHERE IN clause.
-    if len(vertices) == 0:
-      return
+        # No work to be done if the subgraph is empty. This is necessary
+        # as PostgreSQL does not handle an empty WHERE IN clause.
+        if len(vertices) == 0:
+            return
 
-    db = webapp2.get_app().registry['db']
-    vertices_eids = [v['eid'] for v in vertices]
-    q = """
+        db = webapp2.get_app().registry['db']
+        vertices_eids = [v['eid'] for v in vertices]
+        q = """
         SELECT
           entities.id AS eid,
           entities.name,
@@ -77,78 +80,78 @@ class MyServer(webapp2.RequestHandler):
         LEFT JOIN entity_flags ON entity_flags.eid=entities.id
         WHERE entities.id IN %s;
         """
-    q_data = [tuple(vertices_eids)]
-    eid_to_entity = {row['eid']: row for row in db.query(q, q_data)}
-    for vertex in vertices:
-      entity = eid_to_entity[vertex['eid']]
-      vertex['entity_name'] = entity['name']
-      for key in ['trade_with_government', 'political_entity',
-                  'contact_with_politics']:
-        vertex[key] = entity[key]
+        q_data = [tuple(vertices_eids)]
+        eid_to_entity = {row['eid']: row for row in db.query(q, q_data)}
+        for vertex in vertices:
+            entity = eid_to_entity[vertex['eid']]
+            vertex['entity_name'] = entity['name']
+            for key in ['trade_with_government', 'political_entity',
+                        'contact_with_politics']:
+                vertex[key] = entity[key]
 
-  def returnJSON(self,j):
-    self.response.headers['Content-Type'] = 'application/json'
-    self.response.write(json.dumps(j, separators=(',',':')))
+    def returnJSON(self, j):
+        self.response.headers['Content-Type'] = 'application/json'
+        self.response.write(json.dumps(j, separators=(',', ':')))
 
 
 class AShortestPath(MyServer):
-  def get(self):
-    start, end = self.parse_start_end()
-    relations = webapp2.get_app().registry['relations']
-    response = relations.bfs(start, end)  # Assumes unit edge lengths!
-    self.returnJSON(response)
+    def get(self):
+        start, end = self.parse_start_end()
+        relations = webapp2.get_app().registry['relations']
+        response = relations.bfs(start, end)  # Assumes unit edge lengths!
+        self.returnJSON(response)
 
 
 class Subgraph(MyServer):
-  def get(self):
-    relations = webapp2.get_app().registry['relations']
+    def get(self):
+        relations = webapp2.get_app().registry['relations']
 
-    # Compute the subgraph to return:
-    start = self._parse_eid_list('eid1')
-    end = self._parse_eid_list('eid2')
-    subgraph = relations.subgraph(start, end)
+        # Compute the subgraph to return:
+        start = self._parse_eid_list('eid1')
+        end = self._parse_eid_list('eid2')
+        subgraph = relations.subgraph(start, end)
 
-    # Endow returning vertices with entity names (and other info).
-    self._add_entity_info_to_vertices(subgraph['vertices'])
+        # Endow returning vertices with entity names (and other info).
+        self._add_entity_info_to_vertices(subgraph['vertices'])
 
-    self.returnJSON(subgraph)
+        self.returnJSON(subgraph)
 
 
 class NotableConnections(MyServer):
-  """Returns subgraphs of connections to "notable" entities."""
+    """Returns subgraphs of connections to "notable" entities."""
 
-  def get(self):
-    relations = webapp2.get_app().registry['relations']
-    notable_eids = webapp2.get_app().registry['notable_eids']
+    def get(self):
+        relations = webapp2.get_app().registry['relations']
+        notable_eids = webapp2.get_app().registry['notable_eids']
 
-    # Parse URL parameters:
-    start = self._parse_eid_list('eid')
-    radius = self._parse_int('radius', default=6)
-    max_nodes_to_explore = self._parse_int(
-      'max_explore', default=100000, max_value=1000000)
-    target_order = self._parse_int(
-      'target_order', default=50, max_value=200)
-    max_order = self._parse_int(
-      'max_order', default=100, max_value=200)
+        # Parse URL parameters:
+        start = self._parse_eid_list('eid')
+        radius = self._parse_int('radius', default=6)
+        max_nodes_to_explore = self._parse_int(
+            'max_explore', default=100000, max_value=1000000)
+        target_order = self._parse_int(
+            'target_order', default=50, max_value=200)
+        max_order = self._parse_int(
+            'max_order', default=100, max_value=200)
 
-    # Special case due to current media coverage.
-    first_eid_name = webapp2.get_app().registry['db'].query(
-        'SELECT name FROM entities WHERE id=%s;',
-        [start[0]]
-    )[0]['name']
-    if u'Kočner' in first_eid_name:
-      target_order = 120
-      max_order = 120
+        # Special case due to current media coverage.
+        first_eid_name = webapp2.get_app().registry['db'].query(
+            'SELECT name FROM entities WHERE id=%s;',
+            [start[0]]
+        )[0]['name']
+        if 'Kočner' in first_eid_name:
+            target_order = 120
+            max_order = 120
 
-    # Build subgraph of connections to notable entities:
-    subgraph = relations.get_notable_connections_subgraph(
-      start, notable_eids, radius, max_nodes_to_explore, target_order,
-      max_order)
+        # Build subgraph of connections to notable entities:
+        subgraph = relations.get_notable_connections_subgraph(
+            start, notable_eids, radius, max_nodes_to_explore, target_order,
+            max_order)
 
-    # Endow returning vertices with entity names (and other info).
-    self._add_entity_info_to_vertices(subgraph['vertices'])
+        # Endow returning vertices with entity names (and other info).
+        self._add_entity_info_to_vertices(subgraph['vertices'])
 
-    self.returnJSON(subgraph)
+        self.returnJSON(subgraph)
 
 
 app = webapp2.WSGIApplication([
@@ -159,83 +162,83 @@ app = webapp2.WSGIApplication([
 
 
 def _initialise_relations(db, max_relations_to_load):
-  """Returns Relations object build from edges in database `db`."""
+    """Returns Relations object build from edges in database `db`."""
 
-  # Retrieve list of relationship edges:
-  q = """
+    # Retrieve list of relationship edges:
+    q = """
       SELECT eid, eid_relation, stakeholder_type_id
       FROM related WHERE eid <> eid_relation
       LIMIT %s;
       """
-  q_data = [max_relations_to_load]
-  edge_list = []
-  for row in db.query(q, q_data):
-    edge_type = row['stakeholder_type_id'] or 0
-    edge_list.append(
-      (row['eid'], row['eid_relation'], +1 * edge_type))
-    edge_list.append(
-      (row['eid_relation'], row['eid'], -1 * edge_type))
-  print('[OK] Received %d edges.' % (len(edge_list)))
+    q_data = [max_relations_to_load]
+    edge_list = []
+    for row in db.query(q, q_data):
+        edge_type = row['stakeholder_type_id'] or 0
+        edge_list.append(
+            (row['eid'], row['eid_relation'], +1 * edge_type))
+        edge_list.append(
+            (row['eid_relation'], row['eid'], -1 * edge_type))
+    print('[OK] Received %d edges.' % len(edge_list))
 
-  # Construct and return Relations object from the edge list:
-  return Relations(edge_list)
+    # Construct and return Relations object from the edge list:
+    return Relations(edge_list)
 
 
 def _initialise_notable_eids(db):
-  """Returns set of eids corresponding to "notable" entities."""
+    """Returns set of eids corresponding to "notable" entities."""
 
-  rows = db.query("""
+    rows = db.query("""
       SELECT eid FROM entity_flags
       WHERE political_entity=TRUE;
   """)
-  notable_eids = set(row["eid"] for row in rows)
-  print('[OK] Received %d notable eIDs.' % (len(notable_eids)))
-  return notable_eids
+    notable_eids = set(row["eid"] for row in rows)
+    print('[OK] Received %d notable eIDs.' % len(notable_eids))
+    return notable_eids
 
 
 def initialise_app(max_relations_to_load):
-  """Precomputes values shared across requests to this app.
+    """Precomputes values shared across requests to this app.
 
-  The registry property is intended for storing these precomputed
-  values, so as to avoid global variables.
-  """
+    The registry property is intended for storing these precomputed
+    values, so as to avoid global variables.
+    """
 
-  # Connect to the database:
-  db = DatabaseConnection(path_config='db_config.yaml')
-  schema = db.get_latest_schema('prod_')
-  db.execute('SET search_path to ' + schema + ';')
-  app.registry['db'] = db
+    # Connect to the database:
+    db = DatabaseConnection(path_config=os.path.abspath(os.path.join(os.path.dirname(__file__), 'db_config.yaml')))
+    schema = db.get_latest_schema('prod_')
+    db.execute('SET search_path to ' + schema + ';')
+    app.registry['db'] = db
 
-  # Build Relations object and a set of notable eIDs:
-  app.registry['relations'] = _initialise_relations(
-    db, max_relations_to_load)
-  app.registry['notable_eids'] = _initialise_notable_eids(db)
+    # Build Relations object and a set of notable eIDs:
+    app.registry['relations'] = _initialise_relations(
+        db, max_relations_to_load)
+    app.registry['notable_eids'] = _initialise_notable_eids(db)
 
 
 def main(args):
-  # Initialise the app by precomputing values:
-  initialise_app(args.max_relations_to_load)
+    # Initialise the app by precomputing values:
+    initialise_app(args.max_relations_to_load)
 
-  # Start the server:
-  host, port = args.listen.split(':')
-  httpserver.serve(
-      app,
-      host=host,
-      port=port,
-      request_queue_size=128,
-      use_threadpool=True,
-      threadpool_workers=32,
-  )
+    # Start the server:
+    host, port = args.listen.split(':')
+    httpserver.serve(
+        app,
+        host=host,
+        port=port,
+        request_queue_size=128,
+        use_threadpool=True,
+        threadpool_workers=32,
+    )
 
 
 if __name__ == '__main__':
-  parser = argparse.ArgumentParser()
-  parser.add_argument('--listen',
-                      help='host:port to listen on',
-                      default='127.0.0.1:8081')
-  parser.add_argument('--max_relations_to_load',
-                      type=int,
-                      help='Maximum # of edges to load from database.',
-                      default=123456789)
-  args = parser.parse_args()
-  main(args)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--listen',
+                        help='host:port to listen on',
+                        default='127.0.0.1:8081')
+    parser.add_argument('--max_relations_to_load',
+                        type=int,
+                        help='Maximum # of edges to load from database.',
+                        default=123456789)
+    args = parser.parse_args()
+    main(args)

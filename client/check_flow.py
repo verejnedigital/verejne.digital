@@ -15,6 +15,6 @@ for filename in files:
     with open(filename) as file:
         first_line = file.readline().strip()
         if first_line != '// @flow':
-            print('Unflowed file: \t"%s"' % (filename))
+            print('Unflowed file: \t"%s"' % filename)
 
 print(DELIM)

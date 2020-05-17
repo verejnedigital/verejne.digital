@@ -9,7 +9,6 @@ To reapply post-processing on the current prod schema, execute:
 
 import argparse
 import os
-import sys
 import numpy
 import math
 
@@ -56,6 +55,7 @@ class Notice:
                 weights.append(similarity ** 2.0)
         if len(values) < 2:
             return None, None, None
+        values = numpy.array(values)
         mean = numpy.average(values, weights=weights)
         std_dev = math.sqrt(numpy.average((values - mean) ** 2.0, weights=weights))
         price_low = numpy.exp(mean - 2.0 * std_dev)
@@ -128,14 +128,17 @@ def notices_find_candidates(notices, test_mode):
     similarity_source_target = []
     for notice in notices:
         # If we know the winner already
-        if notice.supplier is not None: continue
+        if notice.supplier is not None:
+            continue
         # If the embedding is from a small fraction of title words
-        if notice.matched_title_fraction < 0.4: continue
+        if notice.matched_title_fraction < 0.4:
+            continue
         # try all other candidates, but keep only similar
         for notice2 in notices:
             # candidates are only the notices with known winners / suppliers
             if notice2.supplier is None: continue
-            if notice2.matched_title_fraction < 0.4: continue
+            if notice2.matched_title_fraction < 0.4:
+                continue
             similarity = numpy.inner(notice.embedding, notice2.embedding) / (notice.norm * notice2.norm)
             if test_mode and similarity > 0.8:
                 similarity_source_target.append((similarity, notice.idx, notice2.idx))
@@ -174,9 +177,9 @@ def _normalized_embedding(embedding):
 
 def _post_process_notices(db, test_mode):
     notices_create_extra_table(db, test_mode)
-    ids = []
-    texts = []
-    suppliers = []
+    # ids = []
+    # texts = []
+    # suppliers = []
     notices = []
 
     columns = [
@@ -207,14 +210,15 @@ def _post_process_notices(db, test_mode):
     with db.get_server_side_cursor(
             query, buffer_size=100000, return_dicts=True) as cur:
         for row in cur:
-            if (processed % 1000 == 0):
+            if processed % 1000 == 0:
                 print(processed, "/", num_notices)
                 sys.stdout.flush()
             processed += 1
 
             embedding = text_embedder.embed_one_text(row["text"])
             # Skip if could not compute embedding, or the embedding was out of 0 words.
-            if embedding is None or embedding[1] == 0: continue
+            if embedding is None or embedding[1] == 0:
+                continue
             description_embedding = None
             if "short_description" in row and row["short_description"] is not None:
                 description_embedding = text_embedder.embed_one_text(row["short_description"])
@@ -311,12 +315,12 @@ def main(args_dict):
     # TODO: Remove the temporary connection to the profil source
     # once it is no longer needed.
     db = DatabaseConnection(
-        path_config='db_config_update_source.yaml')
+        path_config=os.path.abspath(os.path.join(os.path.dirname(__file__), 'db_config_update_source.yaml')))
     schema = db.get_latest_schema('prod_')
     schema_profil = db.get_latest_schema('source_internal_profil_')
     db.execute(
         'SET search_path="' + schema + '", "' + schema_profil + '";')
-    print('[OK] Postprocessing schema "%s"...' % (schema))
+    print('[OK] Postprocessing schema "%s"...' % schema)
     do_post_processing(db, test_mode)
 
     # Grant SELECT on any new tables to our applications:
@@ -344,9 +348,11 @@ if __name__ == '__main__':
     try:
         main(args_dict)
     except:
-        import pdb, sys, traceback
+        import pdb
+        import sys
+        import traceback
 
-        type, value, tb = sys.exc_info()
+        _, _, tb = sys.exc_info()
         traceback.print_exc()
         pdb.post_mortem(tb)
         raise

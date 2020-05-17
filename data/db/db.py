@@ -2,10 +2,10 @@ import psycopg2
 import psycopg2.extras
 from psycopg2.extensions import AsIs
 
+import utils
+
 psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
 psycopg2.extensions.register_type(psycopg2.extensions.UNICODEARRAY)
-
-import utils
 
 # Register a customised adapter that returns Postgres decimal values
 # as Python floats rather than Decimal objects (which are not JSON
@@ -17,7 +17,7 @@ DEC2FLOAT = psycopg2.extensions.new_type(
 psycopg2.extensions.register_type(DEC2FLOAT)
 
 
-class DatabaseConnection():
+class DatabaseConnection:
     def __init__(self, path_config='db_config.yaml', search_path=None):
         config = utils.yaml_load(path_config)
         self.conn = psycopg2.connect(user=config['user'], dbname=config['db'])
@@ -109,7 +109,7 @@ class DatabaseConnection():
             """
         rows = self.query(q)
         if len(rows) == 0:
-            raise Exception('No schema found for prefix "%s"' % (prefix))
+            raise Exception('No schema found for prefix "%s"' % prefix)
         return rows[0]['schema_name']
 
     def dump_to_CSV(self, query, path_output):

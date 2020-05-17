@@ -16,5 +16,5 @@ def longest_common_prefix(str1, str2):
 def yaml_load(path):
     """Returns content of YAML file at `path` as a Python object."""
     with open(path, 'r') as f:
-        data_yaml = yaml.load(f)
+        data_yaml = yaml.load(f, Loader=yaml.FullLoader)
     return data_yaml

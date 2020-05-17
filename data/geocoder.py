@@ -71,7 +71,7 @@ class Geocoder:
             print("Finished reading key hints, size =", len(self.cache_key_hints))
 
     def AddToCache(self, address, formatted_address, lat, lng, update_formatted_address):
-        " Add one entry to the cache. The function takes care of generating proper keys"
+        """ Add one entry to the cache. The function takes care of generating proper keys"""
         keys = set(
             list(self.GetKeysForAddress(address)) +
             list(self.GetKeysForAddress(formatted_address))
@@ -188,7 +188,7 @@ class Geocoder:
                 yield res.replace(b" ", b"").replace(b",", b"").replace(b"-", b"")
 
     def GeocodingAPILookup(self, address):
-        " Performs and returns the response from Google geocoding api."
+        """ Performs and returns the response from Google geocoding api."""
         # Don't try to do any geocoding at the moment as we have plenty of things
         # in the cache. Now we're mostly geocoding things where geocoding failed
         # before. Remove this once started handling failed geocoding requests properly.
@@ -248,7 +248,7 @@ class Geocoder:
             """ For a given key, lookups lat, lng, formatted address in the caches.
             Returns None if missing, otherwise returns (lat, lng, formatted_address).
             """
-            if not key in self.cache:
+            if key not in self.cache:
                 self.cache_miss += 1
                 return None
             self.cache_hit += 1
@@ -274,7 +274,8 @@ class Geocoder:
             """
             for key in keys:
                 address_data = GetAddressDataForKey(key)
-                if address_data is None: continue
+                if address_data is None:
+                    continue
                 lat, lng, formatted_address = address_data
                 # print address, " -> ", lat, lng, formatted_address
                 with self.db_address_id.dict_cursor() as cur_id:
@@ -291,8 +292,10 @@ class Geocoder:
         def UpdateKeyHint(address, key_hint, matched_key):
             # Updates key_hint for a given address with matched_key. Currently, if the
             # old 'key_hint' exists, the new one is ignored.
-            if key_hint is not None: return
-            if matched_key is None: return
+            if key_hint is not None:
+                return
+            if matched_key is None:
+                return
             self.db_address_cache.add_values("AddressHints", [address, matched_key])
             self.cache_key_hints[address] = matched_key
 
@@ -321,14 +324,15 @@ class Geocoder:
         # Did not find address id, do geocoding lookup, which add data into cache.
         self.UpdateGeocodingAPILookup(address)
         address_id, _ = LookupKeysInCache(keys_backup)
-        if address_id is not None: UpdateKeyHint(address, key_hint, matched_key)
+        if address_id is not None:
+            UpdateKeyHint(address, key_hint, matched_key)
         return address_id
 
     def PrintStats(self):
-        print("[geocoder] CACHE_HITS: %d" % (self.cache_hit))
-        print("[geocoder] CACHE_MISS: %d" % (self.cache_miss))
-        print("[geocoder] API_LOOKUPS: %d" % (self.api_lookups))
-        print("[geocoder] API_LOOKUP_FAILS: %d" % (self.api_lookup_fails))
-        print("[geocoder] HAS KEY HINT: %d" % (self.has_key_hint))
-        print("[geocoder] MISSING KEY HINT: %d" % (self.missing_key_hint))
-        print("[geocoder] ADJUST POINT: %d" % (self.adjust_point))
+        print("[geocoder] CACHE_HITS: %d" % self.cache_hit)
+        print("[geocoder] CACHE_MISS: %d" % self.cache_miss)
+        print("[geocoder] API_LOOKUPS: %d" % self.api_lookups)
+        print("[geocoder] API_LOOKUP_FAILS: %d" % self.api_lookup_fails)
+        print("[geocoder] HAS KEY HINT: %d" % self.has_key_hint)
+        print("[geocoder] MISSING KEY HINT: %d" % self.missing_key_hint)
+        print("[geocoder] ADJUST POINT: %d" % self.adjust_point)

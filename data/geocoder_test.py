@@ -1,11 +1,8 @@
-import os
-import sys
 import unittest
 
 import geocoder as geocoder_lib
-#import db.db
-#sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../data/db')))
 from db.db import DatabaseConnection
+
 
 class GeocoderTest(unittest.TestCase):
 
@@ -32,5 +29,6 @@ class GeocoderTest(unittest.TestCase):
              'ulica11/222mesto', 'ulica222/11mesto', 'ulica222mesto']
         )
 
+
 if __name__ == '__main__':
-    unittest.main()        
+    unittest.main()

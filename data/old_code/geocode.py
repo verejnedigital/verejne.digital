@@ -8,8 +8,6 @@ import json
 import logging
 import psycopg2.extras
 from psycopg2.extensions import AsIs
-import sys
-import time
 import urllib
 import yaml
 
@@ -17,7 +15,7 @@ import yaml
 # TODO: have a config file for this
 geocode_key = None
 with open("/tmp/geocode_key.txt", 'r') as f:
-    geocode_key = yaml.load(f)['key']
+    geocode_key = yaml.load(f, Loader=yaml.FullLoader)['key']
 #db.parser.add_argument("--related", help="Only compute related table", action="store_true")
 #db.parser.add_argument("--populate_has_data", help="Updates values so we know for which data we have somthing to show", action="store_true")
 
@@ -570,7 +568,7 @@ def process(limit):
 
 def populateHasDataForTable(table):
     with open("../verejne/datasources.yaml", "r") as f:
-        data_sources = yaml.load(f)
+        data_sources = yaml.load(f, Loader=yaml.FullLoader)
     with getCursor() as cur:
         print "Populating has data for", table
         condition = " OR ".join([column + " IS NOT NULL" for column in data_sources[table]])
@@ -584,7 +582,7 @@ def populateHasDataForTable(table):
 
 def populateHasData():
     with open("../verejne/datasources.yaml", "r") as f:
-        data_sources = yaml.load(f)
+        data_sources = yaml.load(f, Loader=yaml.FullLoader)
 
     with getCursor() as cur:
         #executeAndLog(cur, "UPDATE entities SET has_data = NULL")

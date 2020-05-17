@@ -1,11 +1,6 @@
 import argparse
-import os
-import sys
 import psycopg2
 import psycopg2.extras
-
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../data/db')))
-from db import DatabaseConnection
 
 
 def google_translate(sk_text):
@@ -21,7 +16,7 @@ def google_translate(sk_text):
 def getConfig():
     import yaml
     with open("../db_config_update_source.yaml", "r") as stream:
-        return yaml.load(stream)
+        return yaml.load(stream, Loader=yaml.FullLoader)
 
 
 def translate(sk_texts, verbose=False, enable_google_translate=False):

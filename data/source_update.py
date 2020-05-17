@@ -1,6 +1,7 @@
 import argparse
 import csv
 import re
+import os
 import subprocess
 import urllib.request
 
@@ -20,7 +21,7 @@ from utils import json_load, remove_accents
 def update_SQL_source(source, timestamp, dry_run, verbose):
     # Check that the (temporary) schema names created by this data source
     # do not conflict with existing schemas in the database
-    db = DatabaseConnection(path_config='db_config_update_source.yaml')
+    db = DatabaseConnection(path_config=os.path.abspath(os.path.join(os.path.dirname(__file__), 'db_config_update_source.yaml')))
     q = """SELECT schema_name FROM information_schema.schemata WHERE schema_name IN %s LIMIT 1;"""
     q_data = (tuple(source['schemas']),)
     res = db.query(q, q_data, return_dicts=False)
@@ -56,7 +57,7 @@ def update_SQL_source(source, timestamp, dry_run, verbose):
     # Rename loaded schema(s) to the desired schema name(s)
     # If there is a single schema, rename it to source_NAME_TIMESTAMP
     # If there are multiple schemas, rename them to source_NAME_SCHEMA_TIMESTAMP
-    db = DatabaseConnection(path_config='db_config_update_source.yaml')
+    db = DatabaseConnection(path_config=os.path.abspath(os.path.join(os.path.dirname(__file__), 'db_config_update_source.yaml')))
     if len(source['schemas']) == 1:
         schema_old = source['schemas'][0]
         schema_new = 'source_' + source['name'] + '_' + timestamp
@@ -103,7 +104,7 @@ def update_CSV_source(source, timestamp, dry_run, verbose):
         print('Columns:', column_names)
 
     # Create postgres schema
-    db = DatabaseConnection(path_config='db_config_update_source.yaml')
+    db = DatabaseConnection(path_config=os.path.abspath(os.path.join(os.path.dirname(__file__), 'db_config_update_source.yaml')))
     schema = 'source_' + source['name'] + '_' + timestamp
     q = 'CREATE SCHEMA %s; SET search_path="%s";' % (schema, schema)
     db.execute(q)
@@ -151,7 +152,7 @@ def update_JSON_source(source, timestamp, dry_run, verbose):
     data = [tuple(datum[column] if column in datum else "" for column in columns) for datum in data]
 
     # Create postgres schema
-    db = DatabaseConnection(path_config='db_config_update_source.yaml')
+    db = DatabaseConnection(path_config=os.path.abspath(os.path.join(os.path.dirname(__file__), 'db_config_update_source.yaml')))
     schema = 'source_' + source['name'] + '_' + timestamp
     q = 'CREATE SCHEMA "%s"; SET search_path="%s";' % (schema, schema)
     db.execute(q)
@@ -179,7 +180,7 @@ def update_JSON_source(source, timestamp, dry_run, verbose):
 
 def main(args_dict):
     timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
-    sources = json_load('sources.json')
+    sources = json_load(os.path.abspath(os.path.join(os.path.dirname(__file__), 'sources.json')))
     sources_todo = args_dict['sources_todo']
     dry_run = args_dict['dry_run']
     verbose = args_dict['verbose']
@@ -207,9 +208,11 @@ if __name__ == '__main__':
     try:
         main(args_dict)
     except:
-        import pdb, sys, traceback
+        import pdb
+        import sys
+        import traceback
 
-        type, value, tb = sys.exc_info()
+        _, _, tb = sys.exc_info()
         traceback.print_exc()
         pdb.post_mortem(tb)
         raise

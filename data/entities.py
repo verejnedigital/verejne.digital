@@ -92,7 +92,6 @@ class Entities:
         return eid
 
     def GetEntity(self, ico, name, address_id, no_new_entity=False):
-        eid = None
         if ico is not None:
             # Skontrolujme ci je ICO int!
             if not isinstance(ico, int):

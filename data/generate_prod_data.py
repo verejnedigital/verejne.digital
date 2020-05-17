@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 import argparse
 from datetime import datetime
-import html.parser
-import os
+import html
 from psycopg2.extensions import AsIs
 import re
 import sys
+import os
 import xml.etree.ElementTree as ET
 
 from db.db import DatabaseConnection
@@ -20,9 +20,11 @@ def ExtractDescriptionFromBody(body):
     """ Input is the raw body of raw_notice.
     This method extracts description from it and returns it.
     """
-    if body is None: return None
+    if body is None:
+        return None
     root = ET.fromstring(body)
-    if root is None: return None
+    if root is None:
+        return None
     # TODO: port to XPath
     mapping = {
         "description": ["opisPredmetuObstaravania", "opisZakazky"],
@@ -34,7 +36,8 @@ def ExtractDescriptionFromBody(body):
         result["email"] = email.text
     for e in root.iter():
         component = e.attrib.get("FormComponentId", None)
-        if component is None: continue
+        if component is None:
+            continue
         value = e.attrib.get("Value", None)
         if value is None:
             continue
@@ -51,7 +54,7 @@ def StripHtml(text):
     if text is None:
         return ""
     p = re.compile(r'<.*?>')
-    return html.parser.HTMLParser().unescape(p.sub('', text)).replace('\xa0', ' ')
+    return html.unescape(p.sub('', text)).replace('\xa0', ' ')
 
 
 def CreateAndSetProdSchema(db, prod_schema_name):
@@ -209,7 +212,6 @@ def ProcessSource(db_source, db_prod, geocoder, entities, config, test_mode):
                     continue
             found += 1
 
-            eid = None
             if config.get("no_entity_id"):
                 # TODO(rasto): is the address lookup necessary here?
                 eid = None
@@ -374,12 +376,12 @@ def main(args_dict):
 
     # Create database connections:
     db_source = DatabaseConnection(
-        path_config='db_config_update_source.yaml')
+        path_config=os.path.abspath(os.path.join(os.path.dirname(__file__), 'db_config_update_source.yaml')))
     db_address_cache = DatabaseConnection(
-        path_config='db_config_update_source.yaml',
+        path_config=os.path.abspath(os.path.join(os.path.dirname(__file__), 'db_config_update_source.yaml')),
         search_path='address_cache')
     db_prod = DatabaseConnection(
-        path_config='db_config_update_source.yaml')
+        path_config=os.path.abspath(os.path.join(os.path.dirname(__file__), 'db_config_update_source.yaml')))
     CreateAndSetProdSchema(db_prod, prod_schema_name)
 
     # Initialize geocoder
@@ -389,7 +391,7 @@ def main(args_dict):
 
     # Table prod_tables.yaml defines a specifications of SQL selects to read
     # source data and describtion of additional tables to be created.
-    config = utils.yaml_load('prod_tables.yaml')
+    config = utils.yaml_load(os.path.abspath(os.path.join(os.path.dirname(__file__), 'prod_tables.yaml')))
     # This is where all the population happens!!!
     # Go through all the specified data sources and process them, adding data
     # as needed. We process them in lexicographic order!
