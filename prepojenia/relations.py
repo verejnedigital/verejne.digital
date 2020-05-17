@@ -131,8 +131,8 @@ class Relations:
 
         # Iterate through the queue in FIFO order, but do not pop.
         queue_index = 0
-        while (queue_index < len(queue)) and (
-                len(queue) < max_nodes_to_explore):
+        while (queue_index < len(bfs_queue)) and (
+                len(bfs_queue) < max_nodes_to_explore):
             vertex = bfs_queue[queue_index]
             vertex_distance = distance[vertex]
             if max_distance and (vertex_distance >= max_distance):
