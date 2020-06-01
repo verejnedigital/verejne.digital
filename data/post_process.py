@@ -11,6 +11,7 @@ import argparse
 import os
 import numpy
 import math
+import sys
 
 from intelligence import embed
 from db.db import DatabaseConnection
@@ -349,7 +350,6 @@ if __name__ == '__main__':
         main(args_dict)
     except:
         import pdb
-        import sys
         import traceback
 
         _, _, tb = sys.exc_info()

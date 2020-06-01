@@ -101,7 +101,7 @@ def update_CSV_source(source, timestamp, dry_run, verbose):
         data = [tuple(row) for row in reader]
     if verbose:
         print('Loaded CSV file with %d columns and %d data rows' % (len(column_names), len(data)))
-        print('Columns:', column_names)
+        # print('Columns:', column_names)
 
     # Create postgres schema
     db = DatabaseConnection(path_config=os.path.abspath(os.path.join(os.path.dirname(__file__), 'db_config_update_source.yaml')))
@@ -146,7 +146,7 @@ def update_JSON_source(source, timestamp, dry_run, verbose):
     columns = sorted(list(set(chain.from_iterable([list(datum.keys()) for datum in data]))))
     if verbose:
         print('Loaded JSON files with %d columns and %d data rows' % (len(columns), len(data)))
-        print('Columns:', columns)
+        # print('Columns:', columns)
 
     # Reorganise data into a list of tuples
     data = [tuple(datum[column] if column in datum else "" for column in columns) for datum in data]
