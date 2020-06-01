@@ -1,6 +1,6 @@
 from collections import defaultdict
 
-from .utils import download_cadastral_json, download_cadastral_pages, search_string, WGS84_to_Mercator, json_dump_utf8
+from utils import download_cadastral_json, download_cadastral_pages, search_string, WGS84_to_Mercator, json_dump_utf8
 
 CADASTRAL_API_ODATA = 'https://kataster.skgeodesy.sk/PortalOData/'
 DIR_OUTPUT = '/tmp/skgeodesy/'

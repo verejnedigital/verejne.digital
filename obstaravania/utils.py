@@ -14,7 +14,7 @@ import yaml
 # properly, delete this function from here.
 def yaml_load(path):
   with open(path, 'r') as f:
-    data_yaml = yaml.load(f, Loader=yaml.FullLoader)
+    data_yaml = yaml.load(f)
   return data_yaml
 
 

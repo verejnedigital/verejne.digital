@@ -19,7 +19,7 @@ db_old.connect(False)
 
 # Defining database scheme here
 with open("db_config_old.yaml", "r") as stream:
-    config = yaml.load(stream, Loader=yaml.FullLoader)
+    config = yaml.load(stream)
 engine = sqlalchemy.create_engine(
         'postgresql+psycopg2://' + config["user"] + "@/" + config["db"],
         client_encoding='utf8')
