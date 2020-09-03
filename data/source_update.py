@@ -181,30 +181,29 @@ def update_JSON_source(source, timestamp, dry_run, verbose):
 def main(args_dict):
     timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
     sources = json_load(os.path.abspath(os.path.join(os.path.dirname(__file__), 'sources.json')))
-    sources_todo = args_dict['sources_todo']
-    dry_run = args_dict['dry_run']
-    verbose = args_dict['verbose']
+    source_todo = args_dict.source_todo
+    dry_run = args_dict.dry_run
+    verbose = args_dict.verbose
 
     # Iterate through requested data sources, checking they are all recognised
     sources_by_name = {source['name']: source for source in sources}
-    for source_todo in sources_todo:
-        if source_todo not in sources_by_name:
-            raise Exception('Source "%s" not known' % source_todo)
-        source = sources_by_name[source_todo]
-        if source['type'] == 'SQL':
-            update_SQL_source(source, timestamp, dry_run, verbose)
-        elif source['type'] == 'CSV':
-            update_CSV_source(source, timestamp, dry_run, verbose)
-        elif source['type'] == 'JSON':
-            update_JSON_source(source, timestamp, dry_run, verbose)
+    if source_todo not in sources_by_name:
+        raise Exception('Source "%s" not known' % source_todo)
+    source = sources_by_name[source_todo]
+    if source['type'] == 'SQL':
+        update_SQL_source(source, timestamp, dry_run, verbose)
+    elif source['type'] == 'CSV':
+        update_CSV_source(source, timestamp, dry_run, verbose)
+    elif source['type'] == 'JSON':
+        update_JSON_source(source, timestamp, dry_run, verbose)
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('sources_todo', nargs='*', help='names of sources to update', action='store')
+    parser.add_argument('source_todo', type=str, help='Name of source to update')
     parser.add_argument('--dry_run', default=False, action='store_true', help='Do not commit database changes')
     parser.add_argument('--verbose', default=False, action='store_true', help='Report progress to stdout')
-    args_dict = vars(parser.parse_args())
+    args_dict = parser.parse_args()
     try:
         main(args_dict)
     except:
