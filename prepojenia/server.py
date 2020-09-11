@@ -135,13 +135,13 @@ class NotableConnections(MyServer):
             'max_order', default=100, max_value=200)
 
         # Special case due to current media coverage.
-        first_eid_name = webapp2.get_app().registry['db'].query(
-            'SELECT name FROM entities WHERE id=%s;',
-            [start[0]]
-        )[0]['name']
-        if 'Kočner' in first_eid_name:
-            target_order = 120
-            max_order = 120
+        # first_eid_name = webapp2.get_app().registry['db'].query(
+        #     'SELECT name FROM entities WHERE id=%s;',
+        #     [start[0]]
+        # )[0]['name']
+        # if 'Kočner' in first_eid_name:
+        #     target_order = 120
+        #     max_order = 120
 
         # Build subgraph of connections to notable entities:
         subgraph = relations.get_notable_connections_subgraph(
@@ -210,8 +210,7 @@ def initialise_app(max_relations_to_load):
     app.registry['db'] = db
 
     # Build Relations object and a set of notable eIDs:
-    app.registry['relations'] = _initialise_relations(
-        db, max_relations_to_load)
+    app.registry['relations'] = _initialise_relations(db, max_relations_to_load)
     app.registry['notable_eids'] = _initialise_notable_eids(db)
 
 
