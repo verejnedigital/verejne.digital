@@ -9,7 +9,7 @@ psycopg2.extensions.register_type(psycopg2.extensions.UNICODEARRAY)
 
 # Register a customised adapter that returns Postgres decimal values
 # as Python floats rather than Decimal objects (which are not JSON
-# serialisable). See http://initd.org/psycopg/docs/faq.html#faq-float
+# serializable). See http://initd.org/psycopg/docs/faq.html#faq-float
 DEC2FLOAT = psycopg2.extensions.new_type(
     psycopg2.extensions.DECIMAL.values,
     'DEC2FLOAT',
@@ -23,6 +23,7 @@ class DatabaseConnection:
         self.conn = psycopg2.connect(user=config['user'], dbname=config['db'])
         if search_path is not None:
             self.execute('SET search_path = %s', (search_path,))
+            self.commit()
 
     def execute(self, query, query_data=()):
         """ Executes query without returning any data """
@@ -83,6 +84,36 @@ class DatabaseConnection:
         self.execute(q)
         if verbose:
             print('[OK] Renamed schema "%s" to "%s"' % (schema_old, schema_new))
+
+    def remove_schema(self, schema_to_del, verbose=True):
+        """
+        Removes schema, use with caution!
+        :param schema_to_del: str - schema name for removal
+        :param verbose: bool - be verbose?
+        :return: None
+        """
+        q = "DROP SCHEMA IF EXISTS %s CASCADE;" % (
+            psycopg2.extensions.quote_ident(schema_to_del, self.conn))
+        self.execute(q)
+        if verbose:
+            print('[OK] Removed schema "%s"' % schema_to_del)
+
+    def list_schemas(self, prefix=''):
+        """
+        List all available schemas (with a given prefix).
+        :param prefix: str - prefix for the schema
+        :return: list(str) - schema names
+        """
+        q = """
+            SELECT schema_name
+            FROM information_schema.schemata
+            WHERE schema_name ILIKE '""" + prefix + """_%%'
+            ORDER BY schema_name DESC
+            """
+        rows = self.query(q)
+        if len(rows) == 0:
+            raise Exception('No schema found for prefix "%s"' % prefix)
+        return [r['schema_name'] for r in rows]
 
     def grant_select_on_schema(self, schema, user):
         q = 'GRANT SELECT ON ALL TABLES IN SCHEMA "%s" TO %s;' % (

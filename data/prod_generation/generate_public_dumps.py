@@ -1,5 +1,4 @@
 """Script to generate public data dump files from latest prod data.
-
 This script should be invoked whenever new prod data is generated.
 Configuration (dumps to create, and where to save them) is stored in
 public_dumps.yaml.

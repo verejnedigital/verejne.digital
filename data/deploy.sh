@@ -13,6 +13,6 @@ echo "Activating new environment..."
 . venv/bin/activate
 echo "Installing requirements..."
 pip install --upgrade pip
-pip install wheel
-pip install Cython
+pip install wheel==0.35.1
+pip install Cython==0.29.21
 pip install -r requirements.txt
