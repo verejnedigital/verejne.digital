@@ -27,7 +27,7 @@ def json_dump_utf8(var, path, indent=4, flatten_level=None):
 
 
 def yaml_load(path):
-    with open(path, 'r') as f:
+    with open(path, 'rt', encoding='utf-8') as f:
         # data_yaml = yaml.load(f, Loader=yaml.FullLoader)
         data_yaml = yaml.load(f)
     return data_yaml
@@ -35,5 +35,5 @@ def yaml_load(path):
 
 def execute_script(db, path):
     """Executes SQL script at `path` on database `db`."""
-    with open(path, 'r') as f:
+    with open(path, 'r', encoding='utf-8') as f:
         db.execute(f.read())
