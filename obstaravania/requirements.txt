@@ -9,5 +9,5 @@ psycopg2
 python-dateutil
 PyYAML
 sqlalchemy
-webapp2
+webapp2>=3.0.0b1
 webob

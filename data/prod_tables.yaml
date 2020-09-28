@@ -103,7 +103,7 @@
         UNION
         SELECT
           organization_id as org_id,
-          stakeholder_type_id,
+          statutory_type_id,
           concat_ws(' ',
             full_name, array_to_string(person_given_names,' '), array_to_string(person_family_names,' ')
           ) AS name,

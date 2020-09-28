@@ -37,7 +37,7 @@ def download_cadastral_json(url, circumvent_geoblocking=False, verbose=False):
 
 
 def download_cadastral_pages(url_start, circumvent_geoblocking=False, verbose=False):
-    """ Download and parse paginated JSON from the cadatral API """
+    """ Download and parse paginated JSON from the cadastral API """
     values = []
     url = url_start
     while True:
@@ -54,7 +54,7 @@ def download_cadastral_pages(url_start, circumvent_geoblocking=False, verbose=Fa
 # --- SEARCH ---
 def remove_accents(s):
     s_NFKD = unicodedata.normalize('NFKD', s)
-    return u''.join([c for c in s_NFKD if not unicodedata.combining(c)])
+    return ''.join([c for c in s_NFKD if not unicodedata.combining(c)])
 
 
 def search_string(s):
@@ -102,8 +102,8 @@ def json_dump_utf8(var, path, indent=4, flatten_level=None):
 
 
 def yaml_load(path):
-    with open(path, 'r') as f:
-        data_yaml = yaml.load(f)
+    with open(path, 'r', encoding='utf-8') as f:
+        data_yaml = yaml.load(f, Loader=yaml.FullLoader)
     return data_yaml
 
 

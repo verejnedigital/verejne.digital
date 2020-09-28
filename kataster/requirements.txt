@@ -2,6 +2,6 @@ paste
 psycopg2
 PyYaml
 requests
-webapp2
+webapp2>=3.0.0b1
 webob
 tqdm

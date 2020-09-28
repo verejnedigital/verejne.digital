@@ -22,7 +22,7 @@ class DatabaseConnection:
         config = utils.yaml_load(path_config)
         self.conn = psycopg2.connect(user=config['user'], dbname=config['db'])
         if search_path is not None:
-            self.execute('SET search_path = %s', (search_path,))
+            self.execute('SET search_path = %s,public;', (search_path,))
             self.commit()
 
     def execute(self, query, query_data=()):

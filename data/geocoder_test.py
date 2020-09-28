@@ -23,7 +23,7 @@ class GeocoderTest(unittest.TestCase):
         )
 
     def test_keys_match(self):
-        self.assertItemsEqual(
+        self.assertCountEqual(
             self.geocoder.GetKeysForAddress("Ulica 11/222 33333 Mesto"),
             ['ulica11/22233333mesto', 'ulica222/1133333mesto', 'ulica22233333mesto',
              'ulica11/222mesto', 'ulica222/11mesto', 'ulica222mesto']

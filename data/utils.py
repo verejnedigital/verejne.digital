@@ -29,7 +29,7 @@ def json_dump_utf8(var, path, indent=4, flatten_level=None):
 def yaml_load(path):
     with open(path, 'rt', encoding='utf-8') as f:
         # data_yaml = yaml.load(f, Loader=yaml.FullLoader)
-        data_yaml = yaml.load(f)
+        data_yaml = yaml.load(f, Loader=yaml.FullLoader)
     return data_yaml
 
 

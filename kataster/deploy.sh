@@ -2,6 +2,6 @@
 
 rm -rf ./venv
 
-virtualenv-2.7 ./venv \
+python -m venv venv \
 && . venv/bin/activate \
 && pip install -r requirements.txt

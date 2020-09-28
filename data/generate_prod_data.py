@@ -60,7 +60,7 @@ def StripHtml(text):
 def CreateAndSetProdSchema(db, prod_schema_name):
     """ Initialized schema with core prod tables: Entities and Address.
 
-    Creates tabales under given scheman (which is created) in the given db
+    Creates tables under given schema (which is created) in the given db
     connection.
 
     Finally it sets the connection to use the just created schema.
@@ -200,13 +200,13 @@ def ProcessSource(db_source, db_prod, geocoder, entities, config, test_mode):
             # letters.
             if len(name.split()) == 1:
                 name = ' '.join(re.findall('[A-Z][^A-Z]*', name))
-            addressId = geocoder.GetAddressId(address.encode("utf8"))
+            addressId = geocoder.GetAddressId(address)
             if addressId is None:
                 if address == "":
                     empty += 1
                 else:
                     if test_mode and missed < 10:
-                        print("MISSING ADDRESS", address.encode("utf8"))
+                        print("MISSING ADDRESS", address)
                     missed_addresses.add(address)
                     missed += 1
                     continue
@@ -257,7 +257,7 @@ def ProcessSource(db_source, db_prod, geocoder, entities, config, test_mode):
                 if "supplier_address" in row and not row["supplier_address"] is None:
                     supplier_address = row["supplier_address"]
                     if supplier_address:
-                        supplier_address_id = geocoder.GetAddressId(supplier_address.encode("utf8"))
+                        supplier_address_id = geocoder.GetAddressId(supplier_address)
                         if supplier_address_id is None:
                             missed_addresses.add(supplier_address)
                             missed += 1
@@ -329,7 +329,7 @@ def process_source_rpvs(db_source, db_prod, geocoder, entities, test_mode):
 
         # Geocode beneficiary's address:
         kuv_address = row["kuv_address"]
-        kuv_address_id = geocoder.GetAddressId(kuv_address.encode("utf8"))
+        kuv_address_id = geocoder.GetAddressId(kuv_address)
         if kuv_address_id is None:
             continue
 
@@ -364,6 +364,7 @@ def process_source_rpvs(db_source, db_prod, geocoder, entities, test_mode):
 
 def main(args_dict):
     test_mode = not args_dict['disable_test_mode']
+    keep_test = args_dict['keep_test_db']
     if test_mode:
         print("=======================")
         print("=======TEST MODE=======")
@@ -372,6 +373,8 @@ def main(args_dict):
     timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
     # Write output into prod_schema_name
     prod_schema_name = "prod_" + timestamp
+    if test_mode:
+        prod_schema_name = "test_prod_" + timestamp
     print("prod_schema_name", prod_schema_name)
 
     # Create database connections:
@@ -390,7 +393,7 @@ def main(args_dict):
     entities_lookup = entities.Entities(db_prod)
 
     # Table prod_tables.yaml defines a specifications of SQL selects to read
-    # source data and describtion of additional tables to be created.
+    # source data and description of additional tables to be created.
     config = utils.yaml_load(os.path.abspath(os.path.join(os.path.dirname(__file__), 'prod_tables.yaml')))
     # This is where all the population happens!!!
     # Go through all the specified data sources and process them, adding data
@@ -435,16 +438,18 @@ def main(args_dict):
     # Commit database changes and close database connections
     db_address_cache.commit()
     db_address_cache.close()
-    if test_mode:
+    if test_mode and not keep_test:
         db_prod.conn.rollback()
         print('[OK] Rolled back database changes (test mode)')
     else:
         db_prod.commit()
+        print('[OK] Keeping database ' + prod_schema_name)
     db_prod.close()
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--disable_test_mode', default=False, action='store_true', help='Disable test mode')
+    parser.add_argument('--keep_test_db', default=False, action='store_true', help='Keep test db')
     args_dict = vars(parser.parse_args())
     main(args_dict)

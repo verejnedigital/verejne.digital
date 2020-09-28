@@ -88,7 +88,7 @@ def normalise_CSV_column_name(column_name):
 
 def update_CSV_source(source, timestamp, dry_run, verbose):
     # Load the CSV file
-    with open(source['path'], 'r') as f:
+    with open(source['path'], 'r', encoding='utf-8') as f:
         delimiter = str(source['delimiter'])  # requires string, not unicode
         reader = csv.reader(f, delimiter=delimiter)
 

@@ -52,7 +52,7 @@ class Word2VecEmbedder:
         print(self.sk_model.similarity("mesto", "mesta"))
         self.dimension = len(self.sk_model["auto"])
         print("sídlisk" in self.sk_model)
-        print("sídlisk".encode('utf8') in self.sk_model)
+        # print("sídlisk".encode('utf8') in self.sk_model)
 
         print("Dimension of embedding of 'auto' is", self.dimension)
         # Create frequency table for words

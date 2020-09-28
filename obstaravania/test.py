@@ -17,26 +17,27 @@ import serving
 
 
 def _request_json(url, test_handler):
-  """Verifies that the given URL returns a valid JSON."""
-  request = webapp2.Request.blank(url)
-  response = request.get_response(serving.app)
-  test_handler.assertEqual(response.status_int, 200)
-  test_handler.assertEqual(response.content_type, 'application/json')
-  j = json.loads(response.text)
-  return j
+    """Verifies that the given URL returns a valid JSON."""
+    request = webapp2.Request.blank(url)
+    response = request.get_response(serving.app)
+    test_handler.assertEqual(response.status_int, 200)
+    test_handler.assertEqual(response.content_type, 'application/json')
+    j = json.loads(response.text)
+    return j
 
 
 class TestHandlers(unittest.TestCase):
 
-  def test_info_notice(self):
-    url = '/info_notice?id=159012'
-    content = _request_json(url, self)
-    print('InfoNotice:\n%s' % (content))
+    def test_info_notice(self):
+        url = '/info_notice?id=159012'
+        content = _request_json(url, self)
+        print('InfoNotice:\n%s' % (content))
+
 
 def main():
-  serving.initialise_app()
-  unittest.main()
+    serving.initialise_app()
+    unittest.main()
 
 
 if __name__ == '__main__':
-  main()
+    main()

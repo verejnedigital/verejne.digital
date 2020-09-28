@@ -5,6 +5,7 @@ import re
 import urllib.request
 import urllib.parse
 import yaml
+from psycopg2.errors import UniqueViolation, InFailedSqlTransaction
 
 
 # Class to transform address -> address_id. The class takes care of caching and
@@ -35,15 +36,16 @@ class Geocoder:
 
         # matches NUM/NUMx where x is either space (' ') or command followed by
         # space (', ')
-        self.prog = re.compile(b" ([0-9]+)\/([0-9]+)( |(, ))")
+        self.prog = re.compile(" ([0-9]+)/([0-9]+)( |(, ))")
         # Match psc, either XXXXX or XXX XX. Check that it's in a block with a
         # nondigit character (or beginning/end of string) before and after
-        self.psc = re.compile(b"(\D|^)([0-9][0-9][0-9](([0-9][0-9])|( [0-9][0-9])))(\D|$)")
+        self.psc = re.compile("(\D|^)([0-9][0-9][0-9](([0-9][0-9])|( [0-9][0-9])))(\D|$)")
         # Match Bratislava/Kosice - xxx
-        self.city_part = re.compile("(bratislava|košice) ?-(.*)".encode('utf8'))
+        self.city_part = re.compile("(bratislava|košice) ?-(.*)")
 
         suffix_for_testing = ""
-        if self.test_mode: suffix_for_testing = " LIMIT 20000"
+        if self.test_mode:
+            suffix_for_testing = " LIMIT 20000"
         with db_address_cache.dict_cursor() as cur:
             print("Reading cache of geocoded addresses")
             cur.execute(
@@ -53,8 +55,8 @@ class Geocoder:
             print("Processing database output")
             for row in cur:
                 self.AddToCache(
-                    row["address"].encode("utf8"),
-                    row["formatted_address"].encode("utf8"),
+                    row["address"],
+                    row["formatted_address"],
                     row["lat"], row["lng"], update_formatted_address=True
                 )
             print("Finished pre-processing geocoder input cache, size =", len(self.cache))
@@ -67,7 +69,7 @@ class Geocoder:
             )
             print("Processing database output")
             for row in cur:
-                self.cache_key_hints[row["address"].encode("utf8")] = row["key_hint"].encode("utf8")
+                self.cache_key_hints[row["address"]] = row["key_hint"]
             print("Finished reading key hints, size =", len(self.cache_key_hints))
 
     def AddToCache(self, address, formatted_address, lat, lng, update_formatted_address):
@@ -114,9 +116,9 @@ class Geocoder:
             for k in keys:
                 obj = re.search(self.prog, k)
                 if obj:
-                    drop_first = ReplaceAfter(k, obj.start(0), obj.group(0), b" " + obj.group(2) + b" ")
+                    drop_first = ReplaceAfter(k, obj.start(0), obj.group(0), " " + obj.group(2) + " ")
                     if int(obj.group(1)) < int(obj.group(2)):
-                        swapped = ReplaceAfter(k, obj.start(0), obj.group(0), b" " + obj.group(2) + b"/" + obj.group(1) + b" ")
+                        swapped = ReplaceAfter(k, obj.start(0), obj.group(0), " " + obj.group(2) + "/" + obj.group(1) + " ")
                         if len(swapped) > 5:
                             result.append(swapped)
                     if len(drop_first) > 5:
@@ -129,7 +131,7 @@ class Geocoder:
             for k in keys:
                 obj = re.search(self.psc, k)
                 if obj:
-                    new_k = ReplaceAfter(k, obj.start(2), obj.group(2), b"")
+                    new_k = ReplaceAfter(k, obj.start(2), obj.group(2), "")
                     if len(new_k) > 5:
                         result.append(new_k)
             return result
@@ -137,17 +139,17 @@ class Geocoder:
         # Remove common suffixes not adding any value
         def ExpandKeysRemoveSuffixes(keys):
             drop_patterns = [
-                'slovenská republika'.encode('utf8'),
-                b'slovenska republika',
-                b'slovensko',
-                b'slovakia',
-                b'slovak republic'
+                'slovenská republika',
+                'slovenska republika',
+                'slovensko',
+                'slovakia',
+                'slovak republic'
             ]
             result = []
             for pattern in drop_patterns:
                 for k in keys:
                     if pattern in k:
-                        without = k.replace(pattern, b"")
+                        without = k.replace(pattern, "")
                         if len(without) > 5:
                             result.append(without)
             return result
@@ -158,7 +160,7 @@ class Geocoder:
             for k in keys:
                 obj = re.search(self.city_part, k)
                 if obj:
-                    new_k = ReplaceAfter(k, obj.start(2), obj.group(2), b"")
+                    new_k = ReplaceAfter(k, obj.start(2), obj.group(2), "")
                     if len(new_k) > 5:
                         result.append(new_k)
             return result
@@ -185,14 +187,13 @@ class Geocoder:
                     continue
                 already.add(res)
                 old.append(res)
-                yield res.replace(b" ", b"").replace(b",", b"").replace(b"-", b"")
+                yield res.replace(" ", "").replace(",", "").replace("-", "")
 
     def GeocodingAPILookup(self, address):
         """ Performs and returns the response from Google geocoding api."""
         # Don't try to do any geocoding at the moment as we have plenty of things
         # in the cache. Now we're mostly geocoding things where geocoding failed
         # before. Remove this once started handling failed geocoding requests properly.
-        return None
         self.api_lookups += 1
         if self.api_lookups > 100000:
             # The API has daily limit of 100k queries, so save some round trips
@@ -224,20 +225,24 @@ class Geocoder:
             self.api_lookup_fails += 1
             if not self.test_mode:
                 # Store into the list for later processing.
-                self.db_address_cache.add_values("ToProcess", [address])
-                self.db_address_cache.commit()
-            return
-        result = api_response["results"][0]
-        lat = result["geometry"]["location"]["lat"]
-        lng = result["geometry"]["location"]["lng"]
-        formatted_address = result["formatted_address"].encode("utf8")
-        # Add to cache and add to the database
-        self.AddToCache(address, formatted_address, lat, lng, update_formatted_address=False)
-        self.db_address_cache.add_values(
-            "Cache",
-            [address, formatted_address, lat, lng, json.dumps(api_response["results"])]
-        )
-        self.db_address_cache.commit()
+                try:
+                    self.db_address_cache.add_values("ToProcess", [address])
+                    self.db_address_cache.commit()
+                except UniqueViolation:
+                    # print('WARNING: address already in cache (rollback):', address)
+                    self.db_address_cache.conn.rollback()
+        else:
+            result = api_response["results"][0]
+            lat = result["geometry"]["location"]["lat"]
+            lng = result["geometry"]["location"]["lng"]
+            formatted_address = result["formatted_address"]
+            # Add to cache and add to the database
+            self.AddToCache(address, formatted_address, lat, lng, update_formatted_address=False)
+            self.db_address_cache.add_values(
+                "Cache",
+                [address, formatted_address, lat, lng, json.dumps(api_response["results"])]
+            )
+            self.db_address_cache.commit()
 
     def GetAddressId(self, address):
         """ Get AddressId for a given string. If the address is not in the cache
