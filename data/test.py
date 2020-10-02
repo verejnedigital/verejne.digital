@@ -32,11 +32,10 @@ class TestHandlers(unittest.TestCase):
         content = _request_json('/source_data_info', self)
         self.assertIsInstance(content, list)
         self.assertTrue(content)
-        print('SourceDataInfo responded with %d items.' % (len(content)))
+        print('SourceDataInfo responded with %d items.' % len(content))
         print('Schemas and their update times:')
         for source in content:
-            print('%s (schema %s) last updated %s' % (
-                source['name'], source['schema'], source['update']))
+            print('%s (schema %s) last updated %s' % (source['name'], source['schema'], source['update']))
 
     def test_prod_data_info(self):
         content = _request_json('/prod_data_info', self)
@@ -45,22 +44,21 @@ class TestHandlers(unittest.TestCase):
         self.assertTrue('tables' in content)
         self.assertTrue('schema' in content)
         self.assertTrue('update' in content)
-        print('ProdDataInfo responded with schema %s.' % (
-            content['schema']))
+        print('ProdDataInfo responded with schema %s.' % content['schema'])
 
     def test_public_dumps_info(self):
         content = _request_json('/public_dumps_info', self)
         self.assertIsInstance(content, list)
         self.assertTrue(content)
-        print('PublicDumpsInfo responded with %d items:' % (len(content)))
-        print(json.dumps(content, indent=2))
+        print('PublicDumpsInfo responded with %d items:' % len(content))
+        print(json.dumps(content, indent=2, ensure_ascii=False))
 
     def test_colabs_info(self):
         content = _request_json('/colabs_info', self)
         self.assertIsInstance(content, list)
         self.assertTrue(content)
-        print('ColabsInfo responded with %d items:' % (len(content)))
-        print(json.dumps(content, indent=2))
+        print('ColabsInfo responded with %d items:' % len(content))
+        print(json.dumps(content, indent=2, ensure_ascii=False))
 
 
 if __name__ == '__main__':

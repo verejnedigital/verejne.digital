@@ -26,7 +26,7 @@ class DetailCadastralLV extends Component<DetailCadastralLVProps> {
         <td className="key">{this.props.num < 10 ? `0${this.props.num}` : this.props.num}</td>
         <td>
           <ExternalLink
-            url={`https://kataster.skgeodesy.sk/EsknBo/Bo.svc/GeneratePrf?prfNumber=${
+            url={`https://kataster.skgeodesy.sk/Portal/api/Bo/GeneratePrfPublic?prfNumber=${
               this.props.lv.foliono
             }&cadastralUnitCode=${this.props.lv.cadastralunitcode}&outputType=html`}
             onClick={this.disablePropagation}

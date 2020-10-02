@@ -1,14 +1,23 @@
 #!/usr/bin/env bash
 
+# script to regenerate production data from schemas gained from update_weekly.sh
+
 # set bash strict mode - fail immediately if anything fails
 set -eu
 IFS=$'\n\t'
 
-# Get the script's directory:
+# Get to the script's directory:
 DIR=$(dirname $(readlink -f "$0"))
 cd "${DIR}"
+cd ..
 
-# Set up log file path:
+# create virtual environment (switched off for now - takes too long)
+# sh deploy.sh
+
+# activate virtual environment
+. venv/bin/activate
+
+# Set up a log file path:
 DATE=$(date +%Y_%m_%d_%H_%M_%S)
 LOG_PATH="/tmp/regenerate_prod_data_${DATE}.log"
 echo "Command to monitor logs:"
@@ -18,7 +27,6 @@ echo "tail ${LOG_PATH};"
 started=$(date)
 echo "Generation started: ${started}"
 echo "sudo -u datautils python3 generate_prod_data.py --disable_test_mode > ${LOG_PATH} 2>&1;"
-cd ..
 sudo -u datautils python3 generate_prod_data.py --disable_test_mode > ${LOG_PATH} 2>&1
 finished=$(date)
 echo "Generation finished: ${finished}"

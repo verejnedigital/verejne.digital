@@ -244,8 +244,8 @@ def ProcessSource(db_source, db_prod, geocoder, entities, config, test_mode):
                 extract = ExtractDescriptionFromBody(row["body"])
                 if extract is not None:
                     row["body"] = extract.get("description", None)
-                    # TODO: fix this code. It is not possible to set value for non-existng key.
-                    # This was not caugh in testng because testing data for Notices have 0 rows.
+                    # TODO: fix this code. It is not possible to set value for non-existing key.
+                    # This was not caught in testng because testing data for Notices have 0 rows.
                     #
                     # if "deadline" in extract:
                     #     row["deadline"] = datetime.strptime(row["deadline"], "%Y-%m-%dT%H:%M:%S").date()
@@ -406,6 +406,7 @@ def main(args_dict):
         entities_lookup.print_statistics()
 
     # Process yaml-free sources:
+    print("Working on source: RPVS")
     process_source_rpvs(db_source, db_prod, geocoder, entities_lookup, test_mode)
     db_source.close()
 
