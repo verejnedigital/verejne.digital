@@ -41,3 +41,19 @@
     verejne.digital
   description:
     Začneme s takmer 30 osobami, ktoré sú v novinových článkoch zmienené ako prepojené s Mariánom Kočnerom. Aké ďalšie osoby a firmy sú prepojené s viacerými z týchto 30 osôb? Pozrite si rebríček.
+- name:
+    Mapa eurofondov
+  url:
+    https://colab.research.google.com/drive/1iGRS7810mIRR3gqAgxhB4qA1qtiyi2qo?usp=sharing
+  author:
+    Richard a Kristián 
+  description:
+    (Richard a Kristián) V tomto colabe sme sa pozreli na distribúciu eurofondov z verejnej databázy od verejne.digital. Zaujímalo nás, koľko peňazí putuje na rozvoj jednotlivých sektorov a zároveň aj geografická vizualizácia tejto podpory.
+- name:
+    Klasifikácia verejných obstarávaní
+  url:
+    https://colab.research.google.com/drive/14EWhMBzUb0pSK2aWq_b0bS_IfcuDTwVz
+  author:
+    Petr
+  description:
+    (Petr) Ako metódu hľadania anomálí sme zvolili model Isolation Forest, keďže dáta, ktoré máme označené nemajú zaznačené, ktoré obstarávania boli korumpované a ktoré nie, ale iba 9 vlastností o každom obstarávaní a firme v ňom figurujúcej.
