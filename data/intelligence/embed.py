@@ -48,7 +48,7 @@ class Word2VecEmbedder:
         print("Reading the pretrained model for Word2VecEmbedder")
         self.sk_model = KeyedVectors.load_word2vec_format(
             '/data/verejne/datautils/embedding_data/slovak.vec', encoding='utf-8', unicode_errors='ignore')
-        print("Model contains", len(self.sk_model.vocab), "tokens")
+        # print("Model contains", len(self.sk_model.vocab), "tokens")
         print(self.sk_model.similarity("mesto", "mesta"))
         self.dimension = len(self.sk_model["auto"])
         print("sídlisk" in self.sk_model)
