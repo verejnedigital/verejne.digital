@@ -8,4 +8,3 @@ numpy==1.19.2
 scipy==1.5.2
 # smart-open==1.10.0  # solves bug in printing an warning message https://github.com/RaRe-Technologies/smart_open/issues/475
 smart-open==2.2.0
-gensim==3.8.3
