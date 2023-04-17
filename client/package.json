@@ -16,7 +16,7 @@
     "plotly.js": "^1.43.2",
     "points-cluster": "^0.1.4",
     "prop-types": "^15.6.1",
-    "qs": "^6.5.2",
+    "qs": "^6.6.1",
     "rc-drawer": "^1.7.3",
     "react": "^16.3.2",
     "react-app-polyfill": "^0.1.3",
